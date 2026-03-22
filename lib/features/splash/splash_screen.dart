@@ -6,11 +6,6 @@ import '../../core/router/app_router.dart';
 import '../../core/theme/app_theme.dart';
 import '../auth/providers/auth_provider.dart';
 
-/// The first screen shown when the app launches.
-///
-/// Displays Karakana branding for 2 seconds while the app determines
-/// the correct destination based on authentication and onboarding state,
-/// then navigates automatically.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -22,16 +17,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateAfterDelay();
-  }
-
-  /// Waits 2 seconds then redirects to the appropriate screen.
-  void _navigateAfterDelay() {
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 3), () {
       if (!mounted) return;
-
       final auth = context.read<AuthProvider>();
-
       if (!auth.isOnboardingComplete) {
         context.go(AppRoutes.onboarding);
       } else if (auth.isAuthenticated) {
@@ -46,69 +34,83 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.dark,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // ── Logo placeholder ──────────────────────
-            // Replace this container with an Image.asset widget once
-            // the real Karakana logo asset is available.
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                shape: BoxShape.circle,
+      extendBodyBehindAppBar: true,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // ── Background image ───────────────────────
+          Image.asset(
+            'assets/images/Log_In_BG.png',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
+
+          // ── Dark brown gradient overlay ────────────
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF3B1A08).withValues(alpha:0.85),
+                  Color(0xFF3B1A08).withValues(alpha:0.6),
+                  Color(0xFF3B1A08).withValues(alpha:0.95),
+                ],
               ),
-              alignment: Alignment.center,
-              child: Text(
-                'K',
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 56,
-                  fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          // ── Content ────────────────────────────────
+          SafeArea(
+            child: Column(
+              children: [
+                const Spacer(),
+
+                // Logo
+                Image.asset(
+                  'assets/images/Kreative_Karakana_-_Official_Logo_(White).png',
+                  width: 220,
                 ),
-              ),
+
+                const SizedBox(height: 16),
+
+                // Tagline
+                Text(
+                  'Empowering Entrepreneurs',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha:0.85),
+                    fontSize: 15,
+                    fontFamily: 'Inter',
+                    letterSpacing: 2,
+                  ),
+                ),
+
+                const Spacer(),
+
+                // Loading indicator
+                CircularProgressIndicator(
+                  color: AppColors.primary,
+                  strokeWidth: 2,
+                ),
+
+                const SizedBox(height: 20),
+
+                // Version
+                Text(
+                  'Version 1.0.0',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha:0.4),
+                    fontSize: 11,
+                    fontFamily: 'Inter',
+                  ),
+                ),
+
+                const SizedBox(height: 40),
+              ],
             ),
-
-            const SizedBox(height: 24),
-
-            // ── App name ──────────────────────────────
-            Text(
-              'KARAKANA',
-              style: TextStyle(
-                color: AppColors.white,
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 6,
-              ),
-            ),
-
-            const SizedBox(height: 8),
-
-            // ── Tagline ───────────────────────────────
-            Text(
-              'Empowering Entrepreneurs',
-              style: TextStyle(
-                color: AppColors.lightOrange,
-                fontSize: 14,
-                letterSpacing: 1.5,
-              ),
-            ),
-
-            const SizedBox(height: 48),
-
-            // ── Loading indicator ─────────────────────
-            SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                color: AppColors.primary,
-                strokeWidth: 2.5,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
