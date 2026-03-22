@@ -33,6 +33,7 @@ class CourseCard extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             _Thumbnail(course: course, onWishlistTap: onWishlistTap),
             _CourseInfo(course: course),
@@ -187,9 +188,10 @@ class _CourseInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           // ── Title ────────────────────────────
           Text(
@@ -222,7 +224,7 @@ class _CourseInfo extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
 
           // ── Rating + Level ───────────────────
           Row(
@@ -243,7 +245,7 @@ class _CourseInfo extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
 
           // ── Price + Students count ────────────
           Row(
@@ -254,16 +256,16 @@ class _CourseInfo extends StatelessWidget {
                     : 'TZS ${course.price.toStringAsFixed(0)}',
                 style: TextStyle(
                   color: course.isFree ? AppColors.primary : AppColors.dark,
-                  fontSize: 16,
+                  fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const Spacer(),
-              Icon(Icons.people_outline, size: 14, color: AppColors.grey),
+              Icon(Icons.people_outline, size: 12, color: AppColors.grey),
               const SizedBox(width: 4),
               Text(
                 '${course.studentsCount} students',
-                style: TextStyle(color: AppColors.grey, fontSize: 11),
+                style: TextStyle(color: AppColors.grey, fontSize: 10),
               ),
             ],
           ),
