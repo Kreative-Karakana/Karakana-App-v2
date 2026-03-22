@@ -268,37 +268,36 @@ class _BottomContent extends StatelessWidget {
             // Buttons
             if (!isLastSlide)
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
                     onPressed: onFinish,
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.white.withValues(alpha: 0.6),
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(0, 0),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    child: Text(
+                      'Skip',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.6),
+                        fontSize: 15,
+                      ),
                     ),
-                    child: const Text('Skip', style: TextStyle(fontSize: 15)),
                   ),
-                  const Spacer(),
                   ElevatedButton(
                     onPressed: onNext,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 28,
+                        horizontal: 32,
                         vertical: 14,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      elevation: 2,
                     ),
                     child: const Text(
                       'Next →',
                       style: TextStyle(
-                        fontSize: 15,
                         fontWeight: FontWeight.bold,
+                        fontSize: 15,
                       ),
                     ),
                   ),
@@ -307,22 +306,21 @@ class _BottomContent extends StatelessWidget {
             else
               SizedBox(
                 width: double.infinity,
-                height: 52,
                 child: ElevatedButton(
                   onPressed: onFinish,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 52),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    elevation: 2,
                   ),
                   child: const Text(
                     'Get Started →',
                     style: TextStyle(
-                      fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
                 ),
