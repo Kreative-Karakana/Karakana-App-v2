@@ -177,7 +177,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                 child: Text(
-                  '${provider.courses.length} courses found',
+                  '${context.watch<CourseProvider>().courses.length} courses found',
                   style: TextStyle(
                     color: AppColors.grey,
                     fontSize: 13,
@@ -188,7 +188,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
               const SizedBox(height: 8),
 
               // ── Course list ─────────────────────────
-              Expanded(child: _CourseListBody(provider: provider)),
+              const Expanded(child: _CourseListBody()),
             ],
           );
         },
@@ -266,37 +266,40 @@ class _SearchBar extends StatelessWidget {
 // ─────────────────────────────────────────────
 
 class _CourseListBody extends StatelessWidget {
-  const _CourseListBody({required this.provider});
-
-  final CourseProvider provider;
+  const _CourseListBody();
 
   @override
   Widget build(BuildContext context) {
-    if (provider.isLoading) {
+    final courseProvider = context.watch<CourseProvider>();
+
+    if (courseProvider.isLoading) {
       return Center(child: CircularProgressIndicator(color: AppColors.primary));
     }
 
-    if (provider.errorMessage != null) {
+    if (courseProvider.errorMessage != null) {
       return _ErrorView(
-        message: provider.errorMessage!,
-        onRetry: () => provider.loadCourses(),
+        message: courseProvider.errorMessage!,
+        onRetry: () => courseProvider.loadCourses(),
       );
     }
 
-    if (provider.courses.isEmpty) {
+    if (courseProvider.courses.isEmpty) {
       return const _EmptyView();
     }
 
     return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8).copyWith(bottom: 16),
-      itemCount: provider.courses.length,
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 8,
+      ).copyWith(bottom: 16),
+      itemCount: courseProvider.courses.length,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, i) {
-        final course = provider.courses[i];
+        final course = courseProvider.courses[i];
         return CourseCard(
           course: course,
           onTap: () => context.push('/courses/${course.id}'),
-          onWishlistTap: () => provider.toggleWishlist(course.id),
+          onWishlistTap: () => courseProvider.toggleWishlist(course.id),
         );
       },
     );
