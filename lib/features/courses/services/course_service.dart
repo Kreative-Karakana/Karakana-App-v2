@@ -92,12 +92,12 @@ class CourseService {
   // Sections & Lessons
   // ─────────────────────────────────────────────
 
-  /// Returns the ordered list of sections (with nested lessons) for [courseId].
+  /// Returns the ordered list of sections for [courseId].
+  /// GET /api/v1/courses/{courseId}/sections/
   Future<List<SectionModel>> getCourseSections(int courseId) async {
     try {
       final response = await _dio.get(
-        ApiEndpoints.sections,
-        queryParameters: {'course': courseId},
+        '${ApiEndpoints.sections}$courseId/sections/',
       );
       final results = response.data['results'] as List<dynamic>? ?? [];
       return results
@@ -108,15 +108,38 @@ class CourseService {
     }
   }
 
+  /// Returns the ordered list of lessons for [sectionId].
+  /// GET /api/v1/sections/{sectionId}/lessons/
+  Future<List<LessonModel>> getSectionLessons(int sectionId) async {
+    try {
+      final response = await _dio.get('/api/v1/sections/$sectionId/lessons/');
+      final results = response.data['results'] as List<dynamic>? ?? [];
+      return results
+          .map((e) => LessonModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      throw 'Failed to load lessons. Please try again.';
+    }
+  }
+
+  /// Returns the full detail for a single lesson identified by [lessonId].
+  /// GET /api/v1/lessons/{lessonId}/
+  Future<LessonModel> getLessonDetail(int lessonId) async {
+    try {
+      final response = await _dio.get('/api/v1/lessons/$lessonId/');
+      return LessonModel.fromJson(response.data as Map<String, dynamic>);
+    } catch (e) {
+      throw 'Failed to load lesson. Please try again.';
+    }
+  }
+
   /// Toggles the read/watched state of [lessonId] for the current user.
+  /// POST /api/v1/lessons/{lessonId}/progress/
   ///
   /// Returns `true` if the lesson is now marked as read.
   Future<bool> toggleLessonProgress(int lessonId) async {
     try {
-      final response = await _dio.post(
-        ApiEndpoints.lessonProgress,
-        data: {'lesson': lessonId},
-      );
+      final response = await _dio.post('/api/v1/lessons/$lessonId/progress/');
       return response.data['is_read'] as bool? ?? false;
     } catch (e) {
       throw 'Failed to update lesson progress. Please try again.';
@@ -162,12 +185,11 @@ class CourseService {
   // Reviews
   // ─────────────────────────────────────────────
 
-  /// Returns all reviews for the course identified by [courseId].
+  /// Returns all reviews for [courseId].
+  /// GET /api/v1/courses/{courseId}/reviews/
   Future<List<ReviewModel>> getCourseReviews(int courseId) async {
     try {
-      final response = await _dio.get(
-        '${ApiEndpoints.courses}$courseId/reviews/',
-      );
+      final response = await _dio.get('/api/v1/courses/$courseId/reviews/');
       final results = response.data['results'] as List<dynamic>? ?? [];
       return results
           .map((e) => ReviewModel.fromJson(e as Map<String, dynamic>))
@@ -179,6 +201,7 @@ class CourseService {
 
   /// Submits a new review for [courseId] with the given [rating] (1–5)
   /// and [content] text.
+  /// POST /api/v1/courses/{courseId}/reviews/
   ///
   /// Returns the created [ReviewModel].
   Future<ReviewModel> createReview(
@@ -188,8 +211,8 @@ class CourseService {
   ) async {
     try {
       final response = await _dio.post(
-        ApiEndpoints.reviews,
-        data: {'course': courseId, 'rating': rating, 'content': content},
+        '/api/v1/courses/$courseId/reviews/',
+        data: {'rating': rating, 'content': content},
       );
       return ReviewModel.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {

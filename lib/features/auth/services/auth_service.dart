@@ -200,7 +200,7 @@ class AuthService {
   /// This method never throws.
   Future<void> logout() async {
     try {
-      await _api.post(ApiEndpoints.logout);
+      await _api.post('/api/v1/accounts/logout/');
     } catch (_) {
       // Intentionally swallowed — local cleanup always runs below.
     } finally {
