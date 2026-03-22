@@ -148,6 +148,23 @@ class CourseProvider extends ChangeNotifier {
   // Categories
   // ─────────────────────────────────────────────
 
+  /// Fetches enrolled courses and updates [_courses] for display.
+  Future<void> loadEnrolledCourses() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _courses = await _service.getCourses(enrolled: true);
+      _allCourses = List.from(_courses);
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   /// Fetches all course categories.
   Future<void> loadCategories() async {
     try {

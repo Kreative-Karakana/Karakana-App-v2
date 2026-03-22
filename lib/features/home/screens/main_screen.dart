@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../courses/screens/explore_screen.dart';
+import '../../notifications/screens/notifications_screen.dart';
+import '../../profile/screens/profile_screen.dart';
 import 'home_screen.dart';
 
 /// Shell screen that owns the bottom navigation bar and keeps all 4 main
@@ -20,8 +22,8 @@ class _MainScreenState extends State<MainScreen> {
   static const List<Widget> _screens = [
     HomeScreen(),
     ExploreScreen(),
-    _NotificationsScreen(),
-    _AccountScreen(),
+    NotificationsScreen(),
+    ProfileScreen(),
   ];
 
   @override
@@ -61,35 +63,6 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────
-// Placeholder screens — to be replaced with
-// full implementations in later iterations.
-// ─────────────────────────────────────────────
-
-class _NotificationsScreen extends StatelessWidget {
-  const _NotificationsScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Notifications')),
-      body: const Center(child: Text('Notifications coming soon')),
-    );
-  }
-}
-
-class _AccountScreen extends StatelessWidget {
-  const _AccountScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Account')),
-      body: const Center(child: Text('Account coming soon')),
     );
   }
 }

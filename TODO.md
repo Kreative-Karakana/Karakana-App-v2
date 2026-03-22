@@ -85,6 +85,17 @@
 - **Priority:** Low
 - **Description:** List of wishlisted courses
 
+### FEAT-014: Test classroom screen with enrolled course
+- **Status:** Blocked
+- **Reason:** No free courses available on backend for testing. All courses are paid (TZS 5,000+). Need either:
+  1. Admin access to manually enroll test account in a course via Django admin at https://beta.kreativekarakana.co.tz/admin/
+  2. OR a free course created on the backend
+  3. OR AzamPay payment flow completed so we can pay to enroll
+- **Files ready but untested:**
+  - `lib/features/courses/screens/course_detail_screen.dart` — enrollment button ready
+  - Classroom screen — not yet built, blocked by this
+- **Next step:** Complete payment flow (FEAT-005) which will allow enrollment and unblock classroom testing
+
 ---
 
 ## ✅ Completed

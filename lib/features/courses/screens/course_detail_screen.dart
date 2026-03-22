@@ -88,9 +88,15 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         );
                       }
                     },
-                    onPayToEnroll: () => context.push('/payment/${course.id}'),
+                    onPayToEnroll: () => context.push(
+                      '/payment/${course.id}',
+                      extra: {
+                        'title': course.title,
+                        'price': course.price,
+                      },
+                    ),
                     onContinueLearning: () =>
-                        context.push('/classroom/${course.id}'),
+                        context.push('/enrolled-courses'),
                   ),
                   const Divider(height: 1),
 

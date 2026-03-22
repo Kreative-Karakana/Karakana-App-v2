@@ -6,10 +6,17 @@ import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/signup_screen.dart';
 import '../../features/auth/screens/verify_email_screen.dart';
-import '../../features/home/screens/main_screen.dart';
 import '../../features/courses/screens/course_detail_screen.dart';
+import '../../features/courses/screens/enrolled_courses_screen.dart';
+import '../../features/home/screens/main_screen.dart';
+import '../../features/notifications/screens/notifications_screen.dart';
 import '../../features/onboarding/screens/onboarding_screen.dart';
+import '../../features/payments/screens/payment_screen.dart';
+import '../../features/payments/screens/payment_success_screen.dart';
+import '../../features/profile/screens/edit_profile_screen.dart';
+import '../../features/profile/screens/profile_screen.dart';
 import '../../features/splash/splash_screen.dart';
+import '../../features/support/screens/support_screen.dart';
 
 // ─────────────────────────────────────────────
 // Route path constants
@@ -30,6 +37,13 @@ class AppRoutes {
   static const String verifyEmail = '/verify-email';
   static const String home = '/home';
   static const String courseDetail = '/courses/:id';
+  static const String profile = '/profile';
+  static const String profileEdit = '/profile/edit';
+  static const String notifications = '/notifications';
+  static const String payment = '/payment/:courseId';
+  static const String paymentSuccess = '/payment-success';
+  static const String enrolledCourses = '/enrolled-courses';
+  static const String support = '/support';
 }
 
 // ─────────────────────────────────────────────
@@ -130,6 +144,48 @@ class AppRouter {
             final id = int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
             return CourseDetailScreen(courseId: id);
           },
+        ),
+        GoRoute(
+          path: AppRoutes.profile,
+          builder: (context, state) => const ProfileScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.profileEdit,
+          builder: (context, state) => const EditProfileScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.notifications,
+          builder: (context, state) => const NotificationsScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.payment,
+          builder: (context, state) {
+            final courseId =
+                int.tryParse(state.pathParameters['courseId'] ?? '') ?? 0;
+            final extra = state.extra as Map<String, dynamic>? ?? {};
+            return PaymentScreen(
+              courseId: courseId,
+              courseTitle: extra['title']?.toString() ?? '',
+              price: (extra['price'] as num?)?.toDouble() ?? 0.0,
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.paymentSuccess,
+          builder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>? ?? {};
+            return PaymentSuccessScreen(
+              courseTitle: extra['courseTitle']?.toString() ?? '',
+            );
+          },
+        ),
+        GoRoute(
+          path: AppRoutes.enrolledCourses,
+          builder: (context, state) => const EnrolledCoursesScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.support,
+          builder: (context, state) => const SupportScreen(),
         ),
       ],
     );

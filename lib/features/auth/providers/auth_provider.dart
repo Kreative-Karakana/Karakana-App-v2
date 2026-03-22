@@ -268,6 +268,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       final userData = await _authService.getCurrentUser();
       _user = userData;
+      debugPrint('Current user data: $_user');
       notifyListeners();
     } catch (_) {
       // Non-fatal: authentication is already confirmed via the stored token.
