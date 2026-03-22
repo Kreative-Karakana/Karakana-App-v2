@@ -349,7 +349,7 @@ class _GradientButton extends StatelessWidget {
                         Color(0xFFE8750A).withValues(alpha: 0.5),
                       ],
                     )
-                  : const LinearGradient(
+                  : LinearGradient(
                       colors: [AppColors.primary, Color(0xFFE8750A)],
                     ),
             ),

@@ -83,16 +83,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          // ── Full screen PageView ───────────────
+          // ── Layer 1: Full screen PageView (bottom z-order) ──
           PageView.builder(
             controller: _pageController,
+            physics: const BouncingScrollPhysics(),
             itemCount: _slides.length,
             onPageChanged: (i) => setState(() => _currentPage = i),
             itemBuilder: (context, i) => _SlidePage(slide: _slides[i]),
           ),
 
-          // ── Bottom content overlay ─────────────
+          // ── Layer 2: Bottom content (top z-order, always on top) ──
           Positioned(
             bottom: 0,
             left: 0,
@@ -173,132 +175,162 @@ class _BottomContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Logo
-          Image.asset(
-            'assets/images/Kreative_Karakana_-_Official_Logo_(White).png',
-            width: 140,
-            opacity: const AlwaysStoppedAnimation(0.9),
-          ),
-
-          const SizedBox(height: 24),
-
-          // Slide title
-          Text(
-            slide.title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Poppins',
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // Slide body
-          Text(
-            slide.body,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
-              fontSize: 15,
-              fontFamily: 'Inter',
-              height: 1.5,
-            ),
-          ),
-
-          const SizedBox(height: 40),
-
-          // Page indicator dots
-          Row(
-            children: List.generate(totalPages, (i) {
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                margin: const EdgeInsets.only(right: 6),
-                width: i == currentPage ? 24 : 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: i == currentPage
-                      ? AppColors.primary
-                      : Colors.white.withValues(alpha: 0.4),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              );
-            }),
-          ),
-
-          const SizedBox(height: 24),
-
-          // Buttons
-          if (!isLastSlide)
-            Row(
-              children: [
-                TextButton(
-                  onPressed: onFinish,
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.white.withValues(alpha: 0.6),
-                    padding: EdgeInsets.zero,
-                    minimumSize: const Size(0, 0),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    // Material with transparent color ensures the widget is fully
+    // hit-testable, preventing the PageView beneath from stealing taps.
+    return Material(
+      color: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Logo with drop shadow for visibility
+            DecoratedBox(
+              decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.4),
+                    blurRadius: 16,
+                    spreadRadius: 2,
                   ),
-                  child: const Text('Skip', style: TextStyle(fontSize: 15)),
-                ),
-                const Spacer(),
-                ElevatedButton(
-                  onPressed: onNext,
+                ],
+              ),
+              child: Image.asset(
+                'assets/images/Kreative_Karakana_-_Official_Logo_(White).png',
+                width: 140,
+                opacity: const AlwaysStoppedAnimation(0.9),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Slide title
+            Text(
+              slide.title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins',
+                shadows: [
+                  Shadow(
+                    color: Colors.black54,
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // Slide body
+            Text(
+              slide.body,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontFamily: 'Inter',
+                height: 1.5,
+                shadows: [
+                  Shadow(
+                    color: Colors.black54,
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 40),
+
+            // Page indicator dots
+            Row(
+              children: List.generate(totalPages, (i) {
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  margin: const EdgeInsets.only(right: 6),
+                  width: i == currentPage ? 24 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: i == currentPage
+                        ? AppColors.primary
+                        : Colors.white.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                );
+              }),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Buttons
+            if (!isLastSlide)
+              Row(
+                children: [
+                  TextButton(
+                    onPressed: onFinish,
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white.withValues(alpha: 0.6),
+                      padding: EdgeInsets.zero,
+                      minimumSize: const Size(0, 0),
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: const Text('Skip', style: TextStyle(fontSize: 15)),
+                  ),
+                  const Spacer(),
+                  ElevatedButton(
+                    onPressed: onNext,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 28,
+                        vertical: 14,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 2,
+                    ),
+                    child: const Text(
+                      'Next →',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            else
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: onFinish,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 28,
-                      vertical: 14,
-                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    elevation: 0,
+                    elevation: 2,
                   ),
                   child: const Text(
-                    'Next →',
+                    'Get Started →',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-              ],
-            )
-          else
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: onFinish,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'Get Started →',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
               ),
-            ),
 
-          const SizedBox(height: 48),
-        ],
+            const SizedBox(height: 48),
+          ],
+        ),
       ),
     );
   }

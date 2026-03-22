@@ -185,6 +185,13 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icon(Icons.notifications_outlined, color: AppColors.dark),
           onPressed: () => context.push('/notifications'),
         ),
+        IconButton(
+          icon: Icon(Icons.logout, color: AppColors.dark),
+          onPressed: () async {
+            await context.read<AuthProvider>().logout();
+            if (context.mounted) context.go('/login');
+          },
+        ),
       ],
     );
   }
