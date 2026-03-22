@@ -33,30 +33,34 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.dark,
+      backgroundColor: Color(0xFF3B1A08),
       extendBodyBehindAppBar: true,
       body: Stack(
         fit: StackFit.expand,
         children: [
           // ── Background image ───────────────────────
-          Image.asset(
-            'assets/images/Log_In_BG.png',
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/Log_In_BG.png',
+              fit: BoxFit.cover,
+            ),
           ),
 
           // ── Dark brown gradient overlay ────────────
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF3B1A08).withValues(alpha:0.85),
-                  Color(0xFF3B1A08).withValues(alpha:0.6),
-                  Color(0xFF3B1A08).withValues(alpha:0.95),
-                ],
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF3B1A08).withValues(alpha: 0.7),
+                    Color(0xFF3B1A08).withValues(alpha: 0.75),
+                    Color(0xFF3B1A08).withValues(alpha: 0.95),
+                    Color(0xFF3B1A08).withValues(alpha: 1.0),
+                  ],
+                  stops: const [0.0, 0.3, 0.7, 1.0],
+                ),
               ),
             ),
           ),
