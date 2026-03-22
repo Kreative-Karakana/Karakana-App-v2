@@ -99,6 +99,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
 
                   // ── Curriculum ────────────────────────
                   _CurriculumSection(
+                    course: course,
                     sections: provider.sections,
                     isLoading: provider.isLoadingSections,
                   ),
@@ -430,8 +431,13 @@ class _AboutSection extends StatelessWidget {
 // ─────────────────────────────────────────────
 
 class _CurriculumSection extends StatelessWidget {
-  const _CurriculumSection({required this.sections, required this.isLoading});
+  const _CurriculumSection({
+    required this.course,
+    required this.sections,
+    required this.isLoading,
+  });
 
+  final CourseModel course;
   final List<SectionModel> sections;
   final bool isLoading;
 
@@ -453,15 +459,66 @@ class _CurriculumSection extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
-          if (isLoading)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: CircularProgressIndicator(color: AppColors.primary),
+          if (course.isEnrolled) ...[
+            if (isLoading)
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: CircularProgressIndicator(color: AppColors.primary),
+                ),
+              )
+            else if (sections.isEmpty)
+              Center(
+                child: Text(
+                  'No curriculum available',
+                  style: TextStyle(color: AppColors.grey),
+                ),
+              )
+            else
+              ...sections.map((section) => _SectionTile(section: section)),
+          ] else ...[
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColors.lightOrange,
+                borderRadius: BorderRadius.circular(12),
               ),
-            )
-          else
-            ...sections.map((section) => _SectionTile(section: section)),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.lock_outline_rounded,
+                    color: AppColors.primary,
+                    size: 32,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Enroll to Access Curriculum',
+                          style: TextStyle(
+                            color: AppColors.dark,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Purchase this course to unlock all sections and lessons',
+                          style: TextStyle(
+                            color: AppColors.grey,
+                            fontSize: 12,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
