@@ -75,15 +75,57 @@ lib/
 - Always call notifyListeners() after state changes in providers
 - Commit to GitHub after every completed feature
 
-## API Endpoints (Real)
+## API Endpoints (Complete & Verified)
+Base URL: https://beta.kreativekarakana.co.tz
+
+### Auth (no /api/v1/ prefix)
 - Login: /api/auth/signin/
-- Signup: /api/auth/signup/
+- Signup: /api/auth/signup/ (returns 306 on success)
 - Verify Email: /api/auth/verify/
-- Courses: /api/v1/courses/
+- Resend OTP: /api/auth/verify/resend/
+- Forgot Password: /api/request-password-reset/
+
+### Courses (/api/v1/)
+- List/Search: /api/v1/courses/?q=search&categories__name=X&recommend=true&popular=true&free=true&weekly_choice=true&enrolled=true
+- Detail: /api/v1/courses/{id}/
+- Sections: /api/v1/courses/{id}/sections/
+- Lessons: /api/v1/sections/{id}/lessons/
+- Lesson Detail: /api/v1/lessons/{id}/
+- Lesson Progress: /api/v1/lessons/{id}/progress/
+- Enroll Free: /api/v1/courses/enroll/
 - Categories: /api/v1/categories/
+- Wishlist: /api/v1/wishlist/
+- Reviews: /api/v1/courses/{id}/reviews/
+- Review Reply: /api/v1/courses/{id}/reviews/{reviewId}/reply/
+
+### Profile (/api/v1/)
+- My Profile: /api/v1/profiles/me/
+- Profile Detail: /api/v1/profiles/{id}/
+- MasterCard Data: /api/v1/master-card/
+- Trainer Application: /api/v1/trainer-application/
+- Ambassador Code: /api/v1/ambassador-codes/
+
+### Payments (/api/v1/)
+- MNO Checkout: /api/v1/payments/checkout/
+- Payment Status: /api/v1/payments/{externalId}/
+- Wallet: /api/v1/wallet/me/
+- Wallet Checkout: /api/v1/wallet/checkouts/
+
+### Communications (/api/v1/)
 - Banners: /api/v1/communications/banners/
 - Notifications: /api/v1/communications/notifications/me/
 - Support Tickets: /api/v1/communications/tickets/
+- Support Messages: /api/v1/communications/tickets/{id}/messages/
+
+### Course JSON Fields (verified from real API)
+- cover_photo → thumbnail
+- playback_url → trailer video
+- trainer → {id, first_name, last_name, avatar, cover, is_owner}
+- student_count → students count
+- review_count → reviews count
+- average_rating → rating
+- is_in_wishlist → wishlisted
+- is_enrolled → enrolled
 
 ## Current Status
 - Phase 1 (Auth): 100% complete

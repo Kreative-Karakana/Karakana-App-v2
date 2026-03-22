@@ -6,108 +6,81 @@ class ApiEndpoints {
   ApiEndpoints._(); // Prevent instantiation
 
   // ─────────────────────────────────────────────
-  // Authentication
+  // Authentication  (no /api/v1/ prefix)
   // ─────────────────────────────────────────────
 
-  /// Authenticate an existing user and receive an access token.
   static const String login = '/api/auth/signin/';
-
-  /// Register a new user account.
   static const String signup = '/api/auth/signup/';
-
-  /// Initiate a password-reset flow via email.
   static const String forgotPassword = '/api/request-password-reset/';
-
-  /// Verify a user's email address using the token sent to their inbox.
   static const String verifyEmail = '/api/auth/verify/';
-
-  /// Resend the email verification link to the current user.
   static const String resendVerification = '/api/auth/verify/resend/';
 
-  /// Invalidate the current session / access token.
-  static const String logout = '/api/v1/accounts/logout/';
-
   // ─────────────────────────────────────────────
-  // Profile
+  // Courses  (/api/v1/)
   // ─────────────────────────────────────────────
 
-  /// Retrieve or update the currently authenticated user's profile.
-  static const String profileMe = '/api/v1/accounts/profile/me/';
-
-  /// Access a specific user profile by ID.
-  static const String profileDetail = '/api/v1/accounts/profile/';
-
-  /// Submit or retrieve a trainer application for the current user.
-  static const String trainerApplication =
-      '/api/v1/accounts/trainer-application/';
-
-  /// Retrieve or update MasterCard-related data for the current user.
-  static const String masterCardData = '/api/v1/accounts/mastercard-data/';
-
-  /// Retrieve or manage the current user's ambassador referral code.
-  static const String ambassadorCode = '/api/v1/accounts/ambassador-code/';
-
-  // ─────────────────────────────────────────────
-  // Courses
-  // ─────────────────────────────────────────────
-
-  /// List or retrieve courses.
+  /// List / search courses. Supports: q, categories__name, recommend,
+  /// popular, free, weekly_choice, enrolled, page_size.
   static const String courses = '/api/v1/courses/';
 
-  /// List or retrieve course categories.
   static const String categories = '/api/v1/categories/';
-
-  /// List or retrieve course sections.
-  static const String sections = '/api/v1/courses/sections/';
-
-  /// List or retrieve individual lessons within a course.
-  static const String lessons = '/api/v1/courses/lessons/';
-
-  /// Track or retrieve lesson completion progress for the current user.
-  static const String lessonProgress = '/api/v1/courses/progress/';
-
-  /// Enroll the current user in a free course.
   static const String enrollFree = '/api/v1/courses/enroll/';
+  static const String wishlist = '/api/v1/wishlist/';
 
-  /// Add or remove courses from the current user's wishlist.
-  static const String wishlist = '/api/v1/courses/wishlist/';
+  /// Sections: GET /api/v1/courses/{courseId}/sections/
+  static const String sections = '/api/v1/courses/';
 
-  /// Submit or retrieve course reviews.
-  static const String reviews = '/api/v1/courses/reviews/';
+  /// Lessons: GET /api/v1/sections/{sectionId}/lessons/
+  static const String lessons = '/api/v1/sections/';
 
-  // ─────────────────────────────────────────────
-  // Payments
-  // ─────────────────────────────────────────────
+  /// Lesson detail: GET /api/v1/lessons/{lessonId}/
+  static const String lessonDetail = '/api/v1/lessons/';
 
-  /// List or retrieve payment records.
-  static const String payments = '/api/v1/payments/';
+  /// Lesson progress: POST /api/v1/lessons/{lessonId}/progress/
+  static const String lessonProgress = '/api/v1/lessons/';
 
-  /// Initiate a mobile-network-operator (MNO) checkout session.
-  static const String mnoCheckout = '/api/v1/payments/checkout/';
+  /// Reviews: GET/POST /api/v1/courses/{courseId}/reviews/
+  static const String reviews = '/api/v1/courses/';
 
-  /// Retrieve or manage the current user's in-app wallet balance.
-  static const String wallet = '/api/v1/payments/wallet/';
-
-  /// Initiate a checkout using the user's in-app wallet balance.
-  static const String walletCheckout = '/api/v1/payments/wallet/checkout/';
+  /// Review reply: POST /api/v1/courses/{courseId}/reviews/{reviewId}/reply/
+  static const String reviewReply = '/api/v1/courses/';
 
   // ─────────────────────────────────────────────
-  // Communications
+  // Profile  (/api/v1/)
   // ─────────────────────────────────────────────
 
-  /// Retrieve promotional banners displayed in the app.
+  static const String profileMe = '/api/v1/profiles/me/';
+
+  /// Profile detail: GET /api/v1/profiles/{userId}/
+  static const String profileDetail = '/api/v1/profiles/';
+
+  static const String masterCardData = '/api/v1/master-card/';
+  static const String trainerApplication = '/api/v1/trainer-application/';
+  static const String ambassadorCode = '/api/v1/ambassador-codes/';
+
+  // ─────────────────────────────────────────────
+  // Payments  (/api/v1/)
+  // ─────────────────────────────────────────────
+
+  static const String paymentsCheckout = '/api/v1/payments/checkout/';
+
+  /// Payment status: GET /api/v1/payments/{externalId}/
+  static const String paymentStatus = '/api/v1/payments/';
+
+  static const String wallet = '/api/v1/wallet/me/';
+  static const String walletCheckout = '/api/v1/wallet/checkouts/';
+
+  // ─────────────────────────────────────────────
+  // Communications  (/api/v1/)
+  // ─────────────────────────────────────────────
+
   static const String banners = '/api/v1/communications/banners/';
-
-  /// Retrieve in-app notifications for the current user.
   static const String notifications =
       '/api/v1/communications/notifications/me/';
-
-  /// Create or retrieve support tickets raised by the current user.
   static const String supportTickets = '/api/v1/communications/tickets/';
 
-  /// Send or retrieve messages within a support ticket thread.
+  /// Support messages: GET/POST /api/v1/communications/tickets/{ticketId}/messages/
   static const String supportMessages = '/api/v1/communications/tickets/';
 
-  /// Register or update the current device's push-notification token.
   static const String deviceToken = '/api/v1/communications/device-token/';
 }
