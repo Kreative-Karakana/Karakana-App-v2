@@ -12,32 +12,34 @@ import '../../auth/providers/auth_provider.dart';
 
 class _OnboardingSlide {
   const _OnboardingSlide({
-    required this.icon,
+    required this.image,
     required this.title,
     required this.body,
   });
 
-  final IconData icon;
+  final String image;
   final String title;
   final String body;
 }
 
 const List<_OnboardingSlide> _slides = [
   _OnboardingSlide(
-    icon: Icons.school_rounded,
+    image: 'assets/images/Onboard_one_BG.png',
     title: 'Learn Entrepreneurship',
     body:
-        'Access world-class entrepreneurship courses taught by experienced trainers',
+        'Access world-class entrepreneurship courses taught by experienced Tanzanian trainers',
   ),
   _OnboardingSlide(
-    icon: Icons.play_circle_rounded,
+    image: 'assets/images/Onboard_two_BG.png',
     title: 'Learn At Your Own Pace',
-    body: 'Watch lessons anytime, anywhere, on your own schedule',
+    body:
+        'Watch video lessons anytime, anywhere. Track your progress and grow at your own speed',
   ),
   _OnboardingSlide(
-    icon: Icons.trending_up_rounded,
+    image: 'assets/images/Onboard_three_BG.png',
     title: 'Grow Your Business',
-    body: 'Apply real skills and tools to build and grow your business',
+    body:
+        'Apply real business skills and tools to build, launch, and grow your business in Tanzania',
   ),
 ];
 
@@ -45,10 +47,6 @@ const List<_OnboardingSlide> _slides = [
 // Onboarding screen
 // ─────────────────────────────────────────────
 
-/// Shown once to first-time users to introduce the Karakana platform.
-///
-/// After completing or skipping onboarding, [AuthProvider.completeOnboarding]
-/// is called so this screen is never displayed again.
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -66,174 +64,242 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.dispose();
   }
 
-  // ── Navigation helpers ─────────────────────
-
   void _nextPage() {
     _pageController.nextPage(
-      duration: const Duration(milliseconds: 350),
+      duration: const Duration(milliseconds: 400),
       curve: Curves.easeInOut,
     );
   }
 
-  /// Marks onboarding as complete then sends the user to the login screen.
   Future<void> _finish() async {
     await context.read<AuthProvider>().completeOnboarding();
     if (!mounted) return;
     context.go(AppRoutes.login);
   }
 
-  // ─────────────────────────────────────────────
-  // Build
-  // ─────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
-    final bool isLastSlide = _currentPage == _slides.length - 1;
-
     return Scaffold(
-      backgroundColor: AppColors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            children: [
-              // ── Slides ─────────────────────────────
-              Expanded(
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: _slides.length,
-                  onPageChanged: (index) =>
-                      setState(() => _currentPage = index),
-                  itemBuilder: (context, index) =>
-                      _SlideView(slide: _slides[index]),
-                ),
-              ),
-
-              // ── Page indicator dots ─────────────────
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  _slides.length,
-                  (index) => AnimatedContainer(
-                    duration: const Duration(milliseconds: 250),
-                    margin: const EdgeInsets.symmetric(horizontal: 3),
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: index == _currentPage
-                          ? AppColors.primary
-                          : AppColors.lightOrange,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 32),
-
-              // ── Skip button (hidden on last slide) ──
-              if (!isLastSlide)
-                TextButton(
-                  onPressed: _finish,
-                  child: Text(
-                    'Skip',
-                    style: TextStyle(color: AppColors.grey, fontSize: 14),
-                  ),
-                )
-              else
-                // Keep consistent spacing when Skip is hidden.
-                const SizedBox(height: 40),
-
-              const SizedBox(height: 8),
-
-              // ── Primary action button ───────────────
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: isLastSlide ? _finish : _nextPage,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: AppColors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    isLastSlide ? 'Get Started' : 'Next',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 32),
-            ],
+      backgroundColor: Colors.black,
+      extendBodyBehindAppBar: true,
+      body: Stack(
+        children: [
+          // ── Full screen PageView ───────────────
+          PageView.builder(
+            controller: _pageController,
+            itemCount: _slides.length,
+            onPageChanged: (i) => setState(() => _currentPage = i),
+            itemBuilder: (context, i) => _SlidePage(slide: _slides[i]),
           ),
-        ),
+
+          // ── Bottom content overlay ─────────────
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: _BottomContent(
+              currentPage: _currentPage,
+              totalPages: _slides.length,
+              slide: _slides[_currentPage],
+              isLastSlide: _currentPage == _slides.length - 1,
+              onNext: _nextPage,
+              onFinish: _finish,
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
 // ─────────────────────────────────────────────
-// Individual slide widget
+// Individual slide page
 // ─────────────────────────────────────────────
 
-/// Renders a single onboarding slide with icon, title, and body text.
-class _SlideView extends StatelessWidget {
-  const _SlideView({required this.slide});
+class _SlidePage extends StatelessWidget {
+  const _SlidePage({required this.slide});
 
   final _OnboardingSlide slide;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Stack(
+      fit: StackFit.expand,
       children: [
-        // ── Icon circle ─────────────────────────
-        Container(
-          width: 80,
-          height: 80,
+        // Background image
+        Image.asset(slide.image, fit: BoxFit.cover),
+
+        // Gradient overlay
+        DecoratedBox(
           decoration: BoxDecoration(
-            color: AppColors.lightOrange,
-            shape: BoxShape.circle,
-          ),
-          alignment: Alignment.center,
-          child: Icon(slide.icon, color: AppColors.primary, size: 48),
-        ),
-
-        const SizedBox(height: 40),
-
-        // ── Title ───────────────────────────────
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Text(
-            slide.title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppColors.dark,
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.transparent,
+                Colors.transparent,
+                Color(0xFF3B1A08).withValues(alpha: 0.7),
+                Color(0xFF3B1A08).withValues(alpha: 0.98),
+              ],
+              stops: const [0.0, 0.3, 0.6, 1.0],
             ),
           ),
         ),
-
-        const SizedBox(height: 16),
-
-        // ── Body ────────────────────────────────
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          child: Text(
-            slide.body,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.grey, fontSize: 15, height: 1.5),
-          ),
-        ),
       ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// Bottom content
+// ─────────────────────────────────────────────
+
+class _BottomContent extends StatelessWidget {
+  const _BottomContent({
+    required this.currentPage,
+    required this.totalPages,
+    required this.slide,
+    required this.isLastSlide,
+    required this.onNext,
+    required this.onFinish,
+  });
+
+  final int currentPage;
+  final int totalPages;
+  final _OnboardingSlide slide;
+  final bool isLastSlide;
+  final VoidCallback onNext;
+  final VoidCallback onFinish;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Logo
+          Image.asset(
+            'assets/images/Kreative_Karakana_-_Official_Logo_(White).png',
+            width: 140,
+            opacity: const AlwaysStoppedAnimation(0.9),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Slide title
+          Text(
+            slide.title,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Poppins',
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Slide body
+          Text(
+            slide.body,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.8),
+              fontSize: 15,
+              fontFamily: 'Inter',
+              height: 1.5,
+            ),
+          ),
+
+          const SizedBox(height: 40),
+
+          // Page indicator dots
+          Row(
+            children: List.generate(totalPages, (i) {
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                margin: const EdgeInsets.only(right: 6),
+                width: i == currentPage ? 24 : 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: i == currentPage
+                      ? AppColors.primary
+                      : Colors.white.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              );
+            }),
+          ),
+
+          const SizedBox(height: 24),
+
+          // Buttons
+          if (!isLastSlide)
+            Row(
+              children: [
+                TextButton(
+                  onPressed: onFinish,
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white.withValues(alpha: 0.6),
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(0, 0),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text('Skip', style: TextStyle(fontSize: 15)),
+                ),
+                const Spacer(),
+                ElevatedButton(
+                  onPressed: onNext,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 28,
+                      vertical: 14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    'Next →',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          else
+            SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: ElevatedButton(
+                onPressed: onFinish,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  'Get Started →',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+
+          const SizedBox(height: 48),
+        ],
+      ),
     );
   }
 }
