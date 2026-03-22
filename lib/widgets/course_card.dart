@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import '../core/theme/app_theme.dart';
 import '../features/courses/models/course_model.dart';
 
-/// A reusable course card used on the home, explore, search, and wishlist
-/// screens. Displays thumbnail, title, trainer, rating, level, price, and
-/// enrolment/wishlist state.
 class CourseCard extends StatelessWidget {
   const CourseCard({
     super.key,
@@ -17,26 +14,23 @@ class CourseCard extends StatelessWidget {
 
   final CourseModel course;
   final VoidCallback onTap;
-
-  /// Called when the user taps the heart icon. If null, the button is hidden.
   final VoidCallback? onWishlistTap;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        margin: const EdgeInsets.only(bottom: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        elevation: 2,
-        color: AppColors.white,
-        clipBehavior: Clip.antiAlias,
+    return Material(
+      elevation: 2,
+      borderRadius: BorderRadius.circular(16),
+      color: AppColors.white,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _Thumbnail(course: course, onWishlistTap: onWishlistTap),
-            _CourseInfo(course: course),
+            _ImageSection(course: course, onWishlistTap: onWishlistTap),
+            _InfoSection(course: course),
           ],
         ),
       ),
@@ -45,40 +39,51 @@ class CourseCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────
-// Thumbnail section
+// Image section
 // ─────────────────────────────────────────────
 
-class _Thumbnail extends StatelessWidget {
-  const _Thumbnail({required this.course, this.onWishlistTap});
+class _ImageSection extends StatelessWidget {
+  const _ImageSection({required this.course, this.onWishlistTap});
 
   final CourseModel course;
   final VoidCallback? onWishlistTap;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 160,
-      width: double.infinity,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // ── Course thumbnail image ───────────
-          _buildImage(),
-
-          // ── Status badge (Enrolled / Free) ───
-          Positioned(top: 10, left: 10, child: _buildStatusBadge()),
-
-          // ── Wishlist heart button ─────────────
-          if (onWishlistTap != null)
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(16),
+        topRight: Radius.circular(16),
+      ),
+      child: SizedBox(
+        height: 140,
+        width: double.infinity,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            _buildImage(),
+            if (course.isEnrolled)
+              Positioned(
+                top: 8,
+                left: 8,
+                child: _Badge(label: 'Enrolled', color: Colors.green.shade600),
+              )
+            else if (course.isFree)
+              Positioned(
+                top: 8,
+                left: 8,
+                child: _Badge(label: 'Free', color: AppColors.primary),
+              ),
             Positioned(
-              top: 4,
-              right: 4,
+              top: 2,
+              right: 2,
               child: _WishlistButton(
                 isWishlisted: course.isWishlisted,
-                onTap: onWishlistTap!,
+                onTap: onWishlistTap,
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -87,7 +92,6 @@ class _Thumbnail extends StatelessWidget {
     if (course.thumbnail == null || course.thumbnail!.isEmpty) {
       return _placeholder();
     }
-
     return CachedNetworkImage(
       imageUrl: course.thumbnail!,
       fit: BoxFit.cover,
@@ -103,73 +107,60 @@ class _Thumbnail extends StatelessWidget {
         child: Icon(
           Icons.play_circle_outline_rounded,
           color: AppColors.primary,
-          size: 48,
+          size: 40,
         ),
       ),
     );
   }
-
-  Widget _buildStatusBadge() {
-    if (course.isEnrolled) {
-      return _Badge(label: 'Enrolled', backgroundColor: Colors.green.shade600);
-    }
-    if (course.isFree) {
-      return _Badge(label: 'Free', backgroundColor: AppColors.primary);
-    }
-    return const SizedBox.shrink();
-  }
 }
 
-/// Small pill badge placed over the thumbnail.
 class _Badge extends StatelessWidget {
-  const _Badge({required this.label, required this.backgroundColor});
+  const _Badge({required this.label, required this.color});
 
   final String label;
-  final Color backgroundColor;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(6),
+        color: color,
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         label,
         style: const TextStyle(
           color: Colors.white,
-          fontSize: 11,
+          fontSize: 10,
           fontWeight: FontWeight.w600,
-          letterSpacing: 0.3,
         ),
       ),
     );
   }
 }
 
-/// Semi-transparent heart button overlaid on the thumbnail.
 class _WishlistButton extends StatelessWidget {
-  const _WishlistButton({required this.isWishlisted, required this.onTap});
+  const _WishlistButton({required this.isWishlisted, this.onTap});
 
   final bool isWishlisted;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 36,
-        height: 36,
+        width: 32,
+        height: 32,
         decoration: BoxDecoration(
-          color: Colors.black.withAlpha(90),
+          color: Colors.black.withAlpha(70),
           shape: BoxShape.circle,
         ),
         child: Icon(
           isWishlisted ? Icons.favorite : Icons.favorite_border,
           color: isWishlisted ? Colors.redAccent : Colors.white,
-          size: 18,
+          size: 16,
         ),
       ),
     );
@@ -180,33 +171,30 @@ class _WishlistButton extends StatelessWidget {
 // Info section
 // ─────────────────────────────────────────────
 
-class _CourseInfo extends StatelessWidget {
-  const _CourseInfo({required this.course});
+class _InfoSection extends StatelessWidget {
+  const _InfoSection({required this.course});
 
   final CourseModel course;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(10),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Title ────────────────────────────
           Text(
             course.title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
               color: AppColors.dark,
-              fontWeight: FontWeight.w600,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-
           const SizedBox(height: 4),
-
-          // ── Trainer name ─────────────────────
           Row(
             children: [
               Icon(Icons.person_outline, size: 12, color: AppColors.grey),
@@ -214,91 +202,59 @@ class _CourseInfo extends StatelessWidget {
               Expanded(
                 child: Text(
                   course.trainerName,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: AppColors.grey),
+                  style: TextStyle(fontSize: 11, color: AppColors.grey),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-
-          const SizedBox(height: 4),
-
-          // ── Rating + Level ───────────────────
+          const SizedBox(height: 6),
           Row(
             children: [
-              Icon(Icons.star_rounded, color: Colors.amber, size: 14),
+              Icon(Icons.star_rounded, color: Colors.amber, size: 12),
               const SizedBox(width: 2),
               Text(
                 course.averageRating.toStringAsFixed(1),
-                style: TextStyle(color: AppColors.grey, fontSize: 12),
+                style: TextStyle(fontSize: 11, color: AppColors.grey),
               ),
               const SizedBox(width: 4),
               Text(
                 '(${course.reviewsCount})',
-                style: TextStyle(color: AppColors.grey, fontSize: 11),
+                style: TextStyle(fontSize: 11, color: AppColors.grey),
               ),
               const Spacer(),
-              _LevelBadge(level: course.level),
+              if (course.level.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.lightOrange,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    '${course.level[0].toUpperCase()}${course.level.substring(1)}',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
             ],
           ),
-
-          const SizedBox(height: 4),
-
-          // ── Price + Students count ────────────
-          Row(
-            children: [
-              Text(
-                course.isFree
-                    ? 'Free'
-                    : 'TZS ${course.price.toStringAsFixed(0)}',
-                style: TextStyle(
-                  color: course.isFree ? AppColors.primary : AppColors.dark,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Spacer(),
-              Icon(Icons.people_outline, size: 12, color: AppColors.grey),
-              const SizedBox(width: 4),
-              Text(
-                '${course.studentsCount} students',
-                style: TextStyle(color: AppColors.grey, fontSize: 10),
-              ),
-            ],
+          const SizedBox(height: 6),
+          Text(
+            course.isFree ? 'Free' : 'TZS ${course.price.toStringAsFixed(0)}',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: course.isFree ? AppColors.primary : AppColors.dark,
+            ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Small pill badge showing the course difficulty level.
-class _LevelBadge extends StatelessWidget {
-  const _LevelBadge({required this.level});
-
-  final String level;
-
-  String get _label =>
-      level.isEmpty ? '' : '${level[0].toUpperCase()}${level.substring(1)}';
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: AppColors.lightOrange,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        _label,
-        style: TextStyle(
-          color: AppColors.primary,
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-        ),
       ),
     );
   }
