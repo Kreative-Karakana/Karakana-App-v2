@@ -3,13 +3,14 @@
 ## 🐛 Known Bugs
 
 ### BUG-001: Category filtering not working on Explore screen
-- **Status:** Open
-- **Screen:** Explore (`lib/features/courses/screens/explore_screen.dart`)
-- **Description:** When a category chip is tapped, the API call is made correctly (verified via logs — returns 200 with filtered results) but the UI still shows all 19 courses instead of filtered ones.
-- **Suspected cause:** The explore screen may not be rebuilding when `_courses` updates in the provider, or it's reading from a different list.
-- **Files to check:**
-  - `lib/features/courses/screens/explore_screen.dart`
+- **Status:** Partially resolved (client-side workaround applied)
+- **Root Cause:** BACKEND BUG — The backend API ignores the `categories__name` query parameter and always returns all 19 courses regardless of the filter value. Confirmed via debug logs showing correct params sent but full results always returned.
+- **Frontend fix:** Client-side filtering applied as temporary workaround
+- **Backend fix needed:** Django backend needs to correctly implement `categories__name` filter on the `/api/v1/courses/` endpoint
+- **Backend file to fix:** Likely in `courses/views.py` or `courses/filters.py` in the Kreative-Karakana-backend repo
+- **Files affected:**
   - `lib/features/courses/providers/course_provider.dart`
+  - `lib/features/courses/screens/explore_screen.dart`
 
 ### BUG-002: Course description shows raw Quill JSON
 - **Status:** Open

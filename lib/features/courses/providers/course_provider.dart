@@ -28,6 +28,7 @@ class CourseProvider extends ChangeNotifier {
   String? _errorMessage;
 
   List<CourseModel> _courses = [];
+  List<CourseModel> _allCourses = [];
 
   /// Up to 5 courses surfaced as recommendations (first page slice).
   List<CourseModel> _recommendedCourses = [];
@@ -134,6 +135,7 @@ class CourseProvider extends ChangeNotifier {
       _popularCourses = results[1];
       _freeCourses = results[2];
       _courses = results[3];
+      _allCourses = List.from(_courses);
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
@@ -224,17 +226,16 @@ class CourseProvider extends ChangeNotifier {
   /// Pass `null` to clear the filter.
   Future<void> filterByCategory(String? categoryName) async {
     _selectedCategoryName = categoryName;
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      _courses = await _service.getCourses(categoryName: categoryName);
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+    if (categoryName == null) {
+      _courses = List.from(_allCourses);
+    } else {
+      _courses = _allCourses.where((course) {
+        return course.categories.any(
+          (cat) => cat.toLowerCase() == categoryName.toLowerCase(),
+        );
+      }).toList();
     }
+    notifyListeners();
   }
 
   // ─────────────────────────────────────────────
