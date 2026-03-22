@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
@@ -185,9 +186,7 @@ class _CourseHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final level = course.level.isEmpty
-        ? ''
-        : '${course.level[0].toUpperCase()}${course.level.substring(1)}';
+    final level = _formatLevel(course.level);
 
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -330,7 +329,7 @@ class _EnrolSection extends StatelessWidget {
         children: [
           // Price display
           Text(
-            course.isFree ? 'Free' : 'TZS ${course.price.toStringAsFixed(0)}',
+            course.isFree ? 'Free' : _formatPrice(course.price),
             style: TextStyle(
               color: course.isFree ? AppColors.primary : AppColors.dark,
               fontSize: 24,
@@ -697,4 +696,38 @@ class _ReviewCard extends StatelessWidget {
       ),
     );
   }
+}
+
+// ─────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────
+
+String _formatLevel(String level) {
+  switch (level.toLowerCase()) {
+    case 'bgn':
+    case 'beginner':
+      return 'Beginner';
+    case 'int':
+    case 'intermediate':
+      return 'Intermediate';
+    case 'adv':
+    case 'advanced':
+      return 'Advanced';
+    case 'all':
+    case 'all_levels':
+      return 'All Levels';
+    case 'sht':
+    case 'short':
+      return 'Short Course';
+    case 'pro':
+    case 'professional':
+      return 'Professional';
+    default:
+      return level.isEmpty ? '' : level;
+  }
+}
+
+String _formatPrice(double price) {
+  final formatter = NumberFormat('#,###', 'en_US');
+  return 'TZS ${formatter.format(price)}';
 }
