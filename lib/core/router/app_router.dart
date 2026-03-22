@@ -16,6 +16,7 @@ import '../../features/payments/screens/payment_success_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/splash/splash_screen.dart';
+import '../../features/payments/screens/wallet_screen.dart';
 import '../../features/support/screens/support_screen.dart';
 
 // ─────────────────────────────────────────────
@@ -44,6 +45,7 @@ class AppRoutes {
   static const String paymentSuccess = '/payment-success';
   static const String enrolledCourses = '/enrolled-courses';
   static const String support = '/support';
+  static const String wallet = '/wallet';
 }
 
 // ─────────────────────────────────────────────
@@ -186,6 +188,10 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.support,
           builder: (context, state) => const SupportScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.wallet,
+          builder: (context, state) => const WalletScreen(),
         ),
       ],
     );
