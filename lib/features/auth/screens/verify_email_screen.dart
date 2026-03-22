@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../providers/auth_provider.dart';
 
-/// Email verification screen shown after a successful sign-up.
-///
-/// The backend sends a 6-digit OTP to the user's email address. This screen
-/// collects that code, calls [AuthProvider.verifyEmail], and navigates to
-/// [AppRoutes.home] on success. The email is passed as a URI query parameter.
 class VerifyEmailScreen extends StatefulWidget {
   const VerifyEmailScreen({super.key});
 
@@ -23,23 +17,18 @@ class VerifyEmailScreen extends StatefulWidget {
 class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   String _email = '';
 
-  /// One controller per OTP digit.
   final List<TextEditingController> _controllers = List.generate(
     6,
     (_) => TextEditingController(),
   );
 
-  /// One focus node per OTP digit — used for automatic field-to-field movement.
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
 
-  /// Tracks whether a resend request is currently in flight.
   bool _isResending = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Read the email query parameter only once — inherited widgets are
-    // available here unlike in initState().
     if (_email.isEmpty) {
       _email =
           GoRouterState.of(context).uri.queryParameters['email'] ?? '';
@@ -61,27 +50,19 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   // OTP field logic
   // ─────────────────────────────────────────────
 
-  /// Called whenever a digit field's value changes.
-  ///
-  /// Advances focus to the next field on input, retreats to the previous
-  /// field on deletion, and auto-submits once all six digits are present.
   void _onDigitChanged(int index, String value) {
     context.read<AuthProvider>().clearError();
 
     if (value.isNotEmpty) {
       if (index < 5) {
-        // Move forward to the next digit field.
         _focusNodes[index + 1].requestFocus();
       } else {
-        // Last digit filled — dismiss the keyboard.
         _focusNodes[index].unfocus();
       }
-      // Auto-submit as soon as all six digits are present.
       if (_controllers.every((c) => c.text.isNotEmpty)) {
         _verify();
       }
     } else if (index > 0) {
-      // Digit deleted — move back to the previous field.
       _focusNodes[index - 1].requestFocus();
     }
   }
@@ -90,8 +71,6 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   // Actions
   // ─────────────────────────────────────────────
 
-  /// Combines the six digit fields into a single code and calls
-  /// [AuthProvider.verifyEmail]. Navigates to home on success.
   Future<void> _verify() async {
     final code = _controllers.map((c) => c.text).join();
     if (code.length < 6) return;
@@ -104,23 +83,18 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     }
   }
 
-  /// Requests a new OTP from the backend and shows a confirmation snack bar.
   Future<void> _resend() async {
     setState(() => _isResending = true);
-
-    final success =
-        await context.read<AuthProvider>().resendOTP(_email);
-
+    final success = await context.read<AuthProvider>().resendOTP(_email);
     if (!mounted) return;
-
     setState(() => _isResending = false);
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
+          content: const Text(
             'Code resent successfully',
-            style: GoogleFonts.inter(color: AppColors.white),
+            style: TextStyle(color: Colors.white, fontFamily: 'Inter'),
           ),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
@@ -138,158 +112,152 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+
     return Scaffold(
-      backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.dark),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: SafeArea(
-        child: Consumer<AuthProvider>(
-          builder: (context, auth, _) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 40),
+      backgroundColor: Colors.black,
+      extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: true,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // ── Background image ───────────────────
+          Image.asset(
+            'assets/images/Log_In_BG.png',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
 
-                  // ── Icon ──────────────────────────────
-                  Icon(
-                    Icons.mark_email_unread_rounded,
-                    size: 72,
-                    color: AppColors.primary,
-                  ),
+          // ── Gradient overlay ───────────────────
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF3B1A08).withValues(alpha: 0.3),
+                  Color(0xFF3B1A08).withValues(alpha: 0.75),
+                  Color(0xFF3B1A08).withValues(alpha: 0.97),
+                  Color(0xFF3B1A08).withValues(alpha: 1.0),
+                ],
+                stops: const [0.0, 0.3, 0.55, 1.0],
+              ),
+            ),
+          ),
 
-                  const SizedBox(height: 24),
-
-                  // ── Heading ───────────────────────────
-                  Text(
-                    'Verify Your Email',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.dark,
+          // ── Content ────────────────────────────
+          SafeArea(
+            child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // ── Logo ──────────────────────
+                    const SizedBox(height: 80),
+                    Image.asset(
+                      'assets/images/Kreative_Karakana_-_Official_Logo_(White).png',
+                      width: 160,
                     ),
-                  ),
+                    const SizedBox(height: 32),
 
-                  const SizedBox(height: 12),
-
-                  // ── Subtitle ──────────────────────────
-                  Text(
-                    'We sent a 6-digit code to',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      fontSize: 15,
-                      color: AppColors.grey,
+                    // ── Icon ──────────────────────
+                    Icon(
+                      Icons.mark_email_unread_rounded,
+                      size: 64,
+                      color: AppColors.midOrange,
                     ),
-                  ),
+                    const SizedBox(height: 20),
 
-                  const SizedBox(height: 4),
-
-                  // ── Email address ─────────────────────
-                  Text(
-                    _email,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
-                  ),
-
-                  const SizedBox(height: 40),
-
-                  // ── OTP input row ─────────────────────
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: List.generate(
-                      6,
-                      (i) => _buildOtpField(i),
-                    ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // ── Error message ─────────────────────
-                  if (auth.errorMessage != null) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      auth.errorMessage!,
+                    // ── Heading ───────────────────
+                    const Text(
+                      'Verify Your Email',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
-                        fontSize: 13,
-                        color: AppColors.error,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins',
                       ),
                     ),
-                  ],
+                    const SizedBox(height: 10),
 
-                  const SizedBox(height: 24),
-
-                  // ── Verify button ─────────────────────
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: auth.isLoading ? null : _verify,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.white,
-                        disabledBackgroundColor:
-                            AppColors.primary.withAlpha(153),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
+                    // ── Subtitle ──────────────────
+                    Text(
+                      'We sent a 6-digit code to',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.7),
+                        fontSize: 14,
+                        fontFamily: 'Inter',
                       ),
-                      child: auth.isLoading
-                          ? SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                color: AppColors.white,
-                                strokeWidth: 2.5,
-                              ),
-                            )
-                          : Text(
-                              'Verify Email',
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.white,
-                              ),
-                            ),
                     ),
-                  ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _email,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: AppColors.midOrange,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    const SizedBox(height: 36),
 
-                  const SizedBox(height: 24),
+                    // ── OTP boxes ─────────────────
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: List.generate(6, (i) => _buildOtpField(i)),
+                    ),
 
-                  // ── Resend row ────────────────────────
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                    const SizedBox(height: 8),
+
+                    // ── Error message ─────────────
+                    if (auth.errorMessage != null) ...[
+                      const SizedBox(height: 8),
                       Text(
-                        "Didn't receive the code?",
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          color: AppColors.grey,
+                        auth.errorMessage!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppColors.error,
+                          fontSize: 13,
+                          fontFamily: 'Inter',
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      SizedBox(
-                        height: 36,
-                        child: TextButton(
+                    ],
+
+                    const SizedBox(height: 24),
+
+                    // ── Verify button ─────────────
+                    _GradientButton(
+                      label: 'Verify Email',
+                      isLoading: auth.isLoading,
+                      onPressed: auth.isLoading ? null : _verify,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // ── Resend row ────────────────
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Didn't receive the code?",
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.6),
+                            fontSize: 14,
+                            fontFamily: 'Inter',
+                          ),
+                        ),
+                        TextButton(
                           onPressed:
                               (_isResending || auth.isLoading) ? null : _resend,
                           style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: Size.zero,
+                            padding: const EdgeInsets.only(left: 4),
+                            minimumSize: const Size(0, 0),
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                           child: _isResending
@@ -297,29 +265,30 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                   width: 16,
                                   height: 16,
                                   child: CircularProgressIndicator(
-                                    color: AppColors.primary,
+                                    color: AppColors.midOrange,
                                     strokeWidth: 2,
                                   ),
                                 )
                               : Text(
                                   'Resend',
-                                  style: GoogleFonts.poppins(
+                                  style: TextStyle(
+                                    color: AppColors.midOrange,
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.primary,
+                                    fontFamily: 'Poppins',
                                   ),
                                 ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
 
-                  const SizedBox(height: 40),
-                ],
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -328,7 +297,6 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   // Helpers
   // ─────────────────────────────────────────────
 
-  /// Builds a single digit input box at [index].
   Widget _buildOtpField(int index) {
     return SizedBox(
       width: 44,
@@ -339,10 +307,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         keyboardType: TextInputType.number,
         textAlign: TextAlign.center,
         maxLength: 1,
-        style: GoogleFonts.poppins(
+        style: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: AppColors.dark,
+          color: Colors.white,
+          fontFamily: 'Poppins',
         ),
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         onChanged: (value) => _onDigitChanged(index, value),
@@ -350,18 +319,84 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           counterText: '',
           contentPadding: EdgeInsets.zero,
           filled: true,
-          fillColor: AppColors.lightOrange,
+          fillColor: Colors.white.withValues(alpha: 0.12),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: AppColors.primary, width: 2),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// Gradient button
+// ─────────────────────────────────────────────
+
+class _GradientButton extends StatelessWidget {
+  const _GradientButton({
+    required this.label,
+    required this.isLoading,
+    required this.onPressed,
+  });
+
+  final String label;
+  final bool isLoading;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 54,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(14),
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              gradient: onPressed == null
+                  ? LinearGradient(
+                      colors: [
+                        AppColors.primary.withValues(alpha: 0.5),
+                        Color(0xFFE8750A).withValues(alpha: 0.5),
+                      ],
+                    )
+                  : LinearGradient(
+                      colors: [AppColors.primary, Color(0xFFE8750A)],
+                    ),
+            ),
+            child: Center(
+              child: isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Text(
+                      label,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+            ),
           ),
         ),
       ),
