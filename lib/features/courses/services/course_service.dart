@@ -97,13 +97,29 @@ class CourseService {
   Future<List<SectionModel>> getCourseSections(int courseId) async {
     try {
       final response = await _dio.get(
-        '${ApiEndpoints.sections}$courseId/sections/',
+        '${ApiEndpoints.courses}$courseId/sections/',
       );
-      final results = response.data['results'] as List<dynamic>? ?? [];
+      final data = response.data;
+      debugPrint('Sections response type: ${data.runtimeType}');
+      if (data is Map) debugPrint('Sections response keys: ${data.keys.toList()}');
+      debugPrint('Sections response: $data');
+
+      List<dynamic> results;
+      if (data is List) {
+        results = data;
+      } else if (data is Map && data.containsKey('results')) {
+        results = data['results'] as List<dynamic>? ?? [];
+      } else if (data is Map && data.containsKey('sections')) {
+        results = data['sections'] as List<dynamic>? ?? [];
+      } else {
+        results = [];
+      }
+
       return results
           .map((e) => SectionModel.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
+      debugPrint('getCourseSections error: $e');
       throw 'Failed to load course content. Please try again.';
     }
   }
