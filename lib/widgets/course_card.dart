@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../core/theme/app_theme.dart';
 import '../features/courses/models/course_model.dart';
@@ -185,9 +186,20 @@ String _formatLevel(String level) {
     case 'all':
     case 'all_levels':
       return 'All Levels';
+    case 'sht':
+    case 'short':
+      return 'Short Course';
+    case 'pro':
+    case 'professional':
+      return 'Professional';
     default:
-      return level;
+      return level.isEmpty ? 'General' : level;
   }
+}
+
+String _formatPrice(double price) {
+  final formatter = NumberFormat('#,###', 'en_US');
+  return 'TZS ${formatter.format(price)}';
 }
 
 // ─────────────────────────────────────────────
@@ -270,7 +282,7 @@ class _InfoSection extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            course.isFree ? 'Free' : 'TZS ${course.price.toStringAsFixed(0)}',
+            course.isFree ? 'Free' : _formatPrice(course.price),
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
