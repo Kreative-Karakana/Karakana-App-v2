@@ -41,12 +41,12 @@
 - **Description:** Mark lessons as complete, track course progress percentage
 
 ### FEAT-005: AzamPay Payment Screen
-- **Status:** Not Started
+- **Status:** ✅ Done (UI built, needs testing with real payment)
 - **Priority:** High (Phase 4)
 - **Description:** MNO checkout screen for paid course enrollment
 
 ### FEAT-006: Payment Success/Failure Screen
-- **Status:** Not Started
+- **Status:** ✅ Done
 - **Priority:** High (Phase 4)
 - **Description:** Post-payment confirmation screen
 
@@ -56,7 +56,7 @@
 - **Description:** List of all past payments
 
 ### FEAT-008: Profile View Screen
-- **Status:** Not Started
+- **Status:** ✅ Done
 - **Priority:** High (Phase 5)
 - **Description:** View logged-in user profile
 
@@ -71,7 +71,7 @@
 - **Description:** Form to apply as a trainer
 
 ### FEAT-011: Notifications Screen
-- **Status:** Not Started
+- **Status:** ✅ Done
 - **Priority:** Medium (Phase 5)
 - **Description:** List of user notifications
 
@@ -84,6 +84,13 @@
 - **Status:** Not Started
 - **Priority:** Low
 - **Description:** List of wishlisted courses
+
+### FEAT-015: Profile screen improvements
+- **Status:** Open
+- **Priority:** Low
+- **Description:** Profile avatar header needs improvement — show real user avatar or initials if no avatar. The default avatar image loads correctly but could be improved with initials fallback.
+- **Files affected:**
+  - `lib/features/profile/screens/profile_screen.dart`
 
 ### FEAT-014: Test classroom screen with enrolled course
 - **Status:** Blocked

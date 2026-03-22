@@ -96,7 +96,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 const Divider(height: 1, indent: 72),
                 _MenuItem(
-                  icon: Icons.school_outline,
+                  icon: Icons.school_outlined,
                   label: 'My Courses',
                   onTap: () => context.push('/enrolled-courses'),
                 ),
