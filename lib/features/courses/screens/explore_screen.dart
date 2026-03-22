@@ -173,6 +173,53 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   },
                 ),
 
+              // ── Results count ───────────────────────
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 4,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '${provider.courses.length} courses found',
+                      style: TextStyle(
+                        color: AppColors.dark,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    if (provider.selectedCategoryName != null) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.lightOrange,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          provider.selectedCategoryName!,
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+
               // ── Course list ─────────────────────────
               const Expanded(child: _CourseListBody()),
             ],
