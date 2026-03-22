@@ -17,6 +17,7 @@ import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../features/courses/screens/wishlist_screen.dart';
+import '../../features/payments/screens/payment_history_screen.dart';
 import '../../features/payments/screens/wallet_screen.dart';
 import '../../features/support/screens/support_screen.dart';
 
@@ -48,6 +49,7 @@ class AppRoutes {
   static const String support = '/support';
   static const String wallet = '/wallet';
   static const String wishlist = '/wishlist';
+  static const String paymentHistory = '/payment-history';
 }
 
 // ─────────────────────────────────────────────
@@ -198,6 +200,10 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.wishlist,
           builder: (context, state) => const WishlistScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.paymentHistory,
+          builder: (context, state) => const PaymentHistoryScreen(),
         ),
       ],
     );
