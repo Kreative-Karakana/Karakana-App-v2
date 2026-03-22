@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../widgets/course_card.dart';
-import '../models/course_model.dart';
 import '../providers/course_provider.dart';
 
 /// Explore tab — search, filter by category, and browse all courses.
@@ -17,7 +16,7 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen> {
   final TextEditingController _searchController = TextEditingController();
-  String? _selectedCategory;
+  String? _selectedCategoryName;
 
   @override
   void initState() {
@@ -73,12 +72,104 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
               // ── Category chips ──────────────────────
               if (provider.categories.isNotEmpty)
-                _CategoryChipList(
-                  categories: provider.categories,
-                  selectedCategory: _selectedCategory,
-                  onSelect: (name) {
-                    setState(() => _selectedCategory = name);
-                    context.read<CourseProvider>().filterByCategory(name);
+                Consumer<CourseProvider>(
+                  builder: (context, courseProvider, _) {
+                    return SizedBox(
+                      height: 44,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        children: [
+                          // All chip
+                          GestureDetector(
+                            onTap: () {
+                              setState(() => _selectedCategoryName = null);
+                              context
+                                  .read<CourseProvider>()
+                                  .filterByCategory(null);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(right: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _selectedCategoryName == null
+                                    ? AppColors.primary
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: _selectedCategoryName == null
+                                      ? AppColors.primary
+                                      : AppColors.lightOrange,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Text(
+                                'All',
+                                style: TextStyle(
+                                  color: _selectedCategoryName == null
+                                      ? Colors.white
+                                      : AppColors.dark,
+                                  fontSize: 13,
+                                  fontWeight: _selectedCategoryName == null
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                          ),
+                          // Category chips
+                          ...courseProvider.categories.map((category) {
+                            final isSelected =
+                                _selectedCategoryName == category.name;
+                            return GestureDetector(
+                              onTap: () {
+                                setState(
+                                  () =>
+                                      _selectedCategoryName = category.name,
+                                );
+                                context
+                                    .read<CourseProvider>()
+                                    .filterByCategory(category.name);
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(right: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? AppColors.primary
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? AppColors.primary
+                                        : AppColors.lightOrange,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Text(
+                                  category.name,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Colors.white
+                                        : AppColors.dark,
+                                    fontSize: 13,
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    );
                   },
                 ),
 
@@ -169,82 +260,6 @@ class _SearchBar extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────
-// Category chip list
-// ─────────────────────────────────────────────
-
-class _CategoryChipList extends StatelessWidget {
-  const _CategoryChipList({
-    required this.categories,
-    required this.selectedCategory,
-    required this.onSelect,
-  });
-
-  final List<CategoryModel> categories;
-  final String? selectedCategory;
-  final ValueChanged<String?> onSelect;
-
-  @override
-  Widget build(BuildContext context) {
-    final items = <_ChipItem>[
-      const _ChipItem(name: null, label: 'All'),
-      ...categories.map((c) => _ChipItem(name: c.name, label: c.name)),
-    ];
-
-    return SizedBox(
-      height: 44,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: items.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 8),
-        itemBuilder: (_, i) {
-          final item = items[i];
-          final isSelected = item.name == selectedCategory;
-
-          return GestureDetector(
-            onTap: () => onSelect(item.name),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.primary : AppColors.white,
-                borderRadius: BorderRadius.circular(20),
-                border: isSelected
-                    ? null
-                    : Border.all(color: AppColors.lightOrange, width: 1.5),
-                boxShadow: isSelected
-                    ? [
-                        BoxShadow(
-                          color: AppColors.primary.withAlpha(80),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ]
-                    : null,
-              ),
-              child: Text(
-                item.label,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : AppColors.dark,
-                  fontSize: 13,
-                  fontWeight:
-                      isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-/// Internal data class for a category chip item.
-class _ChipItem {
-  const _ChipItem({required this.name, required this.label});
-  final String? name;
-  final String label;
-}
 
 // ─────────────────────────────────────────────
 // Course list body
