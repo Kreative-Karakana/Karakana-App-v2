@@ -17,6 +17,7 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen> {
   final TextEditingController _searchController = TextEditingController();
+  String? _selectedCategory;
 
   @override
   void initState() {
@@ -72,7 +73,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
               // ── Category chips ──────────────────────
               if (provider.categories.isNotEmpty)
-                _CategoryChipList(categories: provider.categories),
+                _CategoryChipList(
+                  categories: provider.categories,
+                  selectedCategory: _selectedCategory,
+                  onSelect: (name) {
+                    setState(() => _selectedCategory = name);
+                    context.read<CourseProvider>().filterByCategory(name);
+                  },
+                ),
 
               // ── Results count ───────────────────────
               Padding(
@@ -166,55 +174,64 @@ class _SearchBar extends StatelessWidget {
 // ─────────────────────────────────────────────
 
 class _CategoryChipList extends StatelessWidget {
-  const _CategoryChipList({required this.categories});
+  const _CategoryChipList({
+    required this.categories,
+    required this.selectedCategory,
+    required this.onSelect,
+  });
 
   final List<CategoryModel> categories;
+  final String? selectedCategory;
+  final ValueChanged<String?> onSelect;
 
   @override
   Widget build(BuildContext context) {
     final items = <_ChipItem>[
-      _ChipItem(id: null, label: 'All'),
-      ...categories.map((c) => _ChipItem(id: c.id, label: c.name)),
+      const _ChipItem(name: null, label: 'All'),
+      ...categories.map((c) => _ChipItem(name: c.name, label: c.name)),
     ];
 
     return SizedBox(
       height: 44,
-      child: Consumer<CourseProvider>(
-        builder: (context, provider, _) {
-          return ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: items.length,
-            separatorBuilder: (_, _) => const SizedBox(width: 8),
-            itemBuilder: (_, i) {
-              final item = items[i];
-              final isSelected = item.id == provider.selectedCategoryId;
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: items.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
+        itemBuilder: (_, i) {
+          final item = items[i];
+          final isSelected = item.name == selectedCategory;
 
-              return GestureDetector(
-                onTap: () => context
-                    .read<CourseProvider>()
-                    .filterByCategory(item.id),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color:
-                        isSelected ? AppColors.primary : AppColors.lightOrange,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    item.label,
-                    style: TextStyle(
-                      color: isSelected ? AppColors.white : AppColors.primary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+          return GestureDetector(
+            onTap: () => onSelect(item.name),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.primary : AppColors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: isSelected
+                    ? null
+                    : Border.all(color: AppColors.lightOrange, width: 1.5),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: AppColors.primary.withAlpha(80),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Text(
+                item.label,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : AppColors.dark,
+                  fontSize: 13,
+                  fontWeight:
+                      isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
-              );
-            },
+              ),
+            ),
           );
         },
       ),
@@ -224,8 +241,8 @@ class _CategoryChipList extends StatelessWidget {
 
 /// Internal data class for a category chip item.
 class _ChipItem {
-  const _ChipItem({required this.id, required this.label});
-  final int? id;
+  const _ChipItem({required this.name, required this.label});
+  final String? name;
   final String label;
 }
 

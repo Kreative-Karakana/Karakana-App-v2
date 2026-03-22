@@ -45,7 +45,7 @@ class CourseProvider extends ChangeNotifier {
   List<ReviewModel> _reviews = [];
 
   String _searchQuery = '';
-  int? _selectedCategoryId;
+  String? _selectedCategoryName;
 
   // ─────────────────────────────────────────────
   // Getters — raw state
@@ -65,7 +65,7 @@ class CourseProvider extends ChangeNotifier {
   List<SectionModel> get sections => _sections;
   List<ReviewModel> get reviews => _reviews;
   String get searchQuery => _searchQuery;
-  int? get selectedCategoryId => _selectedCategoryId;
+  String? get selectedCategoryName => _selectedCategoryName;
 
   // ─────────────────────────────────────────────
   // Getters — derived
@@ -117,7 +117,7 @@ class CourseProvider extends ChangeNotifier {
   /// [recommended], [popular], and [free] lists each use a specific query
   /// flag so the backend returns the correct curated subset. The main
   /// [_courses] list supports [search] and [categoryId] filtering.
-  Future<void> loadCourses({String? search, int? categoryId}) async {
+  Future<void> loadCourses({String? search, String? categoryName}) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -127,7 +127,7 @@ class CourseProvider extends ChangeNotifier {
         _service.getCourses(recommended: true),
         _service.getCourses(popular: true),
         _service.getCourses(free: true),
-        _service.getCourses(search: search, categoryId: categoryId),
+        _service.getCourses(search: search, categoryName: categoryName),
       ]);
 
       _recommendedCourses = results[0];
@@ -216,16 +216,25 @@ class CourseProvider extends ChangeNotifier {
   Future<void> searchCourses(String query) async {
     _searchQuery = query;
     notifyListeners();
-    await loadCourses(search: query, categoryId: _selectedCategoryId);
+    await loadCourses(search: query, categoryName: _selectedCategoryName);
   }
 
   /// Updates the active category filter and reloads the course list.
   ///
   /// Pass `null` to clear the filter.
-  Future<void> filterByCategory(int? categoryId) async {
-    _selectedCategoryId = categoryId;
+  Future<void> filterByCategory(String? categoryName) async {
+    _selectedCategoryName = categoryName;
+    _isLoading = true;
     notifyListeners();
-    await loadCourses(search: _searchQuery, categoryId: categoryId);
+
+    try {
+      _courses = await _service.getCourses(categoryName: categoryName);
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   // ─────────────────────────────────────────────

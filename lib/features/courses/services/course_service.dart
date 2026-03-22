@@ -30,7 +30,7 @@ class CourseService {
   /// and [enrolled]. A [pageSize] of 20 is always sent.
   Future<List<CourseModel>> getCourses({
     String? search,
-    int? categoryId,
+    String? categoryName,
     bool? recommended,
     bool? popular,
     bool? free,
@@ -41,8 +41,8 @@ class CourseService {
     try {
       final queryParams = <String, dynamic>{'page_size': pageSize};
 
-      if (search != null && search.isNotEmpty) queryParams['search'] = search;
-      if (categoryId != null) queryParams['category'] = categoryId;
+      if (search != null && search.isNotEmpty) queryParams['q'] = search;
+      if (categoryName != null) queryParams['categories__name'] = categoryName;
       if (recommended == true) queryParams['recommend'] = true;
       if (popular == true) queryParams['popular'] = true;
       if (free == true) queryParams['free'] = true;
