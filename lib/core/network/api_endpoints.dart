@@ -95,18 +95,18 @@ class ApiEndpoints {
   // Communications
   // ─────────────────────────────────────────────
 
-  /// Retrieve in-app notifications for the current user.
-  static const String notifications = '/api/v1/communications/notifications/';
-
   /// Retrieve promotional banners displayed in the app.
   static const String banners = '/api/v1/communications/banners/';
 
+  /// Retrieve in-app notifications for the current user.
+  static const String notifications =
+      '/api/v1/communications/notifications/me/';
+
   /// Create or retrieve support tickets raised by the current user.
-  static const String supportTickets = '/api/v1/communications/support/';
+  static const String supportTickets = '/api/v1/communications/tickets/';
 
   /// Send or retrieve messages within a support ticket thread.
-  static const String supportMessages =
-      '/api/v1/communications/support/messages/';
+  static const String supportMessages = '/api/v1/communications/tickets/';
 
   /// Register or update the current device's push-notification token.
   static const String deviceToken = '/api/v1/communications/device-token/';

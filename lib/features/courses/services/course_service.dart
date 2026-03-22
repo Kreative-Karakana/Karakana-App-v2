@@ -52,12 +52,11 @@ class CourseService {
         queryParameters: queryParams,
       );
 
-      final results = response.data['results'] as List<dynamic>? ?? [];
-      return results
+      return _parseList(response.data)
           .map((e) => CourseModel.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      throw 'Failed to load courses. Please try again.';
+      return [];
     }
   }
 
@@ -79,12 +78,11 @@ class CourseService {
   Future<List<CategoryModel>> getCategories() async {
     try {
       final response = await _dio.get(ApiEndpoints.categories);
-      final results = response.data['results'] as List<dynamic>? ?? [];
-      return results
+      return _parseList(response.data)
           .map((e) => CategoryModel.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      throw 'Failed to load categories. Please try again.';
+      return [];
     }
   }
 
@@ -166,8 +164,7 @@ class CourseService {
   Future<List<ReviewModel>> getCourseReviews(int courseId) async {
     try {
       final response = await _dio.get(
-        ApiEndpoints.reviews,
-        queryParameters: {'course': courseId},
+        '${ApiEndpoints.courses}$courseId/reviews/',
       );
       final results = response.data['results'] as List<dynamic>? ?? [];
       return results
@@ -203,15 +200,33 @@ class CourseService {
   // ─────────────────────────────────────────────
 
   /// Returns all active promotional banners for the home / discovery screens.
+  ///
+  /// Returns an empty list on any error so the home screen renders without
+  /// banners rather than failing completely.
   Future<List<BannerModel>> getBanners() async {
     try {
       final response = await _dio.get(ApiEndpoints.banners);
-      final results = response.data['results'] as List<dynamic>? ?? [];
-      return results
+      return _parseList(response.data)
           .map((e) => BannerModel.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      throw 'Failed to load banners. Please try again.';
+      return [];
     }
+  }
+
+  // ─────────────────────────────────────────────
+  // Helpers
+  // ─────────────────────────────────────────────
+
+  /// Safely extracts a [List<dynamic>] from a response body that may be
+  /// either a direct list or a paginated map containing a `results` key.
+  ///
+  /// Returns an empty list for any unrecognised shape.
+  List<dynamic> _parseList(dynamic data) {
+    if (data is List) return data;
+    if (data is Map<String, dynamic>) {
+      return data['results'] as List<dynamic>? ?? [];
+    }
+    return [];
   }
 }

@@ -107,27 +107,28 @@ class CourseProvider extends ChangeNotifier {
   // Courses
   // ─────────────────────────────────────────────
 
-  /// Fetches courses, optionally filtered by [search] text and/or [categoryId].
+  /// Fetches all course sections in parallel using dedicated backend filters.
   ///
-  /// Also derives [recommendedCourses], [popularCourses], and [freeCourses]
-  /// from the returned list.
+  /// [recommended], [popular], and [free] lists each use a specific query
+  /// flag so the backend returns the correct curated subset. The main
+  /// [_courses] list supports [search] and [categoryId] filtering.
   Future<void> loadCourses({String? search, int? categoryId}) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      _courses = await _service.getCourses(
-        search: search,
-        categoryId: categoryId,
-      );
+      final results = await Future.wait([
+        _service.getCourses(recommended: true),
+        _service.getCourses(popular: true),
+        _service.getCourses(free: true),
+        _service.getCourses(search: search, categoryId: categoryId),
+      ]);
 
-      // Derive curated sublists from the full result.
-      _recommendedCourses = _courses.take(5).toList();
-      _popularCourses = _courses.length > 5
-          ? _courses.skip(5).take(5).toList()
-          : [];
-      _freeCourses = _courses.where((c) => c.isFree).toList();
+      _recommendedCourses = results[0];
+      _popularCourses = results[1];
+      _freeCourses = results[2];
+      _courses = results[3];
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
