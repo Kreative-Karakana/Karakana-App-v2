@@ -182,24 +182,27 @@ class _BottomContent extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
             // Logo with drop shadow for visibility
-            DecoratedBox(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.4),
-                    blurRadius: 16,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              child: Image.asset(
-                'assets/images/Kreative_Karakana_-_Official_Logo_(White).png',
-                width: 140,
-                opacity: const AlwaysStoppedAnimation(0.9),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.4),
+                      blurRadius: 16,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Image.asset(
+                  'assets/images/Kreative_Karakana_-_Official_Logo_(White).png',
+                  width: 140,
+                  opacity: const AlwaysStoppedAnimation(0.9),
+                ),
               ),
             ),
 
@@ -246,21 +249,25 @@ class _BottomContent extends StatelessWidget {
             const SizedBox(height: 40),
 
             // Page indicator dots
-            Row(
-              children: List.generate(totalPages, (i) {
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
-                  margin: const EdgeInsets.only(right: 6),
-                  width: i == currentPage ? 24 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: i == currentPage
-                        ? AppColors.primary
-                        : Colors.white.withValues(alpha: 0.4),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                );
-              }),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(totalPages, (i) {
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    margin: const EdgeInsets.only(right: 6),
+                    width: i == currentPage ? 24 : 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: i == currentPage
+                          ? AppColors.primary
+                          : Colors.white.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  );
+                }),
+              ),
             ),
 
             const SizedBox(height: 24),
