@@ -4,6 +4,7 @@
 /// Null values are handled safely using the `??` operator with sensible defaults.
 library;
 
+
 // ─────────────────────────────────────────────
 // CategoryModel
 // ─────────────────────────────────────────────
@@ -114,29 +115,48 @@ class CourseModel {
   bool get isFree => price == 0;
 
   factory CourseModel.fromJson(Map<String, dynamic> json) {
+    final trainer = json['trainer'] as Map<String, dynamic>?;
+    final firstName = trainer?['first_name'] as String? ?? '';
+    final lastName = trainer?['last_name'] as String? ?? '';
+    final trainerName =
+        [firstName, lastName].where((s) => s.isNotEmpty).join(' ');
+
+    final rawPrice = json['price'];
+    final price = rawPrice is num
+        ? rawPrice.toDouble()
+        : double.tryParse(rawPrice?.toString() ?? '') ?? 0.0;
+
+    final rawRating = json['average_rating'];
+    final averageRating = rawRating is num
+        ? rawRating.toDouble()
+        : double.tryParse(rawRating?.toString() ?? '') ?? 0.0;
+
+    final rawCategories = json['categories'] as List<dynamic>? ?? [];
+    final categories = rawCategories.map((e) {
+      if (e is String) return e;
+      if (e is Map<String, dynamic>) return e['name'] as String? ?? '';
+      return '';
+    }).where((s) => s.isNotEmpty).toList();
+
     return CourseModel(
       id: json['id'] as int? ?? 0,
       title: json['title'] as String? ?? '',
       excerpt: json['excerpt'] as String? ?? '',
       description: json['description'] as String? ?? '',
-      price: (json['price'] as num?)?.toDouble() ?? 0.0,
+      price: price,
       status: json['status'] as String? ?? '',
       level: json['level'] as String? ?? '',
       isBlocked: json['is_blocked'] as bool? ?? false,
-      thumbnail: json['thumbnail'] as String?,
-      trailerPlaybackId: json['trailer_playback_id'] as String?,
-      categories:
-          (json['categories'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
-      trainerName: json['trainer_name'] as String? ?? '',
-      trainerAvatar: json['trainer_avatar'] as String?,
-      studentsCount: json['students_count'] as int? ?? 0,
-      averageRating: (json['average_rating'] as num?)?.toDouble() ?? 0.0,
-      reviewsCount: json['reviews_count'] as int? ?? 0,
+      thumbnail: json['cover_photo'] as String?,
+      trailerPlaybackId: json['playback_url'] as String?,
+      categories: categories,
+      trainerName: trainerName,
+      trainerAvatar: trainer?['avatar'] as String?,
+      studentsCount: json['student_count'] as int? ?? 0,
+      averageRating: averageRating,
+      reviewsCount: json['review_count'] as int? ?? 0,
       isEnrolled: json['is_enrolled'] as bool? ?? false,
-      isWishlisted: json['is_wishlisted'] as bool? ?? false,
+      isWishlisted: json['is_in_wishlist'] as bool? ?? false,
     );
   }
 
