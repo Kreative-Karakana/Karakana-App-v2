@@ -21,7 +21,7 @@ class VerifyEmailScreen extends StatefulWidget {
 }
 
 class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
-  late String _email;
+  String _email = '';
 
   /// One controller per OTP digit.
   final List<TextEditingController> _controllers = List.generate(
@@ -36,10 +36,14 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   bool _isResending = false;
 
   @override
-  void initState() {
-    super.initState();
-    _email =
-        GoRouterState.of(context).uri.queryParameters['email'] ?? '';
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Read the email query parameter only once — inherited widgets are
+    // available here unlike in initState().
+    if (_email.isEmpty) {
+      _email =
+          GoRouterState.of(context).uri.queryParameters['email'] ?? '';
+    }
   }
 
   @override

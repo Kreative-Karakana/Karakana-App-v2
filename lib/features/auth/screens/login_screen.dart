@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../providers/auth_provider.dart';
 
 /// Login screen for returning Karakana users.
 ///
 /// Validates the form locally before calling [AuthProvider.login].
-/// Navigates to [AppRoutes.home] on success.
+/// Uses [context.watch] scoped at the build root so only the error message
+/// and button re-render when auth state changes — text fields are stable.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -17,11 +18,15 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen>
+    with AutomaticKeepAliveClientMixin {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void dispose() {
@@ -34,16 +39,16 @@ class _LoginScreenState extends State<LoginScreen> {
   // Actions
   // ─────────────────────────────────────────────
 
-  Future<void> _submit(AuthProvider auth) async {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final success = await auth.login(
-      _emailController.text.trim(),
-      _passwordController.text,
-    );
+    final success = await context.read<AuthProvider>().login(
+          _emailController.text.trim(),
+          _passwordController.text,
+        );
 
     if (success && mounted) {
-      context.go(AppRoutes.home);
+      context.go('/home');
     }
   }
 
@@ -53,224 +58,228 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    final auth = context.watch<AuthProvider>();
+
     return Scaffold(
       backgroundColor: AppColors.white,
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: Consumer<AuthProvider>(
-          builder: (context, auth, _) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  // ── Top branding ─────────────────────
-                  const SizedBox(height: 60),
+        child: SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 60),
 
-                  // Logo placeholder — replace with Image.asset once ready.
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      'K',
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+              // ── Logo ──────────────────────────────
+              Center(
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    shape: BoxShape.circle,
                   ),
-
-                  const SizedBox(height: 24),
-
-                  Text(
-                    'Welcome Back',
+                  alignment: Alignment.center,
+                  child: Text(
+                    'K',
                     style: TextStyle(
-                      color: AppColors.dark,
-                      fontSize: 28,
+                      color: AppColors.white,
+                      fontSize: 40,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                ),
+              ),
 
-                  const SizedBox(height: 8),
+              const SizedBox(height: 24),
 
-                  Text(
-                    'Login to continue learning',
-                    style: TextStyle(color: AppColors.grey, fontSize: 15),
-                  ),
+              // ── Heading ───────────────────────────
+              Text(
+                'Welcome Back',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.dark,
+                ),
+              ),
 
-                  // ── Form ─────────────────────────────
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: 40),
+              const SizedBox(height: 8),
 
-                          // ── Email field ───────────────
-                          TextFormField(
-                            controller: _emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.next,
-                            onChanged: (_) => auth.clearError(),
-                            decoration: _inputDecoration(
-                              label: 'Email Address',
-                              prefixIcon: Icons.email_outlined,
-                            ),
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'Please enter your email address.';
-                              }
-                              if (!value.contains('@')) {
-                                return 'Please enter a valid email address.';
-                              }
-                              return null;
-                            },
+              // ── Subtitle ──────────────────────────
+              Text(
+                'Login to continue learning',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 15,
+                  color: AppColors.grey,
+                ),
+              ),
+
+              const SizedBox(height: 40),
+
+              // ── Form ──────────────────────────────
+              Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // ── Email ──────────────────────
+                    TextFormField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      onChanged: (_) => auth.clearError(),
+                      decoration: _inputDecoration(
+                        'Email Address',
+                        Icons.email_outlined,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter your email address.';
+                        }
+                        if (!value.contains('@')) {
+                          return 'Please enter a valid email address.';
+                        }
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // ── Password ───────────────────
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: _obscurePassword,
+                      textInputAction: TextInputAction.done,
+                      onChanged: (_) => auth.clearError(),
+                      onFieldSubmitted: (_) => _submit(),
+                      decoration: _inputDecoration(
+                        'Password',
+                        Icons.lock_outlined,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                            color: AppColors.grey,
                           ),
-
-                          const SizedBox(height: 16),
-
-                          // ── Password field ────────────
-                          TextFormField(
-                            controller: _passwordController,
-                            obscureText: _obscurePassword,
-                            textInputAction: TextInputAction.done,
-                            onChanged: (_) => auth.clearError(),
-                            onFieldSubmitted: (_) => _submit(auth),
-                            decoration: _inputDecoration(
-                              label: 'Password',
-                              prefixIcon: Icons.lock_outlined,
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscurePassword
-                                      ? Icons.visibility_outlined
-                                      : Icons.visibility_off_outlined,
-                                  color: AppColors.grey,
-                                ),
-                                onPressed: () => setState(
-                                  () => _obscurePassword = !_obscurePassword,
-                                ),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password.';
-                              }
-                              if (value.length < 6) {
-                                return 'Password must be at least 6 characters.';
-                              }
-                              return null;
-                            },
+                          onPressed: () => setState(
+                            () => _obscurePassword = !_obscurePassword,
                           ),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password.';
+                        }
+                        if (value.length < 6) {
+                          return 'Password must be at least 6 characters.';
+                        }
+                        return null;
+                      },
+                    ),
 
-                          const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-                          // ── Forgot password ───────────
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () =>
-                                  context.push(AppRoutes.forgotPassword),
-                              child: Text(
-                                'Forgot Password?',
-                                style: TextStyle(color: AppColors.primary),
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 8),
-
-                          // ── Error message ─────────────
-                          if (auth.errorMessage != null) ...[
-                            Text(
-                              auth.errorMessage!,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: AppColors.error,
-                                fontSize: 13,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                          ],
-
-                          const SizedBox(height: 24),
-
-                          // ── Login button ──────────────
-                          SizedBox(
-                            height: 52,
-                            child: ElevatedButton(
-                              onPressed: auth.isLoading
-                                  ? null
-                                  : () => _submit(auth),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                foregroundColor: AppColors.white,
-                                disabledBackgroundColor: AppColors.primary
-                                    .withAlpha(153),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                elevation: 0,
-                              ),
-                              child: auth.isLoading
-                                  ? SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        color: AppColors.white,
-                                        strokeWidth: 2.5,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Login',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 24),
-
-                          // ── Sign-up link ──────────────
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Don't have an account?",
-                                style: TextStyle(
-                                  color: AppColors.grey,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () => context.push(AppRoutes.signup),
-                                child: Text(
-                                  'Sign Up',
-                                  style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 40),
-                        ],
+                    // ── Forgot password ────────────
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => context.push('/forgot-password'),
+                        child: Text(
+                          'Forgot Password?',
+                          style: TextStyle(color: AppColors.primary),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: 8),
+
+                    // ── Error message ──────────────
+                    if (auth.errorMessage != null)
+                      Text(
+                        auth.errorMessage!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppColors.error,
+                          fontSize: 13,
+                        ),
+                      ),
+
+                    const SizedBox(height: 24),
+
+                    // ── Login button ───────────────
+                    SizedBox(
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: auth.isLoading ? null : _submit,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: AppColors.white,
+                          disabledBackgroundColor:
+                              AppColors.primary.withAlpha(153),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: auth.isLoading
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: AppColors.white,
+                                  strokeWidth: 2.5,
+                                ),
+                              )
+                            : Text(
+                                'Login',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.white,
+                                ),
+                              ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // ── Sign-up link ───────────────
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Don't have an account?",
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            color: AppColors.grey,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => context.push('/signup'),
+                          child: Text(
+                            'Sign Up',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
-            );
-          },
+            ],
+          ),
         ),
       ),
     );
@@ -281,17 +290,17 @@ class _LoginScreenState extends State<LoginScreen> {
   // ─────────────────────────────────────────────
 
   /// Shared [InputDecoration] for all form fields on this screen.
-  InputDecoration _inputDecoration({
-    required String label,
-    required IconData prefixIcon,
+  InputDecoration _inputDecoration(
+    String label,
+    IconData prefixIcon, {
     Widget? suffixIcon,
   }) {
     return InputDecoration(
       labelText: label,
       prefixIcon: Icon(prefixIcon, color: AppColors.grey),
       suffixIcon: suffixIcon,
-      filled: true,
       fillColor: AppColors.lightOrange,
+      filled: true,
       labelStyle: TextStyle(color: AppColors.grey),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

@@ -20,24 +20,36 @@ class CourseService {
   // Courses
   // ─────────────────────────────────────────────
 
-  /// Returns a list of published courses, optionally filtered by [search]
-  /// text, [categoryId], and/or [ordering] field (e.g. '-created_at').
+  /// Returns a list of published courses with optional filters.
+  ///
+  /// [search] performs a text search, [categoryId] filters by category,
+  /// and the boolean flags map to backend query parameters that select
+  /// curated subsets: [recommended], [popular], [free], [weeklyChoice],
+  /// and [enrolled]. A [pageSize] of 20 is always sent.
   Future<List<CourseModel>> getCourses({
     String? search,
     int? categoryId,
-    String? ordering,
+    bool? recommended,
+    bool? popular,
+    bool? free,
+    bool? weeklyChoice,
+    bool? enrolled,
+    int pageSize = 20,
   }) async {
     try {
-      final queryParams = <String, dynamic>{};
+      final queryParams = <String, dynamic>{'page_size': pageSize};
+
       if (search != null && search.isNotEmpty) queryParams['search'] = search;
       if (categoryId != null) queryParams['category'] = categoryId;
-      if (ordering != null && ordering.isNotEmpty) {
-        queryParams['ordering'] = ordering;
-      }
+      if (recommended == true) queryParams['recommend'] = true;
+      if (popular == true) queryParams['popular'] = true;
+      if (free == true) queryParams['free'] = true;
+      if (weeklyChoice == true) queryParams['weekly_choice'] = true;
+      if (enrolled == true) queryParams['enrolled'] = true;
 
       final response = await _dio.get(
         ApiEndpoints.courses,
-        queryParameters: queryParams.isNotEmpty ? queryParams : null,
+        queryParameters: queryParams,
       );
 
       final results = response.data['results'] as List<dynamic>? ?? [];

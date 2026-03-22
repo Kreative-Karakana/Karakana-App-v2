@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_endpoints.dart';
 import '../../../core/utils/secure_storage.dart';
@@ -67,16 +69,36 @@ class AuthService {
     required String password,
   }) async {
     try {
-      await _api.post(
+      // Use the underlying Dio instance directly so we can pass Options.
+      // The registered interceptors (auth token, logging) still apply.
+      final response = await _api.dio.post(
         ApiEndpoints.signup,
         data: {
           'first_name': firstName,
           'email': email,
           'password': password,
         },
+        options: Options(
+          // This backend returns 306 to indicate that the account was created
+          // and a verification email was sent. Without this, Dio would treat
+          // any status > 299 as an error and throw before we can inspect it.
+          validateStatus: (status) => status != null && status <= 306,
+        ),
       );
 
-      return email;
+      final statusCode = response.statusCode ?? 0;
+
+      if (statusCode == 200 || statusCode == 306) {
+        // Both codes mean success — the OTP has been dispatched to [email].
+        return email;
+      }
+
+      // Any other status is a real failure — surface the server message.
+      final body = response.data;
+      if (body is Map<String, dynamic> && body.containsKey('detail')) {
+        throw body['detail'].toString();
+      }
+      throw 'Sign-up failed (status $statusCode). Please try again.';
     } catch (e) {
       throw e.toString();
     }

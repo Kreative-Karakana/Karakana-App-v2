@@ -55,7 +55,7 @@ class ApiEndpoints {
   static const String courses = '/api/v1/courses/';
 
   /// List or retrieve course categories.
-  static const String categories = '/api/v1/courses/categories/';
+  static const String categories = '/api/v1/categories/';
 
   /// List or retrieve course sections.
   static const String sections = '/api/v1/courses/sections/';

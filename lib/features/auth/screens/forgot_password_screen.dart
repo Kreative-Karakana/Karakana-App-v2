@@ -16,12 +16,16 @@ class ForgotPasswordScreen extends StatefulWidget {
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
+    with AutomaticKeepAliveClientMixin {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
 
   /// Tracks whether the reset email has been sent successfully.
   bool _emailSent = false;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void dispose() {
@@ -33,9 +37,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   // Actions
   // ─────────────────────────────────────────────
 
-  Future<void> _submit(AuthProvider auth) async {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final auth = context.read<AuthProvider>();
     final success = await auth.forgotPassword(_emailController.text.trim());
 
     if (success && mounted) {
@@ -49,8 +54,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       backgroundColor: AppColors.white,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: AppColors.white,
         elevation: 0,
@@ -61,63 +68,68 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
       ),
       body: SafeArea(
-        child: Consumer<AuthProvider>(
-          builder: (context, auth, _) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 40),
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          physics: const ClampingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 40),
 
-                  // ── Header icon ───────────────────────
-                  Icon(
-                    Icons.lock_reset_rounded,
-                    size: 72,
-                    color: AppColors.primary,
-                  ),
+              // ── Header icon ───────────────────────
+              Icon(
+                Icons.lock_reset_rounded,
+                size: 72,
+                color: AppColors.primary,
+              ),
 
-                  const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-                  // ── Title ─────────────────────────────
-                  Text(
-                    'Forgot Password?',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.dark,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+              // ── Title ─────────────────────────────
+              Text(
+                'Forgot Password?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.dark,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
 
-                  const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-                  // ── Subtitle ──────────────────────────
-                  Text(
-                    'Enter your email address and we will send you a link to reset your password',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.grey,
-                      fontSize: 15,
-                      height: 1.5,
-                    ),
-                  ),
+              // ── Subtitle ──────────────────────────
+              Text(
+                'Enter your email address and we will send you a link to reset your password',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.grey,
+                  fontSize: 15,
+                  height: 1.5,
+                ),
+              ),
 
-                  const SizedBox(height: 40),
+              const SizedBox(height: 40),
 
-                  // ── Content: form or success state ────
-                  _emailSent
+              // ── Content: form or success state ────
+              //
+              // Consumer is scoped to only the reactive form/success section.
+              // The icon, title, and subtitle above never rebuild.
+              Consumer<AuthProvider>(
+                builder: (context, auth, _) {
+                  return _emailSent
                       ? _SuccessState(onBackToLogin: () => context.pop())
                       : _EmailForm(
                           formKey: _formKey,
                           emailController: _emailController,
                           auth: auth,
-                          onSubmit: () => _submit(auth),
-                        ),
-                ],
+                          onSubmit: _submit,
+                        );
+                },
               ),
-            );
-          },
+            ],
+          ),
         ),
       ),
     );
