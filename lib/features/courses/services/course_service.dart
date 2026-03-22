@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_endpoints.dart';
 import '../models/course_model.dart';
@@ -201,15 +203,38 @@ class CourseService {
 
   /// Returns all active promotional banners for the home / discovery screens.
   ///
-  /// Returns an empty list on any error so the home screen renders without
-  /// banners rather than failing completely.
+  /// Never throws — any network or parsing error is caught and logged, and
+  /// an empty list is returned so the home screen renders without banners.
   Future<List<BannerModel>> getBanners() async {
     try {
       final response = await _dio.get(ApiEndpoints.banners);
-      return _parseList(response.data)
-          .map((e) => BannerModel.fromJson(e as Map<String, dynamic>))
-          .toList();
+      final data = response.data;
+
+      if (data == null) return [];
+
+      final List<dynamic> rawList;
+      if (data is List) {
+        rawList = data;
+      } else if (data is Map<String, dynamic> &&
+          data.containsKey('results')) {
+        rawList = data['results'] as List<dynamic>? ?? [];
+      } else {
+        return [];
+      }
+
+      // Parse each item individually so a single bad record does not drop
+      // the entire banner list.
+      final banners = <BannerModel>[];
+      for (final item in rawList) {
+        try {
+          banners.add(BannerModel.fromJson(item as Map<String, dynamic>));
+        } catch (e) {
+          debugPrint('[CourseService] Skipping invalid banner item: $e');
+        }
+      }
+      return banners;
     } catch (e) {
+      debugPrint('[CourseService] getBanners failed: $e');
       return [];
     }
   }

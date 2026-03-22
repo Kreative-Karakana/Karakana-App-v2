@@ -51,7 +51,12 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
 
-          if (courses.errorMessage != null) {
+          // Only show the error view when courses also failed to load.
+          // A banner failure alone is silent — the section is simply omitted.
+          if (courses.errorMessage != null &&
+              courses.recommendedCourses.isEmpty &&
+              courses.popularCourses.isEmpty &&
+              courses.freeCourses.isEmpty) {
             return _ErrorView(
               message: courses.errorMessage!,
               onRetry: () => courses.loadHomeData(),

@@ -84,6 +84,9 @@ class CourseProvider extends ChangeNotifier {
   // ─────────────────────────────────────────────
 
   /// Loads banners and the default course list in parallel.
+  ///
+  /// Banner failures are silently swallowed — courses load independently
+  /// and [errorMessage] is only set when course fetching fails.
   Future<void> loadHomeData() async {
     await Future.wait([loadBanners(), loadCourses()]);
   }
@@ -93,14 +96,16 @@ class CourseProvider extends ChangeNotifier {
   // ─────────────────────────────────────────────
 
   /// Fetches all active promotional banners.
+  ///
+  /// On any failure, banners are set to an empty list and no error is
+  /// surfaced — the home screen simply omits the banner section.
   Future<void> loadBanners() async {
     try {
       _banners = await _service.getBanners();
-      notifyListeners();
-    } catch (e) {
-      _errorMessage = e.toString();
-      notifyListeners();
+    } catch (_) {
+      _banners = [];
     }
+    notifyListeners();
   }
 
   // ─────────────────────────────────────────────
