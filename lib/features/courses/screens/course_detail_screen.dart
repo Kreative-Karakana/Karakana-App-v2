@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -409,7 +411,7 @@ class _AboutSection extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            course.description,
+            _parseDescription(course.description),
             style: TextStyle(
               color: AppColors.grey,
               fontSize: 14,
@@ -701,6 +703,28 @@ class _ReviewCard extends StatelessWidget {
 // ─────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────
+
+String _parseDescription(String raw) {
+  try {
+    final decoded = jsonDecode(raw);
+    if (decoded is Map && decoded.containsKey('ops')) {
+      final ops = decoded['ops'] as List;
+      final buffer = StringBuffer();
+      for (final op in ops) {
+        if (op is Map && op.containsKey('insert')) {
+          final insert = op['insert'];
+          if (insert is String) {
+            buffer.write(insert);
+          }
+        }
+      }
+      return buffer.toString().trim();
+    }
+    return raw;
+  } catch (e) {
+    return raw;
+  }
+}
 
 String _formatLevel(String level) {
   switch (level.toLowerCase()) {
