@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../providers/auth_provider.dart';
 
-/// Login screen for returning Karakana users.
-///
-/// Validates the form locally before calling [AuthProvider.login].
-/// Uses [context.watch] scoped at the build root so only the error message
-/// and button re-render when auth state changes — text fields are stable.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -35,26 +29,14 @@ class _LoginScreenState extends State<LoginScreen>
     super.dispose();
   }
 
-  // ─────────────────────────────────────────────
-  // Actions
-  // ─────────────────────────────────────────────
-
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-
     final success = await context.read<AuthProvider>().login(
           _emailController.text.trim(),
           _passwordController.text,
         );
-
-    if (success && mounted) {
-      context.go('/home');
-    }
+    if (success && mounted) context.go('/home');
   }
-
-  // ─────────────────────────────────────────────
-  // Build
-  // ─────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -62,265 +44,337 @@ class _LoginScreenState extends State<LoginScreen>
     final auth = context.watch<AuthProvider>();
 
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Colors.black,
+      extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: true,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const ClampingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 60),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // ── Background image ───────────────────
+          Image.asset(
+            'assets/images/Log_In_BG.png',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
 
-              // ── Logo ──────────────────────────────
-              Center(
-                child: Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    'K',
-                    style: TextStyle(
-                      color: AppColors.white,
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+          // ── Gradient overlay ───────────────────
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF3B1A08).withValues(alpha: 0.3),
+                  Color(0xFF3B1A08).withValues(alpha: 0.75),
+                  Color(0xFF3B1A08).withValues(alpha: 0.97),
+                  Color(0xFF3B1A08).withValues(alpha: 1.0),
+                ],
+                stops: const [0.0, 0.3, 0.55, 1.0],
               ),
+            ),
+          ),
 
-              const SizedBox(height: 24),
-
-              // ── Heading ───────────────────────────
-              Text(
-                'Welcome Back',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.dark,
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              // ── Subtitle ──────────────────────────
-              Text(
-                'Login to continue learning',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  fontSize: 15,
-                  color: AppColors.grey,
-                ),
-              ),
-
-              const SizedBox(height: 40),
-
-              // ── Form ──────────────────────────────
-              Form(
-                key: _formKey,
+          // ── Content ────────────────────────────
+          SafeArea(
+            child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // ── Email ──────────────────────
-                    TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      onChanged: (_) => auth.clearError(),
-                      decoration: _inputDecoration(
-                        'Email Address',
-                        Icons.email_outlined,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please enter your email address.';
-                        }
-                        if (!value.contains('@')) {
-                          return 'Please enter a valid email address.';
-                        }
-                        return null;
-                      },
+                    // ── Logo ──────────────────────
+                    const SizedBox(height: 60),
+                    Image.asset(
+                      'assets/images/Kreative_Karakana_-_Official_Logo_(White).png',
+                      width: 160,
                     ),
+                    const SizedBox(height: 48),
 
-                    const SizedBox(height: 16),
-
-                    // ── Password ───────────────────
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: _obscurePassword,
-                      textInputAction: TextInputAction.done,
-                      onChanged: (_) => auth.clearError(),
-                      onFieldSubmitted: (_) => _submit(),
-                      decoration: _inputDecoration(
-                        'Password',
-                        Icons.lock_outlined,
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscurePassword
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                            color: AppColors.grey,
-                          ),
-                          onPressed: () => setState(
-                            () => _obscurePassword = !_obscurePassword,
-                          ),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password.';
-                        }
-                        if (value.length < 6) {
-                          return 'Password must be at least 6 characters.';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    const SizedBox(height: 12),
-
-                    // ── Forgot password ────────────
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () => context.push('/forgot-password'),
-                        child: Text(
-                          'Forgot Password?',
-                          style: TextStyle(color: AppColors.primary),
-                        ),
+                    // ── Heading ───────────────────
+                    const Text(
+                      'Welcome Back',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins',
                       ),
                     ),
-
-                    const SizedBox(height: 8),
-
-                    // ── Error message ──────────────
-                    if (auth.errorMessage != null)
-                      Text(
-                        auth.errorMessage!,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: AppColors.error,
-                          fontSize: 13,
-                        ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Login to continue your learning journey',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.7),
+                        fontSize: 14,
+                        fontFamily: 'Inter',
                       ),
+                    ),
+                    const SizedBox(height: 32),
 
-                    const SizedBox(height: 24),
-
-                    // ── Login button ───────────────
-                    SizedBox(
-                      height: 52,
-                      child: ElevatedButton(
-                        onPressed: auth.isLoading ? null : _submit,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: AppColors.white,
-                          disabledBackgroundColor:
-                              AppColors.primary.withAlpha(153),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                    // ── Form ──────────────────────
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Email
+                          TextFormField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                            style: const TextStyle(color: Colors.white),
+                            cursorColor: AppColors.primary,
+                            onChanged: (_) => auth.clearError(),
+                            decoration: _inputDecoration(
+                              'Email Address',
+                              Icons.email_outlined,
+                            ),
+                            validator: (v) {
+                              if (v == null || v.trim().isEmpty) {
+                                return 'Please enter your email address.';
+                              }
+                              if (!v.contains('@')) {
+                                return 'Please enter a valid email address.';
+                              }
+                              return null;
+                            },
                           ),
-                          elevation: 0,
-                        ),
-                        child: auth.isLoading
-                            ? SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  color: AppColors.white,
-                                  strokeWidth: 2.5,
+
+                          const SizedBox(height: 14),
+
+                          // Password
+                          TextFormField(
+                            controller: _passwordController,
+                            obscureText: _obscurePassword,
+                            textInputAction: TextInputAction.done,
+                            style: const TextStyle(color: Colors.white),
+                            cursorColor: AppColors.primary,
+                            onChanged: (_) => auth.clearError(),
+                            onFieldSubmitted: (_) => _submit(),
+                            decoration: _inputDecoration(
+                              'Password',
+                              Icons.lock_outlined,
+                              suffix: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_outlined
+                                      : Icons.visibility_off_outlined,
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                  size: 20,
                                 ),
-                              )
-                            : Text(
-                                'Login',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.white,
+                                onPressed: () => setState(
+                                  () => _obscurePassword = !_obscurePassword,
                                 ),
                               ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // ── Sign-up link ───────────────
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Don't have an account?",
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            color: AppColors.grey,
+                            ),
+                            validator: (v) {
+                              if (v == null || v.isEmpty) {
+                                return 'Please enter your password.';
+                              }
+                              if (v.length < 6) {
+                                return 'Password must be at least 6 characters.';
+                              }
+                              return null;
+                            },
                           ),
-                        ),
-                        TextButton(
-                          onPressed: () => context.push('/signup'),
-                          child: Text(
-                            'Sign Up',
-                            style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
+
+                          const SizedBox(height: 8),
+
+                          // Forgot password
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () =>
+                                  context.push('/forgot-password'),
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: const Size(0, 0),
+                                tapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Text(
+                                'Forgot Password?',
+                                style: TextStyle(
+                                  color: AppColors.midOrange,
+                                  fontSize: 13,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
 
-                    const SizedBox(height: 40),
+                          const SizedBox(height: 8),
+
+                          // Error message
+                          if (auth.errorMessage != null)
+                            Text(
+                              auth.errorMessage!,
+                              style: TextStyle(
+                                color: AppColors.error,
+                                fontSize: 13,
+                                fontFamily: 'Inter',
+                              ),
+                            ),
+
+                          const SizedBox(height: 20),
+
+                          // Login button (gradient)
+                          _GradientButton(
+                            onPressed: auth.isLoading ? null : _submit,
+                            isLoading: auth.isLoading,
+                            label: 'Login',
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Sign up link
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Don't have an account?",
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                  fontSize: 14,
+                                  fontFamily: 'Inter',
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () => context.push('/signup'),
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.only(left: 4),
+                                  minimumSize: const Size(0, 0),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
+                                child: Text(
+                                  'Sign Up',
+                                  style: TextStyle(
+                                    color: AppColors.midOrange,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Inter',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 32),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  // ─────────────────────────────────────────────
-  // Helpers
-  // ─────────────────────────────────────────────
-
-  /// Shared [InputDecoration] for all form fields on this screen.
   InputDecoration _inputDecoration(
     String label,
-    IconData prefixIcon, {
-    Widget? suffixIcon,
+    IconData prefix, {
+    Widget? suffix,
   }) {
     return InputDecoration(
       labelText: label,
-      prefixIcon: Icon(prefixIcon, color: AppColors.grey),
-      suffixIcon: suffixIcon,
-      fillColor: AppColors.lightOrange,
+      labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.6)),
+      prefixIcon: Icon(prefix, color: Colors.white.withValues(alpha: 0.6)),
+      suffixIcon: suffix,
       filled: true,
-      labelStyle: TextStyle(color: AppColors.grey),
+      fillColor: Colors.white.withValues(alpha: 0.12),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
+        borderRadius: BorderRadius.circular(14),
+        borderSide:
+            BorderSide(color: Colors.white.withValues(alpha: 0.2)),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
+        borderRadius: BorderRadius.circular(14),
+        borderSide:
+            BorderSide(color: Colors.white.withValues(alpha: 0.2)),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide(color: AppColors.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide(color: AppColors.error, width: 1.5),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide(color: AppColors.error, width: 1.5),
+      ),
+      errorStyle: TextStyle(color: AppColors.error),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// Gradient login button
+// ─────────────────────────────────────────────
+
+class _GradientButton extends StatelessWidget {
+  const _GradientButton({
+    required this.label,
+    required this.isLoading,
+    required this.onPressed,
+  });
+
+  final String label;
+  final bool isLoading;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 54,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(14),
+          child: Ink(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              gradient: onPressed == null
+                  ? LinearGradient(
+                      colors: [
+                        AppColors.primary.withValues(alpha: 0.5),
+                        Color(0xFFE8750A).withValues(alpha: 0.5),
+                      ],
+                    )
+                  : const LinearGradient(
+                      colors: [AppColors.primary, Color(0xFFE8750A)],
+                    ),
+            ),
+            child: Center(
+              child: isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Text(
+                      label,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+            ),
+          ),
+        ),
       ),
     );
   }
