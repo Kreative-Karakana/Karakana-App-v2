@@ -10,16 +10,19 @@ class ApiEndpoints {
   // ─────────────────────────────────────────────
 
   /// Authenticate an existing user and receive an access token.
-  static const String login = '/api/v1/accounts/login/';
+  static const String login = '/api/auth/signin/';
 
   /// Register a new user account.
-  static const String signup = '/api/v1/accounts/register/';
+  static const String signup = '/api/auth/signup/';
 
   /// Initiate a password-reset flow via email.
-  static const String forgotPassword = '/api/v1/accounts/password-reset/';
+  static const String forgotPassword = '/api/request-password-reset/';
 
   /// Verify a user's email address using the token sent to their inbox.
-  static const String verifyEmail = '/api/v1/accounts/verify-email/';
+  static const String verifyEmail = '/api/auth/verify/';
+
+  /// Resend the email verification link to the current user.
+  static const String resendVerification = '/api/auth/verify/resend/';
 
   /// Invalidate the current session / access token.
   static const String logout = '/api/v1/accounts/logout/';

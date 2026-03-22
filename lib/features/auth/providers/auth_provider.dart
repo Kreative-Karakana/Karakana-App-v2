@@ -22,6 +22,9 @@ class AuthProvider extends ChangeNotifier {
   String? _errorMessage;
   bool _isOnboardingComplete = false;
 
+  /// The email address awaiting OTP verification after a successful sign-up.
+  String? _pendingVerificationEmail;
+
   // ─────────────────────────────────────────────
   // Getters
   // ─────────────────────────────────────────────
@@ -54,6 +57,10 @@ class AuthProvider extends ChangeNotifier {
 
   /// The user's avatar URL derived from [user], or `null` if not set.
   String? get userAvatar => _user?['avatar']?.toString();
+
+  /// The email address waiting for OTP verification, set after a successful
+  /// sign-up and cleared once verification completes.
+  String? get pendingVerificationEmail => _pendingVerificationEmail;
 
   // ─────────────────────────────────────────────
   // Initialization
@@ -107,34 +114,79 @@ class AuthProvider extends ChangeNotifier {
   // Sign-up
   // ─────────────────────────────────────────────
 
-  /// Registers a new account with the supplied details.
+  /// Registers a new account with [firstName], [email], and [password].
   ///
-  /// Returns `true` on success and `false` on failure.
-  /// On failure, [errorMessage] is updated with a descriptive message.
-  Future<bool> signup({
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String password,
-  }) async {
+  /// Returns the [email] string on success so the caller can navigate to the
+  /// email-verification screen. Returns `null` on failure and updates
+  /// [errorMessage] with a descriptive message.
+  Future<String?> signup(
+    String firstName,
+    String email,
+    String password,
+  ) async {
     _setLoading(true);
     _clearError();
 
     try {
-      final userData = await _authService.signup(
+      final confirmedEmail = await _authService.signup(
         firstName: firstName,
-        lastName: lastName,
         email: email,
         password: password,
       );
+      _pendingVerificationEmail = confirmedEmail;
+      return confirmedEmail;
+    } catch (e) {
+      _errorMessage = e.toString();
+      return null;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // ─────────────────────────────────────────────
+  // Email verification
+  // ─────────────────────────────────────────────
+
+  /// Verifies the user's email with the OTP [code] sent to [email].
+  ///
+  /// On success, marks the user as authenticated and clears
+  /// [pendingVerificationEmail]. Returns `true` on success, `false` on
+  /// failure (with [errorMessage] updated).
+  Future<bool> verifyEmail(String email, String code) async {
+    _setLoading(true);
+    _clearError();
+
+    try {
+      final userData = await _authService.verifyEmail(email, code);
       _user = userData;
       _isAuthenticated = true;
+      _pendingVerificationEmail = null;
       return true;
     } catch (e) {
       _errorMessage = e.toString();
       return false;
     } finally {
       _setLoading(false);
+    }
+  }
+
+  // ─────────────────────────────────────────────
+  // Resend OTP
+  // ─────────────────────────────────────────────
+
+  /// Requests a new OTP to be sent to [email].
+  ///
+  /// Returns `true` on success and `false` on failure.
+  /// On failure, [errorMessage] is updated with a descriptive message.
+  Future<bool> resendOTP(String email) async {
+    _clearError();
+
+    try {
+      await _authService.resendOTP(email);
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      return false;
     }
   }
 

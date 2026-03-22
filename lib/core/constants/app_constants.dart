@@ -18,7 +18,7 @@ class AppConstants {
   static const String appVersion = '1.0.0';
 
   /// The base URL for all API requests.
-  static const String baseUrl = 'https://kreativekarakana.co.tz';
+  static const String baseUrl = 'https://beta.kreativekarakana.co.tz';
 
   /// The key used to store/retrieve the authentication token in local storage.
   static const String tokenKey = 'auth_token';

@@ -41,7 +41,8 @@ class AuthService {
         await _storage.saveToken(token);
       }
 
-      return data;
+      // Return only the nested user map so callers work with a clean profile.
+      return data['user'] as Map<String, dynamic>;
     } catch (e) {
       // ApiClient already converts DioException to a friendly string;
       // re-throw as-is so callers receive a consistent message type.
@@ -53,27 +54,49 @@ class AuthService {
   // Sign-up
   // ─────────────────────────────────────────────
 
-  /// Registers a new user account with the supplied details.
+  /// Registers a new user account with [firstName], [email], and [password].
+  ///
+  /// The backend sends an OTP to [email] for verification — no token is
+  /// issued at this stage. Returns [email] on success so the caller can
+  /// route the user to the verification screen.
+  ///
+  /// Throws a descriptive [String] message on failure.
+  Future<String> signup({
+    required String firstName,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      await _api.post(
+        ApiEndpoints.signup,
+        data: {
+          'first_name': firstName,
+          'email': email,
+          'password': password,
+        },
+      );
+
+      return email;
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  // ─────────────────────────────────────────────
+  // Email verification
+  // ─────────────────────────────────────────────
+
+  /// Verifies the user's email address using the OTP [code] sent to [email].
   ///
   /// On success, the returned token is saved to secure storage and the
   /// user data map is returned.
   ///
   /// Throws a descriptive [String] message on failure.
-  Future<Map<String, dynamic>> signup({
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String password,
-  }) async {
+  Future<Map<String, dynamic>> verifyEmail(String email, String code) async {
     try {
       final response = await _api.post(
-        ApiEndpoints.signup,
-        data: {
-          'first_name': firstName,
-          'last_name': lastName,
-          'email': email,
-          'password': password,
-        },
+        ApiEndpoints.verifyEmail,
+        data: {'email': email, 'code': code},
       );
 
       final data = response.data as Map<String, dynamic>;
@@ -83,7 +106,34 @@ class AuthService {
         await _storage.saveToken(token);
       }
 
-      return data;
+      return data['user'] as Map<String, dynamic>;
+    } catch (e) {
+      throw e.toString();
+    }
+  }
+
+  // ─────────────────────────────────────────────
+  // Resend OTP
+  // ─────────────────────────────────────────────
+
+  /// Requests a new OTP to be sent to [email].
+  ///
+  /// Returns a success message string on success.
+  /// Throws a descriptive [String] message on failure.
+  Future<String> resendOTP(String email) async {
+    try {
+      final response = await _api.post(
+        ApiEndpoints.resendVerification,
+        data: {'email': email},
+      );
+
+      final data = response.data;
+
+      if (data is Map<String, dynamic> && data.containsKey('detail')) {
+        return data['detail'].toString();
+      }
+
+      return 'Verification code resent. Please check your inbox.';
     } catch (e) {
       throw e.toString();
     }

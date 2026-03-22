@@ -20,7 +20,6 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -31,7 +30,6 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   void dispose() {
     _firstNameController.dispose();
-    _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -45,15 +43,14 @@ class _SignupScreenState extends State<SignupScreen> {
   Future<void> _submit(AuthProvider auth) async {
     if (!_formKey.currentState!.validate()) return;
 
-    final success = await auth.signup(
-      firstName: _firstNameController.text.trim(),
-      lastName: _lastNameController.text.trim(),
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
+    final email = await auth.signup(
+      _firstNameController.text.trim(),
+      _emailController.text.trim(),
+      _passwordController.text,
     );
 
-    if (success && mounted) {
-      context.go(AppRoutes.home);
+    if (email != null && mounted) {
+      context.go('/verify-email?email=$email');
     }
   }
 
@@ -134,26 +131,6 @@ class _SignupScreenState extends State<SignupScreen> {
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
                                 return 'Please enter your first name.';
-                              }
-                              return null;
-                            },
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          // ── Last name ─────────────────
-                          TextFormField(
-                            controller: _lastNameController,
-                            textCapitalization: TextCapitalization.words,
-                            textInputAction: TextInputAction.next,
-                            onChanged: (_) => auth.clearError(),
-                            decoration: _inputDecoration(
-                              label: 'Last Name',
-                              prefixIcon: Icons.person_outlined,
-                            ),
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'Please enter your last name.';
                               }
                               return null;
                             },

@@ -5,6 +5,7 @@ import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/signup_screen.dart';
+import '../../features/auth/screens/verify_email_screen.dart';
 import '../../features/home/screens/main_screen.dart';
 import '../../features/courses/screens/course_detail_screen.dart';
 import '../../features/onboarding/screens/onboarding_screen.dart';
@@ -26,6 +27,7 @@ class AppRoutes {
   static const String login = '/login';
   static const String signup = '/signup';
   static const String forgotPassword = '/forgot-password';
+  static const String verifyEmail = '/verify-email';
   static const String home = '/home';
   static const String courseDetail = '/courses/:id';
 }
@@ -76,6 +78,7 @@ class AppRouter {
             location == AppRoutes.login ||
             location == AppRoutes.signup ||
             location == AppRoutes.forgotPassword ||
+            location == AppRoutes.verifyEmail ||
             location == AppRoutes.onboarding;
 
         if (isAuthenticated && isOnAuthScreen) {
@@ -112,6 +115,10 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.forgotPassword,
           builder: (context, state) => const ForgotPasswordScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.verifyEmail,
+          builder: (context, state) => const VerifyEmailScreen(),
         ),
         GoRoute(
           path: AppRoutes.home,
