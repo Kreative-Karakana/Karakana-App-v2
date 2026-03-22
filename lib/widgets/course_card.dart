@@ -168,6 +168,29 @@ class _WishlistButton extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────
+
+String _formatLevel(String level) {
+  switch (level.toLowerCase()) {
+    case 'bgn':
+    case 'beginner':
+      return 'Beginner';
+    case 'int':
+    case 'intermediate':
+      return 'Intermediate';
+    case 'adv':
+    case 'advanced':
+      return 'Advanced';
+    case 'all':
+    case 'all_levels':
+      return 'All Levels';
+    default:
+      return level;
+  }
+}
+
+// ─────────────────────────────────────────────
 // Info section
 // ─────────────────────────────────────────────
 
@@ -235,7 +258,7 @@ class _InfoSection extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
-                    '${course.level[0].toUpperCase()}${course.level.substring(1)}',
+                    _formatLevel(course.level),
                     style: TextStyle(
                       fontSize: 10,
                       color: AppColors.primary,
