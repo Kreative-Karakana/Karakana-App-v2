@@ -11,6 +11,24 @@
   - `lib/features/courses/screens/explore_screen.dart`
   - `lib/features/courses/providers/course_provider.dart`
 
+### BUG-002: Course description shows raw Quill JSON
+- **Status:** Open
+- **Screen:** Course Detail (`lib/features/courses/screens/course_detail_screen.dart`)
+- **Description:** The course description field contains Quill rich text editor JSON format like `{"ops":[{"insert":"..."}]}` instead of plain text.
+- **Fix needed:** Parse the Quill delta JSON and extract plain text from all `"insert"` string values, concatenate them to form readable description.
+- **Example fix:**
+  ```dart
+  String _parseQuillJson(String raw) {
+    try {
+      final decoded = jsonDecode(raw);
+      final ops = decoded['ops'] as List;
+      return ops.map((op) => op['insert'] ?? '').join('').trim();
+    } catch (e) {
+      return raw;
+    }
+  }
+  ```
+
 ---
 
 ## 🚧 Pending Features
