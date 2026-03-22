@@ -18,14 +18,9 @@ class ExploreScreen extends StatefulWidget {
 class _ExploreScreenState extends State<ExploreScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  /// Pending timer used to debounce search input.
-  _Debouncer? _debouncer;
-
   @override
   void initState() {
     super.initState();
-    _debouncer = _Debouncer(delay: const Duration(milliseconds: 500));
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<CourseProvider>();
       provider.loadCourses();
@@ -36,12 +31,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
   @override
   void dispose() {
     _searchController.dispose();
-    _debouncer?.cancel();
     super.dispose();
-  }
-
-  void _onSearchChanged(String value, CourseProvider provider) {
-    _debouncer?.run(() => provider.searchCourses(value));
   }
 
   void _clearSearch(CourseProvider provider) {
@@ -76,21 +66,17 @@ class _ExploreScreenState extends State<ExploreScreen> {
               // ── Search bar ─────────────────────────
               _SearchBar(
                 controller: _searchController,
-                onChanged: (v) => _onSearchChanged(v, provider),
+                onChanged: (v) => provider.searchCourses(v),
                 onClear: () => _clearSearch(provider),
               ),
 
               // ── Category chips ──────────────────────
               if (provider.categories.isNotEmpty)
-                _CategoryChipList(
-                  categories: provider.categories,
-                  selectedId: provider.selectedCategoryId,
-                  onSelect: (id) => provider.filterByCategory(id),
-                ),
+                _CategoryChipList(categories: provider.categories),
 
               // ── Results count ───────────────────────
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                 child: Text(
                   '${provider.courses.length} courses found',
                   style: TextStyle(
@@ -100,6 +86,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 8),
 
               // ── Course list ─────────────────────────
               Expanded(child: _CourseListBody(provider: provider)),
@@ -179,19 +166,12 @@ class _SearchBar extends StatelessWidget {
 // ─────────────────────────────────────────────
 
 class _CategoryChipList extends StatelessWidget {
-  const _CategoryChipList({
-    required this.categories,
-    required this.selectedId,
-    required this.onSelect,
-  });
+  const _CategoryChipList({required this.categories});
 
   final List<CategoryModel> categories;
-  final int? selectedId;
-  final ValueChanged<int?> onSelect;
 
   @override
   Widget build(BuildContext context) {
-    // Build the combined list: "All" sentinel + actual categories.
     final items = <_ChipItem>[
       _ChipItem(id: null, label: 'All'),
       ...categories.map((c) => _ChipItem(id: c.id, label: c.name)),
@@ -199,32 +179,42 @@ class _CategoryChipList extends StatelessWidget {
 
     return SizedBox(
       height: 44,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: items.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 8),
-        itemBuilder: (_, i) {
-          final item = items[i];
-          final isSelected = item.id == selectedId;
+      child: Consumer<CourseProvider>(
+        builder: (context, provider, _) {
+          return ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: items.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
+            itemBuilder: (_, i) {
+              final item = items[i];
+              final isSelected = item.id == provider.selectedCategoryId;
 
-          return GestureDetector(
-            onTap: () => onSelect(item.id),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.primary : AppColors.lightOrange,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                item.label,
-                style: TextStyle(
-                  color: isSelected ? AppColors.white : AppColors.primary,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
+              return GestureDetector(
+                onTap: () => context
+                    .read<CourseProvider>()
+                    .filterByCategory(item.id),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color:
+                        isSelected ? AppColors.primary : AppColors.lightOrange,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    item.label,
+                    style: TextStyle(
+                      color: isSelected ? AppColors.white : AppColors.primary,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
       ),
@@ -265,9 +255,10 @@ class _CourseListBody extends StatelessWidget {
       return const _EmptyView();
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8).copyWith(bottom: 16),
       itemCount: provider.courses.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, i) {
         final course = provider.courses[i];
         return CourseCard(
@@ -357,28 +348,3 @@ class _ErrorView extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────
-// Debouncer utility
-// ─────────────────────────────────────────────
-
-/// Delays execution of [run] until [delay] has elapsed without a new call.
-/// Used to throttle search API calls while the user is still typing.
-class _Debouncer {
-  _Debouncer({required this.delay});
-
-  final Duration delay;
-  // ignore: cancel_subscriptions
-  Future<void>? _pending;
-  bool _cancelled = false;
-
-  void run(VoidCallback action) {
-    _cancelled = false;
-    _pending = Future.delayed(delay).then((_) {
-      if (!_cancelled) action();
-    });
-  }
-
-  void cancel() {
-    _cancelled = true;
-  }
-}
