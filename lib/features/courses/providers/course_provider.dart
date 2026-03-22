@@ -226,6 +226,12 @@ class CourseProvider extends ChangeNotifier {
   /// Pass `null` to clear the filter.
   Future<void> filterByCategory(String? categoryName) async {
     _selectedCategoryName = categoryName;
+    if (_allCourses.isNotEmpty) {
+      debugPrint('First course categories: ${_allCourses.first.categories}');
+      debugPrint('First course categories type: ${_allCourses.first.categories.runtimeType}');
+    }
+    debugPrint('Filtering by: $categoryName');
+    debugPrint('Total courses before filter: ${_allCourses.length}');
     if (categoryName == null) {
       _courses = List.from(_allCourses);
     } else {
@@ -235,6 +241,7 @@ class CourseProvider extends ChangeNotifier {
         );
       }).toList();
     }
+    debugPrint('Courses after filter: ${_courses.length}');
     notifyListeners();
   }
 

@@ -173,20 +173,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   },
                 ),
 
-              // ── Results count ───────────────────────
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: Text(
-                  '${context.watch<CourseProvider>().courses.length} courses found',
-                  style: TextStyle(
-                    color: AppColors.grey,
-                    fontSize: 13,
-                    fontFamily: 'Inter',
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-
               // ── Course list ─────────────────────────
               const Expanded(child: _CourseListBody()),
             ],
