@@ -24,12 +24,12 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           children: [
             // ── Gradient header ──────────────────────
+            // Stack: gradient bg + circles behind, header content in front
             Stack(
-              clipBehavior: Clip.none,
               children: [
-                // Background gradient
+                // Gradient background — slightly taller to peek behind card
                 Container(
-                  height: 220,
+                  height: 240,
                   width: double.infinity,
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
@@ -40,7 +40,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
 
-                // Decorative circles
+                // Decorative circles (clipped to gradient area)
                 Positioned(
                   top: -30,
                   right: -30,
@@ -66,7 +66,7 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  bottom: 20,
+                  top: 120,
                   left: -20,
                   child: Container(
                     width: 100,
@@ -78,85 +78,82 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
 
-                // Header content
+                // Header content sits on top of gradient
                 SafeArea(
                   bottom: false,
-                  child: SizedBox(
-                    height: 220,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Avatar with white border
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 3,
-                            ),
-                          ),
-                          child: CircleAvatar(
-                            radius: 42,
-                            backgroundColor: AppColors.lightOrange,
-                            backgroundImage: hasAvatar
-                                ? CachedNetworkImageProvider(avatar)
-                                : null,
-                            child: hasAvatar
-                                ? null
-                                : Text(
-                                    initials,
-                                    style: TextStyle(
-                                      color: AppColors.primary,
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Poppins',
-                                    ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      // Avatar with white border
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 3),
+                        ),
+                        child: CircleAvatar(
+                          radius: 42,
+                          backgroundColor: AppColors.lightOrange,
+                          backgroundImage: hasAvatar
+                              ? CachedNetworkImageProvider(avatar)
+                              : null,
+                          child: hasAvatar
+                              ? null
+                              : Text(
+                                  initials,
+                                  style: TextStyle(
+                                    color: AppColors.primary,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Poppins',
                                   ),
-                          ),
+                                ),
                         ),
-                        const SizedBox(height: 10),
-                        Text(
-                          name,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'Poppins',
-                          ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins',
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          auth.userEmail,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.75),
-                            fontSize: 12,
-                            fontFamily: 'Inter',
-                          ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        auth.userEmail,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.75),
+                          fontSize: 12,
+                          fontFamily: 'Inter',
                         ),
-                        const SizedBox(height: 10),
-                        // Stats pills
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _StatPill(label: 'Member'),
-                            if (role.isNotEmpty) ...[
-                              const SizedBox(width: 12),
-                              _StatPill(
-                                label: role[0].toUpperCase() + role.substring(1),
-                              ),
-                            ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _StatPill(label: 'Member'),
+                          if (role.isNotEmpty) ...[
+                            const SizedBox(width: 12),
+                            _StatPill(
+                              label:
+                                  role[0].toUpperCase() + role.substring(1),
+                            ),
                           ],
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                      // Gap so the gradient peeks 20px below the content,
+                      // giving depth behind the card below.
+                      const SizedBox(height: 20),
+                    ],
                   ),
                 ),
               ],
             ),
 
-            // ── Menu card (overlaps header by 20px) ─
-            Container(
-              margin: const EdgeInsets.fromLTRB(16, -20, 16, 0),
+            // ── Menu card (starts right after header) ─
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
               child: Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(
