@@ -21,6 +21,7 @@ import '../../features/payments/screens/payment_history_screen.dart';
 import '../../features/payments/screens/wallet_screen.dart';
 import '../../features/support/screens/new_ticket_screen.dart';
 import '../../features/support/screens/support_screen.dart';
+import '../../features/support/screens/ticket_detail_screen.dart';
 
 // ─────────────────────────────────────────────
 // Route path constants
@@ -215,12 +216,9 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.supportDetail,
           builder: (context, state) {
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text('Ticket Details'),
-              ),
-              body: const Center(child: Text('Coming soon')),
-            );
+            final ticketId =
+                int.tryParse(state.pathParameters['ticketId'] ?? '') ?? 0;
+            return TicketDetailScreen(ticketId: ticketId);
           },
         ),
       ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../courses/screens/explore_screen.dart';
@@ -17,6 +18,15 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final location = GoRouterState.of(context).uri.toString();
+    if (location == '/home' && _currentIndex != 0) {
+      setState(() => _currentIndex = 0);
+    }
+  }
 
   /// The four primary screens — order matches the bottom nav items.
   static const List<Widget> _screens = [

@@ -76,17 +76,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     try {
       final dio = ApiClient.instance.dio;
-      final response = await dio.patch(
-        '/api/v1/profiles/me/',
-        data: {
-          'first_name': _firstNameCtrl.text.trim(),
-          'last_name': _lastNameCtrl.text.trim(),
-          'bio': _bioCtrl.text.trim(),
-          'phone': _phoneCtrl.text.trim(),
-          'gender': _selectedGender,
-          'date_of_birth': _dobCtrl.text.trim(),
-        },
-      );
+      final fields = <String, dynamic>{};
+      if (_firstNameCtrl.text.trim().isNotEmpty) {
+        fields['first_name'] = _firstNameCtrl.text.trim();
+      }
+      if (_lastNameCtrl.text.trim().isNotEmpty) {
+        fields['last_name'] = _lastNameCtrl.text.trim();
+      }
+      if (_bioCtrl.text.trim().isNotEmpty) {
+        fields['biography'] = _bioCtrl.text.trim();
+      }
+      if (_phoneCtrl.text.trim().isNotEmpty) {
+        fields['phone_number'] = _phoneCtrl.text.trim();
+      }
+      if (_selectedGender != null) {
+        fields['gender'] = _selectedGender;
+      }
+      if (_dobCtrl.text.trim().isNotEmpty) {
+        fields['date_of_birth'] = _dobCtrl.text.trim();
+      }
+      final response = await dio.patch('/api/v1/profiles/me/', data: fields);
 
       if (mounted) {
         // Refresh user data in provider.
