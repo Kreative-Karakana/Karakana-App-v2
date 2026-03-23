@@ -19,6 +19,7 @@ import '../../features/splash/splash_screen.dart';
 import '../../features/courses/screens/wishlist_screen.dart';
 import '../../features/payments/screens/payment_history_screen.dart';
 import '../../features/payments/screens/wallet_screen.dart';
+import '../../features/support/screens/new_ticket_screen.dart';
 import '../../features/support/screens/support_screen.dart';
 
 // ─────────────────────────────────────────────
@@ -47,6 +48,8 @@ class AppRoutes {
   static const String paymentSuccess = '/payment-success';
   static const String enrolledCourses = '/enrolled-courses';
   static const String support = '/support';
+  static const String supportNew = '/support/new';
+  static const String supportDetail = '/support/:ticketId';
   static const String wallet = '/wallet';
   static const String wishlist = '/wishlist';
   static const String paymentHistory = '/payment-history';
@@ -204,6 +207,21 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.paymentHistory,
           builder: (context, state) => const PaymentHistoryScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.supportNew,
+          builder: (context, state) => const NewTicketScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.supportDetail,
+          builder: (context, state) {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('Ticket Details'),
+              ),
+              body: const Center(child: Text('Coming soon')),
+            );
+          },
         ),
       ],
     );
