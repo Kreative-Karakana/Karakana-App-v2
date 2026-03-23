@@ -171,10 +171,29 @@ class _Header extends StatelessWidget {
   final VoidCallback onNotifications;
   final VoidCallback onSearch;
 
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour >= 5 && hour < 12) return 'Good Morning';
+    if (hour >= 12 && hour < 17) return 'Good Afternoon';
+    if (hour >= 17 && hour < 21) return 'Good Evening';
+    return 'Good Night';
+  }
+
+  String _getGreetingEmoji() {
+    final hour = DateTime.now().hour;
+    if (hour >= 5 && hour < 12) return '☀️';
+    if (hour >= 12 && hour < 17) return '👋';
+    if (hour >= 17 && hour < 21) return '🌆';
+    return '🌙';
+  }
+
   @override
   Widget build(BuildContext context) {
     final avatar = auth.userAvatar;
     final hasAvatar = avatar != null && avatar.isNotEmpty;
+    final firstLetter = auth.userFullName.isNotEmpty
+        ? auth.userFullName[0].toUpperCase()
+        : 'K';
 
     return Container(
       decoration: const BoxDecoration(
@@ -190,57 +209,102 @@ class _Header extends StatelessWidget {
         children: [
           // ── Name row ──────────────────────────────
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Left: greeting + name + subtitle
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Good morning 👋',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontSize: 13,
-                        fontFamily: 'Inter',
+                    Row(
+                      children: [
+                        Text(
+                          _getGreeting(),
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.75),
+                            fontSize: 13,
+                            fontFamily: 'Inter',
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          _getGreetingEmoji(),
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Hello, ',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.85),
+                              fontSize: 22,
+                              fontFamily: 'Inter',
+                            ),
+                          ),
+                          TextSpan(
+                            text: '${auth.userFullName} 👋',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      auth.userFullName,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins',
+                      'What will you learn today?',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.6),
+                        fontSize: 12,
+                        fontFamily: 'Inter',
                       ),
                     ),
                   ],
                 ),
               ),
-              Row(
+              // Right: notifications + avatar
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  IconButton(
-                    onPressed: onNotifications,
-                    icon: const Icon(
-                      Icons.notifications_outlined,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundColor: AppColors.primary,
-                    backgroundImage:
-                        hasAvatar ? CachedNetworkImageProvider(avatar) : null,
-                    child: hasAvatar
-                        ? null
-                        : const Text(
-                            'K',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: onNotifications,
+                        icon: const Icon(
+                          Icons.notifications_outlined,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      GestureDetector(
+                        onTap: () => context.push('/profile'),
+                        child: CircleAvatar(
+                          radius: 19,
+                          backgroundColor: AppColors.primary,
+                          backgroundImage: hasAvatar
+                              ? CachedNetworkImageProvider(avatar)
+                              : null,
+                          child: hasAvatar
+                              ? null
+                              : Text(
+                                  firstLetter,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
