@@ -10,9 +10,6 @@ import '../../../core/theme/app_theme.dart';
 import '../models/course_model.dart';
 import '../providers/course_provider.dart';
 
-/// Full course detail screen — description, curriculum, reviews, and enrolment.
-///
-/// Navigate to this screen by pushing `/courses/:id` with [courseId].
 class CourseDetailScreen extends StatefulWidget {
   const CourseDetailScreen({super.key, required this.courseId});
 
@@ -59,10 +56,10 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
         }
 
         return Scaffold(
-          backgroundColor: AppColors.white,
+          backgroundColor: const Color(0xFFF5F5F5),
           body: CustomScrollView(
             slivers: [
-              // ── Hero app bar ──────────────────────────
+              // ── Hero app bar (unchanged) ──────────
               _CourseAppBar(
                 course: course,
                 onWishlistTap: () => provider.toggleWishlist(course.id),
@@ -70,11 +67,12 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
 
               SliverList(
                 delegate: SliverChildListDelegate([
-                  // ── Header (title, rating, trainer) ───
-                  _CourseHeader(course: course),
-                  const Divider(height: 1),
+                  const SizedBox(height: 12),
 
-                  // ── Price & enrol action ──────────────
+                  // ── Course header card ────────────
+                  _CourseHeaderCard(course: course),
+
+                  // ── Price & enrol action ──────────
                   _EnrolSection(
                     course: course,
                     onEnrollFree: () async {
@@ -98,22 +96,20 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     onContinueLearning: () =>
                         context.push('/enrolled-courses'),
                   ),
-                  const Divider(height: 1),
 
-                  // ── About ─────────────────────────────
+                  // ── About ─────────────────────────
                   _AboutSection(course: course),
 
-                  // ── Curriculum ────────────────────────
+                  // ── Curriculum ────────────────────
                   _CurriculumSection(
                     course: course,
                     sections: provider.sections,
                     isLoading: provider.isLoadingSections,
                   ),
 
-                  // ── Reviews ───────────────────────────
+                  // ── Reviews ───────────────────────
                   _ReviewsSection(reviews: provider.reviews),
 
-                  // Bottom clearance so content doesn't hide behind nav bar.
                   const SizedBox(height: 80),
                 ]),
               ),
@@ -126,7 +122,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
 }
 
 // ─────────────────────────────────────────────
-// Sliver app bar (hero thumbnail)
+// Sliver app bar (hero thumbnail — unchanged)
 // ─────────────────────────────────────────────
 
 class _CourseAppBar extends StatelessWidget {
@@ -155,7 +151,6 @@ class _CourseAppBar extends StatelessWidget {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            // Thumbnail image
             if (course.thumbnail != null && course.thumbnail!.isNotEmpty)
               CachedNetworkImage(
                 imageUrl: course.thumbnail!,
@@ -166,8 +161,6 @@ class _CourseAppBar extends StatelessWidget {
               )
             else
               Container(color: AppColors.dark),
-
-            // Dark gradient overlay for legibility
             DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -185,11 +178,51 @@ class _CourseAppBar extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────
-// Course header
+// Section header (shared style)
 // ─────────────────────────────────────────────
 
-class _CourseHeader extends StatelessWidget {
-  const _CourseHeader({required this.course});
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.title);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              color: AppColors.dark,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Poppins',
+            ),
+          ),
+          const SizedBox(height: 4),
+          Container(
+            width: 40,
+            height: 3,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// Course header card
+// ─────────────────────────────────────────────
+
+class _CourseHeaderCard extends StatelessWidget {
+  const _CourseHeaderCard({required this.course});
 
   final CourseModel course;
 
@@ -197,23 +230,33 @@ class _CourseHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final level = _formatLevel(course.level);
 
-    return Padding(
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.07),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title
           Text(
             course.title,
             style: TextStyle(
               color: AppColors.dark,
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
               fontFamily: 'Poppins',
             ),
           ),
-
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
 
           // Rating + level
           Row(
@@ -222,11 +265,15 @@ class _CourseHeader extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 course.averageRating.toStringAsFixed(1),
-                style: TextStyle(color: AppColors.grey, fontSize: 13),
+                style: TextStyle(
+                  color: AppColors.dark,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(width: 4),
               Text(
-                '(${course.reviewsCount})',
+                '(${course.reviewsCount} reviews)',
                 style: TextStyle(color: AppColors.grey, fontSize: 12),
               ),
               const Spacer(),
@@ -237,13 +284,13 @@ class _CourseHeader extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.lightOrange,
-                    borderRadius: BorderRadius.circular(6),
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     level,
-                    style: TextStyle(
-                      color: AppColors.primary,
+                    style: const TextStyle(
+                      color: Colors.white,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
@@ -251,10 +298,9 @@ class _CourseHeader extends StatelessWidget {
                 ),
             ],
           ),
+          const SizedBox(height: 10),
 
-          const SizedBox(height: 8),
-
-          // Trainer + students count
+          // Trainer + students
           Row(
             children: [
               CircleAvatar(
@@ -283,7 +329,6 @@ class _CourseHeader extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(width: 8),
               Icon(Icons.people_outline, size: 14, color: AppColors.grey),
               const SizedBox(width: 4),
               Text(
@@ -292,21 +337,6 @@ class _CourseHeader extends StatelessWidget {
               ),
             ],
           ),
-
-          const SizedBox(height: 12),
-
-          // Excerpt
-          Text(
-            course.excerpt,
-            style: TextStyle(
-              color: AppColors.grey,
-              fontSize: 14,
-              fontFamily: 'Inter',
-              height: 1.5,
-            ),
-          ),
-
-          const SizedBox(height: 16),
         ],
       ),
     );
@@ -332,60 +362,90 @@ class _EnrolSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.lightOrange,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Row(
         children: [
-          // Price display
-          Text(
-            course.isFree ? 'Free' : _formatPrice(course.price),
-            style: TextStyle(
-              color: course.isFree ? AppColors.primary : AppColors.dark,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Poppins',
-            ),
-          ),
-
-          const Spacer(),
-
-          // Action button
-          if (course.isEnrolled)
-            ElevatedButton(
-              onPressed: onContinueLearning,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green.shade600,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(0, 44),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Course Price',
+                style: TextStyle(
+                  color: AppColors.grey,
+                  fontSize: 12,
+                  fontFamily: 'Inter',
                 ),
               ),
-              child: const Text('Continue Learning'),
+              const SizedBox(height: 2),
+              Text(
+                course.isFree ? 'Free' : _formatPrice(course.price),
+                style: TextStyle(
+                  color: AppColors.dark,
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          if (course.isEnrolled)
+            _EnrollButton(
+              label: 'Continue Learning',
+              color: Colors.green.shade600,
+              onPressed: onContinueLearning,
             )
           else if (course.isFree)
-            ElevatedButton(
+            _EnrollButton(
+              label: 'Enroll Free',
+              color: AppColors.primary,
               onPressed: onEnrollFree,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(0, 44),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: const Text('Enroll Free'),
             )
           else
-            ElevatedButton(
+            _EnrollButton(
+              label: 'Pay to Enroll',
+              color: AppColors.dark,
               onPressed: onPayToEnroll,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(0, 44),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: const Text('Pay to Enroll'),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _EnrollButton extends StatelessWidget {
+  const _EnrollButton({
+    required this.label,
+    required this.color,
+    required this.onPressed,
+  });
+
+  final String label;
+  final Color color;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        foregroundColor: Colors.white,
+        minimumSize: const Size(0, 46),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 0,
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -402,32 +462,38 @@ class _AboutSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'About This Course',
-            style: TextStyle(
-              color: AppColors.dark,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Poppins',
-            ),
+    final description = _parseDescription(course.description);
+    if (description.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _SectionTitle('About This Course'),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            _parseDescription(course.description),
+          child: Text(
+            description,
             style: TextStyle(
               color: AppColors.grey,
               fontSize: 14,
               fontFamily: 'Inter',
-              height: 1.5,
+              height: 1.6,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -449,115 +515,142 @@ class _CurriculumSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Curriculum',
-            style: TextStyle(
-              color: AppColors.dark,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Poppins',
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _SectionTitle('Curriculum'),
+
+        if (course.isEnrolled) ...[
+          if (isLoading)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: CircularProgressIndicator(color: AppColors.primary),
+              ),
+            )
+          else if (sections.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'No curriculum available',
+                style: TextStyle(color: AppColors.grey),
+              ),
+            )
+          else
+            ...sections.asMap().entries.map(
+              (entry) => _SectionTile(
+                section: entry.value,
+                index: entry.key + 1,
+              ),
+            ),
+        ] else ...[
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColors.lightOrange,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.lock_outline_rounded,
+                  color: AppColors.primary,
+                  size: 32,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Enroll to Access Curriculum',
+                        style: TextStyle(
+                          color: AppColors.dark,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Purchase this course to unlock all sections and lessons',
+                        style: TextStyle(
+                          color: AppColors.grey,
+                          fontSize: 12,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 8),
-
-          if (course.isEnrolled) ...[
-            if (isLoading)
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                ),
-              )
-            else if (sections.isEmpty)
-              Center(
-                child: Text(
-                  'No curriculum available',
-                  style: TextStyle(color: AppColors.grey),
-                ),
-              )
-            else
-              ...sections.map((section) => _SectionTile(section: section)),
-          ] else ...[
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppColors.lightOrange,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.lock_outline_rounded,
-                    color: AppColors.primary,
-                    size: 32,
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Enroll to Access Curriculum',
-                          style: TextStyle(
-                            color: AppColors.dark,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Purchase this course to unlock all sections and lessons',
-                          style: TextStyle(
-                            color: AppColors.grey,
-                            fontSize: 12,
-                            height: 1.4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ],
-      ),
+      ],
     );
   }
 }
 
 class _SectionTile extends StatelessWidget {
-  const _SectionTile({required this.section});
+  const _SectionTile({required this.section, required this.index});
 
   final SectionModel section;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      // Remove default leading icon indentation from ExpansionTile.
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-      child: ExpansionTile(
-        tilePadding: EdgeInsets.zero,
-        childrenPadding: EdgeInsets.zero,
-        title: Text(
-          section.title,
-          style: TextStyle(
-            color: AppColors.dark,
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            fontFamily: 'Poppins',
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
           ),
+        ],
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          tilePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+          childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+          leading: Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: AppColors.lightOrange,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text(
+                '$index',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          title: Text(
+            section.title,
+            style: TextStyle(
+              color: AppColors.dark,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Poppins',
+            ),
+          ),
+          subtitle: Text(
+            '${section.lessons.length} lessons',
+            style: TextStyle(color: AppColors.grey, fontSize: 12),
+          ),
+          children: section.lessons.map((l) => _LessonRow(lesson: l)).toList(),
         ),
-        subtitle: Text(
-          '${section.lessons.length} lessons',
-          style: TextStyle(color: AppColors.grey, fontSize: 12),
-        ),
-        children: section.lessons.map((l) => _LessonRow(lesson: l)).toList(),
       ),
     );
   }
@@ -614,40 +707,28 @@ class _ReviewsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Show at most 3 reviews to keep the screen manageable.
     final displayed = reviews.take(3).toList();
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Reviews',
-            style: TextStyle(
-              color: AppColors.dark,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Poppins',
-            ),
-          ),
-          const SizedBox(height: 8),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _SectionTitle('Reviews'),
 
-          if (displayed.isEmpty)
-            Center(
-              child: Text(
-                'No reviews yet',
-                style: TextStyle(
-                  color: AppColors.grey,
-                  fontSize: 14,
-                  fontFamily: 'Inter',
-                ),
+        if (displayed.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'No reviews yet',
+              style: TextStyle(
+                color: AppColors.grey,
+                fontSize: 14,
+                fontFamily: 'Inter',
               ),
-            )
-          else
-            ...displayed.map((r) => _ReviewCard(review: r)),
-        ],
-      ),
+            ),
+          )
+        else
+          ...displayed.map((r) => _ReviewCard(review: r)),
+      ],
     );
   }
 }
@@ -659,107 +740,139 @@ class _ReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Reviewer row
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: AppColors.lightOrange,
-                  backgroundImage:
-                      review.userAvatar != null && review.userAvatar!.isNotEmpty
-                      ? CachedNetworkImageProvider(review.userAvatar!)
-                      : null,
-                  child:
-                      (review.userAvatar == null || review.userAvatar!.isEmpty)
-                      ? Icon(Icons.person, size: 16, color: AppColors.primary)
-                      : null,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    review.userName,
-                    style: TextStyle(
-                      color: AppColors.dark,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                // Star rating
-                Row(
-                  children: List.generate(
-                    5,
-                    (i) => Icon(
-                      Icons.star_rounded,
-                      size: 14,
-                      color: i < review.rating ? Colors.amber : AppColors.grey,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 8),
-
-            // Review content
-            Text(
-              review.content,
-              style: TextStyle(
-                color: AppColors.grey,
-                fontSize: 13,
-                fontFamily: 'Inter',
-                height: 1.4,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Reviewer row: avatar + name + stars + date
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: AppColors.lightOrange,
+                backgroundImage:
+                    review.userAvatar != null && review.userAvatar!.isNotEmpty
+                    ? CachedNetworkImageProvider(review.userAvatar!)
+                    : null,
+                child:
+                    (review.userAvatar == null || review.userAvatar!.isEmpty)
+                    ? Icon(Icons.person, size: 18, color: AppColors.primary)
+                    : null,
               ),
-            ),
-
-            // Trainer reply
-            if (review.trainerReply != null &&
-                review.trainerReply!.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.lightOrange,
-                  borderRadius: BorderRadius.circular(8),
-                ),
+              const SizedBox(width: 10),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Trainer reply',
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      review.trainerReply!,
+                      review.userName,
                       style: TextStyle(
                         color: AppColors.dark,
-                        fontSize: 12,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
                         fontFamily: 'Inter',
-                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: List.generate(
+                        5,
+                        (i) => Icon(
+                          Icons.star_rounded,
+                          size: 13,
+                          color: i < review.rating
+                              ? Colors.amber
+                              : AppColors.grey.withValues(alpha: 0.4),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
+              if (review.createdAt.isNotEmpty)
+                Text(
+                  _formatDate(review.createdAt),
+                  style: TextStyle(
+                    color: AppColors.grey,
+                    fontSize: 11,
+                    fontFamily: 'Inter',
+                  ),
+                ),
             ],
+          ),
+          const SizedBox(height: 10),
+
+          // Review content
+          Text(
+            review.content,
+            style: TextStyle(
+              color: AppColors.grey,
+              fontSize: 13,
+              fontFamily: 'Inter',
+              height: 1.5,
+            ),
+          ),
+
+          // Trainer reply
+          if (review.trainerReply != null &&
+              review.trainerReply!.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.lightOrange,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Trainer reply',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    review.trainerReply!,
+                    style: TextStyle(
+                      color: AppColors.dark,
+                      fontSize: 12,
+                      fontFamily: 'Inter',
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
-        ),
+        ],
       ),
     );
+  }
+
+  String _formatDate(String isoString) {
+    try {
+      final dt = DateTime.parse(isoString).toLocal();
+      return '${dt.day}/${dt.month}/${dt.year}';
+    } catch (_) {
+      return '';
+    }
   }
 }
 

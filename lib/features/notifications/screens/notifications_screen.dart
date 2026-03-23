@@ -55,7 +55,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: const Color(0xFFF5F5F5),
       appBar: AppBar(
         backgroundColor: AppColors.white,
         elevation: 0,
@@ -70,6 +70,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             fontFamily: 'Poppins',
           ),
         ),
+        actions: [
+          TextButton(
+            onPressed: _notifications.isEmpty ? null : () {},
+            child: Text(
+              'Mark all read',
+              style: TextStyle(
+                color: AppColors.primary,
+                fontSize: 13,
+                fontFamily: 'Inter',
+              ),
+            ),
+          ),
+        ],
       ),
       body: _buildBody(),
     );
@@ -99,6 +112,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _fetch,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: AppColors.white,
+                ),
                 child: const Text('Retry'),
               ),
             ],
@@ -112,19 +129,36 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.notifications_none_rounded,
-              size: 64,
-              color: AppColors.grey,
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: AppColors.lightOrange,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Icon(
+                Icons.notifications_none_rounded,
+                size: 48,
+                color: AppColors.primary,
+              ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             Text(
-              'No notifications yet',
+              'All caught up!',
               style: TextStyle(
                 color: AppColors.dark,
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Poppins',
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'No new notifications',
+              style: TextStyle(
+                color: AppColors.grey,
+                fontSize: 14,
+                fontFamily: 'Inter',
               ),
             ),
           ],
@@ -135,10 +169,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     return RefreshIndicator(
       color: AppColors.primary,
       onRefresh: _fetch,
-      child: ListView.separated(
+      child: ListView.builder(
         padding: const EdgeInsets.symmetric(vertical: 8),
         itemCount: _notifications.length,
-        separatorBuilder: (_, _) => const Divider(height: 1),
         itemBuilder: (context, i) {
           final n = _notifications[i];
           final isRead = n['is_read'] as bool? ?? true;
@@ -147,61 +180,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           final message = n['message']?.toString() ?? '';
           final createdAt = n['created_at']?.toString() ?? '';
 
-          return Container(
-            color: isRead ? null : AppColors.lightOrange.withValues(alpha: 0.4),
-            child: ListTile(
-              leading: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (!isRead)
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  if (!isRead) const SizedBox(width: 6),
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: AppColors.lightOrange,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      _iconForType(type),
-                      color: AppColors.primary,
-                      size: 20,
-                    ),
-                  ),
-                ],
-              ),
-              title: Text(
-                title,
-                style: TextStyle(
-                  color: AppColors.dark,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-              subtitle: Text(
-                message,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: AppColors.grey,
-                  fontSize: 12,
-                  fontFamily: 'Inter',
-                ),
-              ),
-              trailing: Text(
-                _timeAgo(createdAt),
-                style: TextStyle(color: AppColors.grey, fontSize: 11),
-              ),
-            ),
+          return _NotificationItem(
+            title: title,
+            message: message,
+            timeAgo: _timeAgo(createdAt),
+            icon: _iconForType(type),
+            isRead: isRead,
           );
         },
       ),
@@ -219,7 +203,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       case 'course':
         return Icons.play_circle_outline;
       default:
-        return Icons.notifications_outlined;
+        return Icons.notifications_rounded;
     }
   }
 
@@ -236,5 +220,115 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     } catch (_) {
       return '';
     }
+  }
+}
+
+// ─────────────────────────────────────────────
+// Notification item
+// ─────────────────────────────────────────────
+
+class _NotificationItem extends StatelessWidget {
+  const _NotificationItem({
+    required this.title,
+    required this.message,
+    required this.timeAgo,
+    required this.icon,
+    required this.isRead,
+  });
+
+  final String title;
+  final String message;
+  final String timeAgo;
+  final IconData icon;
+  final bool isRead;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Icon container
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.lightOrange,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: AppColors.primary, size: 22),
+          ),
+          const SizedBox(width: 12),
+
+          // Content
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: AppColors.dark,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Poppins',
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  message,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: AppColors.grey,
+                    fontSize: 12,
+                    fontFamily: 'Inter',
+                    height: 1.4,
+                  ),
+                ),
+                if (timeAgo.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    timeAgo,
+                    style: TextStyle(
+                      color: AppColors.grey,
+                      fontSize: 10,
+                      fontFamily: 'Inter',
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+
+          // Unread dot
+          if (!isRead) ...[
+            const SizedBox(width: 8),
+            Container(
+              width: 8,
+              height: 8,
+              margin: const EdgeInsets.only(top: 4),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 }

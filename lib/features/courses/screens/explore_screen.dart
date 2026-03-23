@@ -6,7 +6,6 @@ import '../../../core/theme/app_theme.dart';
 import '../../../widgets/course_card.dart';
 import '../providers/course_provider.dart';
 
-/// Explore tab — search, filter by category, and browse all courses.
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
 
@@ -43,26 +42,42 @@ class _ExploreScreenState extends State<ExploreScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        automaticallyImplyLeading: false,
-        title: Text(
-          'Explore',
-          style: TextStyle(
-            color: AppColors.dark,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Poppins',
-          ),
-        ),
-      ),
       body: Consumer<CourseProvider>(
         builder: (context, provider, _) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // ── Custom header ──────────────────────
+              SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Explore',
+                        style: TextStyle(
+                          color: AppColors.dark,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Find your next course',
+                        style: TextStyle(
+                          color: AppColors.grey,
+                          fontSize: 13,
+                          fontFamily: 'Inter',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
               // ── Search bar ─────────────────────────
               _SearchBar(
                 controller: _searchController,
@@ -72,114 +87,50 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
               // ── Category chips ──────────────────────
               if (provider.categories.isNotEmpty)
-                Consumer<CourseProvider>(
-                  builder: (context, courseProvider, _) {
-                    return SizedBox(
-                      height: 44,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        children: [
-                          // All chip
-                          GestureDetector(
-                            onTap: () {
-                              setState(() => _selectedCategoryName = null);
-                              context
-                                  .read<CourseProvider>()
-                                  .filterByCategory(null);
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(right: 8),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: _selectedCategoryName == null
-                                    ? AppColors.primary
-                                    : Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: _selectedCategoryName == null
-                                      ? AppColors.primary
-                                      : AppColors.lightOrange,
-                                  width: 1.5,
-                                ),
-                              ),
-                              child: Text(
-                                'All',
-                                style: TextStyle(
-                                  color: _selectedCategoryName == null
-                                      ? Colors.white
-                                      : AppColors.dark,
-                                  fontSize: 13,
-                                  fontWeight: _selectedCategoryName == null
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                ),
-                              ),
-                            ),
-                          ),
-                          // Category chips
-                          ...courseProvider.categories.map((category) {
-                            final isSelected =
-                                _selectedCategoryName == category.name;
-                            return GestureDetector(
-                              onTap: () {
-                                setState(
-                                  () =>
-                                      _selectedCategoryName = category.name,
-                                );
-                                context
-                                    .read<CourseProvider>()
-                                    .filterByCategory(category.name);
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.only(right: 8),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppColors.primary
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? AppColors.primary
-                                        : AppColors.lightOrange,
-                                    width: 1.5,
-                                  ),
-                                ),
-                                child: Text(
-                                  category.name,
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Colors.white
-                                        : AppColors.dark,
-                                    fontSize: 13,
-                                    fontWeight: isSelected
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                        ],
+                SizedBox(
+                  height: 40,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    children: [
+                      _CategoryChip(
+                        label: 'All',
+                        isSelected: _selectedCategoryName == null,
+                        onTap: () {
+                          setState(() => _selectedCategoryName = null);
+                          context.read<CourseProvider>().filterByCategory(null);
+                        },
                       ),
-                    );
-                  },
+                      ...provider.categories.map((category) {
+                        final isSelected =
+                            _selectedCategoryName == category.name;
+                        return _CategoryChip(
+                          label: category.name,
+                          isSelected: isSelected,
+                          onTap: () {
+                            setState(
+                              () => _selectedCategoryName = category.name,
+                            );
+                            context
+                                .read<CourseProvider>()
+                                .filterByCategory(category.name);
+                          },
+                        );
+                      }),
+                    ],
+                  ),
                 ),
 
               // ── Results count ───────────────────────
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: Row(
                   children: [
                     Container(
-                      width: 4,
+                      width: 3,
                       height: 16,
                       decoration: BoxDecoration(
                         color: AppColors.primary,
@@ -188,18 +139,19 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '${provider.courses.length} courses found',
+                      '${provider.courses.length} courses',
                       style: TextStyle(
                         color: AppColors.dark,
                         fontSize: 13,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins',
                       ),
                     ),
                     if (provider.selectedCategoryName != null) ...[
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                          horizontal: 10,
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
@@ -231,6 +183,58 @@ class _ExploreScreenState extends State<ExploreScreen> {
 }
 
 // ─────────────────────────────────────────────
+// Category chip
+// ─────────────────────────────────────────────
+
+class _CategoryChip extends StatelessWidget {
+  const _CategoryChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary : AppColors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.lightOrange,
+            width: 1.5,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : AppColors.dark,
+            fontSize: 13,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
 // Search bar
 // ─────────────────────────────────────────────
 
@@ -247,23 +251,47 @@ class _SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: TextField(
-        controller: controller,
-        onChanged: onChanged,
-        style: TextStyle(color: AppColors.dark, fontSize: 14),
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: AppColors.lightGrey,
-          hintText: 'Search courses...',
-          hintStyle: TextStyle(
-            color: AppColors.grey,
-            fontSize: 14,
-            fontFamily: 'Inter',
+    return Container(
+      height: 50,
+      margin: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
-          prefixIcon: Icon(Icons.search_rounded, color: AppColors.grey),
-          suffixIcon: ListenableBuilder(
+        ],
+      ),
+      child: Row(
+        children: [
+          const SizedBox(width: 14),
+          Icon(Icons.search_rounded, color: AppColors.grey, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              controller: controller,
+              onChanged: onChanged,
+              style: TextStyle(
+                color: AppColors.dark,
+                fontSize: 14,
+                fontFamily: 'Inter',
+              ),
+              decoration: InputDecoration(
+                hintText: 'Search courses...',
+                hintStyle: TextStyle(
+                  color: AppColors.grey,
+                  fontSize: 14,
+                  fontFamily: 'Inter',
+                ),
+                border: InputBorder.none,
+                isDense: true,
+              ),
+            ),
+          ),
+          ListenableBuilder(
             listenable: controller,
             builder: (_, _) {
               return controller.text.isNotEmpty
@@ -274,25 +302,11 @@ class _SearchBar extends StatelessWidget {
                   : const SizedBox.shrink();
             },
           ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.primary, width: 1.5),
-          ),
-          contentPadding: const EdgeInsets.symmetric(vertical: 14),
-        ),
+        ],
       ),
     );
   }
 }
-
 
 // ─────────────────────────────────────────────
 // Course list body
@@ -303,36 +317,37 @@ class _CourseListBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final courseProvider = context.watch<CourseProvider>();
+    final provider = context.watch<CourseProvider>();
 
-    if (courseProvider.isLoading) {
-      return Center(child: CircularProgressIndicator(color: AppColors.primary));
-    }
-
-    if (courseProvider.errorMessage != null) {
-      return _ErrorView(
-        message: courseProvider.errorMessage!,
-        onRetry: () => courseProvider.loadCourses(),
+    if (provider.isLoading) {
+      return Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
       );
     }
 
-    if (courseProvider.courses.isEmpty) {
+    if (provider.errorMessage != null) {
+      return _ErrorView(
+        message: provider.errorMessage!,
+        onRetry: () => provider.loadCourses(),
+      );
+    }
+
+    if (provider.courses.isEmpty) {
       return const _EmptyView();
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
-      ).copyWith(bottom: 16),
-      itemCount: courseProvider.courses.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 12),
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+      itemCount: provider.courses.length,
       itemBuilder: (context, i) {
-        final course = courseProvider.courses[i];
-        return CourseCard(
-          course: course,
-          onTap: () => context.push('/courses/${course.id}'),
-          onWishlistTap: () => courseProvider.toggleWishlist(course.id),
+        final course = provider.courses[i];
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: CourseCard(
+            course: course,
+            onTap: () => context.push('/courses/${course.id}'),
+            onWishlistTap: () => provider.toggleWishlist(course.id),
+          ),
         );
       },
     );
@@ -354,8 +369,20 @@ class _EmptyView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.search_off_rounded, size: 64, color: AppColors.grey),
-            const SizedBox(height: 16),
+            Container(
+              width: 90,
+              height: 90,
+              decoration: BoxDecoration(
+                color: AppColors.lightOrange,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Icon(
+                Icons.search_off_rounded,
+                size: 44,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 20),
             Text(
               'No courses found',
               style: TextStyle(
@@ -408,11 +435,17 @@ class _ErrorView extends StatelessWidget {
               style: TextStyle(color: AppColors.grey, fontSize: 14),
             ),
             const SizedBox(height: 24),
-            ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
+            ElevatedButton(
+              onPressed: onRetry,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.white,
+              ),
+              child: const Text('Retry'),
+            ),
           ],
         ),
       ),
     );
   }
 }
-
