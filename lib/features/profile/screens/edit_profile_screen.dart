@@ -95,7 +95,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (_dobCtrl.text.trim().isNotEmpty) {
         fields['date_of_birth'] = _dobCtrl.text.trim();
       }
-      final response = await dio.patch('/api/v1/profiles/me/', data: fields);
+      final userId = context.read<AuthProvider>().user?['id'];
+      if (userId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Unable to update profile, please try again'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+        setState(() => _isSaving = false);
+        return;
+      }
+      final response = await dio.patch('/api/v1/profiles/$userId/', data: fields);
 
       if (mounted) {
         // Refresh user data in provider.
