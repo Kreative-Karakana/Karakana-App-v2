@@ -472,23 +472,6 @@ class _BannerCard extends StatelessWidget {
               ),
             ),
           ),
-
-          Positioned(
-            left: 16,
-            right: 16,
-            bottom: 12,
-            child: Text(
-              banner.title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Poppins',
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
         ],
       ),
     );

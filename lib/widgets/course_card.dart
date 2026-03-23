@@ -26,13 +26,15 @@ class CourseCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _ImageSection(course: course, onWishlistTap: onWishlistTap),
-            _InfoSection(course: course),
-          ],
+        child: IntrinsicHeight(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _ImageSection(course: course, onWishlistTap: onWishlistTap),
+              _InfoSection(course: course),
+            ],
+          ),
         ),
       ),
     );
@@ -214,7 +216,7 @@ class _InfoSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(8),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,41 +224,41 @@ class _InfoSection extends StatelessWidget {
           Text(
             course.title,
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 12,
               fontWeight: FontWeight.bold,
               color: AppColors.dark,
             ),
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
           Row(
             children: [
-              Icon(Icons.person_outline, size: 12, color: AppColors.grey),
+              Icon(Icons.person_outline, size: 10, color: AppColors.grey),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
                   course.trainerName,
-                  style: TextStyle(fontSize: 11, color: AppColors.grey),
+                  style: TextStyle(fontSize: 10, color: AppColors.grey),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Row(
             children: [
-              Icon(Icons.star_rounded, color: Colors.amber, size: 12),
+              Icon(Icons.star_rounded, color: Colors.amber, size: 10),
               const SizedBox(width: 2),
               Text(
                 course.averageRating.toStringAsFixed(1),
-                style: TextStyle(fontSize: 11, color: AppColors.grey),
+                style: TextStyle(fontSize: 10, color: AppColors.grey),
               ),
               const SizedBox(width: 4),
               Text(
                 '(${course.reviewsCount})',
-                style: TextStyle(fontSize: 11, color: AppColors.grey),
+                style: TextStyle(fontSize: 10, color: AppColors.grey),
               ),
               const Spacer(),
               if (course.level.isNotEmpty)
@@ -280,11 +282,11 @@ class _InfoSection extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text(
             course.isFree ? 'Free' : _formatPrice(course.price),
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.bold,
               color: course.isFree ? AppColors.primary : AppColors.dark,
             ),
