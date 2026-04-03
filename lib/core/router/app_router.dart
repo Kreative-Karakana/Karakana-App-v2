@@ -1,225 +1,207 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../features/auth/providers/auth_provider.dart';
-import '../../features/auth/screens/forgot_password_screen.dart';
-import '../../features/auth/screens/login_screen.dart';
-import '../../features/auth/screens/signup_screen.dart';
-import '../../features/auth/screens/verify_email_screen.dart';
-import '../../features/courses/screens/course_detail_screen.dart';
-import '../../features/courses/screens/enrolled_courses_screen.dart';
-import '../../features/home/screens/main_screen.dart';
-import '../../features/notifications/screens/notifications_screen.dart';
-import '../../features/onboarding/screens/onboarding_screen.dart';
-import '../../features/payments/screens/payment_screen.dart';
-import '../../features/payments/screens/payment_success_screen.dart';
-import '../../features/profile/screens/edit_profile_screen.dart';
-import '../../features/profile/screens/profile_screen.dart';
-import '../../features/splash/splash_screen.dart';
-import '../../features/courses/screens/wishlist_screen.dart';
-import '../../features/payments/screens/payment_history_screen.dart';
-import '../../features/payments/screens/wallet_screen.dart';
-import '../../features/support/screens/new_ticket_screen.dart';
-import '../../features/support/screens/support_screen.dart';
-import '../../features/support/screens/ticket_detail_screen.dart';
 
-// ─────────────────────────────────────────────
-// Route path constants
-// ─────────────────────────────────────────────
-
-/// Named path constants for every route in the app.
-///
-/// Always use these constants instead of raw strings when navigating
-/// (e.g. `context.go(AppRoutes.home)`) so typos are caught at compile time.
 class AppRoutes {
-  AppRoutes._();
-
   static const String splash = '/';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String signup = '/signup';
-  static const String forgotPassword = '/forgot-password';
   static const String verifyEmail = '/verify-email';
+  static const String forgotPassword = '/forgot-password';
+  static const String biometric = '/biometric';
   static const String home = '/home';
-  static const String courseDetail = '/courses/:id';
-  static const String profile = '/profile';
-  static const String profileEdit = '/profile/edit';
-  static const String notifications = '/notifications';
+  static const String explore = '/explore';
+  static const String zana = '/zana';
+  static const String account = '/account';
+  static const String courseDetail = '/course/:id';
+  static const String classroom = '/course/:id/classroom';
+  static const String lesson = '/lesson/:id';
   static const String payment = '/payment/:courseId';
-  static const String paymentSuccess = '/payment-success';
-  static const String enrolledCourses = '/enrolled-courses';
+  static const String paymentSuccess = '/payment/success';
+  static const String paymentHistory = '/payment/history';
+  static const String wallet = '/wallet';
+  static const String profile = '/profile';
+  static const String editProfile = '/profile/edit';
+  static const String myCourses = '/my-courses';
+  static const String wishlist = '/wishlist';
+  static const String trainerApply = '/trainer/apply';
+  static const String trainerDashboard = '/trainer/dashboard';
+  static const String courseBuilder = '/trainer/course-builder';
+  static const String notifications = '/notifications';
   static const String support = '/support';
   static const String supportNew = '/support/new';
-  static const String supportDetail = '/support/:ticketId';
-  static const String wallet = '/wallet';
-  static const String wishlist = '/wishlist';
-  static const String paymentHistory = '/payment-history';
+  static const String supportDetail = '/support/:id';
 }
 
-// ─────────────────────────────────────────────
-// Router
-// ─────────────────────────────────────────────
+Widget _placeholder(String routeName) {
+  return Scaffold(
+    backgroundColor: Colors.white,
+    body: Center(
+      child: Text(
+        routeName,
+        style: const TextStyle(fontSize: 18, color: Colors.black54),
+      ),
+    ),
+  );
+}
 
-/// Builds and configures the [GoRouter] for the entire Karakana app.
-///
-/// Call [AppRouter.createRouter] once at the root of the widget tree,
-/// passing in the live [AuthProvider] so the router re-evaluates its
-/// redirect logic whenever authentication state changes.
 class AppRouter {
-  AppRouter._();
-
-  /// Creates and returns the configured [GoRouter].
-  ///
-  /// [authProvider] must be the same instance registered with
-  /// [ChangeNotifierProvider] at the app root so that [GoRouter.refreshListenable]
-  /// triggers a redirect check on every [notifyListeners] call.
   static GoRouter createRouter(AuthProvider authProvider) {
     return GoRouter(
       initialLocation: AppRoutes.splash,
-
-      // Re-evaluates the redirect whenever AuthProvider notifies listeners
-      // (e.g. after login, logout, or onboarding completion).
       refreshListenable: authProvider,
-
-      // ── Global redirect logic ──────────────────
-      redirect: (BuildContext context, GoRouterState state) {
-        final isAuthenticated = authProvider.isAuthenticated;
-        final isOnboardingComplete = authProvider.isOnboardingComplete;
+      redirect: (context, state) async {
+        final isAuth = authProvider.isAuthenticated;
+        final isOnboarded = authProvider.isOnboardingComplete;
         final location = state.matchedLocation;
 
-        // Allow the splash screen to render without any redirect so it can
-        // run its own initialization check before navigating.
+        final authRoutes = [
+          AppRoutes.login,
+          AppRoutes.signup,
+          AppRoutes.verifyEmail,
+          AppRoutes.forgotPassword,
+        ];
+
         if (location == AppRoutes.splash) return null;
 
-        // Onboarding must be completed before anything else, regardless of
-        // authentication status.
-        if (!isOnboardingComplete) {
-          return location == AppRoutes.onboarding ? null : AppRoutes.onboarding;
+        if (!isOnboarded && location != AppRoutes.onboarding) {
+          return AppRoutes.onboarding;
         }
 
-        // Authenticated users have no business on the auth screens.
-        final isOnAuthScreen =
-            location == AppRoutes.login ||
-            location == AppRoutes.signup ||
-            location == AppRoutes.forgotPassword ||
-            location == AppRoutes.verifyEmail ||
-            location == AppRoutes.onboarding;
-
-        if (isAuthenticated && isOnAuthScreen) {
-          return AppRoutes.home;
-        }
-
-        // Unauthenticated users may not access protected screens.
-        if (!isAuthenticated && location == AppRoutes.home) {
+        if (!isAuth && !authRoutes.contains(location)) {
           return AppRoutes.login;
         }
 
-        // No redirect needed — let the navigation proceed as requested.
+        if (isAuth && authRoutes.contains(location)) {
+          return AppRoutes.home;
+        }
+
         return null;
       },
-
-      // ── Route definitions ──────────────────────
       routes: [
         GoRoute(
           path: AppRoutes.splash,
-          builder: (context, state) => const SplashScreen(),
+          builder: (context, state) => _placeholder('Splash'),
         ),
         GoRoute(
           path: AppRoutes.onboarding,
-          builder: (context, state) => const OnboardingScreen(),
+          builder: (context, state) => _placeholder('Onboarding'),
         ),
         GoRoute(
           path: AppRoutes.login,
-          builder: (context, state) => const LoginScreen(),
+          builder: (context, state) => _placeholder('Login'),
         ),
         GoRoute(
           path: AppRoutes.signup,
-          builder: (context, state) => const SignupScreen(),
-        ),
-        GoRoute(
-          path: AppRoutes.forgotPassword,
-          builder: (context, state) => const ForgotPasswordScreen(),
+          builder: (context, state) => _placeholder('Signup'),
         ),
         GoRoute(
           path: AppRoutes.verifyEmail,
-          builder: (context, state) => const VerifyEmailScreen(),
+          builder: (context, state) => _placeholder('Verify Email'),
+        ),
+        GoRoute(
+          path: AppRoutes.forgotPassword,
+          builder: (context, state) => _placeholder('Forgot Password'),
+        ),
+        GoRoute(
+          path: AppRoutes.biometric,
+          builder: (context, state) => _placeholder('Biometric'),
         ),
         GoRoute(
           path: AppRoutes.home,
-          builder: (context, state) => const MainScreen(),
+          builder: (context, state) => _placeholder('Home'),
         ),
         GoRoute(
-          path: AppRoutes.courseDetail,
-          builder: (context, state) {
-            final id = int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
-            return CourseDetailScreen(courseId: id);
-          },
+          path: AppRoutes.explore,
+          builder: (context, state) => _placeholder('Explore'),
         ),
         GoRoute(
-          path: AppRoutes.profile,
-          builder: (context, state) => const ProfileScreen(),
+          path: AppRoutes.zana,
+          builder: (context, state) => _placeholder('Zana'),
         ),
         GoRoute(
-          path: AppRoutes.profileEdit,
-          builder: (context, state) => const EditProfileScreen(),
+          path: AppRoutes.account,
+          builder: (context, state) => _placeholder('Account'),
         ),
         GoRoute(
-          path: AppRoutes.notifications,
-          builder: (context, state) => const NotificationsScreen(),
+          path: '/course/:id',
+          builder: (context, state) =>
+              _placeholder('Course Detail: ${state.pathParameters['id']}'),
+          routes: [
+            GoRoute(
+              path: 'classroom',
+              builder: (context, state) =>
+                  _placeholder('Classroom: ${state.pathParameters['id']}'),
+            ),
+          ],
         ),
         GoRoute(
-          path: AppRoutes.payment,
-          builder: (context, state) {
-            final courseId =
-                int.tryParse(state.pathParameters['courseId'] ?? '') ?? 0;
-            final extra = state.extra as Map<String, dynamic>? ?? {};
-            return PaymentScreen(
-              courseId: courseId,
-              courseTitle: extra['title']?.toString() ?? '',
-              price: (extra['price'] as num?)?.toDouble() ?? 0.0,
-            );
-          },
+          path: '/lesson/:id',
+          builder: (context, state) =>
+              _placeholder('Lesson: ${state.pathParameters['id']}'),
         ),
         GoRoute(
-          path: AppRoutes.paymentSuccess,
-          builder: (context, state) {
-            final extra = state.extra as Map<String, dynamic>? ?? {};
-            return PaymentSuccessScreen(
-              courseTitle: extra['courseTitle']?.toString() ?? '',
-            );
-          },
+          path: '/payment/success',
+          builder: (context, state) => _placeholder('Payment Success'),
         ),
         GoRoute(
-          path: AppRoutes.enrolledCourses,
-          builder: (context, state) => const EnrolledCoursesScreen(),
+          path: '/payment/history',
+          builder: (context, state) => _placeholder('Payment History'),
         ),
         GoRoute(
-          path: AppRoutes.support,
-          builder: (context, state) => const SupportScreen(),
+          path: '/payment/:courseId',
+          builder: (context, state) =>
+              _placeholder('Payment: ${state.pathParameters['courseId']}'),
         ),
         GoRoute(
           path: AppRoutes.wallet,
-          builder: (context, state) => const WalletScreen(),
+          builder: (context, state) => _placeholder('Wallet'),
+        ),
+        GoRoute(
+          path: AppRoutes.profile,
+          builder: (context, state) => _placeholder('Profile'),
+        ),
+        GoRoute(
+          path: AppRoutes.editProfile,
+          builder: (context, state) => _placeholder('Edit Profile'),
+        ),
+        GoRoute(
+          path: AppRoutes.myCourses,
+          builder: (context, state) => _placeholder('My Courses'),
         ),
         GoRoute(
           path: AppRoutes.wishlist,
-          builder: (context, state) => const WishlistScreen(),
+          builder: (context, state) => _placeholder('Wishlist'),
         ),
         GoRoute(
-          path: AppRoutes.paymentHistory,
-          builder: (context, state) => const PaymentHistoryScreen(),
+          path: AppRoutes.trainerApply,
+          builder: (context, state) => _placeholder('Trainer Apply'),
+        ),
+        GoRoute(
+          path: AppRoutes.trainerDashboard,
+          builder: (context, state) => _placeholder('Trainer Dashboard'),
+        ),
+        GoRoute(
+          path: AppRoutes.courseBuilder,
+          builder: (context, state) => _placeholder('Course Builder'),
+        ),
+        GoRoute(
+          path: AppRoutes.notifications,
+          builder: (context, state) => _placeholder('Notifications'),
+        ),
+        GoRoute(
+          path: AppRoutes.support,
+          builder: (context, state) => _placeholder('Support'),
         ),
         GoRoute(
           path: AppRoutes.supportNew,
-          builder: (context, state) => const NewTicketScreen(),
+          builder: (context, state) => _placeholder('New Ticket'),
         ),
         GoRoute(
-          path: AppRoutes.supportDetail,
-          builder: (context, state) {
-            final ticketId =
-                int.tryParse(state.pathParameters['ticketId'] ?? '') ?? 0;
-            return TicketDetailScreen(ticketId: ticketId);
-          },
+          path: '/support/:id',
+          builder: (context, state) =>
+              _placeholder('Support Detail: ${state.pathParameters['id']}'),
         ),
       ],
     );

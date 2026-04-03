@@ -1,135 +1,48 @@
-# Karakana App — Claude Context File
+# Karakana App V2 — Claude Context
 
-## Project Overview
-Karakana is a Flutter mobile app for Kreative Karakana, a Tanzanian Edutech platform focused on entrepreneurship training. This is a clean rebuild targeting both Android and iOS from a single codebase.
+## Project
+Flutter app for Kreative Karakana — Tanzanian Edutech platform for entrepreneurship training.
+Version 2.0 — complete rebuild from design spec.
 
 ## Tech Stack
-- Flutter (latest stable)
-- Dart
+- Flutter (latest stable), Dart
 - Provider (state management)
 - GoRouter (navigation)
-- Dio (HTTP client)
-- Flutter Secure Storage (token storage)
-- Cached Network Image (image loading)
-- Google Fonts (typography — Poppins for headings, Inter for body)
+- Dio (HTTP)
+- Flutter Secure Storage (tokens)
+- Google Fonts (Poppins + Inter)
+- firebase_messaging (push notifications)
 
 ## Backend
 - Base URL: https://beta.kreativekarakana.co.tz
-- Auth: Token-based (Authorization: Token <token>)
-- API version: /api/v1/ for most endpoints, /api/auth/ for authentication
+- Auth: Knox Token — Authorization: Token <token>
+- Signup returns HTTP 306 on success (treat as success)
+- Profile update: PATCH /api/v1/profiles/{userId}/ (NOT /profiles/me/)
 
-## Auth Flow
-1. Signup → POST /api/auth/signup/ (first_name, email, password) → returns 306 on success
-2. Verify Email → POST /api/auth/verify/ (email, code) → returns token + user
-3. Login → POST /api/auth/signin/ (email, password) → returns token + user
-4. Token saved in FlutterSecureStorage
+## Brand Colors (AppColors)
+- primary: #C4620A (orange)
+- primaryDark: #3B1A08 (dark brown)
+- primaryLight: #F5E6D8 (warm cream)
+- background: #FFF8F4 (warm off-white)
+- textPrimary: #1A0A00
 
-## Project Structure
-lib/
-├── core/
-│   ├── constants/app_constants.dart    # App-wide constants and strings
-│   ├── network/api_client.dart         # Dio HTTP client singleton
-│   ├── network/api_endpoints.dart      # All API endpoint paths
-│   ├── router/app_router.dart          # GoRouter navigation
-│   ├── theme/app_theme.dart            # AppColors + AppTheme
-│   └── utils/secure_storage.dart       # Token storage
-├── features/
-│   ├── auth/
-│   │   ├── screens/                    # login, signup, forgot_password, verify_email
-│   │   ├── services/auth_service.dart  # Auth API calls
-│   │   └── providers/auth_provider.dart # Auth state
-│   ├── courses/
-│   │   ├── models/course_model.dart    # CourseModel, CategoryModel, etc.
-│   │   ├── screens/                    # explore, course_detail
-│   │   ├── services/course_service.dart # Course API calls
-│   │   └── providers/course_provider.dart # Course state
-│   ├── home/screens/
-│   │   ├── home_screen.dart            # Main home tab
-│   │   └── main_screen.dart            # Bottom nav shell
-│   ├── onboarding/screens/             # Onboarding flow
-│   ├── splash/                         # Splash screen
-│   ├── notifications/                  # Notifications (coming soon)
-│   └── profile/                        # Profile (coming soon)
-└── widgets/
-    └── course_card.dart                # Reusable course card
+## Design System
+- Min border radius for inputs: 14px (AppRadius.input)
+- Card border radius: 16px (AppRadius.card)
+- Buttons: fully rounded 28px (AppRadius.button)
+- Fonts: Poppins (headings) + Inter (body)
+- All classes in lib/core/theme/
 
-## Brand Colors
-- Primary Orange: #C4620A
-- Dark Brown: #3B1A08
-- Light Orange: #F5E6D8
-- Mid Orange: #E8A96A
-- White: #FFFFFF
-- Grey: #666666
-- Light Grey: #F7F7F7
-- Error Red: #C62828
-- Success Green: #2E7D32
+## Navigation (GoRouter)
+- Bottom nav: 4 tabs — Nyumbani (/home), Tafuta (/explore), Zana (/zana), Akaunti (/account)
+- Auth guard: unauthenticated → /login
+- Onboarding guard: first launch → /onboarding
 
-## Key Conventions
-- All colors come from AppColors class in lib/core/theme/app_theme.dart
-- Never use const with AppColors values
-- All API calls go through ApiClient singleton (Dio)
-- All screens use Consumer<Provider> or context.watch<Provider>()
-- Navigation uses GoRouter: context.go() for replace, context.push() for stack
-- All async methods wrapped in try/catch
-- Loading states always set to false in finally block
-- Always call notifyListeners() after state changes in providers
-- Commit to GitHub after every completed feature
-
-## API Endpoints (Complete & Verified)
-Base URL: https://beta.kreativekarakana.co.tz
-
-### Auth (no /api/v1/ prefix)
-- Login: /api/auth/signin/
-- Signup: /api/auth/signup/ (returns 306 on success)
-- Verify Email: /api/auth/verify/
-- Resend OTP: /api/auth/verify/resend/
-- Forgot Password: /api/request-password-reset/
-
-### Courses (/api/v1/)
-- List/Search: /api/v1/courses/?q=search&categories__name=X&recommend=true&popular=true&free=true&weekly_choice=true&enrolled=true
-- Detail: /api/v1/courses/{id}/
-- Sections: /api/v1/courses/{id}/sections/
-- Lessons: /api/v1/sections/{id}/lessons/
-- Lesson Detail: /api/v1/lessons/{id}/
-- Lesson Progress: /api/v1/lessons/{id}/progress/
-- Enroll Free: /api/v1/courses/enroll/
-- Categories: /api/v1/categories/
-- Wishlist: /api/v1/wishlist/
-- Reviews: /api/v1/courses/{id}/reviews/
-- Review Reply: /api/v1/courses/{id}/reviews/{reviewId}/reply/
-
-### Profile (/api/v1/)
-- My Profile: /api/v1/profiles/me/
-- Profile Detail: /api/v1/profiles/{id}/
-- MasterCard Data: /api/v1/master-card/
-- Trainer Application: /api/v1/trainer-application/
-- Ambassador Code: /api/v1/ambassador-codes/
-
-### Payments (/api/v1/)
-- MNO Checkout: /api/v1/payments/checkout/
-- Payment Status: /api/v1/payments/{externalId}/
-- Wallet: /api/v1/wallet/me/
-- Wallet Checkout: /api/v1/wallet/checkouts/
-
-### Communications (/api/v1/)
-- Banners: /api/v1/communications/banners/
-- Notifications: /api/v1/communications/notifications/me/
-- Support Tickets: /api/v1/communications/tickets/
-- Support Messages: /api/v1/communications/tickets/{id}/messages/
-
-### Course JSON Fields (verified from real API)
-- cover_photo → thumbnail
-- playback_url → trailer video
-- trainer → {id, first_name, last_name, avatar, cover, is_owner}
-- student_count → students count
-- review_count → reviews count
-- average_rating → rating
-- is_in_wishlist → wishlisted
-- is_enrolled → enrolled
-
-## Current Status
-- Phase 1 (Auth): 100% complete
-- Phase 2 (Home + Courses): 70% complete
-- Phase 3 (Learning + Video): 0%
-- Phase 4 (Payments): 0%
-- Phase 5 (Profile): 0%
+## Key Patterns
+- Never use const with AppColors
+- Router created ONCE in StatefulWidget initState
+- Signup returns 306 = success
+- Profile update uses /profiles/{id}/ not /profiles/me/
+- All API calls via ApiClient().dio
+- All errors via ApiClient().parseError(e)
+- Token stored in FlutterSecureStorage
