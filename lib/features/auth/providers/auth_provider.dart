@@ -172,6 +172,19 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> resendOTP(String email) async {
+    try {
+      await ApiClient().dio.post(
+        ApiEndpoints.resendOTP,
+        data: {'email': email},
+      );
+      return true;
+    } catch (e) {
+      if (kDebugMode) debugPrint('[AuthProvider] resendOTP error: $e');
+      return false;
+    }
+  }
+
   void clearError() {
     _errorMessage = null;
     notifyListeners();

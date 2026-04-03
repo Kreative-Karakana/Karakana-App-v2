@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/providers/auth_provider.dart';
+import '../../features/auth/screens/biometric_screen.dart';
+import '../../features/auth/screens/forgot_password_screen.dart';
+import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/signup_screen.dart';
+import '../../features/auth/screens/verify_email_screen.dart';
+import '../../features/onboarding/screens/onboarding_screen.dart';
+import '../../features/splash/screens/splash_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -51,28 +58,32 @@ class AppRouter {
     return GoRouter(
       initialLocation: AppRoutes.splash,
       refreshListenable: authProvider,
-      redirect: (context, state) async {
+      redirect: (context, state) {
         final isAuth = authProvider.isAuthenticated;
         final isOnboarded = authProvider.isOnboardingComplete;
         final location = state.matchedLocation;
 
-        final authRoutes = [
+        const authRoutes = [
           AppRoutes.login,
           AppRoutes.signup,
           AppRoutes.verifyEmail,
           AppRoutes.forgotPassword,
         ];
 
+        // Splash handles its own navigation
         if (location == AppRoutes.splash) return null;
 
+        // Onboarding guard
         if (!isOnboarded && location != AppRoutes.onboarding) {
           return AppRoutes.onboarding;
         }
 
+        // Auth guard: redirect unauthenticated to login
         if (!isAuth && !authRoutes.contains(location)) {
           return AppRoutes.login;
         }
 
+        // Already logged in: redirect away from auth screens
         if (isAuth && authRoutes.contains(location)) {
           return AppRoutes.home;
         }
@@ -80,34 +91,41 @@ class AppRouter {
         return null;
       },
       routes: [
+        // ── Splash ──────────────────────────────────────────────
         GoRoute(
           path: AppRoutes.splash,
-          builder: (context, state) => _placeholder('Splash'),
+          builder: (context, state) => const SplashScreen(),
         ),
+
+        // ── Onboarding ──────────────────────────────────────────
         GoRoute(
           path: AppRoutes.onboarding,
-          builder: (context, state) => _placeholder('Onboarding'),
+          builder: (context, state) => const OnboardingScreen(),
         ),
+
+        // ── Auth ────────────────────────────────────────────────
         GoRoute(
           path: AppRoutes.login,
-          builder: (context, state) => _placeholder('Login'),
+          builder: (context, state) => const LoginScreen(),
         ),
         GoRoute(
           path: AppRoutes.signup,
-          builder: (context, state) => _placeholder('Signup'),
+          builder: (context, state) => const SignupScreen(),
         ),
         GoRoute(
           path: AppRoutes.verifyEmail,
-          builder: (context, state) => _placeholder('Verify Email'),
+          builder: (context, state) => const VerifyEmailScreen(),
         ),
         GoRoute(
           path: AppRoutes.forgotPassword,
-          builder: (context, state) => _placeholder('Forgot Password'),
+          builder: (context, state) => const ForgotPasswordScreen(),
         ),
         GoRoute(
           path: AppRoutes.biometric,
-          builder: (context, state) => _placeholder('Biometric'),
+          builder: (context, state) => const BiometricScreen(),
         ),
+
+        // ── Main tabs (placeholders — replaced in Phase 3+) ─────
         GoRoute(
           path: AppRoutes.home,
           builder: (context, state) => _placeholder('Home'),
@@ -124,10 +142,12 @@ class AppRouter {
           path: AppRoutes.account,
           builder: (context, state) => _placeholder('Account'),
         ),
+
+        // ── Courses ─────────────────────────────────────────────
         GoRoute(
           path: '/course/:id',
           builder: (context, state) =>
-              _placeholder('Course Detail: ${state.pathParameters['id']}'),
+              _placeholder('Course: ${state.pathParameters['id']}'),
           routes: [
             GoRoute(
               path: 'classroom',
@@ -141,6 +161,8 @@ class AppRouter {
           builder: (context, state) =>
               _placeholder('Lesson: ${state.pathParameters['id']}'),
         ),
+
+        // ── Payments ────────────────────────────────────────────
         GoRoute(
           path: '/payment/success',
           builder: (context, state) => _placeholder('Payment Success'),
@@ -158,6 +180,8 @@ class AppRouter {
           path: AppRoutes.wallet,
           builder: (context, state) => _placeholder('Wallet'),
         ),
+
+        // ── Profile ─────────────────────────────────────────────
         GoRoute(
           path: AppRoutes.profile,
           builder: (context, state) => _placeholder('Profile'),
@@ -174,6 +198,8 @@ class AppRouter {
           path: AppRoutes.wishlist,
           builder: (context, state) => _placeholder('Wishlist'),
         ),
+
+        // ── Trainer ─────────────────────────────────────────────
         GoRoute(
           path: AppRoutes.trainerApply,
           builder: (context, state) => _placeholder('Trainer Apply'),
@@ -186,6 +212,8 @@ class AppRouter {
           path: AppRoutes.courseBuilder,
           builder: (context, state) => _placeholder('Course Builder'),
         ),
+
+        // ── Notifications / Support ──────────────────────────────
         GoRoute(
           path: AppRoutes.notifications,
           builder: (context, state) => _placeholder('Notifications'),
@@ -201,7 +229,7 @@ class AppRouter {
         GoRoute(
           path: '/support/:id',
           builder: (context, state) =>
-              _placeholder('Support Detail: ${state.pathParameters['id']}'),
+              _placeholder('Support: ${state.pathParameters['id']}'),
         ),
       ],
     );
