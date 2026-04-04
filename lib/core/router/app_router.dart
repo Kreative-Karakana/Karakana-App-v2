@@ -6,9 +6,17 @@ import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/signup_screen.dart';
 import '../../features/auth/screens/verify_email_screen.dart';
+import '../../features/courses/screens/classroom_screen.dart';
+import '../../features/courses/screens/course_detail_screen.dart';
+import '../../features/courses/screens/video_lesson_screen.dart';
 import '../../features/home/screens/main_screen.dart';
 import '../../features/onboarding/screens/onboarding_screen.dart';
 import '../../features/splash/screens/splash_screen.dart';
+import '../../features/zana/screens/biz_manager_screen.dart';
+import '../../features/zana/screens/insurance_screen.dart';
+import '../../features/zana/screens/pos_screen.dart';
+import '../../features/zana/screens/vicoba_screen.dart';
+import '../../features/zana/screens/zana_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -70,6 +78,13 @@ class AppRouter {
           AppRoutes.verifyEmail,
           AppRoutes.forgotPassword,
         ];
+        const publicRoutes = [
+          AppRoutes.zana,
+          '/zana/vicoba',
+          '/zana/pos',
+          '/zana/biz-manager',
+          '/zana/insurance',
+        ];
 
         // Splash handles its own navigation
         if (location == AppRoutes.splash) return null;
@@ -80,7 +95,9 @@ class AppRouter {
         }
 
         // Auth guard: redirect unauthenticated to login
-        if (!isAuth && !authRoutes.contains(location)) {
+        if (!isAuth &&
+            !authRoutes.contains(location) &&
+            !publicRoutes.contains(location)) {
           return AppRoutes.login;
         }
 
@@ -137,7 +154,23 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.zana,
-          builder: (context, state) => _placeholder('Zana'),
+          builder: (context, state) => const ZanaScreen(),
+        ),
+        GoRoute(
+          path: '/zana/vicoba',
+          builder: (context, state) => const VicobScreen(),
+        ),
+        GoRoute(
+          path: '/zana/pos',
+          builder: (context, state) => const POSScreen(),
+        ),
+        GoRoute(
+          path: '/zana/biz-manager',
+          builder: (context, state) => const BizManagerScreen(),
+        ),
+        GoRoute(
+          path: '/zana/insurance',
+          builder: (context, state) => const InsuranceScreen(),
         ),
         GoRoute(
           path: AppRoutes.account,
@@ -147,20 +180,21 @@ class AppRouter {
         // ── Courses ─────────────────────────────────────────────
         GoRoute(
           path: '/course/:id',
-          builder: (context, state) =>
-              _placeholder('Course: ${state.pathParameters['id']}'),
-          routes: [
-            GoRoute(
-              path: 'classroom',
-              builder: (context, state) =>
-                  _placeholder('Classroom: ${state.pathParameters['id']}'),
-            ),
-          ],
+          builder: (context, state) => CourseDetailScreen(
+            courseId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+          ),
+        ),
+        GoRoute(
+          path: '/course/:id/classroom',
+          builder: (context, state) => ClassroomScreen(
+            courseId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+          ),
         ),
         GoRoute(
           path: '/lesson/:id',
-          builder: (context, state) =>
-              _placeholder('Lesson: ${state.pathParameters['id']}'),
+          builder: (context, state) => VideoLessonScreen(
+            lessonId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+          ),
         ),
 
         // ── Payments ────────────────────────────────────────────

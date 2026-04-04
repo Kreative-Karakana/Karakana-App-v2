@@ -46,3 +46,14 @@ Version 2.0 — complete rebuild from design spec.
 - All API calls via ApiClient().dio
 - All errors via ApiClient().parseError(e)
 - Token stored in FlutterSecureStorage
+
+## Zana Section
+- 4 tools: POS (live), Business Manager (live), Insurance (live), e-VICOBA (coming soon)
+- Zana is the 3rd tab: /zana
+- Model: lib/features/zana/models/zana_model.dart
+- No backend API yet — static data
+
+## Video Player
+- Use video_player package (already in pubspec)
+- Mux playback URL format: https://stream.mux.com/{playbackId}.m3u8
+- Signed tokens from: GET /api/v1/lessons/{id}/
