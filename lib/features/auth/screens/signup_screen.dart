@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../widgets/buttons/gradient_button.dart';
+import '../../../widgets/common/app_logo.dart';
 import '../providers/auth_provider.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -70,53 +71,61 @@ class _SignupScreenState extends State<SignupScreen>
     Widget? suffixIcon,
     String? Function(String?)? validator,
     void Function(String)? onChanged,
+    double height = 52,
   }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      obscureText: obscureText,
-      style: GoogleFonts.inter(fontSize: 15, color: Colors.white),
-      cursorColor: AppColors.primary,
-      validator: validator,
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle:
-            GoogleFonts.inter(fontSize: 12, color: AppColors.textTertiary),
-        hintText: hint,
-        hintStyle: GoogleFonts.inter(
-          fontSize: 14,
-          color: AppColors.textTertiary.withValues(alpha: 0.6),
+    return SizedBox(
+      height: height,
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        obscureText: obscureText,
+        style: GoogleFonts.inter(fontSize: 13.5, color: Colors.white),
+        cursorColor: AppColors.primaryMid,
+        validator: validator,
+        onChanged: onChanged,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle:
+              GoogleFonts.inter(fontSize: 11.5, color: AppColors.textTertiary),
+          hintText: hint,
+          hintStyle: GoogleFonts.inter(
+            fontSize: 12.5,
+            color: AppColors.textTertiary.withValues(alpha: 0.58),
+          ),
+          prefixIcon: Icon(icon, color: AppColors.primaryMid, size: 17),
+          suffixIcon: suffixIcon,
+          filled: true,
+          fillColor: const Color(0xFF5A3525),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(18),
+            borderSide: BorderSide(
+              color: Colors.white.withValues(alpha: 0.08),
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(18),
+            borderSide: BorderSide(
+              color: Colors.white.withValues(alpha: 0.08),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(18),
+            borderSide: const BorderSide(
+              color: AppColors.primaryMid,
+              width: 1.2,
+            ),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(18),
+            borderSide: const BorderSide(color: AppColors.error, width: 1.2),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(18),
+            borderSide: const BorderSide(color: AppColors.error, width: 1.2),
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         ),
-        prefixIcon: Icon(icon, color: AppColors.primary, size: 20),
-        suffixIcon: suffixIcon,
-        filled: true,
-        fillColor: Colors.white.withValues(alpha: 0.05),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide:
-              BorderSide(color: Colors.white.withValues(alpha: 0.15)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide:
-              BorderSide(color: Colors.white.withValues(alpha: 0.15)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide:
-              const BorderSide(color: AppColors.primary, width: 1.5),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.error, width: 1.5),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: AppColors.error, width: 1.5),
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       ),
     );
   }
@@ -128,355 +137,371 @@ class _SignupScreenState extends State<SignupScreen>
 
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
-      extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          // Full screen gradient
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.primaryDark, Color(0xFF1A0A00)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-          ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxHeight < 760;
+          final fieldGap = compact ? 8.0 : 10.0;
+          final cardPadding = compact ? 16.0 : 18.0;
 
-          // Decorative top-right circle
-          Positioned(
-            top: -40,
-            right: -40,
-            child: Container(
-              width: 180,
-              height: 180,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primary.withValues(alpha: 0.15),
-              ),
-            ),
-          ),
-
-          // Decorative bottom-left circle
-          Positioned(
-            bottom: -30,
-            left: -40,
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primaryMid.withValues(alpha: 0.08),
-              ),
-            ),
-          ),
-
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 48),
-
-                  // Logo row
-                  Row(
+          return Stack(
+            children: [
+              const _AuthBackground(),
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 22),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Image.asset(
-                            'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                            errorBuilder: (_, __, ___) => Center(
-                              child: Text(
-                                'K',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
+                      SizedBox(height: compact ? 14 : 18),
+                      const _BrandRow(),
+                      SizedBox(height: compact ? 14 : 18),
                       Text(
-                        'Karakana',
+                        'Fungua Akaunti',
                         style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
+                          fontSize: compact ? 27 : 30,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white,
+                          height: 1.05,
                         ),
                       ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 40),
-
-                  Text(
-                    'Fungua Akaunti! 🚀',
-                    style: GoogleFonts.poppins(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Anza safari yako ya ujasiriamali',
-                    style: GoogleFonts.inter(
-                      fontSize: 15,
-                      color: AppColors.primaryMid,
-                    ),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  // Glass form card
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.06),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.12),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Anza safari yako ya ujasiriamali kwa mwonekano mpya na safi.',
+                        style: GoogleFonts.inter(
+                          fontSize: 13.5,
+                          color: AppColors.primaryMid,
+                          height: 1.35,
+                        ),
                       ),
-                    ),
-                    padding: const EdgeInsets.all(20),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          _buildField(
-                            label: 'Jina la Kwanza',
-                            hint: 'Jina lako',
-                            icon: Icons.person_outline,
-                            controller: _firstNameController,
-                            validator: (v) =>
-                                v!.isEmpty ? 'Weka jina lako' : null,
-                            onChanged: (_) =>
-                                context.read<AuthProvider>().clearError(),
+                      SizedBox(height: compact ? 14 : 18),
+                      Container(
+                        padding: EdgeInsets.all(cardPadding),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.055),
+                          borderRadius: BorderRadius.circular(28),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.08),
                           ),
-
-                          const SizedBox(height: 16),
-
-                          _buildField(
-                            label: 'Barua Pepe',
-                            hint: 'jina@mfano.com',
-                            icon: Icons.email_outlined,
-                            controller: _emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (v) =>
-                                v!.isEmpty || !v.contains('@')
-                                    ? 'Barua pepe si sahihi'
-                                    : null,
-                            onChanged: (_) =>
-                                context.read<AuthProvider>().clearError(),
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          _buildField(
-                            label: 'Neno la Siri',
-                            hint: '••••••••',
-                            icon: Icons.lock_outline,
-                            controller: _passwordController,
-                            obscureText: _obscurePassword,
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
-                                color: AppColors.textTertiary,
-                                size: 20,
-                              ),
-                              onPressed: () => setState(
-                                  () => _obscurePassword = !_obscurePassword),
-                            ),
-                            validator: (v) => v!.length < 8
-                                ? 'Neno la siri lazima liwe na herufi 8+'
-                                : null,
-                            onChanged: (_) =>
-                                context.read<AuthProvider>().clearError(),
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          _buildField(
-                            label: 'Thibitisha Neno la Siri',
-                            hint: '••••••••',
-                            icon: Icons.lock_outline,
-                            controller: _confirmController,
-                            obscureText: _obscureConfirm,
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureConfirm
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
-                                color: AppColors.textTertiary,
-                                size: 20,
-                              ),
-                              onPressed: () => setState(
-                                  () => _obscureConfirm = !_obscureConfirm),
-                            ),
-                            validator: (v) =>
-                                v != _passwordController.text
-                                    ? 'Maneno ya siri hayafanani'
-                                    : null,
-                          ),
-
-                          const SizedBox(height: 8),
-
-                          // Error message
-                          if (authProvider.errorMessage != null) ...[
-                            const SizedBox(height: 8),
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: AppColors.errorLight
-                                    .withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                authProvider.errorMessage!,
-                                style: GoogleFonts.inter(
-                                  fontSize: 13,
-                                  color: Colors.red.shade300,
-                                ),
-                              ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.16),
+                              blurRadius: 24,
+                              offset: const Offset(0, 16),
                             ),
                           ],
-
-                          const SizedBox(height: 20),
-
-                          SizedBox(
-                            width: double.infinity,
-                            child: GradientButton(
-                              text: 'Jisajili',
-                              isLoading: authProvider.isLoading,
-                              onTap: _handleSignup,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Divider
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Divider(
-                          color: Colors.white.withValues(alpha: 0.15),
                         ),
-                      ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 12),
-                        child: Text(
-                          'au',
-                          style: GoogleFonts.inter(
-                            fontSize: 13,
-                            color: AppColors.textTertiary,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(
-                          color: Colors.white.withValues(alpha: 0.15),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Google button
-                  _SocialButton(
-                    label: 'Endelea na Google',
-                    iconWidget: Container(
-                      width: 20,
-                      height: 20,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          'G',
-                          style: GoogleFonts.poppins(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF4285F4),
-                          ),
-                        ),
-                      ),
-                    ),
-                    onTap: _handleGoogleSignIn,
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Apple button
-                  _SocialButton(
-                    label: 'Endelea na Apple',
-                    iconWidget: const Icon(
-                      Icons.apple,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                    isDark: true,
-                    onTap: _handleAppleSignIn,
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  // Login link
-                  Center(
-                    child: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Una akaunti? ',
-                            style: GoogleFonts.inter(
-                              fontSize: 14,
-                              color: Colors.white.withValues(alpha: 0.7),
-                            ),
-                          ),
-                          WidgetSpan(
-                            child: GestureDetector(
-                              onTap: () => context.pop(),
-                              child: Text(
-                                'Ingia',
-                                style: GoogleFonts.inter(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.primary,
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              _buildField(
+                                label: 'Jina la Kwanza',
+                                hint: 'Jina lako',
+                                icon: Icons.person_outline,
+                                controller: _firstNameController,
+                                validator: (v) =>
+                                    v!.isEmpty ? 'Weka jina lako' : null,
+                                onChanged: (_) =>
+                                    context.read<AuthProvider>().clearError(),
+                              ),
+                              SizedBox(height: fieldGap),
+                              _buildField(
+                                label: 'Barua Pepe',
+                                hint: 'jina@mfano.com',
+                                icon: Icons.email_outlined,
+                                controller: _emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                validator: (v) => v!.isEmpty || !v.contains('@')
+                                    ? 'Barua pepe si sahihi'
+                                    : null,
+                                onChanged: (_) =>
+                                    context.read<AuthProvider>().clearError(),
+                              ),
+                              SizedBox(height: fieldGap),
+                              _buildField(
+                                label: 'Neno la Siri',
+                                hint: 'Herufi 8 au zaidi',
+                                icon: Icons.lock_outline,
+                                controller: _passwordController,
+                                obscureText: _obscurePassword,
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscurePassword
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined,
+                                    color: AppColors.textTertiary,
+                                    size: 17,
+                                  ),
+                                  onPressed: () => setState(
+                                    () => _obscurePassword = !_obscurePassword,
+                                  ),
                                 ),
+                                validator: (v) => v!.length < 8
+                                    ? 'Neno la siri lazima liwe na herufi 8+'
+                                    : null,
+                                onChanged: (_) =>
+                                    context.read<AuthProvider>().clearError(),
+                              ),
+                              SizedBox(height: fieldGap),
+                              _buildField(
+                                label: 'Thibitisha Neno la Siri',
+                                hint: 'Rudia neno la siri',
+                                icon: Icons.lock_outline,
+                                controller: _confirmController,
+                                obscureText: _obscureConfirm,
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscureConfirm
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined,
+                                    color: AppColors.textTertiary,
+                                    size: 17,
+                                  ),
+                                  onPressed: () => setState(
+                                    () => _obscureConfirm = !_obscureConfirm,
+                                  ),
+                                ),
+                                validator: (v) => v != _passwordController.text
+                                    ? 'Maneno ya siri hayafanani'
+                                    : null,
+                              ),
+                              if (authProvider.errorMessage != null) ...[
+                                const SizedBox(height: 10),
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.errorLight
+                                        .withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(
+                                      color: Colors.red.shade300
+                                          .withValues(alpha: 0.22),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    authProvider.errorMessage!,
+                                    style: GoogleFonts.inter(
+                                      fontSize: 12.5,
+                                      color: Colors.red.shade200,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                              const SizedBox(height: 14),
+                              SizedBox(
+                                width: double.infinity,
+                                child: GradientButton(
+                                  text: 'Jisajili',
+                                  height: compact ? 52 : 54,
+                                  isLoading: authProvider.isLoading,
+                                  onTap: _handleSignup,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                      const _AuthDivider(),
+                      SizedBox(height: compact ? 10 : 12),
+                      _SocialButton(
+                        label: 'Endelea na Google',
+                        iconWidget: Container(
+                          width: 20,
+                          height: 20,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Text(
+                              'G',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFF4285F4),
                               ),
                             ),
                           ),
-                        ],
+                        ),
+                        onTap: _handleGoogleSignIn,
                       ),
-                    ),
+                      const SizedBox(height: 10),
+                      _SocialButton(
+                        label: 'Endelea na Apple',
+                        iconWidget: const Icon(
+                          Icons.apple,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        isDark: true,
+                        onTap: _handleAppleSignIn,
+                      ),
+                      SizedBox(height: compact ? 12 : 14),
+                      Center(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Una akaunti? ',
+                                style: GoogleFonts.inter(
+                                  fontSize: 14,
+                                  color: Colors.white.withValues(alpha: 0.74),
+                                ),
+                              ),
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: GestureDetector(
+                                  onTap: () => context.go('/login'),
+                                  child: Text(
+                                    'Ingia',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.primaryMid,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: compact ? 8 : 12),
+                    ],
                   ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
 
-                  const SizedBox(height: 32),
-                ],
+class _BrandRow extends StatelessWidget {
+  const _BrandRow();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const AppLogo(size: 48, showBackground: false),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Karakana',
+              style: GoogleFonts.poppins(
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
               ),
             ),
+            Text(
+              'Fundisha  Jifunze  Kua',
+              style: GoogleFonts.inter(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textTertiary,
+                letterSpacing: 0.6,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _AuthBackground extends StatelessWidget {
+  const _AuthBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF301106), Color(0xFF210B03)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
-        ],
-      ),
+        ),
+        Positioned(
+          top: -60,
+          right: -30,
+          child: Container(
+            width: 180,
+            height: 180,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.primary.withValues(alpha: 0.12),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 120,
+          left: -50,
+          child: Container(
+            width: 110,
+            height: 110,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.primaryMid.withValues(alpha: 0.07),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: -40,
+          left: -30,
+          child: Container(
+            width: 130,
+            height: 130,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.primary.withValues(alpha: 0.09),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AuthDivider extends StatelessWidget {
+  const _AuthDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Divider(
+            color: Colors.white.withValues(alpha: 0.14),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            'au',
+            style: GoogleFonts.inter(
+              fontSize: 12.5,
+              color: AppColors.textTertiary,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Divider(
+            color: Colors.white.withValues(alpha: 0.14),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -501,12 +526,10 @@ class _SocialButton extends StatelessWidget {
       child: Container(
         height: 52,
         decoration: BoxDecoration(
-          color: isDark
-              ? const Color(0xFF1A1A1A)
-              : Colors.white.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(14),
+          color: isDark ? const Color(0xFF161616) : const Color(0xFF4A2A1D),
+          borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.15),
+            color: Colors.white.withValues(alpha: 0.08),
           ),
         ),
         child: Row(
@@ -517,7 +540,7 @@ class _SocialButton extends StatelessWidget {
             Text(
               label,
               style: GoogleFonts.inter(
-                fontSize: 15,
+                fontSize: 14.5,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),

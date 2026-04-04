@@ -71,9 +71,14 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     super.dispose();
   }
 
-  void _finish() {
-    context.read<AuthProvider>().completeOnboarding();
-    context.go('/login');
+  Future<void> _completeOnboardingAndGo(String route) async {
+    await context.read<AuthProvider>().completeOnboarding();
+    if (!mounted) return;
+    context.go(route);
+  }
+
+  Future<void> _finish() async {
+    await _completeOnboardingAndGo('/login');
   }
 
   void _nextPage() {
@@ -277,12 +282,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                   width: double.infinity,
                                   child: GradientButton(
                                     text: 'Anza Sasa',
-                                    onTap: () => context.go('/signup'),
+                                    onTap: () =>
+                                        _completeOnboardingAndGo('/signup'),
                                   ),
                                 ),
                                 const SizedBox(height: 12),
                                 TextButton(
-                                  onPressed: () => context.go('/login'),
+                                  onPressed: _finish,
                                   child: RichText(
                                     text: TextSpan(
                                       children: [

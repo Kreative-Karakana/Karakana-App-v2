@@ -74,9 +74,9 @@ class AppRouter {
         // Splash handles its own navigation
         if (location == AppRoutes.splash) return null;
 
-        // Onboarding guard
-        if (!isOnboarded && location != AppRoutes.onboarding) {
-          return AppRoutes.onboarding;
+        // Onboarding guard — takes full priority, skip auth guard entirely
+        if (!isOnboarded) {
+          return location == AppRoutes.onboarding ? null : AppRoutes.onboarding;
         }
 
         // Auth guard: redirect unauthenticated to login
