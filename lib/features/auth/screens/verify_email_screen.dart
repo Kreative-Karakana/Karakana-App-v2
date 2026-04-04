@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../widgets/buttons/gradient_button.dart';
+import '../../../widgets/common/app_logo.dart';
 import '../providers/auth_provider.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
@@ -18,8 +19,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   String _email = '';
   final List<TextEditingController> _controllers =
       List.generate(6, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes =
-      List.generate(6, (_) => FocusNode());
+  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
   bool _isResending = false;
 
   @override
@@ -83,10 +83,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     }
   }
 
-  Widget _buildOtpBox(int index) {
+  Widget _buildOtpBox(int index, bool compact) {
     return SizedBox(
-      width: 48,
-      height: 58,
+      width: compact ? 42 : 46,
+      height: compact ? 52 : 58,
       child: TextFormField(
         controller: _controllers[index],
         focusNode: _focusNodes[index],
@@ -95,29 +95,26 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         maxLength: 1,
         style: GoogleFonts.poppins(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
+          fontSize: compact ? 20 : 22,
+          fontWeight: FontWeight.w700,
           color: Colors.white,
         ),
-        cursorColor: AppColors.primary,
+        cursorColor: AppColors.primaryMid,
         decoration: InputDecoration(
           counterText: '',
           filled: true,
-          fillColor: Colors.white.withValues(alpha: 0.05),
+          fillColor: const Color(0xFF5A3525),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide:
-                BorderSide(color: Colors.white.withValues(alpha: 0.15)),
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide:
-                BorderSide(color: Colors.white.withValues(alpha: 0.15)),
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide:
-                const BorderSide(color: AppColors.primary, width: 1.5),
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: AppColors.primaryMid, width: 1.2),
           ),
           contentPadding: EdgeInsets.zero,
         ),
@@ -132,223 +129,232 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
-      extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          // Background gradient
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.primaryDark, Color(0xFF1A0A00)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-          ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxHeight < 760;
 
-          // Decorative circles
-          Positioned(
-            top: -40,
-            right: -40,
-            child: Container(
-              width: 180,
-              height: 180,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primary.withValues(alpha: 0.15),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -30,
-            left: -40,
-            child: Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primaryMid.withValues(alpha: 0.08),
-              ),
-            ),
-          ),
-
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 80),
-
-                    // Logo
-                    Container(
-                      width: 88,
-                      height: 88,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.95),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.4),
-                            blurRadius: 32,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: ClipOval(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Image.asset(
-                            'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                            fit: BoxFit.contain,
-                            errorBuilder: (_, __, ___) => Center(
-                              child: Text(
-                                'K',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 36,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.primary,
-                                ),
-                              ),
+          return Stack(
+            children: [
+              const _AuthBackground(),
+              SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    22,
+                    compact ? 14 : 24,
+                    22,
+                    compact ? 10 : 16,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () => context.go('/signup'),
+                            icon: const Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              color: Colors.white,
                             ),
                           ),
-                        ),
+                          const Spacer(),
+                        ],
                       ),
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    const Icon(
-                      Icons.mark_email_unread_rounded,
-                      size: 64,
-                      color: AppColors.primaryMid,
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    Text(
-                      'Thibitisha Barua Pepe',
-                      style: GoogleFonts.poppins(
-                        fontSize: 26,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    Text(
-                      'Tumekutumia msimbo wa tarakimu 6 kwenye',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: AppColors.textTertiary,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    Text(
-                      _email,
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primaryMid,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-
-                    const SizedBox(height: 40),
-
-                    // OTP boxes
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        6,
-                        (i) => Padding(
-                          padding: EdgeInsets.only(right: i < 5 ? 8 : 0),
-                          child: _buildOtpBox(i),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // Error message
-                    if (authProvider.errorMessage != null) ...[
+                      const _BrandRow(),
+                      const Spacer(),
                       Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(12),
+                        constraints: const BoxConstraints(maxWidth: 420),
+                        padding: EdgeInsets.all(compact ? 18 : 22),
                         decoration: BoxDecoration(
-                          color:
-                              AppColors.errorLight.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          authProvider.errorMessage!,
-                          style: GoogleFonts.inter(
-                            fontSize: 13,
-                            color: Colors.red.shade300,
+                          color: Colors.white.withValues(alpha: 0.06),
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.08),
                           ),
-                          textAlign: TextAlign.center,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.18),
+                              blurRadius: 28,
+                              offset: const Offset(0, 16),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-
-                    SizedBox(
-                      width: double.infinity,
-                      child: GradientButton(
-                        text: 'Thibitisha',
-                        isLoading: authProvider.isLoading,
-                        onTap: _handleVerify,
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Resend row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Hukupata msimbo? ',
-                          style: GoogleFonts.inter(
-                            fontSize: 14,
-                            color: AppColors.textTertiary,
-                          ),
-                        ),
-                        _isResending
-                            ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  color: AppColors.primaryMid,
-                                  strokeWidth: 2,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Thibitisha Barua Pepe',
+                              style: GoogleFonts.poppins(
+                                fontSize: compact ? 27 : 31,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                                height: 1.02,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Weka msimbo wa tarakimu 6 tuliokutumia kwenye barua pepe hii.',
+                              style: GoogleFonts.inter(
+                                fontSize: compact ? 12.5 : 13.5,
+                                color: AppColors.primaryMid,
+                                height: 1.35,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              _email,
+                              style: GoogleFonts.inter(
+                                fontSize: compact ? 12 : 13,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white.withValues(alpha: 0.88),
+                              ),
+                            ),
+                            SizedBox(height: compact ? 18 : 22),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: List.generate(
+                                6,
+                                (i) => _buildOtpBox(i, compact),
+                              ),
+                            ),
+                            if (authProvider.errorMessage != null) ...[
+                              const SizedBox(height: 12),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: AppColors.errorLight
+                                      .withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: Colors.red.shade300
+                                        .withValues(alpha: 0.22),
+                                  ),
                                 ),
-                              )
-                            : TextButton(
-                                onPressed: _handleResend,
                                 child: Text(
-                                  'Tuma tena',
+                                  authProvider.errorMessage!,
                                   style: GoogleFonts.inter(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.primary,
+                                    fontSize: 12.5,
+                                    color: Colors.red.shade200,
                                   ),
                                 ),
                               ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 32),
-                  ],
+                            ],
+                            SizedBox(height: compact ? 16 : 18),
+                            SizedBox(
+                              width: double.infinity,
+                              child: GradientButton(
+                                text: 'Thibitisha',
+                                height: compact ? 50 : 56,
+                                isLoading: authProvider.isLoading,
+                                onTap: _handleVerify,
+                              ),
+                            ),
+                            SizedBox(height: compact ? 14 : 16),
+                            Center(
+                              child: _isResending
+                                  ? const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                        color: AppColors.primaryMid,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : TextButton(
+                                      onPressed: _handleResend,
+                                      child: Text(
+                                        'Tuma tena msimbo',
+                                        style: GoogleFonts.inter(
+                                          fontSize: compact ? 12 : 13,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.primaryMid,
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
                 ),
               ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _BrandRow extends StatelessWidget {
+  const _BrandRow();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const AppLogo(size: 60, showBackground: false),
+          const SizedBox(width: 12),
+          Text(
+            'Karakana',
+            style: GoogleFonts.poppins(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _AuthBackground extends StatelessWidget {
+  const _AuthBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF2D1207), Color(0xFF200903)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        ),
+        Positioned(
+          top: -90,
+          right: -40,
+          child: Container(
+            width: 220,
+            height: 220,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.primary.withValues(alpha: 0.11),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: -55,
+          left: -30,
+          child: Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.primary.withValues(alpha: 0.08),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

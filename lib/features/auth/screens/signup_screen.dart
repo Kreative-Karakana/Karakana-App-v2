@@ -71,60 +71,54 @@ class _SignupScreenState extends State<SignupScreen>
     Widget? suffixIcon,
     String? Function(String?)? validator,
     void Function(String)? onChanged,
-    double height = 52,
+    required bool compact,
   }) {
-    return SizedBox(
-      height: height,
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        obscureText: obscureText,
-        style: GoogleFonts.inter(fontSize: 13.5, color: Colors.white),
-        cursorColor: AppColors.primaryMid,
-        validator: validator,
-        onChanged: onChanged,
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle:
-              GoogleFonts.inter(fontSize: 11.5, color: AppColors.textTertiary),
-          hintText: hint,
-          hintStyle: GoogleFonts.inter(
-            fontSize: 12.5,
-            color: AppColors.textTertiary.withValues(alpha: 0.58),
-          ),
-          prefixIcon: Icon(icon, color: AppColors.primaryMid, size: 17),
-          suffixIcon: suffixIcon,
-          filled: true,
-          fillColor: const Color(0xFF5A3525),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(18),
-            borderSide: BorderSide(
-              color: Colors.white.withValues(alpha: 0.08),
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(18),
-            borderSide: BorderSide(
-              color: Colors.white.withValues(alpha: 0.08),
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(18),
-            borderSide: const BorderSide(
-              color: AppColors.primaryMid,
-              width: 1.2,
-            ),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(18),
-            borderSide: const BorderSide(color: AppColors.error, width: 1.2),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(18),
-            borderSide: const BorderSide(color: AppColors.error, width: 1.2),
-          ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      style: GoogleFonts.inter(fontSize: compact ? 13 : 14, color: Colors.white),
+      cursorColor: AppColors.primaryMid,
+      validator: validator,
+      onChanged: onChanged,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: GoogleFonts.inter(
+          fontSize: compact ? 11.5 : 12,
+          color: AppColors.textTertiary,
+        ),
+        hintText: hint,
+        hintStyle: GoogleFonts.inter(
+          fontSize: compact ? 12.5 : 13,
+          color: AppColors.textTertiary.withValues(alpha: 0.55),
+        ),
+        prefixIcon: Icon(icon, color: AppColors.primaryMid, size: 18),
+        suffixIcon: suffixIcon,
+        filled: true,
+        fillColor: const Color(0xFF5A3525),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: AppColors.primaryMid, width: 1.2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: AppColors.error, width: 1.2),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: AppColors.error, width: 1.2),
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: compact ? 14 : 16,
         ),
       ),
     );
@@ -140,52 +134,36 @@ class _SignupScreenState extends State<SignupScreen>
       body: LayoutBuilder(
         builder: (context, constraints) {
           final compact = constraints.maxHeight < 760;
-          final fieldGap = compact ? 8.0 : 10.0;
-          final cardPadding = compact ? 16.0 : 18.0;
 
           return Stack(
             children: [
               const _AuthBackground(),
               SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 22),
+                  padding: EdgeInsets.fromLTRB(
+                    22,
+                    compact ? 14 : 24,
+                    22,
+                    compact ? 10 : 16,
+                  ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(height: compact ? 14 : 18),
                       const _BrandRow(),
-                      SizedBox(height: compact ? 14 : 18),
-                      Text(
-                        'Fungua Akaunti',
-                        style: GoogleFonts.poppins(
-                          fontSize: compact ? 27 : 30,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          height: 1.05,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Anza safari yako ya ujasiriamali kwa mwonekano mpya na safi.',
-                        style: GoogleFonts.inter(
-                          fontSize: 13.5,
-                          color: AppColors.primaryMid,
-                          height: 1.35,
-                        ),
-                      ),
-                      SizedBox(height: compact ? 14 : 18),
+                      const Spacer(),
                       Container(
-                        padding: EdgeInsets.all(cardPadding),
+                        constraints: const BoxConstraints(maxWidth: 420),
+                        padding: EdgeInsets.all(compact ? 18 : 22),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.055),
-                          borderRadius: BorderRadius.circular(28),
+                          color: Colors.white.withValues(alpha: 0.06),
+                          borderRadius: BorderRadius.circular(30),
                           border: Border.all(
                             color: Colors.white.withValues(alpha: 0.08),
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.16),
-                              blurRadius: 24,
+                              color: Colors.black.withValues(alpha: 0.18),
+                              blurRadius: 28,
                               offset: const Offset(0, 16),
                             ),
                           ],
@@ -193,44 +171,68 @@ class _SignupScreenState extends State<SignupScreen>
                         child: Form(
                           key: _formKey,
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
+                              Text(
+                                'Fungua Akaunti',
+                                style: GoogleFonts.poppins(
+                                  fontSize: compact ? 27 : 31,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                  height: 1.02,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Jenga akaunti yako na uanze safari yako ya kujifunza na kukuza biashara.',
+                                style: GoogleFonts.inter(
+                                  fontSize: compact ? 12.5 : 13.5,
+                                  color: AppColors.primaryMid,
+                                  height: 1.35,
+                                ),
+                              ),
+                              SizedBox(height: compact ? 18 : 22),
                               _buildField(
                                 label: 'Jina la Kwanza',
                                 hint: 'Jina lako',
                                 icon: Icons.person_outline,
                                 controller: _firstNameController,
+                                compact: compact,
                                 validator: (v) =>
                                     v!.isEmpty ? 'Weka jina lako' : null,
                                 onChanged: (_) =>
                                     context.read<AuthProvider>().clearError(),
                               ),
-                              SizedBox(height: fieldGap),
+                              SizedBox(height: compact ? 10 : 12),
                               _buildField(
                                 label: 'Barua Pepe',
                                 hint: 'jina@mfano.com',
                                 icon: Icons.email_outlined,
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
+                                compact: compact,
                                 validator: (v) => v!.isEmpty || !v.contains('@')
                                     ? 'Barua pepe si sahihi'
                                     : null,
                                 onChanged: (_) =>
                                     context.read<AuthProvider>().clearError(),
                               ),
-                              SizedBox(height: fieldGap),
+                              SizedBox(height: compact ? 10 : 12),
                               _buildField(
                                 label: 'Neno la Siri',
                                 hint: 'Herufi 8 au zaidi',
                                 icon: Icons.lock_outline,
                                 controller: _passwordController,
                                 obscureText: _obscurePassword,
+                                compact: compact,
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     _obscurePassword
                                         ? Icons.visibility_outlined
                                         : Icons.visibility_off_outlined,
                                     color: AppColors.textTertiary,
-                                    size: 17,
+                                    size: 18,
                                   ),
                                   onPressed: () => setState(
                                     () => _obscurePassword = !_obscurePassword,
@@ -242,20 +244,21 @@ class _SignupScreenState extends State<SignupScreen>
                                 onChanged: (_) =>
                                     context.read<AuthProvider>().clearError(),
                               ),
-                              SizedBox(height: fieldGap),
+                              SizedBox(height: compact ? 10 : 12),
                               _buildField(
                                 label: 'Thibitisha Neno la Siri',
                                 hint: 'Rudia neno la siri',
                                 icon: Icons.lock_outline,
                                 controller: _confirmController,
                                 obscureText: _obscureConfirm,
+                                compact: compact,
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     _obscureConfirm
                                         ? Icons.visibility_outlined
                                         : Icons.visibility_off_outlined,
                                     color: AppColors.textTertiary,
-                                    size: 17,
+                                    size: 18,
                                   ),
                                   onPressed: () => setState(
                                     () => _obscureConfirm = !_obscureConfirm,
@@ -287,58 +290,92 @@ class _SignupScreenState extends State<SignupScreen>
                                     ),
                                   ),
                                 ),
+                                const SizedBox(height: 10),
                               ],
-                              const SizedBox(height: 14),
                               SizedBox(
                                 width: double.infinity,
                                 child: GradientButton(
                                   text: 'Jisajili',
-                                  height: compact ? 52 : 54,
+                                  height: compact ? 50 : 56,
                                   isLoading: authProvider.isLoading,
                                   onTap: _handleSignup,
                                 ),
+                              ),
+                              SizedBox(height: compact ? 16 : 18),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Divider(
+                                      color: Colors.white.withValues(alpha: 0.10),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                    ),
+                                    child: Text(
+                                      'Njia nyingine',
+                                      style: GoogleFonts.inter(
+                                        fontSize: compact ? 11 : 12,
+                                        color: AppColors.textTertiary,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Divider(
+                                      color: Colors.white.withValues(alpha: 0.10),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: compact ? 14 : 16),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: _MethodButton(
+                                      compact: compact,
+                                      label: 'Google',
+                                      onTap: _handleGoogleSignIn,
+                                      icon: Container(
+                                        width: compact ? 22 : 24,
+                                        height: compact ? 22 : 24,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            'G',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w700,
+                                              color: const Color(0xFF4285F4),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: _MethodButton(
+                                      compact: compact,
+                                      label: 'Apple',
+                                      onTap: _handleAppleSignIn,
+                                      icon: Icon(
+                                        Icons.apple,
+                                        color: Colors.white,
+                                        size: compact ? 22 : 24,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ),
                       ),
                       const Spacer(),
-                      const _AuthDivider(),
-                      SizedBox(height: compact ? 10 : 12),
-                      _SocialButton(
-                        label: 'Endelea na Google',
-                        iconWidget: Container(
-                          width: 20,
-                          height: 20,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Text(
-                              'G',
-                              style: GoogleFonts.poppins(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF4285F4),
-                              ),
-                            ),
-                          ),
-                        ),
-                        onTap: _handleGoogleSignIn,
-                      ),
-                      const SizedBox(height: 10),
-                      _SocialButton(
-                        label: 'Endelea na Apple',
-                        iconWidget: const Icon(
-                          Icons.apple,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                        isDark: true,
-                        onTap: _handleAppleSignIn,
-                      ),
-                      SizedBox(height: compact ? 12 : 14),
                       Center(
                         child: RichText(
                           text: TextSpan(
@@ -346,7 +383,7 @@ class _SignupScreenState extends State<SignupScreen>
                               TextSpan(
                                 text: 'Una akaunti? ',
                                 style: GoogleFonts.inter(
-                                  fontSize: 14,
+                                  fontSize: compact ? 13 : 14,
                                   color: Colors.white.withValues(alpha: 0.74),
                                 ),
                               ),
@@ -357,7 +394,7 @@ class _SignupScreenState extends State<SignupScreen>
                                   child: Text(
                                     'Ingia',
                                     style: GoogleFonts.inter(
-                                      fontSize: 14,
+                                      fontSize: compact ? 13 : 14,
                                       fontWeight: FontWeight.w700,
                                       color: AppColors.primaryMid,
                                     ),
@@ -368,7 +405,6 @@ class _SignupScreenState extends State<SignupScreen>
                           ),
                         ),
                       ),
-                      SizedBox(height: compact ? 8 : 12),
                     ],
                   ),
                 ),
@@ -386,33 +422,22 @@ class _BrandRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const AppLogo(size: 48, showBackground: false),
-        const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Karakana',
-              style: GoogleFonts.poppins(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
+    return Center(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const AppLogo(size: 60, showBackground: false),
+          const SizedBox(width: 12),
+          Text(
+            'Karakana',
+            style: GoogleFonts.poppins(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
             ),
-            Text(
-              'Fundisha  Jifunze  Kua',
-              style: GoogleFonts.inter(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textTertiary,
-                letterSpacing: 0.6,
-              ),
-            ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -427,45 +452,45 @@ class _AuthBackground extends StatelessWidget {
         Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF301106), Color(0xFF210B03)],
+              colors: [Color(0xFF2D1207), Color(0xFF200903)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
           ),
         ),
         Positioned(
-          top: -60,
-          right: -30,
+          top: -90,
+          right: -40,
           child: Container(
-            width: 180,
-            height: 180,
+            width: 220,
+            height: 220,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.primary.withValues(alpha: 0.12),
+              color: AppColors.primary.withValues(alpha: 0.11),
             ),
           ),
         ),
         Positioned(
-          top: 120,
-          left: -50,
+          top: 180,
+          left: -45,
           child: Container(
-            width: 110,
-            height: 110,
+            width: 90,
+            height: 90,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.primaryMid.withValues(alpha: 0.07),
+              color: AppColors.primaryMid.withValues(alpha: 0.05),
             ),
           ),
         ),
         Positioned(
-          bottom: -40,
+          bottom: -55,
           left: -30,
           child: Container(
-            width: 130,
-            height: 130,
+            width: 120,
+            height: 120,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.primary.withValues(alpha: 0.09),
+              color: AppColors.primary.withValues(alpha: 0.08),
             ),
           ),
         ),
@@ -474,49 +499,17 @@ class _AuthBackground extends StatelessWidget {
   }
 }
 
-class _AuthDivider extends StatelessWidget {
-  const _AuthDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Divider(
-            color: Colors.white.withValues(alpha: 0.14),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Text(
-            'au',
-            style: GoogleFonts.inter(
-              fontSize: 12.5,
-              color: AppColors.textTertiary,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Divider(
-            color: Colors.white.withValues(alpha: 0.14),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _SocialButton extends StatelessWidget {
+class _MethodButton extends StatelessWidget {
+  final Widget icon;
   final String label;
-  final Widget iconWidget;
   final VoidCallback onTap;
-  final bool isDark;
+  final bool compact;
 
-  const _SocialButton({
+  const _MethodButton({
+    required this.icon,
     required this.label,
-    required this.iconWidget,
     required this.onTap,
-    this.isDark = false,
+    required this.compact,
   });
 
   @override
@@ -524,23 +517,27 @@ class _SocialButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 52,
+        padding: EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: compact ? 12 : 14,
+        ),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF161616) : const Color(0xFF4A2A1D),
-          borderRadius: BorderRadius.circular(18),
+          color: Colors.white.withValues(alpha: 0.035),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: Colors.white.withValues(alpha: 0.08),
+            color: Colors.white.withValues(alpha: 0.14),
           ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            iconWidget,
-            const SizedBox(width: 12),
+            icon,
+            SizedBox(height: compact ? 8 : 10),
             Text(
               label,
+              textAlign: TextAlign.center,
               style: GoogleFonts.inter(
-                fontSize: 14.5,
+                fontSize: compact ? 11.5 : 12.5,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),
