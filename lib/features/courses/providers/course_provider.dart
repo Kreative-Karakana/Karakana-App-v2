@@ -246,6 +246,26 @@ class CourseProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> toggleLessonProgress(int lessonId) async {
+    try {
+      final isRead = await _service.toggleLessonProgress(lessonId);
+      for (final section in _sections) {
+        for (final lesson in section.lessons) {
+          if (lesson.id == lessonId) {
+            lesson.isRead = isRead;
+            notifyListeners();
+            return isRead;
+          }
+        }
+      }
+      notifyListeners();
+      return isRead;
+    } catch (e) {
+      if (kDebugMode) debugPrint('[CourseProvider] toggleLessonProgress: $e');
+      return false;
+    }
+  }
+
   void _updateInAllLists(int courseId, void Function(CourseModel) update) {
     for (final list in [
       _allCourses,
