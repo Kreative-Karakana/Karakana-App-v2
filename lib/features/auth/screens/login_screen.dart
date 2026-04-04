@@ -541,19 +541,52 @@ class _BiometricPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isFace = icon == Icons.face_retouching_natural_rounded;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.045),
+          gradient: LinearGradient(
+            colors: enabled
+                ? isFace
+                    ? [
+                        const Color(0xFF1E2234).withValues(alpha: 0.96),
+                        const Color(0xFF2E3651).withValues(alpha: 0.96),
+                      ]
+                    : [
+                        const Color(0xFF3F2417).withValues(alpha: 0.97),
+                        const Color(0xFF22120B).withValues(alpha: 0.97),
+                      ]
+                : [
+                    Colors.white.withValues(alpha: 0.045),
+                    Colors.white.withValues(alpha: 0.035),
+                  ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: enabled
-                ? AppColors.primaryMid.withValues(alpha: 0.28)
+                ? isFace
+                    ? const Color(0xFF9EB2FF).withValues(alpha: 0.24)
+                    : AppColors.primaryMid.withValues(alpha: 0.28)
                 : Colors.white.withValues(alpha: 0.06),
           ),
+          boxShadow: enabled
+              ? [
+                  BoxShadow(
+                    color: (isFace
+                            ? const Color(0xFF5F79FF)
+                            : AppColors.primary)
+                        .withValues(alpha: 0.14),
+                    blurRadius: 22,
+                    offset: const Offset(0, 10),
+                  ),
+                ]
+              : null,
         ),
         child: Row(
           children: [
@@ -561,15 +594,51 @@ class _BiometricPanel extends StatelessWidget {
               width: 52,
               height: 52,
               decoration: BoxDecoration(
+                gradient: enabled
+                    ? LinearGradient(
+                        colors: isFace
+                            ? [
+                                const Color(0xFF7C93FF).withValues(alpha: 0.28),
+                                const Color(0xFF4C5D94).withValues(alpha: 0.2),
+                              ]
+                            : [
+                                AppColors.primary.withValues(alpha: 0.24),
+                                AppColors.primaryMid.withValues(alpha: 0.12),
+                              ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                    : null,
                 color: enabled
-                    ? AppColors.primary.withValues(alpha: 0.16)
+                    ? null
                     : Colors.white.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: Icon(
-                icon,
-                color: enabled ? AppColors.primaryMid : AppColors.textTertiary,
-                size: 28,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (enabled && isFace)
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: const Color(0xFFAEC0FF).withValues(alpha: 0.7),
+                          width: 1.4,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  Icon(
+                    icon,
+                    color: enabled
+                        ? isFace
+                            ? const Color(0xFFDDE5FF)
+                            : AppColors.primaryMid
+                        : AppColors.textTertiary,
+                    size: isFace ? 24 : 28,
+                  ),
+                ],
               ),
             ),
             const SizedBox(width: 14),
@@ -582,7 +651,9 @@ class _BiometricPanel extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontSize: 14.5,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: enabled && isFace
+                          ? const Color(0xFFF2F5FF)
+                          : Colors.white,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -592,7 +663,9 @@ class _BiometricPanel extends StatelessWidget {
                       fontSize: 12.5,
                       height: 1.35,
                       color: enabled
-                          ? AppColors.textTertiary
+                          ? isFace
+                              ? const Color(0xFFC7D2FF)
+                              : AppColors.textTertiary
                           : AppColors.textTertiary.withValues(alpha: 0.82),
                     ),
                   ),
@@ -600,10 +673,27 @@ class _BiometricPanel extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-            Icon(
-              Icons.arrow_forward_rounded,
-              color: enabled ? AppColors.primaryMid : AppColors.textTertiary,
-              size: 20,
+            Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: enabled
+                    ? (isFace
+                            ? const Color(0xFF90A6FF)
+                            : AppColors.primaryMid)
+                        .withValues(alpha: 0.14)
+                    : Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                Icons.arrow_forward_rounded,
+                color: enabled
+                    ? isFace
+                        ? const Color(0xFFDCE4FF)
+                        : AppColors.primaryMid
+                    : AppColors.textTertiary,
+                size: 18,
+              ),
             ),
           ],
         ),
