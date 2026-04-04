@@ -701,7 +701,14 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
             borderRadius: BorderRadius.circular(28),
           ),
         ),
-        onPressed: () => context.push('/payment/${course.id}'),
+        onPressed: () => context.push(
+          '/payment/${course.id}',
+          extra: {
+            'courseTitle': course.title,
+            'coursePrice': course.price,
+            'courseThumbnail': course.coverPhoto,
+          },
+        ),
         child: Text(
           'Nunua Kozi • ${course.formattedPrice}',
           style: GoogleFonts.poppins(

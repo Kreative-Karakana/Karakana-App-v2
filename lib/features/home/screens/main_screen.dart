@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../courses/screens/explore_screen.dart';
-import '../../profile/screens/account_screen.dart';
+import '../../profile/screens/profile_screen.dart';
 import '../../zana/screens/zana_screen.dart';
 import 'home_screen.dart';
 
@@ -20,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     ExploreScreen(),
     ZanaScreen(),
-    AccountScreen(),
+    ProfileScreen(),
   ];
 
   List<_NavItem> get _navItems => const [

@@ -11,6 +11,9 @@ import '../../features/courses/screens/course_detail_screen.dart';
 import '../../features/courses/screens/video_lesson_screen.dart';
 import '../../features/home/screens/main_screen.dart';
 import '../../features/onboarding/screens/onboarding_screen.dart';
+import '../../features/payments/screens/payment_screen.dart';
+import '../../features/payments/screens/payment_success_screen.dart';
+import '../../features/profile/screens/profile_screen.dart';
 import '../../features/splash/screens/splash_screen.dart';
 import '../../features/zana/screens/biz_manager_screen.dart';
 import '../../features/zana/screens/insurance_screen.dart';
@@ -32,6 +35,7 @@ class AppRoutes {
   static const String account = '/account';
   static const String courseDetail = '/course/:id';
   static const String classroom = '/course/:id/classroom';
+  static const String courseComplete = '/course/:id/complete';
   static const String lesson = '/lesson/:id';
   static const String payment = '/payment/:courseId';
   static const String paymentSuccess = '/payment/success';
@@ -56,6 +60,23 @@ Widget _placeholder(String routeName) {
     body: Center(
       child: Text(
         routeName,
+        style: const TextStyle(fontSize: 18, color: Colors.black54),
+      ),
+    ),
+  );
+}
+
+Widget _comingSoonScaffold(String title) {
+  return Scaffold(
+    backgroundColor: const Color(0xFFFFF8F4),
+    appBar: AppBar(
+      backgroundColor: const Color(0xFF3B1A08),
+      foregroundColor: Colors.white,
+      title: Text(title),
+    ),
+    body: Center(
+      child: Text(
+        '$title - Coming Soon',
         style: const TextStyle(fontSize: 18, color: Colors.black54),
       ),
     ),
@@ -174,7 +195,7 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.account,
-          builder: (context, state) => _placeholder('Account'),
+          builder: (context, state) => const ProfileScreen(),
         ),
 
         // ── Courses ─────────────────────────────────────────────
@@ -196,66 +217,81 @@ class AppRouter {
             lessonId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
           ),
         ),
+        GoRoute(
+          path: '/course/:id/complete',
+          builder: (context, state) => _comingSoonScaffold('Hongera!'),
+        ),
 
         // ── Payments ────────────────────────────────────────────
         GoRoute(
           path: '/payment/success',
-          builder: (context, state) => _placeholder('Payment Success'),
+          builder: (context, state) => const PaymentSuccessScreen(),
         ),
         GoRoute(
           path: '/payment/history',
-          builder: (context, state) => _placeholder('Payment History'),
+          builder: (context, state) =>
+              _comingSoonScaffold('Historia ya Malipo'),
         ),
         GoRoute(
           path: '/payment/:courseId',
-          builder: (context, state) =>
-              _placeholder('Payment: ${state.pathParameters['courseId']}'),
+          builder: (context, state) {
+            final extra = state.extra is Map
+                ? Map<String, dynamic>.from(state.extra as Map)
+                : <String, dynamic>{};
+            return PaymentScreen(
+              courseId: int.tryParse(state.pathParameters['courseId'] ?? '') ?? 0,
+              courseTitle: (extra['courseTitle'] as String?) ?? 'Kozi ya Karakana',
+              coursePrice: (extra['coursePrice'] as num?)?.toDouble() ?? 0,
+              courseThumbnail: extra['courseThumbnail'] as String?,
+            );
+          },
         ),
         GoRoute(
           path: AppRoutes.wallet,
-          builder: (context, state) => _placeholder('Wallet'),
+          builder: (context, state) => _comingSoonScaffold('Mkoba'),
         ),
 
         // ── Profile ─────────────────────────────────────────────
         GoRoute(
           path: AppRoutes.profile,
-          builder: (context, state) => _placeholder('Profile'),
+          builder: (context, state) => const ProfileScreen(),
         ),
         GoRoute(
           path: AppRoutes.editProfile,
-          builder: (context, state) => _placeholder('Edit Profile'),
+          builder: (context, state) => _comingSoonScaffold('Hariri Wasifu'),
         ),
         GoRoute(
           path: AppRoutes.myCourses,
-          builder: (context, state) => _placeholder('My Courses'),
+          builder: (context, state) => _comingSoonScaffold('Kozi Zangu'),
         ),
         GoRoute(
           path: AppRoutes.wishlist,
-          builder: (context, state) => _placeholder('Wishlist'),
+          builder: (context, state) => _comingSoonScaffold('Vipendwa'),
         ),
 
         // ── Trainer ─────────────────────────────────────────────
         GoRoute(
           path: AppRoutes.trainerApply,
-          builder: (context, state) => _placeholder('Trainer Apply'),
+          builder: (context, state) =>
+              _comingSoonScaffold('Ombi la Mwalimu'),
         ),
         GoRoute(
           path: AppRoutes.trainerDashboard,
-          builder: (context, state) => _placeholder('Trainer Dashboard'),
+          builder: (context, state) => _comingSoonScaffold('Dashibodi'),
         ),
         GoRoute(
           path: AppRoutes.courseBuilder,
-          builder: (context, state) => _placeholder('Course Builder'),
+          builder: (context, state) => _comingSoonScaffold('Unda Kozi'),
         ),
 
         // ── Notifications / Support ──────────────────────────────
         GoRoute(
           path: AppRoutes.notifications,
-          builder: (context, state) => _placeholder('Notifications'),
+          builder: (context, state) => _comingSoonScaffold('Arifa'),
         ),
         GoRoute(
           path: AppRoutes.support,
-          builder: (context, state) => _placeholder('Support'),
+          builder: (context, state) => _comingSoonScaffold('Msaada'),
         ),
         GoRoute(
           path: AppRoutes.supportNew,
