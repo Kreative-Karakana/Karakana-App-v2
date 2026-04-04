@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class InsuranceScreen extends StatelessWidget {
   const InsuranceScreen({super.key});
@@ -6,14 +7,54 @@ class InsuranceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Insurance')),
-      body: const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Text(
-            'Insurance architecture is ready for the next build step.',
-            textAlign: TextAlign.center,
+      backgroundColor: const Color(0xFFFFF8F4),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF5A1A1A),
+        leading: const BackButton(color: Colors.white),
+        title: Text(
+          'Bima ya Biashara',
+          style: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
           ),
+        ),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF5E6D8),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: const Icon(
+                Icons.security_outlined,
+                size: 40,
+                color: Color(0xFF5A1A1A),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Bima ya Biashara',
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF1A0A00),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Inakuja Hivi Karibuni',
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: const Color(0xFF9E8070),
+              ),
+            ),
+          ],
         ),
       ),
     );
