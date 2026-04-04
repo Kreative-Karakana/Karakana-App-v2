@@ -156,26 +156,51 @@ class _LoginScreenState extends State<LoginScreen>
 
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
+      resizeToAvoidBottomInset: false,
       body: LayoutBuilder(
         builder: (context, constraints) {
           final compact = constraints.maxHeight < 760;
+          final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
 
           return Stack(
             children: [
               const _AuthBackground(),
               SafeArea(
-                child: Padding(
+                child: AnimatedPadding(
+                  duration: const Duration(milliseconds: 180),
+                  curve: Curves.easeOut,
+                  padding: EdgeInsets.only(
+                    bottom: keyboardOpen
+                        ? MediaQuery.viewInsetsOf(context).bottom
+                        : 0,
+                  ),
+                  child: Padding(
                   padding: EdgeInsets.fromLTRB(
                     22,
                     compact ? 14 : 24,
                     22,
                     compact ? 10 : 16,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const _BrandRow(),
-                      const Spacer(),
+                  child: SingleChildScrollView(
+                    physics: keyboardOpen
+                        ? const ClampingScrollPhysics()
+                        : const NeverScrollableScrollPhysics(),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight - (compact ? 24 : 40),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: keyboardOpen ? 6 : (compact ? 26 : 40),
+                          bottom: keyboardOpen ? 18 : (compact ? 30 : 44),
+                        ),
+                        child: const Center(
+                          child: _BrandRow(),
+                        ),
+                      ),
                       Align(
                         alignment: Alignment.center,
                         child: Container(
@@ -451,37 +476,16 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                         ),
                       ),
-                      const Spacer(),
-                      Center(
-                        child: RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Huna akaunti? ',
-                                style: GoogleFonts.inter(
-                                  fontSize: compact ? 13 : 14,
-                                  color: Colors.white.withValues(alpha: 0.74),
-                                ),
-                              ),
-                              WidgetSpan(
-                                alignment: PlaceholderAlignment.middle,
-                                child: GestureDetector(
-                                  onTap: () => context.push('/signup'),
-                                  child: Text(
-                                    'Jisajili Sasa',
-                                    style: GoogleFonts.inter(
-                                      fontSize: compact ? 13 : 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.primaryMid,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                      if (!keyboardOpen) ...[
+                        SizedBox(height: compact ? 24 : 32),
+                        const Center(
+                          child: _SignupFooter(),
                         ),
+                      ],
+                        ],
                       ),
-                    ],
+                    ),
+                    ),
                   ),
                 ),
               ),
@@ -510,6 +514,43 @@ class _BrandRow extends StatelessWidget {
               fontSize: 24,
               fontWeight: FontWeight.w700,
               color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SignupFooter extends StatelessWidget {
+  const _SignupFooter();
+
+  @override
+  Widget build(BuildContext context) {
+    final compact = MediaQuery.sizeOf(context).height < 760;
+
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: 'Huna akaunti? ',
+            style: GoogleFonts.inter(
+              fontSize: compact ? 13 : 14,
+              color: Colors.white.withValues(alpha: 0.74),
+            ),
+          ),
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: GestureDetector(
+              onTap: () => context.push('/signup'),
+              child: Text(
+                'Jisajili Sasa',
+                style: GoogleFonts.inter(
+                  fontSize: compact ? 13 : 14,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primaryMid,
+                ),
+              ),
             ),
           ),
         ],

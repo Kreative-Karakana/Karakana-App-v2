@@ -134,285 +134,391 @@ class _SignupScreenState extends State<SignupScreen>
       body: LayoutBuilder(
         builder: (context, constraints) {
           final compact = constraints.maxHeight < 760;
+          final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
 
           return Stack(
             children: [
               const _AuthBackground(),
               SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    22,
-                    compact ? 14 : 24,
-                    22,
-                    compact ? 10 : 16,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const _BrandRow(),
-                      const Spacer(),
-                      Container(
-                        constraints: const BoxConstraints(maxWidth: 420),
-                        padding: EdgeInsets.all(compact ? 18 : 22),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.06),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.08),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 180),
+                  child: keyboardOpen
+                      ? SingleChildScrollView(
+                          key: const ValueKey('signup_keyboard_open'),
+                          padding: EdgeInsets.fromLTRB(
+                            22,
+                            compact ? 14 : 24,
+                            22,
+                            MediaQuery.viewInsetsOf(context).bottom + 16,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.18),
-                              blurRadius: 28,
-                              offset: const Offset(0, 16),
+                          child: _SignupContent(
+                            compact: compact,
+                            authProvider: authProvider,
+                            formKey: _formKey,
+                            firstNameController: _firstNameController,
+                            emailController: _emailController,
+                            passwordController: _passwordController,
+                            confirmController: _confirmController,
+                            obscurePassword: _obscurePassword,
+                            obscureConfirm: _obscureConfirm,
+                            onTogglePassword: () => setState(
+                              () => _obscurePassword = !_obscurePassword,
                             ),
-                          ],
-                        ),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'Fungua Akaunti',
-                                style: GoogleFonts.poppins(
-                                  fontSize: compact ? 27 : 31,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                  height: 1.02,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Jenga akaunti yako na uanze safari yako ya kujifunza na kukuza biashara.',
-                                style: GoogleFonts.inter(
-                                  fontSize: compact ? 12.5 : 13.5,
-                                  color: AppColors.primaryMid,
-                                  height: 1.35,
-                                ),
-                              ),
-                              SizedBox(height: compact ? 18 : 22),
-                              _buildField(
-                                label: 'Jina la Kwanza',
-                                hint: 'Jina lako',
-                                icon: Icons.person_outline,
-                                controller: _firstNameController,
-                                compact: compact,
-                                validator: (v) =>
-                                    v!.isEmpty ? 'Weka jina lako' : null,
-                                onChanged: (_) =>
-                                    context.read<AuthProvider>().clearError(),
-                              ),
-                              SizedBox(height: compact ? 10 : 12),
-                              _buildField(
-                                label: 'Barua Pepe',
-                                hint: 'jina@mfano.com',
-                                icon: Icons.email_outlined,
-                                controller: _emailController,
-                                keyboardType: TextInputType.emailAddress,
-                                compact: compact,
-                                validator: (v) => v!.isEmpty || !v.contains('@')
-                                    ? 'Barua pepe si sahihi'
-                                    : null,
-                                onChanged: (_) =>
-                                    context.read<AuthProvider>().clearError(),
-                              ),
-                              SizedBox(height: compact ? 10 : 12),
-                              _buildField(
-                                label: 'Neno la Siri',
-                                hint: 'Herufi 8 au zaidi',
-                                icon: Icons.lock_outline,
-                                controller: _passwordController,
-                                obscureText: _obscurePassword,
-                                compact: compact,
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _obscurePassword
-                                        ? Icons.visibility_outlined
-                                        : Icons.visibility_off_outlined,
-                                    color: AppColors.textTertiary,
-                                    size: 18,
-                                  ),
-                                  onPressed: () => setState(
-                                    () => _obscurePassword = !_obscurePassword,
-                                  ),
-                                ),
-                                validator: (v) => v!.length < 8
-                                    ? 'Neno la siri lazima liwe na herufi 8+'
-                                    : null,
-                                onChanged: (_) =>
-                                    context.read<AuthProvider>().clearError(),
-                              ),
-                              SizedBox(height: compact ? 10 : 12),
-                              _buildField(
-                                label: 'Thibitisha Neno la Siri',
-                                hint: 'Rudia neno la siri',
-                                icon: Icons.lock_outline,
-                                controller: _confirmController,
-                                obscureText: _obscureConfirm,
-                                compact: compact,
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _obscureConfirm
-                                        ? Icons.visibility_outlined
-                                        : Icons.visibility_off_outlined,
-                                    color: AppColors.textTertiary,
-                                    size: 18,
-                                  ),
-                                  onPressed: () => setState(
-                                    () => _obscureConfirm = !_obscureConfirm,
-                                  ),
-                                ),
-                                validator: (v) => v != _passwordController.text
-                                    ? 'Maneno ya siri hayafanani'
-                                    : null,
-                              ),
-                              if (authProvider.errorMessage != null) ...[
-                                const SizedBox(height: 10),
-                                Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.errorLight
-                                        .withValues(alpha: 0.12),
-                                    borderRadius: BorderRadius.circular(14),
-                                    border: Border.all(
-                                      color: Colors.red.shade300
-                                          .withValues(alpha: 0.22),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    authProvider.errorMessage!,
-                                    style: GoogleFonts.inter(
-                                      fontSize: 12.5,
-                                      color: Colors.red.shade200,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                              ],
-                              SizedBox(
-                                width: double.infinity,
-                                child: GradientButton(
-                                  text: 'Jisajili',
-                                  height: compact ? 50 : 56,
-                                  isLoading: authProvider.isLoading,
-                                  onTap: _handleSignup,
-                                ),
-                              ),
-                              SizedBox(height: compact ? 16 : 18),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Divider(
-                                      color: Colors.white.withValues(alpha: 0.10),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                    ),
-                                    child: Text(
-                                      'Njia nyingine',
-                                      style: GoogleFonts.inter(
-                                        fontSize: compact ? 11 : 12,
-                                        color: AppColors.textTertiary,
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Divider(
-                                      color: Colors.white.withValues(alpha: 0.10),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: compact ? 14 : 16),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _MethodButton(
-                                      compact: compact,
-                                      label: 'Google',
-                                      onTap: _handleGoogleSignIn,
-                                      icon: Container(
-                                        width: compact ? 22 : 24,
-                                        height: compact ? 22 : 24,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.white,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'G',
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w700,
-                                              color: const Color(0xFF4285F4),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Expanded(
-                                    child: _MethodButton(
-                                      compact: compact,
-                                      label: 'Apple',
-                                      onTap: _handleAppleSignIn,
-                                      icon: Icon(
-                                        Icons.apple,
-                                        color: Colors.white,
-                                        size: compact ? 22 : 24,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                            onToggleConfirm: () => setState(
+                              () => _obscureConfirm = !_obscureConfirm,
+                            ),
+                            onHandleSignup: _handleSignup,
+                            onGoogleSignIn: _handleGoogleSignIn,
+                            onAppleSignIn: _handleAppleSignIn,
+                            buildField: _buildField,
+                          ),
+                        )
+                      : Padding(
+                          key: const ValueKey('signup_keyboard_closed'),
+                          padding: EdgeInsets.fromLTRB(
+                            22,
+                            compact ? 14 : 24,
+                            22,
+                            compact ? 10 : 16,
+                          ),
+                          child: _SignupContent(
+                            compact: compact,
+                            authProvider: authProvider,
+                            formKey: _formKey,
+                            firstNameController: _firstNameController,
+                            emailController: _emailController,
+                            passwordController: _passwordController,
+                            confirmController: _confirmController,
+                            obscurePassword: _obscurePassword,
+                            obscureConfirm: _obscureConfirm,
+                            onTogglePassword: () => setState(
+                              () => _obscurePassword = !_obscurePassword,
+                            ),
+                            onToggleConfirm: () => setState(
+                              () => _obscureConfirm = !_obscureConfirm,
+                            ),
+                            onHandleSignup: _handleSignup,
+                            onGoogleSignIn: _handleGoogleSignIn,
+                            onAppleSignIn: _handleAppleSignIn,
+                            buildField: _buildField,
                           ),
                         ),
-                      ),
-                      const Spacer(),
-                      Center(
-                        child: RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Una akaunti? ',
-                                style: GoogleFonts.inter(
-                                  fontSize: compact ? 13 : 14,
-                                  color: Colors.white.withValues(alpha: 0.74),
-                                ),
-                              ),
-                              WidgetSpan(
-                                alignment: PlaceholderAlignment.middle,
-                                child: GestureDetector(
-                                  onTap: () => context.go('/login'),
-                                  child: Text(
-                                    'Ingia',
-                                    style: GoogleFonts.inter(
-                                      fontSize: compact ? 13 : 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.primaryMid,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ],
           );
         },
       ),
+    );
+  }
+}
+
+class _SignupContent extends StatelessWidget {
+  final bool compact;
+  final AuthProvider authProvider;
+  final GlobalKey<FormState> formKey;
+  final TextEditingController firstNameController;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+  final TextEditingController confirmController;
+  final bool obscurePassword;
+  final bool obscureConfirm;
+  final VoidCallback onTogglePassword;
+  final VoidCallback onToggleConfirm;
+  final Future<void> Function() onHandleSignup;
+  final VoidCallback onGoogleSignIn;
+  final VoidCallback onAppleSignIn;
+  final Widget Function({
+    required String label,
+    required String hint,
+    required IconData icon,
+    required TextEditingController controller,
+    TextInputType? keyboardType,
+    bool obscureText,
+    Widget? suffixIcon,
+    String? Function(String?)? validator,
+    void Function(String)? onChanged,
+    required bool compact,
+  }) buildField;
+
+  const _SignupContent({
+    required this.compact,
+    required this.authProvider,
+    required this.formKey,
+    required this.firstNameController,
+    required this.emailController,
+    required this.passwordController,
+    required this.confirmController,
+    required this.obscurePassword,
+    required this.obscureConfirm,
+    required this.onTogglePassword,
+    required this.onToggleConfirm,
+    required this.onHandleSignup,
+    required this.onGoogleSignIn,
+    required this.onAppleSignIn,
+    required this.buildField,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const _BrandRow(),
+        if (!keyboardOpen)
+          const Spacer(),
+        Container(
+          constraints: const BoxConstraints(maxWidth: 420),
+          padding: EdgeInsets.all(compact ? 18 : 22),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.08),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.18),
+                blurRadius: 28,
+                offset: const Offset(0, 16),
+              ),
+            ],
+          ),
+          child: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Fungua Akaunti',
+                  style: GoogleFonts.poppins(
+                    fontSize: compact ? 27 : 31,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    height: 1.02,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Jenga akaunti yako na uanze safari yako ya kujifunza na kukuza biashara.',
+                  style: GoogleFonts.inter(
+                    fontSize: compact ? 12.5 : 13.5,
+                    color: AppColors.primaryMid,
+                    height: 1.35,
+                  ),
+                ),
+                SizedBox(height: compact ? 18 : 22),
+                buildField(
+                  label: 'Jina la Kwanza',
+                  hint: 'Jina lako',
+                  icon: Icons.person_outline,
+                  controller: firstNameController,
+                  compact: compact,
+                  validator: (v) => v!.isEmpty ? 'Weka jina lako' : null,
+                  onChanged: (_) => context.read<AuthProvider>().clearError(),
+                ),
+                SizedBox(height: compact ? 10 : 12),
+                buildField(
+                  label: 'Barua Pepe',
+                  hint: 'jina@mfano.com',
+                  icon: Icons.email_outlined,
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  compact: compact,
+                  validator: (v) =>
+                      v!.isEmpty || !v.contains('@') ? 'Barua pepe si sahihi' : null,
+                  onChanged: (_) => context.read<AuthProvider>().clearError(),
+                ),
+                SizedBox(height: compact ? 10 : 12),
+                buildField(
+                  label: 'Neno la Siri',
+                  hint: 'Herufi 8 au zaidi',
+                  icon: Icons.lock_outline,
+                  controller: passwordController,
+                  obscureText: obscurePassword,
+                  compact: compact,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: AppColors.textTertiary,
+                      size: 18,
+                    ),
+                    onPressed: onTogglePassword,
+                  ),
+                  validator: (v) =>
+                      v!.length < 8 ? 'Neno la siri lazima liwe na herufi 8+' : null,
+                  onChanged: (_) => context.read<AuthProvider>().clearError(),
+                ),
+                SizedBox(height: compact ? 10 : 12),
+                buildField(
+                  label: 'Thibitisha Neno la Siri',
+                  hint: 'Rudia neno la siri',
+                  icon: Icons.lock_outline,
+                  controller: confirmController,
+                  obscureText: obscureConfirm,
+                  compact: compact,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      obscureConfirm
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: AppColors.textTertiary,
+                      size: 18,
+                    ),
+                    onPressed: onToggleConfirm,
+                  ),
+                  validator: (v) =>
+                      v != passwordController.text ? 'Maneno ya siri hayafanani' : null,
+                ),
+                if (authProvider.errorMessage != null) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.errorLight.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: Colors.red.shade300.withValues(alpha: 0.22),
+                      ),
+                    ),
+                    child: Text(
+                      authProvider.errorMessage!,
+                      style: GoogleFonts.inter(
+                        fontSize: 12.5,
+                        color: Colors.red.shade200,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+                SizedBox(height: compact ? 8 : 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: GradientButton(
+                    text: 'Jisajili',
+                    height: compact ? 52 : 58,
+                    isLoading: authProvider.isLoading,
+                    onTap: onHandleSignup,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (!keyboardOpen) ...[
+          SizedBox(height: compact ? 18 : 22),
+          Container(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        color: Colors.white.withValues(alpha: 0.10),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        'Njia nyingine',
+                        style: GoogleFonts.inter(
+                          fontSize: compact ? 11 : 12,
+                          color: AppColors.textTertiary,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        color: Colors.white.withValues(alpha: 0.10),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: compact ? 12 : 14),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _MethodButton(
+                        compact: compact,
+                        label: 'Google',
+                        onTap: onGoogleSignIn,
+                        icon: Container(
+                          width: compact ? 22 : 24,
+                          height: compact ? 22 : 24,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Text(
+                              'G',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFF4285F4),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _MethodButton(
+                        compact: compact,
+                        label: 'Apple',
+                        onTap: onAppleSignIn,
+                        icon: Icon(
+                          Icons.apple,
+                          color: Colors.white,
+                          size: compact ? 22 : 24,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const Spacer(),
+          Center(
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Una akaunti? ',
+                    style: GoogleFonts.inter(
+                      fontSize: compact ? 13 : 14,
+                      color: Colors.white.withValues(alpha: 0.74),
+                    ),
+                  ),
+                  WidgetSpan(
+                    alignment: PlaceholderAlignment.middle,
+                    child: GestureDetector(
+                      onTap: () => context.go('/login'),
+                      child: Text(
+                        'Ingia',
+                        style: GoogleFonts.inter(
+                          fontSize: compact ? 13 : 14,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primaryMid,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

@@ -74,10 +74,18 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   Future<void> _handleResend() async {
     setState(() => _isResending = true);
-    await context.read<AuthProvider>().resendOTP(_email);
+    final auth = context.read<AuthProvider>();
+    final success = await auth.resendOTP(_email);
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Msimbo mpya umetumwa')),
+        SnackBar(
+          content: Text(
+            success
+                ? 'Msimbo mpya umetumwa'
+                : (auth.errorMessage ??
+                    'Hatukuweza kutuma msimbo mpya. Tafadhali jaribu tena.'),
+          ),
+        ),
       );
       setState(() => _isResending = false);
     }
