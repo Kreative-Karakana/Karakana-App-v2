@@ -10,11 +10,18 @@ import '../../features/courses/screens/classroom_screen.dart';
 import '../../features/courses/screens/course_detail_screen.dart';
 import '../../features/courses/screens/video_lesson_screen.dart';
 import '../../features/home/screens/main_screen.dart';
+import '../../features/notifications/screens/notifications_screen.dart';
 import '../../features/onboarding/screens/onboarding_screen.dart';
 import '../../features/payments/screens/payment_screen.dart';
 import '../../features/payments/screens/payment_success_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/splash/screens/splash_screen.dart';
+import '../../features/support/screens/new_ticket_screen.dart';
+import '../../features/support/screens/support_screen.dart';
+import '../../features/support/screens/ticket_detail_screen.dart';
+import '../../features/trainer/screens/course_builder_screen.dart';
+import '../../features/trainer/screens/student_progress_screen.dart';
+import '../../features/trainer/screens/trainer_dashboard_screen.dart';
 import '../../features/zana/screens/biz_manager_screen.dart';
 import '../../features/zana/screens/insurance_screen.dart';
 import '../../features/zana/screens/pos_screen.dart';
@@ -51,7 +58,8 @@ class AppRoutes {
   static const String notifications = '/notifications';
   static const String support = '/support';
   static const String supportNew = '/support/new';
-  static const String supportDetail = '/support/:id';
+  static const String supportDetail = '/support/:ticketId';
+  static const String trainerStudents = '/trainer/students';
 }
 
 Widget _placeholder(String routeName) {
@@ -277,30 +285,36 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.trainerDashboard,
-          builder: (context, state) => _comingSoonScaffold('Dashibodi'),
+          builder: (context, state) => const TrainerDashboardScreen(),
         ),
         GoRoute(
           path: AppRoutes.courseBuilder,
-          builder: (context, state) => _comingSoonScaffold('Unda Kozi'),
+          builder: (context, state) => const CourseBuilderScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.trainerStudents,
+          builder: (context, state) => const StudentProgressScreen(),
         ),
 
         // ── Notifications / Support ──────────────────────────────
         GoRoute(
           path: AppRoutes.notifications,
-          builder: (context, state) => _comingSoonScaffold('Arifa'),
+          builder: (context, state) => const NotificationsScreen(),
         ),
         GoRoute(
           path: AppRoutes.support,
-          builder: (context, state) => _comingSoonScaffold('Msaada'),
+          builder: (context, state) => const SupportScreen(),
         ),
         GoRoute(
           path: AppRoutes.supportNew,
-          builder: (context, state) => _placeholder('New Ticket'),
+          builder: (context, state) => const NewTicketScreen(),
         ),
         GoRoute(
-          path: '/support/:id',
-          builder: (context, state) =>
-              _placeholder('Support: ${state.pathParameters['id']}'),
+          path: '/support/:ticketId',
+          builder: (context, state) => TicketDetailScreen(
+            ticketId:
+                int.tryParse(state.pathParameters['ticketId'] ?? '') ?? 0,
+          ),
         ),
       ],
     );

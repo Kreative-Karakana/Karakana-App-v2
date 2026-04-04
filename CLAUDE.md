@@ -57,3 +57,9 @@ Version 2.0 — complete rebuild from design spec.
 - Use video_player package (already in pubspec)
 - Mux playback URL format: https://stream.mux.com/{playbackId}.m3u8
 - Signed tokens from: GET /api/v1/lessons/{id}/
+
+## Remaining Screens Status
+- Notifications: lib/features/notifications/screens/notifications_screen.dart
+- Support: lib/features/support/screens/support_screen.dart
+- Trainer Dashboard: lib/features/trainer/screens/trainer_dashboard_screen.dart
+- Course Builder: lib/features/trainer/screens/course_builder_screen.dart
