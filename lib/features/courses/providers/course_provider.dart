@@ -8,6 +8,8 @@ class CourseProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _isLoadingDetail = false;
   String? _errorMessage;
+  String? _sectionsErrorMessage;
+  String? _reviewsErrorMessage;
 
   List<CourseModel> _allCourses = [];
   List<CourseModel> _courses = [];
@@ -27,6 +29,8 @@ class CourseProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isLoadingDetail => _isLoadingDetail;
   String? get errorMessage => _errorMessage;
+  String? get sectionsErrorMessage => _sectionsErrorMessage;
+  String? get reviewsErrorMessage => _reviewsErrorMessage;
   List<CourseModel> get allCourses => _allCourses;
   List<CourseModel> get courses => _courses;
   List<CourseModel> get recommendedCourses => _recommendedCourses;
@@ -144,19 +148,40 @@ class CourseProvider extends ChangeNotifier {
   Future<void> loadCourseDetail(int id) async {
     _isLoadingDetail = true;
     _errorMessage = null;
+    _sectionsErrorMessage = null;
+    _reviewsErrorMessage = null;
+    _selectedCourse = null;
+    _sections = [];
+    _reviews = [];
     notifyListeners();
 
     try {
-      final results = await Future.wait([
-        _service.getCourseDetail(id),
-        _service.getCourseSections(id),
-        _service.getCourseReviews(id),
-      ]);
-      _selectedCourse = results[0] as CourseModel;
-      _sections = List<SectionModel>.from(results[1] as List);
-      _reviews = List<ReviewModel>.from(results[2] as List);
+      _selectedCourse = await _service.getCourseDetail(id);
     } catch (e) {
       _errorMessage = e.toString();
+      _isLoadingDetail = false;
+      notifyListeners();
+      return;
+    }
+
+    try {
+      _sections = await _service.getCourseSections(id);
+    } catch (e) {
+      _sectionsErrorMessage = e.toString();
+      if (kDebugMode) {
+        debugPrint('[CourseProvider] loadCourseDetail sections: $e');
+      }
+      _sections = [];
+    }
+
+    try {
+      _reviews = await _service.getCourseReviews(id);
+    } catch (e) {
+      _reviewsErrorMessage = e.toString();
+      if (kDebugMode) {
+        debugPrint('[CourseProvider] loadCourseDetail reviews: $e');
+      }
+      _reviews = [];
     }
 
     _isLoadingDetail = false;
