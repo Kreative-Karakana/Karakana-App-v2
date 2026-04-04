@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/providers/auth_provider.dart';
+import 'features/courses/providers/course_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,8 +28,11 @@ class _KarakanaAppState extends State<KarakanaApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: widget.authProvider,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: widget.authProvider),
+        ChangeNotifierProvider(create: (_) => CourseProvider()),
+      ],
       child: MaterialApp.router(
         title: 'Karakana',
         debugShowCheckedModeBanner: false,

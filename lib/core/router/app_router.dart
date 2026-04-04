@@ -6,6 +6,7 @@ import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/signup_screen.dart';
 import '../../features/auth/screens/verify_email_screen.dart';
+import '../../features/home/screens/main_screen.dart';
 import '../../features/onboarding/screens/onboarding_screen.dart';
 import '../../features/splash/screens/splash_screen.dart';
 
@@ -125,10 +126,10 @@ class AppRouter {
           builder: (context, state) => const BiometricScreen(),
         ),
 
-        // ── Main tabs (placeholders — replaced in Phase 3+) ─────
+        // ── Main shell ───────────────────────────────────────────
         GoRoute(
           path: AppRoutes.home,
-          builder: (context, state) => _placeholder('Home'),
+          builder: (context, state) => const MainScreen(),
         ),
         GoRoute(
           path: AppRoutes.explore,
