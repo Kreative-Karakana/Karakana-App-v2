@@ -591,7 +591,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                               ),
                             ),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () =>
+                                  context.push('/course/${course.id}/reviews'),
                               child: Text(
                                 'Zote (${course.reviewCount})',
                                 style: GoogleFonts.inter(

@@ -1,0 +1,320 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import '../../auth/providers/auth_provider.dart';
+
+class CourseCompleteScreen extends StatefulWidget {
+  final int courseId;
+  final String courseTitle;
+
+  const CourseCompleteScreen({
+    super.key,
+    required this.courseId,
+    required this.courseTitle,
+  });
+
+  @override
+  State<CourseCompleteScreen> createState() => _CourseCompleteScreenState();
+}
+
+class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
+  bool _isGenerating = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Consumer<AuthProvider>(
+            builder: (_, auth, __) => Column(
+              children: [
+                const SizedBox(height: 32),
+                Center(
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFF4B400), Color(0xFFFF8F00)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFF4B400).withValues(alpha: 0.4),
+                          blurRadius: 24,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.emoji_events,
+                      color: Colors.white,
+                      size: 52,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Hongera!',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF3B1A08),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Umekamilisha kozi kwa mafanikio!',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF3B1A08),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  widget.courseTitle,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.inter(
+                    fontSize: 15,
+                    color: const Color(0xFFC4620A),
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFFFF8F4), Color(0xFFFFF0E6)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: const Color(0xFFC4620A).withValues(alpha: 0.3),
+                      width: 1.5,
+                    ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x1FC4620A),
+                        blurRadius: 20,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFC4620A),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Text(
+                                'K',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'KARAKANA',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF3B1A08),
+                                  letterSpacing: 2,
+                                ),
+                              ),
+                              Text(
+                                'Cheti cha Ukamilishaji',
+                                style: GoogleFonts.inter(
+                                  fontSize: 10,
+                                  color: const Color(0xFF9E8070),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Divider(
+                        color: const Color(0xFFC4620A).withValues(alpha: 0.3),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Hii inathibitisha kwamba',
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          color: const Color(0xFF9E8070),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        auth.userFullName,
+                        style: GoogleFonts.poppins(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF3B1A08),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'amekamilisha kwa mafanikio',
+                        style: GoogleFonts.inter(
+                          fontSize: 13,
+                          color: const Color(0xFF9E8070),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        widget.courseTitle,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFFC4620A),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        DateFormat('dd MMMM yyyy').format(DateTime.now()),
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: const Color(0xFF9E8070),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Divider(
+                        color: const Color(0xFFC4620A).withValues(alpha: 0.3),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Imeidhinishwa na Karakana',
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          color: const Color(0xFFBDA99C),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 28),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    icon: _isGenerating
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Icon(Icons.download_outlined),
+                    label: Text(
+                      'Pakua Cheti',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFC4620A),
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(double.infinity, 54),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28),
+                      ),
+                    ),
+                    onPressed: _isGenerating
+                        ? null
+                        : () async {
+                            final messenger = ScaffoldMessenger.of(context);
+                            setState(() => _isGenerating = true);
+                            await Future.delayed(const Duration(seconds: 1));
+                            if (!mounted) return;
+                            setState(() => _isGenerating = false);
+                            messenger.showSnackBar(
+                              const SnackBar(
+                                content: Text('Cheti kitapatikana hivi karibuni!'),
+                                backgroundColor: Color(0xFF2E7D32),
+                              ),
+                            );
+                          },
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    icon: const Icon(
+                      Icons.share_outlined,
+                      color: Color(0xFFC4620A),
+                      size: 18,
+                    ),
+                    label: Text(
+                      'Shiriki Cheti',
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFFC4620A),
+                      ),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFFC4620A)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28),
+                      ),
+                      minimumSize: const Size(double.infinity, 52),
+                    ),
+                    onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Shiriki inakuja hivi karibuni!'),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => context.go('/home'),
+                  child: Text(
+                    'Rudi Nyumbani',
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: const Color(0xFF9E8070),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

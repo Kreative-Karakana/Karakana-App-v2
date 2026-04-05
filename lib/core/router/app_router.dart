@@ -7,19 +7,28 @@ import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/signup_screen.dart';
 import '../../features/auth/screens/verify_email_screen.dart';
 import '../../features/courses/screens/classroom_screen.dart';
+import '../../features/courses/screens/course_complete_screen.dart';
 import '../../features/courses/screens/course_detail_screen.dart';
+import '../../features/courses/screens/course_reviews_screen.dart';
+import '../../features/courses/screens/my_courses_screen.dart';
 import '../../features/courses/screens/video_lesson_screen.dart';
+import '../../features/courses/screens/wishlist_screen.dart';
 import '../../features/home/screens/main_screen.dart';
 import '../../features/notifications/screens/notifications_screen.dart';
 import '../../features/onboarding/screens/onboarding_screen.dart';
+import '../../features/payments/screens/payment_history_screen.dart';
 import '../../features/payments/screens/payment_screen.dart';
 import '../../features/payments/screens/payment_success_screen.dart';
+import '../../features/payments/screens/wallet_screen.dart';
+import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
+import '../../features/profile/screens/trainer_application_screen.dart';
 import '../../features/splash/screens/splash_screen.dart';
 import '../../features/support/screens/new_ticket_screen.dart';
 import '../../features/support/screens/support_screen.dart';
 import '../../features/support/screens/ticket_detail_screen.dart';
 import '../../features/trainer/screens/course_builder_screen.dart';
+import '../../features/trainer/screens/quiz_manager_screen.dart';
 import '../../features/trainer/screens/student_progress_screen.dart';
 import '../../features/trainer/screens/trainer_dashboard_screen.dart';
 import '../../features/zana/screens/biz_manager_screen.dart';
@@ -68,23 +77,6 @@ Widget _placeholder(String routeName) {
     body: Center(
       child: Text(
         routeName,
-        style: const TextStyle(fontSize: 18, color: Colors.black54),
-      ),
-    ),
-  );
-}
-
-Widget _comingSoonScaffold(String title) {
-  return Scaffold(
-    backgroundColor: const Color(0xFFFFF8F4),
-    appBar: AppBar(
-      backgroundColor: const Color(0xFF3B1A08),
-      foregroundColor: Colors.white,
-      title: Text(title),
-    ),
-    body: Center(
-      child: Text(
-        '$title - Coming Soon',
         style: const TextStyle(fontSize: 18, color: Colors.black54),
       ),
     ),
@@ -220,6 +212,12 @@ class AppRouter {
           ),
         ),
         GoRoute(
+          path: '/course/:id/reviews',
+          builder: (context, state) => CourseReviewsScreen(
+            courseId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+          ),
+        ),
+        GoRoute(
           path: '/lesson/:id',
           builder: (context, state) => VideoLessonScreen(
             lessonId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
@@ -227,7 +225,11 @@ class AppRouter {
         ),
         GoRoute(
           path: '/course/:id/complete',
-          builder: (context, state) => _comingSoonScaffold('Hongera!'),
+          builder: (context, state) => CourseCompleteScreen(
+            courseId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+            courseTitle:
+                (state.extra as Map?)?['courseTitle']?.toString() ?? 'Kozi',
+          ),
         ),
 
         // ── Payments ────────────────────────────────────────────
@@ -237,8 +239,7 @@ class AppRouter {
         ),
         GoRoute(
           path: '/payment/history',
-          builder: (context, state) =>
-              _comingSoonScaffold('Historia ya Malipo'),
+          builder: (context, state) => const PaymentHistoryScreen(),
         ),
         GoRoute(
           path: '/payment/:courseId',
@@ -256,7 +257,7 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.wallet,
-          builder: (context, state) => _comingSoonScaffold('Mkoba'),
+          builder: (context, state) => const WalletScreen(),
         ),
 
         // ── Profile ─────────────────────────────────────────────
@@ -266,22 +267,21 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.editProfile,
-          builder: (context, state) => _comingSoonScaffold('Hariri Wasifu'),
+          builder: (context, state) => const EditProfileScreen(),
         ),
         GoRoute(
           path: AppRoutes.myCourses,
-          builder: (context, state) => _comingSoonScaffold('Kozi Zangu'),
+          builder: (context, state) => const MyCoursesScreen(),
         ),
         GoRoute(
           path: AppRoutes.wishlist,
-          builder: (context, state) => _comingSoonScaffold('Vipendwa'),
+          builder: (context, state) => const WishlistScreen(),
         ),
 
         // ── Trainer ─────────────────────────────────────────────
         GoRoute(
           path: AppRoutes.trainerApply,
-          builder: (context, state) =>
-              _comingSoonScaffold('Ombi la Mwalimu'),
+          builder: (context, state) => const TrainerApplicationScreen(),
         ),
         GoRoute(
           path: AppRoutes.trainerDashboard,
@@ -294,6 +294,10 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.trainerStudents,
           builder: (context, state) => const StudentProgressScreen(),
+        ),
+        GoRoute(
+          path: '/trainer/quiz/:courseId',
+          builder: (context, state) => const QuizManagerScreen(),
         ),
 
         // ── Notifications / Support ──────────────────────────────

@@ -214,7 +214,10 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     if (progress >= 1.0)
                       OutlinedButton(
                         onPressed: () =>
-                            context.push('/course/${widget.courseId}/complete'),
+                            context.push(
+                              '/course/${widget.courseId}/complete',
+                              extra: {'courseTitle': course.title},
+                            ),
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: Color(0xFF2E7D32)),
                           shape: RoundedRectangleBorder(
