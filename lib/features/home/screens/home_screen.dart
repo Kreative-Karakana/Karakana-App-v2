@@ -36,6 +36,22 @@ class _HomeScreenState extends State<HomeScreen> {
     return 'Habari za Usiku';
   }
 
+  IconData _getTimeIcon() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return Icons.light_mode_outlined;
+    if (hour < 17) return Icons.wb_sunny_outlined;
+    if (hour < 21) return Icons.wb_twilight_outlined;
+    return Icons.bedtime_outlined;
+  }
+
+  String _getTagline() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Siku nzuri ya kujifunza na kukua';
+    if (hour < 17) return 'Endelea na safari yako ya maarifa';
+    if (hour < 21) return 'Angalia mafanikio ya masomo ya leo';
+    return 'Pitia masomo — kesho inaanza sasa';
+  }
+
   String _getFirstName(AuthProvider auth) {
     final fullName = auth.userFullName.trim();
     if (fullName.isNotEmpty) return fullName.split(' ').first;
@@ -210,45 +226,53 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, kToolbarHeight + 65, 20, 20),
+                            padding: const EdgeInsets.fromLTRB(20, kToolbarHeight + 58, 20, 20),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                // ── Greeting label ──
+                                // ── Time-aware greeting ──
                                 Row(
                                   children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.primary.withValues(alpha: 0.25),
-                                        borderRadius: BorderRadius.circular(20),
-                                        border: Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
-                                      ),
-                                      child: Text(
-                                        _getGreeting(),
-                                        style: GoogleFonts.inter(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white.withValues(alpha: 0.9),
-                                          letterSpacing: 0.3,
-                                        ),
+                                    Icon(
+                                      _getTimeIcon(),
+                                      color: Colors.white.withValues(alpha: 0.5),
+                                      size: 13,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      _getGreeting(),
+                                      style: GoogleFonts.inter(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.white.withValues(alpha: 0.55),
+                                        letterSpacing: 0.2,
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: 4),
                                 // ── Name ──
                                 Text(
                                   _getFirstName(auth),
                                   style: GoogleFonts.poppins(
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.w700,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w800,
                                     color: Colors.white,
                                     height: 1.1,
                                     shadows: [
-                                      Shadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 8, offset: const Offset(0, 2)),
+                                      Shadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 10, offset: const Offset(0, 2)),
                                     ],
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                // ── Tagline ──
+                                Text(
+                                  _getTagline(),
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12,
+                                    color: Colors.white.withValues(alpha: 0.42),
+                                    letterSpacing: 0.1,
                                   ),
                                 ),
                                 const SizedBox(height: 14),
