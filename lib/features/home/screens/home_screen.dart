@@ -57,17 +57,19 @@ class _HomeScreenState extends State<HomeScreen> {
               physics: const BouncingScrollPhysics(),
               slivers: [
                 SliverAppBar(
-                  expandedHeight: 235,
+                  expandedHeight: 268,
                   pinned: true,
                   automaticallyImplyLeading: false,
+                  centerTitle: false,
+                  titleSpacing: 16,
                   backgroundColor: AppColors.primaryDark,
                   surfaceTintColor: Colors.transparent,
                   title: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        width: 36,
-                        height: 36,
+                        width: 40,
+                        height: 40,
                         decoration: const BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -80,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Text(
                                 'K',
                                 style: GoogleFonts.poppins(
-                                  fontSize: 14,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.w700,
                                   color: AppColors.primary,
                                 ),
@@ -93,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text(
                         'Karakana',
                         style: GoogleFonts.poppins(
-                          fontSize: 20,
+                          fontSize: 22,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
@@ -159,129 +161,146 @@ class _HomeScreenState extends State<HomeScreen> {
                     background: Container(
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
-                          colors: AppColors.headerGradient,
+                          colors: [Color(0xFF2A1106), Color(0xFF5C2208), Color(0xFFB5540A)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
+                          stops: [0.0, 0.5, 1.0],
                         ),
                       ),
                       child: Stack(
                         clipBehavior: Clip.hardEdge,
                         children: [
+                          // Top-right large decorative circle
                           Positioned(
-                            top: -40,
-                            right: -20,
+                            top: -60,
+                            right: -40,
                             child: Container(
-                              width: 200,
-                              height: 200,
+                              width: 240,
+                              height: 240,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.white.withValues(alpha: 0.05),
+                                color: Colors.white.withValues(alpha: 0.04),
                               ),
                             ),
                           ),
+                          // Mid-right accent circle
                           Positioned(
-                            bottom: -20,
-                            left: -20,
+                            top: 40,
+                            right: 60,
                             child: Container(
-                              width: 140,
-                              height: 140,
+                              width: 80,
+                              height: 80,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: AppColors.primaryMid.withValues(alpha: 0.08),
+                                color: AppColors.primary.withValues(alpha: 0.18),
+                              ),
+                            ),
+                          ),
+                          // Bottom-left decorative circle
+                          Positioned(
+                            bottom: -30,
+                            left: -30,
+                            child: Container(
+                              width: 160,
+                              height: 160,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white.withValues(alpha: 0.03),
                               ),
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, kToolbarHeight + 65, 20, 16),
+                            padding: const EdgeInsets.fromLTRB(20, kToolbarHeight + 65, 20, 20),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                  // ── Greeting ──
-                                  Text(
-                                    '${_getGreeting()},',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 13,
-                                      color: AppColors.primaryMid,
-                                      letterSpacing: 0.2,
-                                    ),
-                                  ),
-                                  Text(
-                                    _getFirstName(auth),
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 26,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                      height: 1.1,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  // ── Row 3: Search bar ──
-                                  GestureDetector(
-                                    onTap: () => context.push('/explore'),
-                                    child: Container(
-                                      height: 44,
+                                // ── Greeting label ──
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withValues(alpha: 0.15),
-                                        borderRadius: BorderRadius.circular(22),
-                                        border: Border.all(
-                                          color: Colors.white.withValues(alpha: 0.3),
+                                        color: AppColors.primary.withValues(alpha: 0.25),
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
+                                      ),
+                                      child: Text(
+                                        _getGreeting(),
+                                        style: GoogleFonts.inter(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white.withValues(alpha: 0.9),
+                                          letterSpacing: 0.3,
                                         ),
                                       ),
-                                      child: Row(
-                                        children: [
-                                          const SizedBox(width: 14),
-                                          Icon(
-                                            Icons.search,
-                                            color: Colors.white.withValues(alpha: 0.7),
-                                            size: 18,
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            'Tafuta kozi...',
-                                            style: GoogleFonts.inter(
-                                              fontSize: 14,
-                                              color: Colors.white.withValues(alpha: 0.6),
-                                            ),
-                                          ),
-                                        ],
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                // ── Name ──
+                                Text(
+                                  _getFirstName(auth),
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                    height: 1.1,
+                                    shadows: [
+                                      Shadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 8, offset: const Offset(0, 2)),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 14),
+                                // ── Search bar ──
+                                GestureDetector(
+                                  onTap: () => context.push('/explore'),
+                                  child: Container(
+                                    height: 48,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(14),
+                                      border: Border.all(
+                                        color: Colors.white.withValues(alpha: 0.2),
+                                        width: 1.5,
                                       ),
                                     ),
+                                    child: Row(
+                                      children: [
+                                        const SizedBox(width: 14),
+                                        Icon(
+                                          Icons.search_rounded,
+                                          color: Colors.white.withValues(alpha: 0.65),
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(
+                                            'Tafuta kozi, mada, mwalimu...',
+                                            style: GoogleFonts.inter(
+                                              fontSize: 13,
+                                              color: Colors.white.withValues(alpha: 0.5),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          margin: const EdgeInsets.only(right: 8),
+                                          padding: const EdgeInsets.all(7),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primary.withValues(alpha: 0.35),
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          child: const Icon(Icons.tune_rounded, color: Colors.white, size: 15),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
+                          ),
                         ],
                       ),
-                    ),
-                  ),
-                ),
-                const SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
-                    child: Row(
-                      children: [
-                        _StatCard(
-                          icon: Icons.school_outlined,
-                          value: '20+',
-                          label: 'Kozi',
-                          color: AppColors.primary,
-                        ),
-                        SizedBox(width: 10),
-                        _StatCard(
-                          icon: Icons.people_outlined,
-                          value: '500+',
-                          label: 'Wanafunzi',
-                          color: AppColors.primaryDark,
-                        ),
-                        SizedBox(width: 10),
-                        _StatCard(
-                          icon: Icons.star_outline,
-                          value: '4.8',
-                          label: 'Ukadiriaji',
-                          color: AppColors.primaryMid,
-                        ),
-                      ],
                     ),
                   ),
                 ),
@@ -507,71 +526,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-
-class _StatCard extends StatelessWidget {
-  final IconData icon;
-  final String value;
-  final String label;
-  final Color color;
-
-  const _StatCard({
-    required this.icon,
-    required this.value,
-    required this.label,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: const [
-            BoxShadow(
-              color: AppColors.cardShadow,
-              blurRadius: 8,
-              offset: Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(icon, color: color, size: 16),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              value,
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            Text(
-              label,
-              style: GoogleFonts.inter(
-                fontSize: 10,
-                color: AppColors.textTertiary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _SectionHeader extends StatelessWidget {
   final String title;
   final String? subtitle;
@@ -640,7 +594,7 @@ class _BannerCarouselState extends State<_BannerCarousel> {
   @override
   void initState() {
     super.initState();
-    _controller = PageController(viewportFraction: 0.9);
+    _controller = PageController(viewportFraction: 0.88);
   }
 
   @override
@@ -653,8 +607,9 @@ class _BannerCarouselState extends State<_BannerCarousel> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        const SizedBox(height: 20),
         SizedBox(
-          height: 180,
+          height: 200,
           child: PageView.builder(
             controller: _controller,
             itemCount: widget.banners.length,
@@ -662,21 +617,27 @@ class _BannerCarouselState extends State<_BannerCarousel> {
             itemBuilder: (_, i) {
               final banner = widget.banners[i];
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 6),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(20),
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
                       banner.image != null
                           ? CachedNetworkImage(imageUrl: banner.image!, fit: BoxFit.cover, errorWidget: (_, __, ___) => _fallback())
                           : _fallback(),
+                      // Layered gradient for depth
                       Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Colors.black.withValues(alpha: 0.05), Colors.black.withValues(alpha: 0.58)],
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.3),
+                              Colors.black.withValues(alpha: 0.72),
+                            ],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
+                            stops: const [0.0, 0.45, 1.0],
                           ),
                         ),
                       ),
@@ -688,16 +649,43 @@ class _BannerCarouselState extends State<_BannerCarousel> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.16), borderRadius: BorderRadius.circular(999)),
-                              child: Text('Kipengele cha wiki', style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white)),
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withValues(alpha: 0.85),
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              child: Text(
+                                'Kipengele cha Wiki',
+                                style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: 0.3),
+                              ),
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 8),
                             Text(
                               banner.title,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.poppins(fontSize: 22, height: 1.08, fontWeight: FontWeight.w700, color: Colors.white),
+                              style: GoogleFonts.poppins(
+                                fontSize: 20,
+                                height: 1.15,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                                shadows: [Shadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 6)],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Text(
+                                  'Angalia kozi',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white.withValues(alpha: 0.85),
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Icon(Icons.arrow_forward_rounded, size: 14, color: Colors.white.withValues(alpha: 0.85)),
+                              ],
                             ),
                           ],
                         ),
@@ -709,17 +697,21 @@ class _BannerCarouselState extends State<_BannerCarousel> {
             },
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
             widget.banners.length,
             (i) => AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
               margin: const EdgeInsets.symmetric(horizontal: 3),
-              width: _currentIndex == i ? 20 : 6,
+              width: _currentIndex == i ? 22 : 6,
               height: 6,
-              decoration: BoxDecoration(color: _currentIndex == i ? AppColors.primary : AppColors.border, borderRadius: BorderRadius.circular(999)),
+              decoration: BoxDecoration(
+                color: _currentIndex == i ? AppColors.primary : AppColors.primary.withValues(alpha: 0.25),
+                borderRadius: BorderRadius.circular(999),
+              ),
             ),
           ),
         ),
