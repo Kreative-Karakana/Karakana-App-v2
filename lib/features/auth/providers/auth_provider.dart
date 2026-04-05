@@ -48,6 +48,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      await SecureStorage().deleteToken();
       final response = await ApiClient().dio.post(
         ApiEndpoints.login,
         data: {'email': email, 'password': password},
@@ -66,7 +67,10 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return false;
     } catch (e) {
-      _errorMessage = ApiClient().parseError(e);
+      final parsed = ApiClient().parseError(e);
+      _errorMessage = parsed.toLowerCase().contains('token')
+          ? 'Barua pepe au nenosiri si sahihi.'
+          : parsed;
       _isLoading = false;
       notifyListeners();
       return false;

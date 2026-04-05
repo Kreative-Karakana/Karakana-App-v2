@@ -20,7 +20,18 @@ class ApiClient {
 
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        final token = await SecureStorage().getToken();
+        const authPaths = {
+          '/api/auth/signin/',
+          '/api/auth/signup/',
+          '/api/auth/verify/',
+          '/api/auth/verify/resend/',
+          '/api/request-password-reset/',
+          '/api/oauth/',
+          '/api/apple-oauth/',
+        };
+        final shouldAttachToken = !authPaths.contains(options.path);
+        final token =
+            shouldAttachToken ? await SecureStorage().getToken() : null;
         if (token != null && token.isNotEmpty) {
           options.headers['Authorization'] = 'Token $token';
         }

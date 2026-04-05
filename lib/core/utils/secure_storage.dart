@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_constants.dart';
 
 class SecureStorage {
@@ -12,17 +13,35 @@ class SecureStorage {
       resetOnError: true,
     ),
   );
+  final FlutterSecureStorage _legacyStorage = const FlutterSecureStorage();
+
+  Future<SharedPreferences> get _prefs async => SharedPreferences.getInstance();
+
+  Future<void> _recoverStorage() async {
+    try {
+      await _storage.deleteAll();
+    } catch (_) {}
+    try {
+      await _legacyStorage.deleteAll();
+    } catch (_) {}
+  }
 
   Future<void> saveToken(String token) async {
     try {
       await _storage.write(key: AppConstants.tokenKey, value: token);
-    } catch (_) {}
+    } catch (_) {
+      await _recoverStorage();
+      try {
+        await _storage.write(key: AppConstants.tokenKey, value: token);
+      } catch (_) {}
+    }
   }
 
   Future<String?> getToken() async {
     try {
       return await _storage.read(key: AppConstants.tokenKey);
     } catch (_) {
+      await _recoverStorage();
       return null;
     }
   }
@@ -30,7 +49,9 @@ class SecureStorage {
   Future<void> deleteToken() async {
     try {
       await _storage.delete(key: AppConstants.tokenKey);
-    } catch (_) {}
+    } catch (_) {
+      await _recoverStorage();
+    }
   }
 
   Future<bool> hasToken() async {
@@ -43,51 +64,44 @@ class SecureStorage {
   }
 
   Future<void> saveUserId(String id) async {
-    try {
-      await _storage.write(key: AppConstants.userIdKey, value: id);
-    } catch (_) {}
+    final prefs = await _prefs;
+    await prefs.setString(AppConstants.userIdKey, id);
   }
 
   Future<String?> getUserId() async {
-    try {
-      return await _storage.read(key: AppConstants.userIdKey);
-    } catch (_) {
-      return null;
-    }
+    final prefs = await _prefs;
+    return prefs.getString(AppConstants.userIdKey);
   }
 
   Future<void> setOnboardingComplete() async {
-    try {
-      await _storage.write(key: AppConstants.onboardingKey, value: 'true');
-    } catch (_) {}
+    final prefs = await _prefs;
+    await prefs.setBool(AppConstants.onboardingKey, true);
   }
 
   Future<bool> isOnboardingComplete() async {
-    try {
-      return await _storage.read(key: AppConstants.onboardingKey) == 'true';
-    } catch (_) {
-      return false;
-    }
+    final prefs = await _prefs;
+    return prefs.getBool(AppConstants.onboardingKey) ?? false;
   }
 
   Future<void> setBiometricEnabled(bool enabled) async {
-    try {
-      await _storage.write(
-          key: AppConstants.biometricKey, value: enabled.toString());
-    } catch (_) {}
+    final prefs = await _prefs;
+    await prefs.setBool(AppConstants.biometricKey, enabled);
   }
 
   Future<bool> isBiometricEnabled() async {
-    try {
-      return await _storage.read(key: AppConstants.biometricKey) == 'true';
-    } catch (_) {
-      return false;
-    }
+    final prefs = await _prefs;
+    return prefs.getBool(AppConstants.biometricKey) ?? false;
   }
 
   Future<void> clearAll() async {
+    final prefs = await _prefs;
     try {
       await _storage.deleteAll();
-    } catch (_) {}
+    } catch (_) {
+      await _recoverStorage();
+    }
+    await prefs.remove(AppConstants.onboardingKey);
+    await prefs.remove(AppConstants.biometricKey);
+    await prefs.remove(AppConstants.userIdKey);
   }
 }
