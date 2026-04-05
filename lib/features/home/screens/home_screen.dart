@@ -28,12 +28,20 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  String _greeting() {
+  String _getGreeting() {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Habari Asubuhi';
-    if (hour < 17) return 'Habari Mchana';
-    if (hour < 21) return 'Habari Jioni';
-    return 'Habari Usiku';
+    if (hour < 12) return 'Habari za Asubuhi';
+    if (hour < 17) return 'Habari za Mchana';
+    if (hour < 21) return 'Habari za Jioni';
+    return 'Habari za Usiku';
+  }
+
+  String _getFirstName(AuthProvider auth) {
+    final fullName = auth.userFullName.trim();
+    if (fullName.isNotEmpty) return fullName.split(' ').first;
+    final email = auth.userEmail;
+    if (email.isNotEmpty) return email.split('@').first;
+    return 'Rafiki';
   }
 
   @override
@@ -42,11 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColors.background,
       body: Consumer2<CourseProvider, AuthProvider>(
         builder: (context, courses, auth, _) {
-          final firstName = auth.userFullName.isNotEmpty
-              ? auth.userFullName.split(' ').first
-              : 'Rafiki';
-          final shortHero = MediaQuery.sizeOf(context).height < 760;
-
           return RefreshIndicator(
             color: AppColors.primary,
             onRefresh: () => context.read<CourseProvider>().loadHomeData(),
@@ -54,19 +57,43 @@ class _HomeScreenState extends State<HomeScreen> {
               physics: const BouncingScrollPhysics(),
               slivers: [
                 SliverAppBar(
-                  expandedHeight: shortHero ? 286 : 310,
+                  expandedHeight: 235,
                   pinned: true,
                   automaticallyImplyLeading: false,
                   backgroundColor: AppColors.primaryDark,
                   surfaceTintColor: Colors.transparent,
                   title: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      const _BrandBadge(compact: true),
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Image.asset(
+                            'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                            errorBuilder: (_, __, ___) => Center(
+                              child: Text(
+                                'K',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                       const SizedBox(width: 10),
                       Text(
                         'Karakana',
                         style: GoogleFonts.poppins(
-                          fontSize: 17,
+                          fontSize: 20,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
@@ -74,20 +101,56 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   actions: [
-                    IconButton(
-                      onPressed: () => context.push('/notifications'),
-                      icon: const Icon(
-                        Icons.notifications_none_rounded,
-                        color: Colors.white,
+                    Container(
+                      margin: const EdgeInsets.only(right: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.notifications_outlined,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        onPressed: () => context.push('/notifications'),
+                        padding: const EdgeInsets.all(7),
+                        constraints: const BoxConstraints(),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: GestureDetector(
-                        onTap: () => context.push('/profile'),
-                        child: _Avatar(
-                          userAvatar: auth.userAvatar,
-                          userName: firstName,
+                    GestureDetector(
+                      onTap: () => context.push('/profile'),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        margin: const EdgeInsets.only(right: 16),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.primary, width: 2),
+                        ),
+                        child: ClipOval(
+                          child: auth.userAvatar != null
+                              ? CachedNetworkImage(
+                                  imageUrl: auth.userAvatar!,
+                                  fit: BoxFit.cover,
+                                  width: 36,
+                                  height: 36,
+                                )
+                              : Container(
+                                  color: AppColors.primary,
+                                  child: Center(
+                                    child: Text(
+                                      _getFirstName(auth).isNotEmpty
+                                          ? _getFirstName(auth)[0].toUpperCase()
+                                          : 'K',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                         ),
                       ),
                     ),
@@ -96,23 +159,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     background: Container(
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [
-                            Color(0xFF361305),
-                            Color(0xFF70310B),
-                            Color(0xFFC4620A),
-                          ],
+                          colors: AppColors.headerGradient,
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                       ),
                       child: Stack(
+                        clipBehavior: Clip.hardEdge,
                         children: [
                           Positioned(
-                            top: -36,
+                            top: -40,
                             right: -20,
                             child: Container(
-                              width: 184,
-                              height: 184,
+                              width: 200,
+                              height: 200,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.white.withValues(alpha: 0.05),
@@ -120,147 +180,108 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           Positioned(
-                            top: 116,
-                            left: -28,
+                            bottom: -20,
+                            left: -20,
                             child: Container(
-                              width: 124,
-                              height: 124,
+                              width: 140,
+                              height: 140,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.white.withValues(alpha: 0.05),
+                                color: AppColors.primaryMid.withValues(alpha: 0.08),
                               ),
                             ),
                           ),
-                          SafeArea(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      const _BrandBadge(),
-                                      const SizedBox(width: 12),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Karakana',
-                                            style: GoogleFonts.poppins(
-                                              fontSize: shortHero ? 22 : 24,
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          Text(
-                                            'Jifunze. Jenga. Kua.',
-                                            style: GoogleFonts.inter(
-                                              fontSize: shortHero ? 11 : 12,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.white.withValues(alpha: 0.72),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  const Spacer(),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.12),
-                                      borderRadius: BorderRadius.circular(999),
-                                    ),
-                                    child: Text(
-                                      _greeting(),
-                                      style: GoogleFonts.inter(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.white.withValues(alpha: 0.84),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: shortHero ? 10 : 12),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20, kToolbarHeight + 65, 20, 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                  // ── Greeting ──
                                   Text(
-                                    'Karibu, $firstName',
+                                    '${_getGreeting()},',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 13,
+                                      color: AppColors.primaryMid,
+                                      letterSpacing: 0.2,
+                                    ),
+                                  ),
+                                  Text(
+                                    _getFirstName(auth),
                                     style: GoogleFonts.poppins(
-                                      fontSize: shortHero ? 26 : 30,
+                                      fontSize: 26,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white,
-                                      height: 1.04,
+                                      height: 1.1,
                                     ),
                                   ),
-                                  SizedBox(height: shortHero ? 6 : 8),
-                                  Text(
-                                    'Anza na kozi bora, zana za biashara, na mwongozo wa kukuza hatua yako inayofuata.',
-                                    style: GoogleFonts.inter(
-                                      fontSize: shortHero ? 13 : 14,
-                                      height: 1.5,
-                                      color: Colors.white.withValues(alpha: 0.82),
-                                    ),
-                                  ),
-                                  SizedBox(height: shortHero ? 12 : 18),
+                                  const SizedBox(height: 12),
+                                  // ── Row 3: Search bar ──
                                   GestureDetector(
                                     onTap: () => context.push('/explore'),
                                     child: Container(
-                                      height: shortHero ? 50 : 54,
+                                      height: 44,
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withValues(alpha: 0.12),
-                                        borderRadius: BorderRadius.circular(20),
+                                        color: Colors.white.withValues(alpha: 0.15),
+                                        borderRadius: BorderRadius.circular(22),
                                         border: Border.all(
-                                          color: Colors.white.withValues(alpha: 0.16),
+                                          color: Colors.white.withValues(alpha: 0.3),
                                         ),
                                       ),
                                       child: Row(
                                         children: [
-                                          const SizedBox(width: 16),
-                                          Icon(Icons.search_rounded, color: Colors.white.withValues(alpha: 0.74)),
-                                          const SizedBox(width: 10),
+                                          const SizedBox(width: 14),
+                                          Icon(
+                                            Icons.search,
+                                            color: Colors.white.withValues(alpha: 0.7),
+                                            size: 18,
+                                          ),
+                                          const SizedBox(width: 8),
                                           Text(
-                                            'Tafuta kozi, mwalimu, au mada...',
+                                            'Tafuta kozi...',
                                             style: GoogleFonts.inter(
-                                              fontSize: shortHero ? 13 : 14,
-                                              color: Colors.white.withValues(alpha: 0.74),
+                                              fontSize: 14,
+                                              color: Colors.white.withValues(alpha: 0.6),
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: shortHero ? 10 : 14),
-                                  Wrap(
-                                    spacing: shortHero ? 8 : 10,
-                                    runSpacing: shortHero ? 8 : 10,
-                                    children: [
-                                      _QuickChip(label: 'Kozi Bure', icon: Icons.local_offer_outlined, onTap: () => context.push('/explore')),
-                                      _QuickChip(label: 'Zana', icon: Icons.construction_outlined, onTap: () => context.push('/zana')),
-                                      if (!shortHero)
-                                        _QuickChip(label: 'Maarufu Sasa', icon: Icons.trending_up_rounded, onTap: () => context.push('/explore')),
-                                    ],
-                                  ),
                                 ],
                               ),
                             ),
-                          ),
                         ],
                       ),
                     ),
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: Transform.translate(
-                    offset: const Offset(0, -28),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        children: [
-                          _StatCard(icon: Icons.school_outlined, value: '${courses.allCourses.length}+', label: 'Kozi', color: AppColors.primary),
-                          const SizedBox(width: 12),
-                          const _StatCard(icon: Icons.groups_2_outlined, value: '500+', label: 'Wanafunzi', color: AppColors.primaryDark),
-                          const SizedBox(width: 12),
-                          const _StatCard(icon: Icons.star_rounded, value: '4.8', label: 'Ukadiriaji', color: AppColors.primaryMid),
-                        ],
-                      ),
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
+                    child: Row(
+                      children: [
+                        _StatCard(
+                          icon: Icons.school_outlined,
+                          value: '20+',
+                          label: 'Kozi',
+                          color: AppColors.primary,
+                        ),
+                        SizedBox(width: 10),
+                        _StatCard(
+                          icon: Icons.people_outlined,
+                          value: '500+',
+                          label: 'Wanafunzi',
+                          color: AppColors.primaryDark,
+                        ),
+                        SizedBox(width: 10),
+                        _StatCard(
+                          icon: Icons.star_outline,
+                          value: '4.8',
+                          label: 'Ukadiriaji',
+                          color: AppColors.primaryMid,
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -486,121 +507,64 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class _BrandBadge extends StatelessWidget {
-  final bool compact;
-  const _BrandBadge({this.compact = false});
 
-  @override
-  Widget build(BuildContext context) {
-    final size = compact ? 30.0 : 44.0;
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(compact ? 14 : 16)),
-      child: Padding(
-        padding: EdgeInsets.all(compact ? 5 : 7),
-        child: Image.asset(
-          'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-          errorBuilder: (_, __, ___) => Center(
-            child: Text('K', style: GoogleFonts.poppins(fontSize: compact ? 12 : 18, fontWeight: FontWeight.w700, color: AppColors.primary)),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Avatar extends StatelessWidget {
-  final String? userAvatar;
-  final String userName;
-
-  const _Avatar({required this.userAvatar, required this.userName});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 42,
-      height: 42,
-      decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: AppColors.primaryMid, width: 2)),
-      child: ClipOval(
-        child: userAvatar != null
-            ? CachedNetworkImage(imageUrl: userAvatar!, fit: BoxFit.cover, errorWidget: (_, __, ___) => _fallback())
-            : _fallback(),
-      ),
-    );
-  }
-
-  Widget _fallback() => Container(
-        color: AppColors.primary,
-        child: Center(
-          child: Text(
-            userName.isNotEmpty ? userName[0].toUpperCase() : 'K',
-            style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
-          ),
-        ),
-      );
-}
-
-class _QuickChip extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _QuickChip({required this.label, required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 16, color: Colors.white),
-            const SizedBox(width: 6),
-            Text(label, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white)),
-          ],
-        ),
-      ),
-    );
-  }
-}
 class _StatCard extends StatelessWidget {
   final IconData icon;
   final String value;
   final String label;
   final Color color;
 
-  const _StatCard({required this.icon, required this.value, required this.label, required this.color});
+  const _StatCard({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 12, offset: const Offset(0, 4))],
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: const [
+            BoxShadow(
+              color: AppColors.cardShadow,
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(12)),
-              child: Icon(icon, color: color, size: 18),
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: color, size: 16),
             ),
-            const SizedBox(height: 10),
-            Text(value, style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
-            Text(label, style: GoogleFonts.inter(fontSize: 11, color: AppColors.textTertiary)),
+            const SizedBox(height: 6),
+            Text(
+              value,
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            Text(
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 10,
+                color: AppColors.textTertiary,
+              ),
+            ),
           ],
         ),
       ),
@@ -618,21 +582,42 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 26, 20, 10),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: GoogleFonts.poppins(fontSize: 19, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
-              if (subtitle != null) Text(subtitle!, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textTertiary)),
+              Text(
+                title,
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              if (subtitle != null)
+                Text(
+                  subtitle!,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: AppColors.textTertiary,
+                  ),
+                ),
             ],
           ),
           if (onTapAll != null)
-            TextButton(
-              onPressed: onTapAll,
-              child: Text('Tazama Zote', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.primary)),
+            GestureDetector(
+              onTap: onTapAll,
+              child: Text(
+                'Tazama Zote →',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primary,
+                ),
+              ),
             ),
         ],
       ),
