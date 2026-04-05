@@ -7,7 +7,10 @@ class SecureStorage {
   SecureStorage._internal();
 
   final FlutterSecureStorage _storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    aOptions: AndroidOptions(
+      encryptedSharedPreferences: true,
+      resetOnError: true,
+    ),
   );
 
   Future<void> saveToken(String token) async {
