@@ -19,15 +19,6 @@ class ZanaScreen extends StatelessWidget {
             pinned: true,
             backgroundColor: const Color(0xFF1A2E5A),
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(
-                'Zana',
-                style: GoogleFonts.poppins(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
-              titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
               background: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(

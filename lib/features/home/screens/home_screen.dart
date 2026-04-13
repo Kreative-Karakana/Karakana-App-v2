@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
               physics: const BouncingScrollPhysics(),
               slivers: [
                 SliverAppBar(
-                  expandedHeight: 268,
+                  expandedHeight: 220,
                   pinned: true,
                   automaticallyImplyLeading: false,
                   centerTitle: false,
@@ -226,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, kToolbarHeight + 58, 20, 20),
+                            padding: const EdgeInsets.fromLTRB(20, kToolbarHeight + 58, 20, 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -328,8 +328,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                if (courses.banners.isNotEmpty)
-                  SliverToBoxAdapter(child: _BannerCarousel(banners: courses.banners)),
+                if (!courses.isLoading && courses.popularCourses.isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: _FeaturedCarousel(courses: courses.popularCourses),
+                  ),
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
@@ -420,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisCount: 2,
                           mainAxisSpacing: 12,
                           crossAxisSpacing: 12,
-                          childAspectRatio: 0.72,
+                          childAspectRatio: 0.78,
                         ),
                         delegate: SliverChildBuilderDelegate(
                           (_, i) => CourseCardHorizontal(
@@ -498,7 +500,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _courseStrip(List<CourseModel> items, String empty) {
     if (items.isEmpty) return _empty(empty);
     return SizedBox(
-      height: 236,
+      height: 260,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -536,14 +538,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _shimmer() {
     return SizedBox(
-      height: 236,
+      height: 260,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         itemCount: 3,
         itemBuilder: (_, __) => const Padding(
           padding: EdgeInsets.only(right: 12),
-          child: ShimmerCard(width: 208, height: 236),
+          child: ShimmerCard(width: 208, height: 260),
         ),
       ),
     );
@@ -603,22 +605,22 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-class _BannerCarousel extends StatefulWidget {
-  final List<BannerModel> banners;
-  const _BannerCarousel({required this.banners});
+class _FeaturedCarousel extends StatefulWidget {
+  final List<CourseModel> courses;
+  const _FeaturedCarousel({required this.courses});
 
   @override
-  State<_BannerCarousel> createState() => _BannerCarouselState();
+  State<_FeaturedCarousel> createState() => _FeaturedCarouselState();
 }
 
-class _BannerCarouselState extends State<_BannerCarousel> {
+class _FeaturedCarouselState extends State<_FeaturedCarousel> {
   int _currentIndex = 0;
   late final PageController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = PageController(viewportFraction: 0.88);
+    _controller = PageController(viewportFraction: 0.9);
   }
 
   @override
@@ -627,105 +629,30 @@ class _BannerCarouselState extends State<_BannerCarousel> {
     super.dispose();
   }
 
+  List<CourseModel> get _items => widget.courses.take(4).toList();
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         const SizedBox(height: 20),
         SizedBox(
-          height: 200,
+          height: 210,
           child: PageView.builder(
             controller: _controller,
-            itemCount: widget.banners.length,
+            itemCount: _items.length,
             onPageChanged: (i) => setState(() => _currentIndex = i),
-            itemBuilder: (_, i) {
-              final banner = widget.banners[i];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      banner.image != null
-                          ? CachedNetworkImage(imageUrl: banner.image!, fit: BoxFit.cover, errorWidget: (_, __, ___) => _fallback())
-                          : _fallback(),
-                      // Layered gradient for depth
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.transparent,
-                              Colors.black.withValues(alpha: 0.3),
-                              Colors.black.withValues(alpha: 0.72),
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            stops: const [0.0, 0.45, 1.0],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 16,
-                        right: 16,
-                        bottom: 16,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.85),
-                                borderRadius: BorderRadius.circular(999),
-                              ),
-                              child: Text(
-                                'Kipengele cha Wiki',
-                                style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: 0.3),
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              banner.title,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.poppins(
-                                fontSize: 20,
-                                height: 1.15,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                shadows: [Shadow(color: Colors.black.withValues(alpha: 0.3), blurRadius: 6)],
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Text(
-                                  'Angalia kozi',
-                                  style: GoogleFonts.inter(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white.withValues(alpha: 0.85),
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                Icon(Icons.arrow_forward_rounded, size: 14, color: Colors.white.withValues(alpha: 0.85)),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
+            itemBuilder: (_, i) => _FeaturedCard(
+              course: _items[i],
+              onTap: () => context.push('/course/${_items[i].id}'),
+            ),
           ),
         ),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(
-            widget.banners.length,
+            _items.length,
             (i) => AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
@@ -742,10 +669,171 @@ class _BannerCarouselState extends State<_BannerCarousel> {
       ],
     );
   }
+}
 
-  Widget _fallback() => Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(colors: [Color(0xFF3B1A08), Color(0xFFC4620A)]),
+class _FeaturedCard extends StatelessWidget {
+  final CourseModel course;
+  final VoidCallback onTap;
+
+  const _FeaturedCard({required this.course, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final tag = course.categories.isNotEmpty ? course.categories.first : course.formattedLevel;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // ── Background image or colour ──
+              if (course.coverPhoto != null)
+                CachedNetworkImage(
+                  imageUrl: course.coverPhoto!,
+                  fit: BoxFit.cover,
+                  errorWidget: (_, __, ___) => _colorBg(course.id),
+                )
+              else
+                _colorBg(course.id),
+
+              // ── Gradient overlay: top fade + heavy bottom ──
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.black.withValues(alpha: 0.08),
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.55),
+                      Colors.black.withValues(alpha: 0.85),
+                    ],
+                    stops: const [0.0, 0.25, 0.65, 1.0],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+              ),
+
+              // ── Content ──
+              Positioned(
+                left: 16,
+                right: 16,
+                bottom: 14,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Tag + price row
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.9),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            tag,
+                            style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: 0.3),
+                          ),
+                        ),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.35),
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                          ),
+                          child: Text(
+                            course.formattedPrice,
+                            style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 7),
+                    // Title
+                    Text(
+                      course.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(
+                        fontSize: 17,
+                        height: 1.2,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        shadows: [Shadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 8)],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    // Trainer + rating row
+                    Row(
+                      children: [
+                        if (course.trainerAvatar != null) ...[
+                          ClipOval(
+                            child: CachedNetworkImage(
+                              imageUrl: course.trainerAvatar!,
+                              width: 20,
+                              height: 20,
+                              fit: BoxFit.cover,
+                              errorWidget: (_, __, ___) => _avatarFallback(),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                        ] else ...[
+                          _avatarFallback(),
+                          const SizedBox(width: 6),
+                        ],
+                        Expanded(
+                          child: Text(
+                            course.trainerName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(fontSize: 11, color: Colors.white.withValues(alpha: 0.8)),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Icon(Icons.star_rounded, size: 12, color: Colors.amber.shade300),
+                        const SizedBox(width: 3),
+                        Text(
+                          course.averageRating > 0 ? course.averageRating.toStringAsFixed(1) : 'Mpya',
+                          style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white.withValues(alpha: 0.85)),
+                        ),
+                        const SizedBox(width: 10),
+                        Icon(Icons.arrow_forward_rounded, size: 14, color: Colors.white.withValues(alpha: 0.75)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _colorBg(int seed) {
+    final colors = [
+      [const Color(0xFF1A3A5C), const Color(0xFF2E6DA4)],
+      [const Color(0xFF1F3D1A), const Color(0xFF3A7A30)],
+      [const Color(0xFF3B1A08), const Color(0xFFC4620A)],
+      [const Color(0xFF2A0A3A), const Color(0xFF7B3FA0)],
+    ];
+    final pair = colors[seed % colors.length];
+    return Container(
+      decoration: BoxDecoration(gradient: LinearGradient(colors: pair, begin: Alignment.topLeft, end: Alignment.bottomRight)),
+    );
+  }
+
+  Widget _avatarFallback() => Container(
+        width: 20,
+        height: 20,
+        decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.6), shape: BoxShape.circle),
+        child: const Icon(Icons.person_rounded, size: 12, color: Colors.white),
       );
 }

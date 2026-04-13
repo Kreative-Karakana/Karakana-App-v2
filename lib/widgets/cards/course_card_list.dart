@@ -41,19 +41,46 @@ class CourseListCard extends StatelessWidget {
                 children: [
                   // Thumbnail
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: SizedBox(
-                      width: 80,
-                      height: 72,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                    ),
+                    child: Container(
+                      width: 88,
+                      height: 80,
+                      color: AppColors.primaryLight,
                       child: course.coverPhoto != null &&
                               course.coverPhoto!.isNotEmpty
                           ? CachedNetworkImage(
                               imageUrl: course.coverPhoto!,
+                              width: 88,
+                              height: 80,
                               fit: BoxFit.cover,
-                              errorWidget: (_, __, ___) =>
-                                  _thumbFallback(),
+                              placeholder: (_, __) => Container(
+                                color: AppColors.primaryLight,
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (_, __, ___) => Container(
+                                color: AppColors.primaryLight,
+                                child: const Icon(
+                                  Icons.school_outlined,
+                                  color: AppColors.primary,
+                                  size: 28,
+                                ),
+                              ),
                             )
-                          : _thumbFallback(),
+                          : const Center(
+                              child: Icon(
+                                Icons.school_outlined,
+                                color: AppColors.primary,
+                                size: 28,
+                              ),
+                            ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -147,16 +174,4 @@ class CourseListCard extends StatelessWidget {
     );
   }
 
-  Widget _thumbFallback() {
-    return Container(
-      color: AppColors.primaryLight,
-      child: const Center(
-        child: Icon(
-          Icons.play_circle_outline,
-          color: AppColors.primary,
-          size: 28,
-        ),
-      ),
-    );
-  }
 }

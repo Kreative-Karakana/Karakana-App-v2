@@ -18,13 +18,25 @@ class AuthProvider extends ChangeNotifier {
 
   String get userFullName {
     if (_user == null) return '';
-    final first = _user!['first_name'] ?? '';
-    final last = _user!['last_name'] ?? '';
-    return '$first $last'.trim();
+    final firstName = _user!['first_name'] as String? ??
+                      _user!['firstName'] as String? ?? '';
+    final lastName = _user!['last_name'] as String? ??
+                     _user!['lastName'] as String? ?? '';
+    return '$firstName $lastName'.trim();
   }
 
-  String get userEmail => _user?['email'] ?? '';
-  String? get userAvatar => _user?['avatar'];
+  String get userEmail {
+    if (_user == null) return '';
+    return _user!['email'] as String? ?? '';
+  }
+
+  String? get userAvatar {
+    if (_user == null) return null;
+    return _user!['avatar'] as String? ??
+           _user!['profile_picture'] as String? ??
+           _user!['photo'] as String? ??
+           _user!['image'] as String?;
+  }
   int? get userId => _user?['id'];
 
   bool get isTrainer {
@@ -202,6 +214,7 @@ class AuthProvider extends ChangeNotifier {
   Future<void> getCurrentUser() async {
     try {
       final response = await ApiClient().dio.get(ApiEndpoints.profileMe);
+      debugPrint('[AUTH] Profile response: ${response.data}');
       _user = response.data is Map<String, dynamic>
           ? response.data
           : Map<String, dynamic>.from(response.data);
