@@ -15,7 +15,7 @@ class ZanaScreen extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            expandedHeight: 180,
+            expandedHeight: 230,
             pinned: true,
             backgroundColor: const Color(0xFF1A2E5A),
             flexibleSpace: FlexibleSpaceBar(
@@ -23,8 +23,8 @@ class ZanaScreen extends StatelessWidget {
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
+                      Color(0xFF0F1E3D),
                       Color(0xFF1A2E5A),
-                      Color(0xFF2D4A8A),
                       Color(0xFF1E5FA8),
                     ],
                     begin: Alignment.topLeft,
@@ -33,28 +33,53 @@ class ZanaScreen extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
+                    // Top-right large circle
                     Positioned(
-                      top: -30,
-                      right: -30,
+                      top: -40,
+                      right: -40,
                       child: Container(
-                        width: 160,
-                        height: 160,
+                        width: 200,
+                        height: 200,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.white.withValues(alpha: 0.05),
+                          color: Colors.white.withValues(alpha: 0.04),
                         ),
                       ),
                     ),
+                    // Bottom-left orange accent circle
                     Positioned(
-                      bottom: -20,
-                      left: -20,
+                      bottom: -30,
+                      left: -30,
                       child: Container(
-                        width: 120,
-                        height: 120,
+                        width: 140,
+                        height: 140,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: const Color(0xFFC4620A).withValues(alpha: 0.15),
+                          color: const Color(0xFFC4620A).withValues(alpha: 0.18),
                         ),
+                      ),
+                    ),
+                    // Center-right small accent circle
+                    Positioned(
+                      top: 60,
+                      right: 80,
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withValues(alpha: 0.04),
+                        ),
+                      ),
+                    ),
+                    // Large watermark icon
+                    Positioned(
+                      top: 28,
+                      right: 16,
+                      child: Icon(
+                        Icons.business_center_outlined,
+                        size: 110,
+                        color: Colors.white.withValues(alpha: 0.05),
                       ),
                     ),
                     SafeArea(
@@ -82,23 +107,48 @@ class ZanaScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 10),
                             Text(
-                              'ZANA',
+                              'Zana',
                               style: GoogleFonts.poppins(
-                                fontSize: 36,
-                                fontWeight: FontWeight.w700,
+                                fontSize: 42,
+                                fontWeight: FontWeight.w800,
                                 color: Colors.white,
-                                letterSpacing: 3.0,
+                                height: 1.0,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 6),
                             Text(
                               'Zana za Biashara kwa Ujasiriamali',
                               style: GoogleFonts.inter(
-                                fontSize: 14,
+                                fontSize: 13,
                                 color: const Color(0xFFB8C8E8),
+                                height: 1.4,
                               ),
+                            ),
+                            const Spacer(),
+                            Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.08),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: Colors.white.withValues(alpha: 0.12),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    '1 Inakuja',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white.withValues(alpha: 0.6),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -329,7 +379,6 @@ class _ZanaToolCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isLive = tool.status == ZanaStatus.live;
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -367,51 +416,6 @@ class _ZanaToolCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isLive
-                          ? const Color(0xFF2E7D32).withValues(alpha: 0.3)
-                          : Colors.white.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (isLive) ...[
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF81C784),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'INAPATIKANA',
-                            style: GoogleFonts.inter(
-                              fontSize: 8,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ] else
-                          Text(
-                            'INAKUJA',
-                            style: GoogleFonts.inter(
-                              fontSize: 8,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white.withValues(alpha: 0.8),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
                   Container(
                     width: 48,
                     height: 48,
