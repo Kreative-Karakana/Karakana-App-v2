@@ -27,7 +27,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           body: CustomScrollView(
             slivers: [
               SliverAppBar(
-                expandedHeight: 220,
+                expandedHeight: 160,
                 pinned: true,
                 backgroundColor: const Color(0xFF3B1A08),
                 actions: [
@@ -37,19 +37,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
-                  title: Text(
-                    'Akaunti',
-                    style: GoogleFonts.poppins(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                  titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
                   background: Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF3B1A08), Color(0xFF6B2E0A)],
+                        colors: [Color(0xFF2A0F04), Color(0xFF3B1A08), Color(0xFF6B2E0A)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -60,80 +51,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           top: -40,
                           right: -40,
                           child: Container(
-                            width: 180,
-                            height: 180,
+                            width: 200,
+                            height: 200,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.white.withValues(alpha: 0.04),
                             ),
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
+                        Positioned(
+                          bottom: -30,
+                          left: -20,
+                          child: Container(
+                            width: 130,
+                            height: 130,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: const Color(0xFFC4620A).withValues(alpha: 0.15),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 30,
+                          right: 16,
+                          child: Icon(
+                            Icons.account_circle_outlined,
+                            size: 100,
+                            color: Colors.white.withValues(alpha: 0.04),
+                          ),
+                        ),
+                        SafeArea(
                           child: Padding(
-                            padding: const EdgeInsets.all(20),
+                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                             child: Column(
-                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: const Color(0xFFC4620A),
-                                      width: 3,
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.3),
-                                        blurRadius: 20,
-                                      ),
-                                    ],
-                                  ),
-                                  child: ClipOval(
-                                    child: auth.userAvatar != null
-                                        ? CachedNetworkImage(
-                                            imageUrl: auth.userAvatar!,
-                                            width: 88,
-                                            height: 88,
-                                            fit: BoxFit.cover,
-                                            errorWidget: (_, __, ___) => _avatarFallback(initial),
-                                          )
-                                        : _avatarFallback(initial),
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
                                 Text(
-                                  userName,
-                                  textAlign: TextAlign.center,
+                                  'Akaunti',
                                   style: GoogleFonts.poppins(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
+                                    fontSize: 38,
+                                    fontWeight: FontWeight.w800,
                                     color: Colors.white,
+                                    height: 1.0,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
+                                const SizedBox(height: 6),
                                 Text(
-                                  userEmail,
+                                  'Wasifu na Mipangilio Yako',
                                   style: GoogleFonts.inter(
                                     fontSize: 13,
-                                    color: Colors.white.withValues(alpha: 0.6),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFC4620A).withValues(alpha: 0.2),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(color: const Color(0xFFC4620A)),
-                                  ),
-                                  child: Text(
-                                    auth.isTrainer ? 'Mwalimu' : 'Mwanafunzi',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                      color: const Color(0xFFE8A96A),
-                                    ),
+                                    color: Colors.white.withValues(alpha: 0.55),
+                                    height: 1.4,
                                   ),
                                 ),
                               ],
@@ -145,9 +113,106 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
+              // Profile card
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFC4620A).withValues(alpha: 0.08),
+                          blurRadius: 20,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xFFC4620A),
+                              width: 2.5,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.12),
+                                blurRadius: 12,
+                              ),
+                            ],
+                          ),
+                          child: ClipOval(
+                            child: auth.userAvatar != null
+                                ? CachedNetworkImage(
+                                    imageUrl: auth.userAvatar!,
+                                    width: 72,
+                                    height: 72,
+                                    fit: BoxFit.cover,
+                                    errorWidget: (_, __, ___) => _avatarFallback(initial),
+                                  )
+                                : _avatarFallback(initial),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                userName,
+                                style: GoogleFonts.poppins(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF1A0A00),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                userEmail,
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: const Color(0xFF9E8070),
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFC4620A).withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: const Color(0xFFC4620A).withValues(alpha: 0.4),
+                                  ),
+                                ),
+                                child: Text(
+                                  auth.isTrainer ? 'Mwalimu' : 'Mwanafunzi',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFFC4620A),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                   child: Column(
                     children: [
                       _buildMenuGroup(
