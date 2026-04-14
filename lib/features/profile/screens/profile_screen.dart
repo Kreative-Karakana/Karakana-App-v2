@@ -14,6 +14,27 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  static const double _expandedHeight = 160;
+  final ScrollController _scroll = ScrollController();
+  bool _showTitle = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scroll.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final collapsed = _scroll.offset > (_expandedHeight - kToolbarHeight);
+    if (collapsed != _showTitle) setState(() => _showTitle = collapsed);
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
@@ -25,11 +46,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return Scaffold(
           backgroundColor: const Color(0xFFFFF8F4),
           body: CustomScrollView(
+            controller: _scroll,
             slivers: [
               SliverAppBar(
-                expandedHeight: 160,
+                expandedHeight: _expandedHeight,
                 pinned: true,
                 backgroundColor: const Color(0xFF3B1A08),
+                title: AnimatedOpacity(
+                  opacity: _showTitle ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Text(
+                    'Akaunti',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.edit_outlined, color: Colors.white),
@@ -37,15 +71,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
-                  title: Text(
-                    'Akaunti',
-                    style: GoogleFonts.poppins(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                  titlePadding: const EdgeInsetsDirectional.only(start: 20, bottom: 16),
                   background: Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(

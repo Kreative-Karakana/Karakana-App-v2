@@ -4,30 +4,60 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../models/zana_model.dart';
 
-class ZanaScreen extends StatelessWidget {
+class ZanaScreen extends StatefulWidget {
   const ZanaScreen({super.key});
+
+  @override
+  State<ZanaScreen> createState() => _ZanaScreenState();
+}
+
+class _ZanaScreenState extends State<ZanaScreen> {
+  static const double _expandedHeight = 170;
+  final ScrollController _scroll = ScrollController();
+  bool _showTitle = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scroll.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final collapsed = _scroll.offset > (_expandedHeight - kToolbarHeight);
+    if (collapsed != _showTitle) setState(() => _showTitle = collapsed);
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       body: CustomScrollView(
+        controller: _scroll,
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            expandedHeight: 170,
+            expandedHeight: _expandedHeight,
             pinned: true,
             backgroundColor: const Color(0xFF1A2E5A),
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(
+            title: AnimatedOpacity(
+              opacity: _showTitle ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 200),
+              child: Text(
                 'Zana',
                 style: GoogleFonts.poppins(
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
               ),
-              titlePadding: const EdgeInsetsDirectional.only(start: 20, bottom: 16),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
