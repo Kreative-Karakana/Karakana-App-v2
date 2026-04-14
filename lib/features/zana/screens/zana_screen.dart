@@ -14,18 +14,6 @@ class ZanaScreen extends StatefulWidget {
 class _ZanaScreenState extends State<ZanaScreen> {
   static const double _expandedHeight = 170;
   final ScrollController _scroll = ScrollController();
-  bool _showTitle = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _scroll.addListener(_onScroll);
-  }
-
-  void _onScroll() {
-    final collapsed = _scroll.offset > (_expandedHeight - kToolbarHeight);
-    if (collapsed != _showTitle) setState(() => _showTitle = collapsed);
-  }
 
   @override
   void dispose() {
@@ -45,17 +33,24 @@ class _ZanaScreenState extends State<ZanaScreen> {
             expandedHeight: _expandedHeight,
             pinned: true,
             backgroundColor: const Color(0xFF1A2E5A),
-            title: AnimatedOpacity(
-              opacity: _showTitle ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 200),
-              child: Text(
-                'Zana',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
+            title: AnimatedBuilder(
+              animation: _scroll,
+              builder: (context, _) {
+                final show = _scroll.hasClients &&
+                    _scroll.offset > (_expandedHeight - kToolbarHeight);
+                return AnimatedOpacity(
+                  opacity: show ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: Text(
+                    'Zana',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                );
+              },
             ),
             flexibleSpace: FlexibleSpaceBar(
               background: Container(

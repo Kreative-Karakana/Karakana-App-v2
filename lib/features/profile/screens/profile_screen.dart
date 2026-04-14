@@ -16,18 +16,6 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   static const double _expandedHeight = 160;
   final ScrollController _scroll = ScrollController();
-  bool _showTitle = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _scroll.addListener(_onScroll);
-  }
-
-  void _onScroll() {
-    final collapsed = _scroll.offset > (_expandedHeight - kToolbarHeight);
-    if (collapsed != _showTitle) setState(() => _showTitle = collapsed);
-  }
 
   @override
   void dispose() {
@@ -52,17 +40,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 expandedHeight: _expandedHeight,
                 pinned: true,
                 backgroundColor: const Color(0xFF3B1A08),
-                title: AnimatedOpacity(
-                  opacity: _showTitle ? 1.0 : 0.0,
-                  duration: const Duration(milliseconds: 200),
-                  child: Text(
-                    'Akaunti',
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
+                title: AnimatedBuilder(
+                  animation: _scroll,
+                  builder: (context, _) {
+                    final show = _scroll.hasClients &&
+                        _scroll.offset > (_expandedHeight - kToolbarHeight);
+                    return AnimatedOpacity(
+                      opacity: show ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Text(
+                        'Akaunti',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  },
                 ),
                 actions: [
                   IconButton(
