@@ -126,29 +126,49 @@ class ZanaScreen extends StatelessWidget {
                                 height: 1.4,
                               ),
                             ),
-                            const Spacer(),
-                            Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.08),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: Colors.white.withValues(alpha: 0.12),
+                            const SizedBox(height: 20),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: ZanaData.tools.map((tool) {
+                                  final bool live = tool.status == ZanaStatus.live;
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 8),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 7,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(alpha: live ? 0.12 : 0.06),
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(
+                                          color: Colors.white.withValues(alpha: live ? 0.2 : 0.1),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            tool.icon,
+                                            size: 13,
+                                            color: Colors.white.withValues(alpha: live ? 0.9 : 0.45),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            tool.nameSwahili,
+                                            style: GoogleFonts.inter(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white.withValues(alpha: live ? 0.9 : 0.45),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  child: Text(
-                                    '1 Inakuja',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white.withValues(alpha: 0.6),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                  );
+                                }).toList(),
+                              ),
                             ),
                           ],
                         ),
