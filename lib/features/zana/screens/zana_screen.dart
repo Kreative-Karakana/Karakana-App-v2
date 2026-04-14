@@ -172,55 +172,6 @@ class _ZanaScreenState extends State<ZanaScreen> {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: ZanaData.tools.map((tool) {
-                    final bool live = tool.status == ZanaStatus.live;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                        decoration: BoxDecoration(
-                          color: live
-                              ? const Color(0xFF1A2E5A).withValues(alpha: 0.08)
-                              : const Color(0xFF9E8070).withValues(alpha: 0.06),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: live
-                                ? const Color(0xFF1A2E5A).withValues(alpha: 0.2)
-                                : const Color(0xFF9E8070).withValues(alpha: 0.15),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              tool.icon,
-                              size: 13,
-                              color: live ? const Color(0xFF1A2E5A) : const Color(0xFF9E8070),
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              tool.nameSwahili,
-                              style: GoogleFonts.inter(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w500,
-                                color: live ? const Color(0xFF1A2E5A) : const Color(0xFF9E8070),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: GestureDetector(
                 onTap: () => context.push('/zana/vicoba'),
                 child: Container(

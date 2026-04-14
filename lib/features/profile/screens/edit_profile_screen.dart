@@ -233,10 +233,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     value: 'F',
                     child: Text('Mwanamke', style: GoogleFonts.inter()),
                   ),
-                  DropdownMenuItem(
-                    value: 'O',
-                    child: Text('Nyingine', style: GoogleFonts.inter()),
-                  ),
                 ],
                 onChanged: (v) => setState(() => _selectedGender = v),
               ),
