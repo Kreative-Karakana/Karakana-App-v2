@@ -37,6 +37,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
+                  title: Text(
+                    'Akaunti',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  titlePadding: const EdgeInsetsDirectional.only(start: 20, bottom: 16),
                   background: Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
