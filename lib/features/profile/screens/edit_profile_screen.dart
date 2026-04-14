@@ -59,7 +59,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           if (_selectedGender != null) 'gender': _selectedGender,
         },
       );
-      await authProvider.initialize();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -68,6 +67,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       );
       context.pop();
+      // Refresh after pop so GoRouter's refreshListenable fires on ProfileScreen, not EditProfileScreen
+      authProvider.initialize();
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/network/api_client.dart';
 import '../../auth/providers/auth_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -14,13 +16,66 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  static const double _expandedHeight = 160;
+  static const double _expandedHeight = 210;
   final ScrollController _scroll = ScrollController();
 
   @override
   void dispose() {
     _scroll.dispose();
     super.dispose();
+  }
+
+  Future<void> _deleteAccount(BuildContext context, AuthProvider auth) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(
+          'Futa Akaunti',
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w700),
+        ),
+        content: Text(
+          'Una uhakika unataka kufuta akaunti yako? Hatua hii haiwezi kurudishwa.',
+          style: GoogleFonts.inter(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(
+              'Hapana',
+              style: GoogleFonts.inter(color: const Color(0xFF9E8070)),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              'Ndiyo, Futa',
+              style: GoogleFonts.inter(
+                color: const Color(0xFFB71C1C),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+    if (!context.mounted) return;
+
+    try {
+      await ApiClient().dio.delete('/api/v1/accounts/me/delete/');
+      if (!context.mounted) return;
+      await auth.logout();
+      context.go('/login');
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Hitilafu. Jaribu tena.'),
+          backgroundColor: Color(0xFFB71C1C),
+        ),
+      );
+    }
   }
 
   @override
@@ -58,6 +113,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     );
                   },
+                ),
+                systemOverlayStyle: const SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.light,
                 ),
                 actions: [
                   IconButton(
@@ -132,6 +191,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     color: Colors.white.withValues(alpha: 0.55),
                                     height: 1.4,
                                   ),
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    _headerChip(Icons.person_outline, 'Wasifu'),
+                                    const SizedBox(width: 8),
+                                    _headerChip(Icons.school_outlined, 'Kozi Zangu'),
+                                    const SizedBox(width: 8),
+                                    _headerChip(Icons.headset_mic_outlined, 'Msaada'),
+                                  ],
                                 ),
                               ],
                             ),
@@ -431,6 +500,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                       ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: TextButton.icon(
+                          onPressed: () => _deleteAccount(context, auth),
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: Color(0xFF9E8070),
+                            size: 18,
+                          ),
+                          label: Text(
+                            'Futa Akaunti',
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF9E8070),
+                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 32),
                     ],
                   ),
@@ -440,6 +532,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _headerChip(IconData icon, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: Colors.white.withValues(alpha: 0.85)),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: GoogleFonts.inter(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: Colors.white.withValues(alpha: 0.85),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
