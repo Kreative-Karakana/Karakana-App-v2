@@ -130,7 +130,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       final response = await ApiClient().dio.post(
         ApiEndpoints.verifyEmail,
-        data: {'email': email, 'otp': code},
+        data: {'email': email, 'code': code},
       );
       final token = response.data['token'] ?? response.data['key'];
       if (token != null) {
