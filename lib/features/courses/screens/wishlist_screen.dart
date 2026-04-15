@@ -41,7 +41,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
   Future<void> _removeFromWishlist(int courseId) async {
     try {
-      await ApiClient().dio.post('/api/v1/wishlist/', data: {'course': courseId});
+      await ApiClient().dio.post('/api/v1/wishlist/', data: {'course_id': courseId});
       if (!mounted) return;
       setState(() {
         _courses.removeWhere((c) => (c as Map)['id'] == courseId);

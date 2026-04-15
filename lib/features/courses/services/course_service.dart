@@ -104,7 +104,7 @@ class CourseService {
     try {
       final response = await _dio.post(
         '/api/v1/wishlist/',
-        data: {'course': courseId},
+        data: {'course_id': courseId},
       );
       return response.data['is_wishlisted'] ?? false;
     } catch (e) {
