@@ -131,6 +131,7 @@ class _SignupScreenState extends State<SignupScreen>
 
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
+      resizeToAvoidBottomInset: false,
       body: LayoutBuilder(
         builder: (context, constraints) {
           final compact = constraints.maxHeight < 760;
@@ -140,70 +141,65 @@ class _SignupScreenState extends State<SignupScreen>
             children: [
               const _AuthBackground(),
               SafeArea(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 180),
-                  child: keyboardOpen
-                      ? SingleChildScrollView(
-                          key: const ValueKey('signup_keyboard_open'),
-                          padding: EdgeInsets.fromLTRB(
-                            22,
-                            compact ? 14 : 24,
-                            22,
-                            MediaQuery.viewInsetsOf(context).bottom + 16,
-                          ),
-                          child: _SignupContent(
-                            compact: compact,
-                            authProvider: authProvider,
-                            formKey: _formKey,
-                            firstNameController: _firstNameController,
-                            emailController: _emailController,
-                            passwordController: _passwordController,
-                            confirmController: _confirmController,
-                            obscurePassword: _obscurePassword,
-                            obscureConfirm: _obscureConfirm,
-                            onTogglePassword: () => setState(
-                              () => _obscurePassword = !_obscurePassword,
-                            ),
-                            onToggleConfirm: () => setState(
-                              () => _obscureConfirm = !_obscureConfirm,
-                            ),
-                            onHandleSignup: _handleSignup,
-                            onGoogleSignIn: _handleGoogleSignIn,
-                            onAppleSignIn: _handleAppleSignIn,
-                            buildField: _buildField,
-                          ),
-                        )
-                      : Padding(
-                          key: const ValueKey('signup_keyboard_closed'),
-                          padding: EdgeInsets.fromLTRB(
-                            22,
-                            compact ? 14 : 24,
-                            22,
-                            compact ? 10 : 16,
-                          ),
-                          child: _SignupContent(
-                            compact: compact,
-                            authProvider: authProvider,
-                            formKey: _formKey,
-                            firstNameController: _firstNameController,
-                            emailController: _emailController,
-                            passwordController: _passwordController,
-                            confirmController: _confirmController,
-                            obscurePassword: _obscurePassword,
-                            obscureConfirm: _obscureConfirm,
-                            onTogglePassword: () => setState(
-                              () => _obscurePassword = !_obscurePassword,
-                            ),
-                            onToggleConfirm: () => setState(
-                              () => _obscureConfirm = !_obscureConfirm,
-                            ),
-                            onHandleSignup: _handleSignup,
-                            onGoogleSignIn: _handleGoogleSignIn,
-                            onAppleSignIn: _handleAppleSignIn,
-                            buildField: _buildField,
-                          ),
+                child: keyboardOpen
+                    ? SingleChildScrollView(
+                        padding: EdgeInsets.fromLTRB(
+                          22,
+                          compact ? 14 : 24,
+                          22,
+                          MediaQuery.viewInsetsOf(context).bottom + 16,
                         ),
-                ),
+                        child: _SignupContent(
+                          compact: compact,
+                          authProvider: authProvider,
+                          formKey: _formKey,
+                          firstNameController: _firstNameController,
+                          emailController: _emailController,
+                          passwordController: _passwordController,
+                          confirmController: _confirmController,
+                          obscurePassword: _obscurePassword,
+                          obscureConfirm: _obscureConfirm,
+                          onTogglePassword: () => setState(
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
+                          onToggleConfirm: () => setState(
+                            () => _obscureConfirm = !_obscureConfirm,
+                          ),
+                          onHandleSignup: _handleSignup,
+                          onGoogleSignIn: _handleGoogleSignIn,
+                          onAppleSignIn: _handleAppleSignIn,
+                          buildField: _buildField,
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          22,
+                          compact ? 14 : 24,
+                          22,
+                          compact ? 10 : 16,
+                        ),
+                        child: _SignupContent(
+                          compact: compact,
+                          authProvider: authProvider,
+                          formKey: _formKey,
+                          firstNameController: _firstNameController,
+                          emailController: _emailController,
+                          passwordController: _passwordController,
+                          confirmController: _confirmController,
+                          obscurePassword: _obscurePassword,
+                          obscureConfirm: _obscureConfirm,
+                          onTogglePassword: () => setState(
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
+                          onToggleConfirm: () => setState(
+                            () => _obscureConfirm = !_obscureConfirm,
+                          ),
+                          onHandleSignup: _handleSignup,
+                          onGoogleSignIn: _handleGoogleSignIn,
+                          onAppleSignIn: _handleAppleSignIn,
+                          buildField: _buildField,
+                        ),
+                      ),
               ),
             ],
           );
