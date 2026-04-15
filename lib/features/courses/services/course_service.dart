@@ -93,7 +93,7 @@ class CourseService {
 
   Future<bool> enrollFreeCourse(int courseId) async {
     try {
-      await _dio.post('/api/v1/courses/enroll/', data: {'course': courseId});
+      await _dio.post('/api/v1/courses/enroll/', data: {'course_id': courseId});
       return true;
     } catch (e) {
       throw ApiClient().parseError(e);

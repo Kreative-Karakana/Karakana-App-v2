@@ -214,13 +214,17 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
 
     setState(() => _isSubmitting = true);
     try {
-      await ApiClient().dio.post(
+      final ticketRes = await ApiClient().dio.post(
         '/api/v1/communications/tickets/',
         data: {
           'subject': _subjectController.text,
           'type': _selectedType,
-          'message': _messageController.text,
         },
+      );
+      final ticketId = ticketRes.data['id'];
+      await ApiClient().dio.post(
+        '/api/v1/communications/tickets/$ticketId/messages/',
+        data: {'message': _messageController.text},
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

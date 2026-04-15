@@ -64,11 +64,11 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
       await ApiClient().dio.post(
         '/api/v1/trainer-application/',
         data: {
-          'title': _titleController.text,
-          'bio': _bioController.text,
-          'experience': _experienceController.text,
-          'why': _whyController.text,
-          'topics': _topicsController.text,
+          'professional_title': _titleController.text,
+          'professional_bio': _bioController.text,
+          'teaching_experience': _experienceController.text,
+          'why_do_you_want_to_teach': _whyController.text,
+          'topics_of_interest': _topicsController.text,
         },
       );
       if (!mounted) return;
