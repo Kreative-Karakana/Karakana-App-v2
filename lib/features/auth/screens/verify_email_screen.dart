@@ -93,8 +93,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   Widget _buildOtpBox(int index, bool compact) {
     return SizedBox(
-      width: compact ? 42 : 46,
-      height: compact ? 52 : 58,
+      width: compact ? 44 : 48,
+      height: compact ? 56 : 62,
       child: TextFormField(
         controller: _controllers[index],
         focusNode: _focusNodes[index],
@@ -103,7 +103,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         maxLength: 1,
         style: GoogleFonts.poppins(
-          fontSize: compact ? 20 : 22,
+          fontSize: compact ? 22 : 24,
           fontWeight: FontWeight.w700,
           color: Colors.white,
         ),
@@ -111,18 +111,18 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         decoration: InputDecoration(
           counterText: '',
           filled: true,
-          fillColor: const Color(0xFF5A3525),
+          fillColor: Colors.white.withValues(alpha: 0.10),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.25)),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.25)),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: AppColors.primaryMid, width: 1.2),
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: AppColors.primaryMid, width: 2.0),
           ),
           contentPadding: EdgeInsets.zero,
         ),
@@ -191,33 +191,46 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Thibitisha Barua Pepe',
+                              'Thibitisha\nBarua Pepe',
                               style: GoogleFonts.poppins(
-                                fontSize: compact ? 27 : 31,
+                                fontSize: compact ? 26 : 30,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
-                                height: 1.02,
+                                height: 1.1,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(height: compact ? 10 : 12),
                             Text(
-                              'Weka msimbo wa tarakimu 6 tuliokutumia kwenye barua pepe hii.',
+                              'Weka msimbo wa tarakimu 6 tuliokutumia kwenye:',
                               style: GoogleFonts.inter(
-                                fontSize: compact ? 12.5 : 13.5,
-                                color: AppColors.primaryMid,
-                                height: 1.35,
+                                fontSize: compact ? 12.5 : 13,
+                                color: Colors.white.withValues(alpha: 0.55),
+                                height: 1.4,
                               ),
                             ),
                             const SizedBox(height: 6),
-                            Text(
-                              _email,
-                              style: GoogleFonts.inter(
-                                fontSize: compact ? 12 : 13,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white.withValues(alpha: 0.88),
-                              ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.mail_outline_rounded,
+                                  size: 14,
+                                  color: AppColors.primaryMid,
+                                ),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(
+                                    _email,
+                                    style: GoogleFonts.inter(
+                                      fontSize: compact ? 12.5 : 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primaryMid,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(height: compact ? 18 : 22),
+                            SizedBox(height: compact ? 20 : 24),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: List.generate(
@@ -229,26 +242,34 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                               const SizedBox(height: 12),
                               Container(
                                 width: double.infinity,
-                                padding: const EdgeInsets.all(12),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                                 decoration: BoxDecoration(
                                   color: AppColors.errorLight
-                                      .withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(14),
+                                      .withValues(alpha: 0.10),
+                                  borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: Colors.red.shade300
-                                        .withValues(alpha: 0.22),
+                                        .withValues(alpha: 0.30),
                                   ),
                                 ),
-                                child: Text(
-                                  authProvider.errorMessage!,
-                                  style: GoogleFonts.inter(
-                                    fontSize: 12.5,
-                                    color: Colors.red.shade200,
-                                  ),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.error_outline_rounded, size: 15, color: Colors.red.shade300),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        authProvider.errorMessage!,
+                                        style: GoogleFonts.inter(
+                                          fontSize: 12,
+                                          color: Colors.red.shade200,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
-                            SizedBox(height: compact ? 16 : 18),
+                            SizedBox(height: compact ? 18 : 20),
                             SizedBox(
                               width: double.infinity,
                               child: GradientButton(
@@ -269,16 +290,28 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                         strokeWidth: 2,
                                       ),
                                     )
-                                  : TextButton(
-                                      onPressed: _handleResend,
-                                      child: Text(
-                                        'Tuma tena msimbo',
-                                        style: GoogleFonts.inter(
-                                          fontSize: compact ? 12 : 13,
-                                          fontWeight: FontWeight.w700,
-                                          color: AppColors.primaryMid,
+                                  : Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Hukupokea msimbo? ',
+                                          style: GoogleFonts.inter(
+                                            fontSize: compact ? 12 : 12.5,
+                                            color: Colors.white.withValues(alpha: 0.45),
+                                          ),
                                         ),
-                                      ),
+                                        GestureDetector(
+                                          onTap: _handleResend,
+                                          child: Text(
+                                            'Tuma tena',
+                                            style: GoogleFonts.inter(
+                                              fontSize: compact ? 12 : 12.5,
+                                              fontWeight: FontWeight.w700,
+                                              color: AppColors.primaryMid,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                             ),
                           ],
