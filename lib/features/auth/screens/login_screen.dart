@@ -66,16 +66,16 @@ class _LoginScreenState extends State<LoginScreen>
     if (success && mounted) context.go('/home');
   }
 
-  void _handleGoogleSignIn() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Google Sign-In coming soon')),
-    );
+  Future<void> _handleGoogleSignIn() async {
+    final auth = context.read<AuthProvider>();
+    final success = await auth.loginWithGoogle();
+    if (success && mounted) context.go('/home');
   }
 
-  void _handleAppleSignIn() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Apple Sign-In coming soon')),
-    );
+  Future<void> _handleAppleSignIn() async {
+    final auth = context.read<AuthProvider>();
+    final success = await auth.loginWithApple();
+    if (success && mounted) context.go('/home');
   }
 
   void _handleBiometricUnavailable() {
@@ -392,7 +392,9 @@ class _LoginScreenState extends State<LoginScreen>
                                             child: _MethodButton(
                                               compact: compact,
                                               label: 'Google',
-                                              onTap: _handleGoogleSignIn,
+                                              onTap: authProvider.isLoading
+                                                  ? () {}
+                                                  : _handleGoogleSignIn,
                                               icon: Container(
                                                 width: compact ? 22 : 24,
                                                 height: compact ? 22 : 24,
@@ -423,7 +425,9 @@ class _LoginScreenState extends State<LoginScreen>
                                             child: _MethodButton(
                                               compact: compact,
                                               label: 'Apple',
-                                              onTap: _handleAppleSignIn,
+                                              onTap: authProvider.isLoading
+                                                  ? () {}
+                                                  : _handleAppleSignIn,
                                               icon: Icon(
                                                 Icons.apple,
                                                 color: Colors.white,

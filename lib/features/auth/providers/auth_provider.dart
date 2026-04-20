@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/utils/secure_storage.dart';
@@ -209,6 +214,112 @@ class AuthProvider extends ChangeNotifier {
   void clearError() {
     _errorMessage = null;
     notifyListeners();
+  }
+
+  Future<bool> loginWithGoogle() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      String? clientId;
+      if (!kIsWeb) {
+        if (Platform.isIOS) {
+          clientId =
+              '466490006316-a26dq3aarir4jl9971u7j440hsegllv8.apps.googleusercontent.com';
+        } else if (Platform.isAndroid) {
+          clientId =
+              '466490006316-7rt3volsjbjhu76og8hr9kroeimqlpel.apps.googleusercontent.com';
+        }
+      }
+
+      final googleSignIn = GoogleSignIn(
+        clientId: clientId,
+        scopes: ['email'],
+      );
+      final account = await googleSignIn.signIn();
+      if (account == null) {
+        // User cancelled
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+
+      final auth = await account.authentication;
+      final idToken = auth.idToken;
+      if (idToken == null) throw Exception('No ID token from Google');
+
+      final response = await ApiClient().dio.post(
+        ApiEndpoints.googleAuth,
+        data: {'id_token': idToken},
+      );
+      return await _handleOAuthResponse(response.data);
+    } catch (e) {
+      if (kDebugMode) debugPrint('[AuthProvider] loginWithGoogle error: $e');
+      _errorMessage = 'Tatizo la kuingia kwa Google. Jaribu tena.';
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> loginWithApple() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+      final idToken = credential.identityToken;
+      if (idToken == null) throw Exception('No identity token from Apple');
+
+      final response = await ApiClient().dio.post(
+        ApiEndpoints.appleAuth,
+        data: {
+          'id_token': idToken,
+          if (credential.givenName != null) 'first_name': credential.givenName,
+          if (credential.familyName != null) 'last_name': credential.familyName,
+        },
+      );
+      return await _handleOAuthResponse(response.data);
+    } on SignInWithAppleAuthorizationException catch (e) {
+      if (e.code == AuthorizationErrorCode.canceled) {
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+      _errorMessage = 'Tatizo la kuingia kwa Apple. Jaribu tena.';
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      if (kDebugMode) debugPrint('[AuthProvider] loginWithApple error: $e');
+      _errorMessage = 'Tatizo la kuingia kwa Apple. Jaribu tena.';
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> _handleOAuthResponse(dynamic data) async {
+    final token = data['token'] ?? data['key'];
+    if (token != null) {
+      await SecureStorage().saveToken(token.toString());
+      await getCurrentUser();
+      _isAuthenticated = true;
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    }
+    _errorMessage = 'Tatizo la kuingia. Jaribu tena.';
+    _isLoading = false;
+    notifyListeners();
+    return false;
   }
 
   Future<void> getCurrentUser() async {
