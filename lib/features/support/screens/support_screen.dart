@@ -158,7 +158,16 @@ class _SupportScreenState extends State<SupportScreen> {
                   )
                 : _tickets.isEmpty
                     ? _buildEmptyState()
-                    : ListView.builder(
+                    : RefreshIndicator(
+                        color: const Color(0xFFC4620A),
+                        onRefresh: () async {
+                          setState(() {
+                            _isLoading = true;
+                            _tickets = [];
+                          });
+                          await _loadTickets();
+                        },
+                        child: ListView.builder(
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 80),
                         itemCount: _tickets.length,
                         itemBuilder: (_, index) {
@@ -258,6 +267,7 @@ class _SupportScreenState extends State<SupportScreen> {
                             ),
                           );
                         },
+                      ),
                       ),
           ),
         ],

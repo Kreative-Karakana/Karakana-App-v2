@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/network/api_client.dart';
 
@@ -34,6 +35,16 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  String _formatTs(String? raw) {
+    if (raw == null || raw.isEmpty) return '';
+    try {
+      final dt = DateTime.parse(raw).toLocal();
+      return DateFormat('HH:mm dd/MM/yyyy').format(dt);
+    } catch (_) {
+      return '';
+    }
   }
 
   Future<void> _loadData() async {
@@ -232,92 +243,124 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       final msg = _messages[index];
                       final isStaff = msg['is_staff'] == true;
                       final isUser = !isStaff;
-                      return Row(
-                        mainAxisAlignment: isUser
-                            ? MainAxisAlignment.end
-                            : MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          if (isStaff) ...[
-                            Container(
-                              width: 32,
-                              height: 32,
-                              decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [Color(0xFFC4620A), Color(0xFFE07030)],
-                                ),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.support_agent,
-                                color: Colors.white,
-                                size: 16,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                          ],
-                          Flexible(
-                            child: Container(
-                              constraints: BoxConstraints(
-                                maxWidth:
-                                    MediaQuery.of(context).size.width * 0.72,
-                              ),
-                              margin: const EdgeInsets.only(bottom: 8),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 10,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isUser
-                                    ? const Color(0xFFC4620A)
-                                    : Colors.white,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: const Radius.circular(16),
-                                  topRight: const Radius.circular(16),
-                                  bottomLeft:
-                                      Radius.circular(isUser ? 16 : 4),
-                                  bottomRight:
-                                      Radius.circular(isUser ? 4 : 16),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color:
-                                        Colors.black.withValues(alpha: 0.08),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 1),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  if (isStaff) ...[
-                                    Text(
-                                      'Msaada wa Karakana',
-                                      style: GoogleFonts.inter(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                        color: const Color(0xFFC4620A),
+                      final ts = _formatTs(
+                          msg['created_at'] as String? ?? '');
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Column(
+                          crossAxisAlignment: isUser
+                              ? CrossAxisAlignment.end
+                              : CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: isUser
+                                  ? MainAxisAlignment.end
+                                  : MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                if (isStaff) ...[
+                                  Container(
+                                    width: 32,
+                                    height: 32,
+                                    decoration: const BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Color(0xFFC4620A),
+                                          Color(0xFFE07030)
+                                        ],
                                       ),
+                                      shape: BoxShape.circle,
                                     ),
-                                    const SizedBox(height: 4),
-                                  ],
-                                  Text(
-                                    msg['message'] as String? ?? '',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 14,
-                                      height: 1.4,
-                                      color: isUser
-                                          ? Colors.white
-                                          : const Color(0xFF3B1A08),
+                                    child: const Icon(
+                                      Icons.support_agent,
+                                      color: Colors.white,
+                                      size: 16,
                                     ),
                                   ),
+                                  const SizedBox(width: 8),
                                 ],
-                              ),
+                                Flexible(
+                                  child: Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width *
+                                              0.72,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 10,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isUser
+                                          ? const Color(0xFFC4620A)
+                                          : Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: const Radius.circular(16),
+                                        topRight: const Radius.circular(16),
+                                        bottomLeft:
+                                            Radius.circular(isUser ? 16 : 4),
+                                        bottomRight:
+                                            Radius.circular(isUser ? 4 : 16),
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black
+                                              .withValues(alpha: 0.08),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 1),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        if (isStaff) ...[
+                                          Text(
+                                            'Msaada wa Karakana',
+                                            style: GoogleFonts.inter(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w600,
+                                              color: const Color(0xFFC4620A),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                        ],
+                                        Text(
+                                          msg['message'] as String? ?? '',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 14,
+                                            height: 1.4,
+                                            color: isUser
+                                                ? Colors.white
+                                                : const Color(0xFF3B1A08),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                if (isUser) const SizedBox(width: 8),
+                              ],
                             ),
-                          ),
-                          if (isUser) const SizedBox(width: 8),
-                        ],
+                            if (ts.isNotEmpty)
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  top: 3,
+                                  left: isStaff ? 40 : 0,
+                                  right: isUser ? 8 : 0,
+                                  bottom: 8,
+                                ),
+                                child: Text(
+                                  ts,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 10,
+                                    color: const Color(0xFFBDA99C),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       );
                     },
                   ),

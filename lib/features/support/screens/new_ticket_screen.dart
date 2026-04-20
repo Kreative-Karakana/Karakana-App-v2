@@ -233,7 +233,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
           backgroundColor: Color(0xFF2E7D32),
         ),
       );
-      context.pop();
+      // Go directly into the new ticket thread
+      context.pushReplacement('/support/$ticketId');
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
