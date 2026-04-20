@@ -34,7 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: GoogleFonts.poppins(fontWeight: FontWeight.w700),
         ),
         content: Text(
-          'Una uhakika unataka kufuta akaunti yako? Hatua hii haiwezi kurudishwa.',
+          'Je, una uhakika unataka kufuta akaunti yako? Hatua hii haiwezi kutenduliwa na data yako yote itafutwa kabisa.',
           style: GoogleFonts.inter(),
         ),
         actions: [
@@ -48,7 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              'Ndiyo, Futa',
+              'Ndio, Futa',
               style: GoogleFonts.inter(
                 color: const Color(0xFFB71C1C),
                 fontWeight: FontWeight.w600,
@@ -65,14 +65,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await ApiClient().dio.delete('/api/v1/accounts/me/delete/');
       if (!context.mounted) return;
+
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: Text(
+            'Tutakukosa! 💙',
+            style: GoogleFonts.poppins(fontWeight: FontWeight.w700),
+          ),
+          content: Text(
+            'Akaunti yako imefutwa. Asante kwa muda wako pamoja nasi — karibu tena wakati wowote!',
+            style: GoogleFonts.inter(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(
+                'Kwa heri',
+                style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
+      );
+
+      if (!context.mounted) return;
       await auth.logout();
       context.go('/login');
     } catch (_) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Hitilafu. Jaribu tena.'),
-          backgroundColor: Color(0xFFB71C1C),
+        SnackBar(
+          content: Text(
+            'Imeshindikana kufuta akaunti. Jaribu tena.',
+            style: GoogleFonts.inter(color: Colors.white),
+          ),
+          backgroundColor: const Color(0xFFB71C1C),
         ),
       );
     }
