@@ -83,6 +83,15 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
             actions: [
               IconButton(
                 icon: const Icon(
+                  Icons.account_balance_wallet_outlined,
+                  color: Colors.white,
+                  size: 24,
+                ),
+                tooltip: 'Mkoba',
+                onPressed: () => context.push('/wallet'),
+              ),
+              IconButton(
+                icon: const Icon(
                   Icons.add_circle_outline,
                   color: Colors.white,
                   size: 26,

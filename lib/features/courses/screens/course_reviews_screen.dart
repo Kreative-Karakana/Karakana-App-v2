@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../auth/providers/auth_provider.dart';
 
 class CourseReviewsScreen extends StatefulWidget {
@@ -57,6 +58,180 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
       if (!mounted) return;
       setState(() => _isLoading = false);
     }
+  }
+
+  void _showReplySheet(int reviewId, String? existingReply) {
+    final controller = TextEditingController(text: existingReply ?? '');
+    bool isSaving = false;
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => StatefulBuilder(
+        builder: (ctx, setSheet) => Padding(
+          padding: EdgeInsets.fromLTRB(
+            24, 20, 24,
+            MediaQuery.of(context).viewInsets.bottom + 24,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40, height: 4,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE8D5C8),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Jibu Maoni',
+                style: GoogleFonts.poppins(
+                  fontSize: 18, fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Fikia wanafunzi kwa kujibu maoni yao',
+                style: GoogleFonts.inter(
+                  fontSize: 13, color: Colors.grey.shade600,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: controller,
+                maxLines: 5,
+                minLines: 3,
+                decoration: InputDecoration(
+                  hintText: 'Andika jibu lako hapa...',
+                  filled: true,
+                  fillColor: const Color(0xFFFFF8F4),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(28),
+                    ),
+                    elevation: 0,
+                  ),
+                  onPressed: isSaving
+                      ? null
+                      : () async {
+                          if (controller.text.trim().isEmpty) return;
+                          setSheet(() => isSaving = true);
+                          try {
+                            await ApiClient().dio.put(
+                              '/api/v1/courses/${widget.courseId}/reviews/$reviewId/reply/',
+                              data: {'reply': controller.text.trim()},
+                            );
+                            if (!ctx.mounted) return;
+                            Navigator.of(ctx).pop();
+                            await _loadReviews();
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Jibu limetumwa kikamilifu!'),
+                                backgroundColor: Color(0xFF2E7D32),
+                              ),
+                            );
+                          } catch (_) {
+                            setSheet(() => isSaving = false);
+                            if (!ctx.mounted) return;
+                            ScaffoldMessenger.of(ctx).showSnackBar(
+                              SnackBar(
+                                content: Text('Zoezi limeshindikana. Jaribu tena.',
+                                    style: GoogleFonts.inter(color: Colors.white)),
+                                backgroundColor: AppColors.primary,
+                              ),
+                            );
+                          }
+                        },
+                  child: isSaving
+                      ? const SizedBox(width: 20, height: 20,
+                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                      : Text(
+                          existingReply != null && existingReply.isNotEmpty
+                              ? 'Hariri Jibu'
+                              : 'Tuma Jibu',
+                          style: GoogleFonts.poppins(
+                              fontSize: 15, fontWeight: FontWeight.w600),
+                        ),
+                ),
+              ),
+              if (existingReply != null && existingReply.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFFB71C1C),
+                      side: const BorderSide(color: Color(0xFFB71C1C)),
+                      minimumSize: const Size(double.infinity, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28),
+                      ),
+                    ),
+                    onPressed: isSaving
+                        ? null
+                        : () async {
+                            setSheet(() => isSaving = true);
+                            try {
+                              await ApiClient().dio.delete(
+                                '/api/v1/courses/${widget.courseId}/reviews/$reviewId/reply/',
+                              );
+                              if (!ctx.mounted) return;
+                              Navigator.of(ctx).pop();
+                              await _loadReviews();
+                              if (!mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Jibu limefutwa.'),
+                                  backgroundColor: Color(0xFF2E7D32),
+                                ),
+                              );
+                            } catch (_) {
+                              setSheet(() => isSaving = false);
+                              if (!ctx.mounted) return;
+                              ScaffoldMessenger.of(ctx).showSnackBar(
+                                SnackBar(
+                                  content: Text('Zoezi limeshindikana.',
+                                      style: GoogleFonts.inter(color: Colors.white)),
+                                  backgroundColor: AppColors.primary,
+                                ),
+                              );
+                            }
+                          },
+                    child: Text('Futa Jibu',
+                        style: GoogleFonts.poppins(
+                            fontSize: 15, fontWeight: FontWeight.w600)),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   void _showReviewForm() {
@@ -425,6 +600,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                         itemCount: _reviews.length,
                         itemBuilder: (_, i) {
                           final review = _reviews[i] as Map;
+                          final reviewId = review['id'] as int? ?? 0;
                           final student = review['student'] as Map? ?? {};
                           final name =
                               '${student['first_name'] ?? ''} ${student['last_name'] ?? ''}'
@@ -432,6 +608,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                           final rating = review['rating'] as int? ?? 0;
                           final content = review['content'] as String? ?? '';
                           final reply = review['trainer_reply'] as String?;
+                          final isTrainer = context.read<AuthProvider>().isTrainer;
                           return Container(
                             margin: const EdgeInsets.only(bottom: 16),
                             padding: const EdgeInsets.all(16),
@@ -549,6 +726,39 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                           ),
                                         ),
                                       ],
+                                    ),
+                                  ),
+                                ],
+                                if (isTrainer) ...[
+                                  const SizedBox(height: 10),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: TextButton.icon(
+                                      onPressed: () =>
+                                          _showReplySheet(reviewId, reply),
+                                      icon: Icon(
+                                        reply != null && reply.isNotEmpty
+                                            ? Icons.edit_outlined
+                                            : Icons.reply_outlined,
+                                        size: 16,
+                                        color: AppColors.primary,
+                                      ),
+                                      label: Text(
+                                        reply != null && reply.isNotEmpty
+                                            ? 'Hariri Jibu'
+                                            : 'Jibu',
+                                        style: GoogleFonts.inter(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.primary,
+                                        ),
+                                      ),
+                                      style: TextButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12, vertical: 6),
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                      ),
                                     ),
                                   ),
                                 ],
