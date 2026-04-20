@@ -21,6 +21,7 @@ import '../../features/payments/screens/payment_screen.dart';
 import '../../features/payments/screens/payment_success_screen.dart';
 import '../../features/payments/screens/wallet_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
+import '../../features/profile/screens/mastercard_form_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/profile/screens/trainer_application_screen.dart';
 import '../../features/splash/screens/splash_screen.dart';
@@ -69,6 +70,7 @@ class AppRoutes {
   static const String supportNew = '/support/new';
   static const String supportDetail = '/support/:ticketId';
   static const String trainerStudents = '/trainer/students';
+  static const String mastercardForm = '/mastercard-form';
 }
 
 Widget _placeholder(String routeName) {
@@ -268,6 +270,13 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.editProfile,
           builder: (context, state) => const EditProfileScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.mastercardForm,
+          builder: (context, state) {
+            final shouldPop = (state.extra as Map?)?['shouldPop'] as bool? ?? false;
+            return MastercardFormScreen(shouldPop: shouldPop);
+          },
         ),
         GoRoute(
           path: AppRoutes.myCourses,

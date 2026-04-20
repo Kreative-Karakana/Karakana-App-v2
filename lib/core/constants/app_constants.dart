@@ -7,6 +7,7 @@ class AppConstants {
   static const String biometricKey = 'biometric_enabled';
   static const String userIdKey = 'user_id';
   static const String ambassadorCodeKey = 'ambassador_code_state';
+  static const String mastercardDoneKey = 'mastercard_done';
 }
 
 class AppStrings {

@@ -104,6 +104,16 @@ class SecureStorage {
     await prefs.setBool(AppConstants.ambassadorCodeKey, value);
   }
 
+  Future<bool> isMastercardDone() async {
+    final prefs = await _prefs;
+    return prefs.getBool(AppConstants.mastercardDoneKey) ?? false;
+  }
+
+  Future<void> setMastercardDone() async {
+    final prefs = await _prefs;
+    await prefs.setBool(AppConstants.mastercardDoneKey, true);
+  }
+
   Future<void> clearAll() async {
     final prefs = await _prefs;
     try {
@@ -115,5 +125,6 @@ class SecureStorage {
     await prefs.remove(AppConstants.biometricKey);
     await prefs.remove(AppConstants.userIdKey);
     await prefs.remove(AppConstants.ambassadorCodeKey);
+    await prefs.remove(AppConstants.mastercardDoneKey);
   }
 }
