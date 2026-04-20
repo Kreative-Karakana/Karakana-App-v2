@@ -11,6 +11,7 @@ import '../../../widgets/cards/shimmer_card.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../courses/models/course_model.dart';
 import '../../courses/providers/course_provider.dart';
+import '../widgets/ambassador_code_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -23,9 +24,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => context.read<CourseProvider>().loadHomeData(),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CourseProvider>().loadHomeData();
+      checkAndShowAmbassadorCode(context);
+    });
   }
 
   String _getGreeting() {

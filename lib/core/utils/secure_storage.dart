@@ -93,6 +93,17 @@ class SecureStorage {
     return prefs.getBool(AppConstants.biometricKey) ?? false;
   }
 
+  Future<bool?> getAmbassadorCodeState() async {
+    final prefs = await _prefs;
+    if (!prefs.containsKey(AppConstants.ambassadorCodeKey)) return null;
+    return prefs.getBool(AppConstants.ambassadorCodeKey);
+  }
+
+  Future<void> setAmbassadorCodeState(bool value) async {
+    final prefs = await _prefs;
+    await prefs.setBool(AppConstants.ambassadorCodeKey, value);
+  }
+
   Future<void> clearAll() async {
     final prefs = await _prefs;
     try {
@@ -103,5 +114,6 @@ class SecureStorage {
     await prefs.remove(AppConstants.onboardingKey);
     await prefs.remove(AppConstants.biometricKey);
     await prefs.remove(AppConstants.userIdKey);
+    await prefs.remove(AppConstants.ambassadorCodeKey);
   }
 }
