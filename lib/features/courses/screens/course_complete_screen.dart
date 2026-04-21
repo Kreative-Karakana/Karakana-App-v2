@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart' show Share;
 
 import '../../auth/providers/auth_provider.dart';
 
@@ -234,9 +235,9 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                               strokeWidth: 2,
                             ),
                           )
-                        : const Icon(Icons.download_outlined),
+                        : const Icon(Icons.share_outlined),
                     label: Text(
-                      'Pakua Cheti',
+                      'Shiriki Cheti',
                       style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -253,17 +254,17 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                     onPressed: _isGenerating
                         ? null
                         : () async {
-                            final messenger = ScaffoldMessenger.of(context);
+                            final auth = context.read<AuthProvider>();
+                            final date = DateFormat('dd MMMM yyyy').format(DateTime.now());
+                            final text =
+                                '🎓 CHETI CHA UKAMILISHAJI\n\nHii inathibitisha kwamba\n\n${auth.userFullName}\n\namekamilisha kwa mafanikio kozi ya:\n\n"${widget.courseTitle}"\n\nTarehe: $date\nImeidhinishwa na Karakana\n\nPakua app: https://kreativekarakana.co.tz';
                             setState(() => _isGenerating = true);
-                            await Future.delayed(const Duration(seconds: 1));
+                            await Share.share(
+                              text,
+                              subject: 'Cheti cha Ukamilishaji — ${widget.courseTitle}',
+                            );
                             if (!mounted) return;
                             setState(() => _isGenerating = false);
-                            messenger.showSnackBar(
-                              const SnackBar(
-                                content: Text('Cheti kitapatikana hivi karibuni!'),
-                                backgroundColor: Color(0xFF2E7D32),
-                              ),
-                            );
                           },
                   ),
                 ),
@@ -277,7 +278,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       size: 18,
                     ),
                     label: Text(
-                      'Shiriki Cheti',
+                      'Shiriki Mafanikio',
                       style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -291,11 +292,16 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       ),
                       minimumSize: const Size(double.infinity, 52),
                     ),
-                    onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Shiriki inakuja hivi karibuni!'),
-                      ),
-                    ),
+                    onPressed: () async {
+                      final auth = context.read<AuthProvider>();
+                      final date = DateFormat('dd MMMM yyyy').format(DateTime.now());
+                      final text =
+                          '🎓 Nimekamilisha kozi ya "${widget.courseTitle}" kwenye Karakana!\n\nTarehe: $date\n\n— ${auth.userFullName}\n\nPakua Karakana: https://kreativekarakana.co.tz';
+                      await Share.share(
+                        text,
+                        subject: 'Nimekamilisha kozi kwenye Karakana!',
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 16),

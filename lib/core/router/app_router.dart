@@ -10,6 +10,7 @@ import '../../features/courses/screens/classroom_screen.dart';
 import '../../features/courses/screens/course_complete_screen.dart';
 import '../../features/courses/screens/course_detail_screen.dart';
 import '../../features/courses/screens/course_reviews_screen.dart';
+import '../../features/courses/screens/course_list_screen.dart';
 import '../../features/courses/screens/my_courses_screen.dart';
 import '../../features/courses/screens/video_lesson_screen.dart';
 import '../../features/courses/screens/wishlist_screen.dart';
@@ -23,6 +24,7 @@ import '../../features/payments/screens/wallet_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/mastercard_form_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
+import '../../features/profile/screens/terms_screen.dart';
 import '../../features/profile/screens/trainer_application_screen.dart';
 import '../../features/splash/screens/splash_screen.dart';
 import '../../features/support/screens/new_ticket_screen.dart';
@@ -71,6 +73,7 @@ class AppRoutes {
   static const String supportDetail = '/support/:ticketId';
   static const String trainerStudents = '/trainer/students';
   static const String mastercardForm = '/mastercard-form';
+  static const String terms = '/terms';
 }
 
 Widget _placeholder(String routeName) {
@@ -202,6 +205,18 @@ class AppRouter {
 
         // ── Courses ─────────────────────────────────────────────
         GoRoute(
+          path: '/courses/list',
+          builder: (context, state) {
+            final extra = state.extra is Map
+                ? Map<String, dynamic>.from(state.extra as Map)
+                : <String, dynamic>{};
+            return CourseListScreen(
+              listType: (extra['type'] as String?) ?? 'all',
+              title: (extra['title'] as String?) ?? 'Kozi',
+            );
+          },
+        ),
+        GoRoute(
           path: '/course/:id',
           builder: (context, state) => CourseDetailScreen(
             courseId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
@@ -277,6 +292,10 @@ class AppRouter {
             final shouldPop = (state.extra as Map?)?['shouldPop'] as bool? ?? false;
             return MastercardFormScreen(shouldPop: shouldPop);
           },
+        ),
+        GoRoute(
+          path: AppRoutes.terms,
+          builder: (context, state) => const TermsScreen(),
         ),
         GoRoute(
           path: AppRoutes.myCourses,

@@ -401,6 +401,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             'Arifa',
                             onTap: () => context.push('/notifications'),
                           ),
+                          _buildMenuItem(
+                            Icons.gavel_outlined,
+                            const Color(0xFF1A2E5A),
+                            'Masharti na Vigezo',
+                            onTap: () => context.push('/terms'),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 16),
