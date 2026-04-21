@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -66,9 +67,16 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       await SecureStorage().deleteToken();
+      final deviceToken = await FirebaseMessaging.instance.getToken();
+      final platform = Platform.isIOS ? 'ios' : 'android';
       final response = await ApiClient().dio.post(
         ApiEndpoints.login,
-        data: {'email': email, 'password': password},
+        data: {
+          'email': email,
+          'password': password,
+          'platform': platform,
+          if (deviceToken != null) 'device_token': deviceToken,
+        },
       );
       final token = response.data['token'] ?? response.data['key'];
       if (token != null) {
@@ -133,9 +141,16 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      final deviceToken = await FirebaseMessaging.instance.getToken();
+      final platform = Platform.isIOS ? 'ios' : 'android';
       final response = await ApiClient().dio.post(
         ApiEndpoints.verifyEmail,
-        data: {'email': email, 'code': code},
+        data: {
+          'email': email,
+          'code': code,
+          'platform': platform,
+          if (deviceToken != null) 'device_token': deviceToken,
+        },
       );
       final token = response.data['token'] ?? response.data['key'];
       if (token != null) {

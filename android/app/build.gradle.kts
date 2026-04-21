@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kreativekarakana.karakana_app"
+    namespace = "com.kreativekarkana.karakana"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.kreativekarakana.karakana_app"
+        applicationId = "com.kreativekarkana.karakana"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

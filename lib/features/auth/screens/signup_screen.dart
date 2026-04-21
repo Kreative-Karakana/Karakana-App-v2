@@ -49,16 +49,16 @@ class _SignupScreenState extends State<SignupScreen>
     }
   }
 
-  void _handleGoogleSignIn() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Google Sign-In coming soon')),
-    );
+  Future<void> _handleGoogleSignIn() async {
+    final auth = context.read<AuthProvider>();
+    final success = await auth.loginWithGoogle();
+    if (success && mounted) context.go('/home');
   }
 
-  void _handleAppleSignIn() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Apple Sign-In coming soon')),
-    );
+  Future<void> _handleAppleSignIn() async {
+    final auth = context.read<AuthProvider>();
+    final success = await auth.loginWithApple();
+    if (success && mounted) context.go('/home');
   }
 
   Widget _buildField({
@@ -194,8 +194,8 @@ class _SignupContent extends StatelessWidget {
   final VoidCallback onTogglePassword;
   final VoidCallback onToggleConfirm;
   final Future<void> Function() onHandleSignup;
-  final VoidCallback onGoogleSignIn;
-  final VoidCallback onAppleSignIn;
+  final Future<void> Function() onGoogleSignIn;
+  final Future<void> Function() onAppleSignIn;
   final Widget Function({
     required String label,
     required String hint,
