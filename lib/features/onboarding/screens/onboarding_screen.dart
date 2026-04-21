@@ -66,22 +66,12 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      statusBarBrightness: Brightness.dark,
-    ));
+    _pageController = PageController(viewportFraction: 1.0);
   }
 
   @override
   void dispose() {
     _pageController.dispose();
-    // Restore default status bar style
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.light,
-    ));
     super.dispose();
   }
 
@@ -176,6 +166,20 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     ),
                   ),
                 ),
+
+                // Gradient overlay — softens the hard cut into the white text area
+                Positioned.fill(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        stops: [0.45, 0.75],
+                        colors: [Colors.transparent, Colors.white],
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -184,27 +188,27 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           Expanded(
             child: Container(
               color: Colors.white,
-              padding: const EdgeInsets.fromLTRB(28, 24, 28, 0),
+              padding: const EdgeInsets.fromLTRB(32, 24, 32, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     slide.title,
                     style: GoogleFonts.poppins(
-                      fontSize: 22,
+                      fontSize: 26,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
+                      color: Colors.black87,
                       height: 1.3,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 16),
                   Text(
                     slide.subtitle,
                     style: GoogleFonts.inter(
-                      fontSize: 13.5,
-                      color: AppColors.textTertiary,
-                      height: 1.65,
+                      fontSize: 15,
+                      color: Colors.black54,
+                      height: 1.6,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 4,
@@ -232,11 +236,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         return AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          width: isActive ? 22 : 8,
+          margin: const EdgeInsets.symmetric(horizontal: 3),
+          width: isActive ? 24 : 8,
           height: 8,
           decoration: BoxDecoration(
-            color: isActive ? _amber : AppColors.border,
+            color: isActive ? _amber : _amber.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(4),
           ),
         );
@@ -252,166 +256,141 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     super.build(context);
     final isLast = _currentPage == 2;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          // ── PageView ──────────────────────────────────────────────────────
-          PageView(
-            controller: _pageController,
-            physics: const BouncingScrollPhysics(),
-            onPageChanged: (i) => setState(() => _currentPage = i),
-            children: _slides.map(_buildSlide).toList(),
-          ),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(
+          children: [
+            // ── PageView ──────────────────────────────────────────────────────
+            PageView(
+              controller: _pageController,
+              physics: const BouncingScrollPhysics(),
+              onPageChanged: (i) => setState(() => _currentPage = i),
+              children: _slides.map(_buildSlide).toList(),
+            ),
 
-          // ── "Ruka" skip button — top right, only on pages 0 & 1 ──────────
-          Positioned(
-            top: 0,
-            right: 0,
-            child: SafeArea(
-              child: AnimatedOpacity(
-                opacity: isLast ? 0 : 1,
-                duration: const Duration(milliseconds: 200),
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16, top: 4),
-                  child: TextButton(
-                    onPressed: isLast
-                        ? null
-                        : () => _completeOnboardingAndGo('/login'),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(
-                      'Ruka',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white.withValues(alpha: 0.9),
+            // ── "Ruka" skip button — top right, slides 0 & 1 only ────────────
+            Positioned(
+              top: 0,
+              right: 0,
+              child: SafeArea(
+                child: AnimatedOpacity(
+                  opacity: isLast ? 0 : 1,
+                  duration: const Duration(milliseconds: 200),
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 16, top: 4),
+                    child: TextButton(
+                      onPressed: isLast
+                          ? null
+                          : () => _completeOnboardingAndGo('/login'),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        'Ruka',
+                        style: GoogleFonts.inter(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.9),
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
 
-          // ── Bottom controls ───────────────────────────────────────────────
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: SafeArea(
-              child: Container(
-                color: Colors.white,
-                padding: const EdgeInsets.fromLTRB(28, 12, 28, 28),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Dots
-                    _buildDots(),
-                    const SizedBox(height: 24),
+            // ── Bottom controls ───────────────────────────────────────────────
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: SafeArea(
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.fromLTRB(32, 12, 32, 28),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Dots
+                      _buildDots(),
+                      const SizedBox(height: 24),
 
-                    // Button — circular arrow OR full-width CTA
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      transitionBuilder: (child, anim) =>
-                          FadeTransition(opacity: anim, child: child),
-                      child: isLast
-                          // ── Last page: Anza Sasa + Ingia ─────────────────
-                          ? Column(
-                              key: const ValueKey('last'),
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SizedBox(
-                                  width: double.infinity,
-                                  height: 52,
-                                  child: ElevatedButton(
-                                    onPressed: () =>
-                                        _completeOnboardingAndGo('/signup'),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: _amber,
-                                      foregroundColor: Colors.white,
-                                      elevation: 0,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(28),
-                                      ),
+                      // Button — circular arrow OR full-width CTA on last slide
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        transitionBuilder: (child, anim) =>
+                            FadeTransition(opacity: anim, child: child),
+                        child: isLast
+                            // ── Last page: Anza Sasa ──────────────────────────
+                            ? SizedBox(
+                                key: const ValueKey('last'),
+                                width: double.infinity,
+                                height: 56,
+                                child: ElevatedButton(
+                                  onPressed: () =>
+                                      _completeOnboardingAndGo('/signup'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: _amber,
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(28),
                                     ),
-                                    child: Text(
-                                      'Anza Sasa',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.3,
-                                      ),
+                                  ),
+                                  child: Text(
+                                    'Anza Sasa',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.3,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 14),
-                                GestureDetector(
-                                  onTap: () =>
-                                      _completeOnboardingAndGo('/login'),
-                                  child: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: 'Una akaunti? ',
-                                          style: GoogleFonts.inter(
-                                            fontSize: 14,
-                                            color: AppColors.textTertiary,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: 'Ingia',
-                                          style: GoogleFonts.inter(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w700,
-                                            color: _amber,
-                                          ),
+                              )
+                            // ── Pages 0 & 1: circular arrow button ────────────
+                            : Center(
+                                key: const ValueKey('next'),
+                                child: GestureDetector(
+                                  onTap: _nextPage,
+                                  child: Container(
+                                    width: 64,
+                                    height: 64,
+                                    decoration: BoxDecoration(
+                                      color: _amber,
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color:
+                                              _amber.withValues(alpha: 0.38),
+                                          blurRadius: 18,
+                                          offset: const Offset(0, 7),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          // ── Pages 0 & 1: circular arrow FAB ──────────────
-                          : Center(
-                              key: const ValueKey('next'),
-                              child: GestureDetector(
-                                onTap: _nextPage,
-                                child: Container(
-                                  width: 58,
-                                  height: 58,
-                                  decoration: BoxDecoration(
-                                    color: _amber,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color:
-                                            _amber.withValues(alpha: 0.38),
-                                        blurRadius: 18,
-                                        offset: const Offset(0, 7),
-                                      ),
-                                    ],
-                                  ),
-                                  child: const Icon(
-                                    Icons.arrow_forward_rounded,
-                                    color: Colors.white,
-                                    size: 26,
+                                    child: const Icon(
+                                      Icons.arrow_forward_rounded,
+                                      color: Colors.white,
+                                      size: 28,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
