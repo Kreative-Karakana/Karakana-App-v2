@@ -27,7 +27,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
 
   Future<void> _loadCourses() async {
     try {
-      final res = await ApiClient().dio.get('/api/v1/courses/?enrolled=true');
+      final res = await ApiClient().dio.get('/api/v1/courses/?is_creator=true&page_size=50');
       final data = res.data;
       final rawList = data is Map
           ? (data['results'] as List? ?? const [])
@@ -526,7 +526,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () => context.push('/trainer/students'),
+                  onPressed: () => context.push('/trainer/students?courseId=${course['id']}'),
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Color(0xFFE8D5C8)),
                     shape: RoundedRectangleBorder(

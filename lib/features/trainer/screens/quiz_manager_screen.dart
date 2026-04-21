@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/network/api_client.dart';
+
 class QuizManagerScreen extends StatefulWidget {
-  const QuizManagerScreen({super.key});
+  final int courseId;
+
+  const QuizManagerScreen({super.key, required this.courseId});
 
   @override
   State<QuizManagerScreen> createState() => _QuizManagerScreenState();
@@ -12,11 +16,75 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
   final List<Map<String, dynamic>> _questions = [];
   final TextEditingController _passingScoreController =
       TextEditingController(text: '70');
+  bool _isSaving = false;
 
   @override
   void dispose() {
     _passingScoreController.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveQuiz() async {
+    if (_questions.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Ongeza maswali angalau moja kwanza.',
+            style: GoogleFonts.inter(fontSize: 14),
+          ),
+          backgroundColor: const Color(0xFFB00020),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isSaving = true);
+    try {
+      final passingScore =
+          int.tryParse(_passingScoreController.text.trim()) ?? 70;
+      await ApiClient().dio.post(
+        '/api/v1/courses/${widget.courseId}/quiz/',
+        data: {
+          'passing_score': passingScore,
+          'questions': _questions
+              .map((q) => {
+                    'question': q['question'],
+                    'options': q['options'],
+                    'correct_answer': q['correct'],
+                  })
+              .toList(),
+        },
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Maswali yamehifadhiwa!',
+            style: GoogleFonts.inter(fontSize: 14),
+          ),
+          backgroundColor: const Color(0xFF2E7D32),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            ApiClient().parseError(e),
+            style: GoogleFonts.inter(fontSize: 14),
+          ),
+          backgroundColor: const Color(0xFFB00020),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
   }
 
   void _addQuestion() {
@@ -182,6 +250,32 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
           ),
         ),
         actions: [
+          if (_isSaving)
+            const Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                ),
+              ),
+            )
+          else
+            TextButton(
+              onPressed: _saveQuiz,
+              child: Text(
+                'Hifadhi',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
           IconButton(
             icon: const Icon(Icons.add, color: Colors.white),
             onPressed: _addQuestion,

@@ -321,11 +321,19 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.trainerStudents,
-          builder: (context, state) => const StudentProgressScreen(),
+          builder: (context, state) {
+            final courseId = int.tryParse(
+              state.uri.queryParameters['courseId'] ?? '',
+            );
+            return StudentProgressScreen(courseId: courseId);
+          },
         ),
         GoRoute(
           path: '/trainer/quiz/:courseId',
-          builder: (context, state) => const QuizManagerScreen(),
+          builder: (context, state) {
+            final courseId = int.tryParse(state.pathParameters['courseId'] ?? '') ?? 0;
+            return QuizManagerScreen(courseId: courseId);
+          },
         ),
 
         // ── Notifications / Support ──────────────────────────────
