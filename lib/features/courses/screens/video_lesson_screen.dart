@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../core/network/api_client.dart';
 
@@ -66,6 +68,9 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
       );
     }
 
+    final playbackId = _lesson?['playback_url'] as String?;
+    final hasVideo = playbackId != null && playbackId.isNotEmpty;
+
     return Scaffold(
       backgroundColor: const Color(0xFF1A0A00),
       appBar: AppBar(
@@ -83,7 +88,10 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
         ),
         actions: [
           if (_isCompleted)
-            const Icon(Icons.check_circle, color: Color(0xFF2E7D32), size: 24)
+            const Padding(
+              padding: EdgeInsets.only(right: 12),
+              child: Icon(Icons.check_circle, color: Color(0xFF2E7D32), size: 24),
+            )
           else
             TextButton(
               onPressed: _markComplete,
@@ -96,46 +104,46 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                 ),
               ),
             ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 4),
         ],
       ),
       body: Column(
         children: [
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: Container(
-              color: Colors.black,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.play_circle_outline,
-                      color: Colors.white,
-                      size: 72,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      'Video itapatikana hivi karibuni',
-                      style: GoogleFonts.inter(
-                        fontSize: 14,
-                        color: Colors.white.withValues(alpha: 0.7),
+          // ── Video or placeholder ───────────────────────────────────────
+          if (hasVideo)
+            _MuxVideoPlayer(
+              playbackId: playbackId,
+              onVideoEnded: _isCompleted ? null : _markComplete,
+            )
+          else
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Container(
+                color: Colors.black,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.article_outlined,
+                        color: Colors.white.withValues(alpha: 0.5),
+                        size: 56,
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    if (_lesson?['playback_url'] != null)
+                      const SizedBox(height: 12),
                       Text(
-                        'Playback ID: ${_lesson!['playback_url']}',
+                        'Somo la Maandishi',
                         style: GoogleFonts.inter(
-                          fontSize: 11,
-                          color: Colors.white.withValues(alpha: 0.4),
+                          fontSize: 14,
+                          color: Colors.white.withValues(alpha: 0.6),
                         ),
                       ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
+
+          // ── Lesson content ─────────────────────────────────────────────
           Expanded(
             child: Container(
               decoration: const BoxDecoration(
@@ -239,5 +247,313 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
         ],
       ),
     );
+  }
+}
+
+// ── Mux Video Player Widget ────────────────────────────────────────────────────
+
+class _MuxVideoPlayer extends StatefulWidget {
+  final String playbackId;
+  final VoidCallback? onVideoEnded;
+
+  const _MuxVideoPlayer({
+    required this.playbackId,
+    this.onVideoEnded,
+  });
+
+  @override
+  State<_MuxVideoPlayer> createState() => _MuxVideoPlayerState();
+}
+
+class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
+  late VideoPlayerController _controller;
+  bool _isInitialized = false;
+  bool _isError = false;
+  bool _showControls = true;
+  bool _isFullscreen = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initPlayer();
+  }
+
+  Future<void> _initPlayer() async {
+    final url = 'https://stream.mux.com/${widget.playbackId}.m3u8';
+    _controller = VideoPlayerController.networkUrl(Uri.parse(url));
+
+    _controller.addListener(_onPlayerChanged);
+
+    try {
+      await _controller.initialize();
+      if (!mounted) return;
+      setState(() => _isInitialized = true);
+      _controller.play();
+      _scheduleHideControls();
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isError = true);
+    }
+  }
+
+  void _onPlayerChanged() {
+    if (!mounted) return;
+
+    // Auto-mark complete when video finishes
+    final pos = _controller.value.position;
+    final dur = _controller.value.duration;
+    if (dur.inSeconds > 0 &&
+        pos.inSeconds >= dur.inSeconds - 1 &&
+        !_controller.value.isPlaying &&
+        widget.onVideoEnded != null) {
+      widget.onVideoEnded!();
+    }
+
+    setState(() {});
+  }
+
+  void _scheduleHideControls() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted && _controller.value.isPlaying) {
+        setState(() => _showControls = false);
+      }
+    });
+  }
+
+  void _togglePlayPause() {
+    setState(() => _showControls = true);
+    if (_controller.value.isPlaying) {
+      _controller.pause();
+    } else {
+      _controller.play();
+      _scheduleHideControls();
+    }
+  }
+
+  void _toggleFullscreen() {
+    setState(() => _isFullscreen = !_isFullscreen);
+    if (_isFullscreen) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    } else {
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
+  }
+
+  String _formatDuration(Duration d) {
+    final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onPlayerChanged);
+    _controller.dispose();
+    // Restore orientation when leaving
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isError) {
+      return AspectRatio(
+        aspectRatio: 16 / 9,
+        child: Container(
+          color: Colors.black,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  color: Colors.white.withValues(alpha: 0.6),
+                  size: 48,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Hitilafu ya kupakia video',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: Colors.white.withValues(alpha: 0.6),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () {
+                    setState(() => _isError = false);
+                    _initPlayer();
+                  },
+                  child: Text(
+                    'Jaribu tena',
+                    style: GoogleFonts.inter(
+                      color: const Color(0xFFC4620A),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (!_isInitialized) {
+      return AspectRatio(
+        aspectRatio: 16 / 9,
+        child: Container(
+          color: Colors.black,
+          child: const Center(
+            child: CircularProgressIndicator(color: Color(0xFFC4620A)),
+          ),
+        ),
+      );
+    }
+
+    final value = _controller.value;
+    final position = value.position;
+    final duration = value.duration;
+    final progress = duration.inMilliseconds > 0
+        ? position.inMilliseconds / duration.inMilliseconds
+        : 0.0;
+
+    final playerWidget = AspectRatio(
+      aspectRatio: _isFullscreen
+          ? MediaQuery.of(context).size.aspectRatio
+          : 16 / 9,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // ── Video ──────────────────────────────────────────────────────
+          VideoPlayer(_controller),
+
+          // ── Controls overlay ───────────────────────────────────────────
+          GestureDetector(
+            onTap: () {
+              setState(() => _showControls = !_showControls);
+              if (_showControls && _controller.value.isPlaying) {
+                _scheduleHideControls();
+              }
+            },
+            child: AnimatedOpacity(
+              opacity: _showControls ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 200),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.4),
+                      Colors.transparent,
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.6),
+                    ],
+                    stops: const [0, 0.2, 0.7, 1],
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const SizedBox(),
+                    // Play/Pause center button
+                    GestureDetector(
+                      onTap: _togglePlayPause,
+                      child: Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.5),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          value.isPlaying
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded,
+                          color: Colors.white,
+                          size: 36,
+                        ),
+                      ),
+                    ),
+                    // Bottom controls
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                      child: Column(
+                        children: [
+                          // Progress bar
+                          VideoProgressIndicator(
+                            _controller,
+                            allowScrubbing: true,
+                            colors: const VideoProgressColors(
+                              playedColor: Color(0xFFC4620A),
+                              bufferedColor: Colors.white38,
+                              backgroundColor: Colors.white12,
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                _formatDuration(position),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                ),
+                              ),
+                              const Spacer(),
+                              Text(
+                                _formatDuration(duration),
+                                style: const TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 11,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: _toggleFullscreen,
+                                child: Icon(
+                                  _isFullscreen
+                                      ? Icons.fullscreen_exit
+                                      : Icons.fullscreen,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Buffering spinner
+          if (value.isBuffering)
+            const CircularProgressIndicator(
+              color: Color(0xFFC4620A),
+              strokeWidth: 2,
+            ),
+        ],
+      ),
+    );
+
+    if (_isFullscreen) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(child: playerWidget),
+      );
+    }
+
+    return playerWidget;
   }
 }

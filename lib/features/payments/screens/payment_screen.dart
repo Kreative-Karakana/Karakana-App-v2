@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/network/api_client.dart';
+
 class PaymentScreen extends StatefulWidget {
   final int courseId;
   final String courseTitle;
@@ -38,19 +40,44 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return 'TZS ${formatter.format(price)}';
   }
 
+  String _normalizePhone(String raw) {
+    final phone = raw.trim().replaceAll(' ', '').replaceAll('-', '');
+    if (phone.startsWith('255')) return phone;
+    if (phone.startsWith('0')) return '255${phone.substring(1)}';
+    return '255$phone';
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: GoogleFonts.inter(fontSize: 14)),
+        backgroundColor: const Color(0xFFB00020),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
   Future<void> _processPayment() async {
+    final phone = _normalizePhone(_phoneController.text);
+    if (phone.length < 12) {
+      _showError('Weka nambari sahihi ya simu (mfano: 0712345678)');
+      return;
+    }
+
     setState(() => _isProcessing = true);
 
+    // Show "waiting for confirmation" dialog
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const CircularProgressIndicator(
-              color: Color(0xFFC4620A),
-            ),
+            const CircularProgressIndicator(color: Color(0xFFC4620A)),
             const SizedBox(height: 18),
             Text(
               'Inashughulikia Malipo...',
@@ -62,7 +89,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ),
             const SizedBox(height: 10),
             Text(
-              'Utapata ujumbe kwenye simu yako. Thibitisha ili kukamilisha.',
+              'Thibitisha malipo kwenye simu yako.\nUsifunge programu hii.',
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
                 fontSize: 13,
@@ -75,10 +102,63 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ),
     );
 
-    await Future.delayed(const Duration(seconds: 3));
-    if (mounted) Navigator.pop(context);
-    if (mounted) context.go('/payment/success');
-    if (mounted) setState(() => _isProcessing = false);
+    try {
+      // 1. Initiate checkout
+      final checkoutRes = await ApiClient().dio.post(
+        '/api/v1/payments/checkout/',
+        data: {
+          'accountNumber': phone,
+          'provider': _selectedProvider,
+          'course_id': widget.courseId,
+        },
+      );
+
+      final externalId = checkoutRes.data['external_id'] as String?;
+      if (externalId == null || externalId.isEmpty) {
+        if (mounted) Navigator.of(context, rootNavigator: true).pop();
+        _showError('Hitilafu ya kuanzisha malipo. Jaribu tena.');
+        return;
+      }
+
+      // 2. Poll for payment status (max 10 × 3s = 30 seconds)
+      bool success = false;
+      for (int i = 0; i < 10; i++) {
+        await Future.delayed(const Duration(seconds: 3));
+        if (!mounted) return;
+
+        try {
+          final statusRes =
+              await ApiClient().dio.get('/api/v1/payments/$externalId/');
+          if (statusRes.data['is_successful'] == true) {
+            success = true;
+            break;
+          }
+          // If explicitly failed (not just pending), stop early
+          final failed = statusRes.data['is_failed'] == true ||
+              statusRes.data['status'] == 'failed';
+          if (failed) break;
+        } catch (_) {
+          // Network hiccup during polling — keep trying
+        }
+      }
+
+      if (!mounted) return;
+      Navigator.of(context, rootNavigator: true).pop(); // close dialog
+
+      if (success) {
+        context.go('/payment/success');
+      } else {
+        _showError(
+          'Malipo hayakukamilika. Thibitisha kwenye simu yako na ujaribu tena.',
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      Navigator.of(context, rootNavigator: true).pop();
+      _showError(ApiClient().parseError(e));
+    } finally {
+      if (mounted) setState(() => _isProcessing = false);
+    }
   }
 
   @override
