@@ -420,9 +420,6 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
     final value = _controller.value;
     final position = value.position;
     final duration = value.duration;
-    final progress = duration.inMilliseconds > 0
-        ? position.inMilliseconds / duration.inMilliseconds
-        : 0.0;
 
     final playerWidget = AspectRatio(
       aspectRatio: _isFullscreen
