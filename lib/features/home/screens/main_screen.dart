@@ -16,39 +16,22 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
+  // Pill geometry constants
+  static const double _pillHeight = 64.0;
+  static const double _fabSize = 60.0;
+  // Total height above safe area:
+  // - 4px top margin for FAB to extend above pill
+  // - 30px (half FAB)  → FAB top at y=4, center at y=34
+  // - pill top = 104 - 8 - 64 = 32  → FAB center is 2px into pill ≈ "sitting on pill edge"
+  // - 8px bottom margin between pill and safe area
+  static const double _navTotalHeight = 104.0;
+
   final List<Widget> _screens = const [
     HomeScreen(),
     ExploreScreen(),
     ZanaScreen(),
     ProfileScreen(),
   ];
-
-  List<_NavItem> get _navItems => const [
-        _NavItem(
-          label: 'Nyumbani',
-          icon: Icons.home_outlined,
-          activeIcon: Icons.home_rounded,
-          index: 0,
-        ),
-        _NavItem(
-          label: 'Tafuta',
-          icon: Icons.explore_outlined,
-          activeIcon: Icons.explore_rounded,
-          index: 1,
-        ),
-        _NavItem(
-          label: 'Zana',
-          icon: Icons.construction_outlined,
-          activeIcon: Icons.construction_rounded,
-          index: 2,
-        ),
-        _NavItem(
-          label: 'Akaunti',
-          icon: Icons.person_outlined,
-          activeIcon: Icons.person_rounded,
-          index: 3,
-        ),
-      ];
 
   @override
   Widget build(BuildContext context) {
@@ -57,84 +40,179 @@ class _MainScreenState extends State<MainScreen> {
         index: _currentIndex,
         children: _screens,
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 16,
-              offset: const Offset(0, -2),
+      bottomNavigationBar: _buildFloatingNavBar(context),
+    );
+  }
+
+  Widget _buildFloatingNavBar(BuildContext context) {
+    return SafeArea(
+      top: false,
+      child: SizedBox(
+        height: _navTotalHeight,
+        child: Stack(
+          children: [
+            // ── Notched pill ──────────────────────────────────────────────
+            Positioned(
+              bottom: 8,
+              left: 16,
+              right: 16,
+              height: _pillHeight,
+              child: CustomPaint(
+                painter: _NotchedPillPainter(color: AppColors.primaryDark),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _buildNavTab(
+                        index: 0,
+                        label: 'Nyumbani',
+                        icon: Icons.home_outlined,
+                        activeIcon: Icons.home_rounded,
+                      ),
+                    ),
+                    Expanded(
+                      child: _buildNavTab(
+                        index: 1,
+                        label: 'Tafuta',
+                        icon: Icons.explore_outlined,
+                        activeIcon: Icons.explore_rounded,
+                      ),
+                    ),
+                    // Gap for Zana FAB
+                    const SizedBox(width: _fabSize + 8),
+                    Expanded(
+                      child: _buildNavTab(
+                        index: 3,
+                        label: 'Akaunti',
+                        icon: Icons.person_outlined,
+                        activeIcon: Icons.person_rounded,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // ── Raised Zana FAB ───────────────────────────────────────────
+            Positioned(
+              top: 4,
+              left: 0,
+              right: 0,
+              child: Center(child: _buildZanaFab()),
             ),
           ],
-        ),
-        child: SafeArea(
-          top: false,
-          child: SizedBox(
-            height: 64,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: _navItems
-                  .map((item) => _buildNavItem(item))
-                  .toList(),
-            ),
-          ),
         ),
       ),
     );
   }
 
-  Widget _buildNavItem(_NavItem item) {
-    final isSelected = _currentIndex == item.index;
+  Widget _buildNavTab({
+    required int index,
+    required String label,
+    required IconData icon,
+    required IconData activeIcon,
+  }) {
+    final isSelected = _currentIndex == index;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () => setState(() => _currentIndex = item.index),
+      onTap: () => setState(() => _currentIndex = index),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: 48,
-            height: 32,
-            decoration: BoxDecoration(
-              color:
-                  isSelected ? AppColors.primaryLight : Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(
-              isSelected ? item.activeIcon : item.icon,
-              color:
-                  isSelected ? AppColors.primary : AppColors.textHint,
-              size: 22,
-            ),
+          Icon(
+            isSelected ? activeIcon : icon,
+            color: isSelected
+                ? AppColors.primary
+                : Colors.white.withValues(alpha: 0.45),
+            size: 22,
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 3),
           Text(
-            item.label,
+            label,
             style: GoogleFonts.inter(
               fontSize: 10,
               fontWeight: FontWeight.w600,
-              color:
-                  isSelected ? AppColors.primary : AppColors.textHint,
+              color: isSelected
+                  ? AppColors.primary
+                  : Colors.white.withValues(alpha: 0.45),
             ),
           ),
         ],
       ),
     );
   }
+
+  Widget _buildZanaFab() {
+    final isActive = _currentIndex == 2;
+    return GestureDetector(
+      onTap: () => setState(() => _currentIndex = 2),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: _fabSize,
+        height: _fabSize,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: AppColors.ctaGradient,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: isActive ? 0.55 : 0.30),
+              blurRadius: isActive ? 18 : 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Icon(
+          isActive ? Icons.construction_rounded : Icons.construction_outlined,
+          color: Colors.white,
+          size: 26,
+        ),
+      ),
+    );
+  }
 }
 
-class _NavItem {
-  final String label;
-  final IconData icon;
-  final IconData activeIcon;
-  final int index;
+// ── Notched pill painter ─────────────────────────────────────────────────────
 
-  const _NavItem({
-    required this.label,
-    required this.icon,
-    required this.activeIcon,
-    required this.index,
-  });
+class _NotchedPillPainter extends CustomPainter {
+  final Color color;
+
+  _NotchedPillPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // FAB center sits ~2px below the pill's top edge (see layout constants).
+    // Notch radius = FAB_radius(30) + 2px visual gap = 32.
+    const notchRadius = 32.0;
+    const notchOffsetY = 2.0;
+    final cornerRadius = size.height / 2;
+
+    final pillPath = Path()
+      ..addRRect(RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+        Radius.circular(cornerRadius),
+      ));
+
+    final notchPath = Path()
+      ..addOval(Rect.fromCircle(
+        center: Offset(size.width / 2, notchOffsetY),
+        radius: notchRadius,
+      ));
+
+    final finalPath =
+        Path.combine(PathOperation.difference, pillPath, notchPath);
+
+    // Elevation shadow
+    canvas.drawShadow(finalPath, Colors.black, 8, false);
+
+    // Pill fill
+    canvas.drawPath(finalPath, Paint()..color = color);
+  }
+
+  @override
+  bool shouldRepaint(covariant _NotchedPillPainter old) =>
+      old.color != color;
 }
