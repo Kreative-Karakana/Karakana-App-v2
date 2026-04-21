@@ -35,8 +35,6 @@ class _MainScreenState extends State<MainScreen> {
         children: _screens,
       ),
       bottomNavigationBar: _buildFloatingNavBar(),
-      floatingActionButton: _buildZanaFab(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
@@ -80,8 +78,14 @@ class _MainScreenState extends State<MainScreen> {
                   activeIcon: Icons.explore_rounded,
                 ),
               ),
-              // Center gap for the Zana FAB (56px FAB + breathing room)
-              const SizedBox(width: 72),
+              Expanded(
+                child: _buildNavTab(
+                  index: 2,
+                  label: 'Zana',
+                  icon: Icons.construction_outlined,
+                  activeIcon: Icons.construction_rounded,
+                ),
+              ),
               Expanded(
                 child: _buildNavTab(
                   index: 3,
@@ -136,19 +140,4 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  // ── Zana FAB ─────────────────────────────────────────────────────────────────
-
-  Widget _buildZanaFab() {
-    final isActive = _currentIndex == 2;
-    return FloatingActionButton(
-      backgroundColor: AppColors.primary,
-      elevation: 6,
-      onPressed: () => setState(() => _currentIndex = 2),
-      child: Icon(
-        isActive ? Icons.construction_rounded : Icons.construction_outlined,
-        color: Colors.white,
-        size: 28,
-      ),
-    );
-  }
 }
