@@ -40,6 +40,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildFloatingNavBar() {
     return Container(
+      // Outer container is fully transparent — only the inner pill has color.
       color: Colors.transparent,
       child: SafeArea(
         top: false,
@@ -56,44 +57,41 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ],
           ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildNavTab(
-                    index: 0,
-                    label: 'Nyumbani',
-                    icon: Icons.home_outlined,
-                    activeIcon: Icons.home_rounded,
-                  ),
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildNavTab(
+                  index: 0,
+                  label: 'Nyumbani',
+                  icon: Icons.home_outlined,
+                  activeIcon: Icons.home_rounded,
                 ),
-                Expanded(
-                  child: _buildNavTab(
-                    index: 1,
-                    label: 'Tafuta',
-                    icon: Icons.explore_outlined,
-                    activeIcon: Icons.explore_rounded,
-                  ),
+              ),
+              Expanded(
+                child: _buildNavTab(
+                  index: 1,
+                  label: 'Tafuta',
+                  icon: Icons.explore_outlined,
+                  activeIcon: Icons.explore_rounded,
                 ),
-                Expanded(
-                  child: _buildNavTab(
-                    index: 2,
-                    label: 'Zana',
-                    icon: Icons.construction_outlined,
-                    activeIcon: Icons.construction_rounded,
-                  ),
+              ),
+              Expanded(
+                child: _buildNavTab(
+                  index: 2,
+                  label: 'Zana',
+                  icon: Icons.construction_outlined,
+                  activeIcon: Icons.construction_rounded,
                 ),
-                Expanded(
-                  child: _buildNavTab(
-                    index: 3,
-                    label: 'Akaunti',
-                    icon: Icons.person_outlined,
-                    activeIcon: Icons.person_rounded,
-                  ),
+              ),
+              Expanded(
+                child: _buildNavTab(
+                  index: 3,
+                  label: 'Akaunti',
+                  icon: Icons.person_outlined,
+                  activeIcon: Icons.person_rounded,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -115,43 +113,50 @@ class _MainScreenState extends State<MainScreen> {
         HapticFeedback.lightImpact();
         setState(() => _currentIndex = index);
       },
-      child: Center(
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          padding: EdgeInsets.symmetric(
-            horizontal: isSelected ? 16.0 : 0.0,
-            vertical: 6.0,
-          ),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? AppColors.primary.withValues(alpha: 0.15)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                isSelected ? activeIcon : icon,
-                color: isSelected
-                    ? AppColors.primary
-                    : Colors.white.withValues(alpha: 0.45),
-                size: 22,
-              ),
-              if (isSelected) ...[
-                const SizedBox(width: 6),
-                Text(
-                  label,
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primary,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: isSelected
+                  ? const EdgeInsets.symmetric(horizontal: 12, vertical: 6)
+                  : EdgeInsets.zero,
+              decoration: isSelected
+                  ? BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(20),
+                    )
+                  : null,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isSelected ? activeIcon : icon,
+                    color: isSelected
+                        ? AppColors.primary
+                        : Colors.white.withValues(alpha: 0.45),
+                    size: 22,
                   ),
-                ),
-              ],
-            ],
-          ),
+                  if (isSelected) ...[
+                    const SizedBox(width: 6),
+                    Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
