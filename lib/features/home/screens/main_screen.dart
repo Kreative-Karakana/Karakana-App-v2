@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../courses/screens/explore_screen.dart';
 import '../../profile/screens/profile_screen.dart';
@@ -40,7 +39,6 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildFloatingNavBar() {
     return Container(
-      // Outer container is fully transparent — only the inner pill has color.
       color: Colors.transparent,
       child: SafeArea(
         top: false,
@@ -62,7 +60,6 @@ class _MainScreenState extends State<MainScreen> {
               Expanded(
                 child: _buildNavTab(
                   index: 0,
-                  label: 'Nyumbani',
                   icon: Icons.home_outlined,
                   activeIcon: Icons.home_rounded,
                 ),
@@ -70,7 +67,6 @@ class _MainScreenState extends State<MainScreen> {
               Expanded(
                 child: _buildNavTab(
                   index: 1,
-                  label: 'Tafuta',
                   icon: Icons.explore_outlined,
                   activeIcon: Icons.explore_rounded,
                 ),
@@ -78,7 +74,6 @@ class _MainScreenState extends State<MainScreen> {
               Expanded(
                 child: _buildNavTab(
                   index: 2,
-                  label: 'Zana',
                   icon: Icons.construction_outlined,
                   activeIcon: Icons.construction_rounded,
                 ),
@@ -86,7 +81,6 @@ class _MainScreenState extends State<MainScreen> {
               Expanded(
                 child: _buildNavTab(
                   index: 3,
-                  label: 'Akaunti',
                   icon: Icons.person_outlined,
                   activeIcon: Icons.person_rounded,
                 ),
@@ -102,7 +96,6 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildNavTab({
     required int index,
-    required String label,
     required IconData icon,
     required IconData activeIcon,
   }) {
@@ -113,47 +106,24 @@ class _MainScreenState extends State<MainScreen> {
         HapticFeedback.lightImpact();
         setState(() => _currentIndex = index);
       },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: isSelected
-                  ? const EdgeInsets.symmetric(horizontal: 12, vertical: 6)
-                  : EdgeInsets.zero,
-              decoration: isSelected
-                  ? BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(20),
-                    )
-                  : null,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    isSelected ? activeIcon : icon,
-                    color: isSelected
-                        ? AppColors.primary
-                        : Colors.white.withValues(alpha: 0.45),
-                    size: 22,
-                  ),
-                  if (isSelected) ...[
-                    const SizedBox(width: 6),
-                    Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ],
-                ],
+            Icon(
+              isSelected ? activeIcon : icon,
+              color: isSelected ? AppColors.primary : Colors.grey[500],
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: isSelected ? 6 : 0,
+              height: isSelected ? 6 : 0,
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
               ),
             ),
           ],
