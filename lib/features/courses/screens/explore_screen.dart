@@ -370,7 +370,7 @@ class _ExploreScreenState extends State<ExploreScreen>
     final itemCount = displayCourses.length + (showCarousel ? 1 : 0);
 
     return ListView.builder(
-      padding: EdgeInsets.fromLTRB(20, showCarousel ? 0 : 20, 20, 20),
+      padding: EdgeInsets.fromLTRB(20, showCarousel ? 0 : 20, 20, MediaQuery.of(context).padding.bottom + 16),
       itemCount: itemCount,
       itemBuilder: (_, i) {
         if (showCarousel && i == 0) {
