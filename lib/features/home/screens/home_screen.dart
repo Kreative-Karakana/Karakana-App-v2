@@ -441,13 +441,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     SliverToBoxAdapter(child: _empty('Hakuna kozi bure kwa sasa'))
                   else
                     SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       sliver: SliverGrid(
                         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           mainAxisSpacing: 12,
                           crossAxisSpacing: 12,
-                          childAspectRatio: 0.78,
+                          childAspectRatio: 0.72,
                         ),
                         delegate: SliverChildBuilderDelegate(
                           (_, i) => CourseCardHorizontal(

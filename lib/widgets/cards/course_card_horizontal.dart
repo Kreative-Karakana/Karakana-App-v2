@@ -21,36 +21,33 @@ class CourseCardHorizontal extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 200,
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
-              color: AppColors.cardShadow,
+              color: Colors.black.withValues(alpha: 0.07),
               blurRadius: 12,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Thumbnail - fixed height 110
-            SizedBox(
-              height: 110,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(16),
-                      topRight: Radius.circular(16),
-                    ),
-                    child: course.coverPhoto != null &&
-                            course.coverPhoto!.isNotEmpty
+            // Thumbnail — 16:9 with gradient overlay and bookmark
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    course.coverPhoto != null && course.coverPhoto!.isNotEmpty
                         ? CachedNetworkImage(
                             imageUrl: course.coverPhoto!,
                             fit: BoxFit.cover,
@@ -71,132 +68,140 @@ class CourseCardHorizontal extends StatelessWidget {
                               size: 32,
                             ),
                           ),
-                  ),
-                  // FREE badge top-left
-                  if (course.isFree)
-                    Positioned(
-                      top: 8,
-                      left: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                    // Gradient overlay — bottom 30% fades to black 40%
+                    Positioned.fill(
+                      child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: AppColors.success,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          'BURE',
-                          style: GoogleFonts.inter(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            stops: const [0.7, 1.0],
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.40),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                  // Wishlist button top-right
-                  Positioned(
-                    top: 4,
-                    right: 4,
-                    child: GestureDetector(
-                      onTap: onWishlistTap,
-                      child: Container(
-                        width: 28,
-                        height: 28,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          shape: BoxShape.circle,
+                    // FREE badge top-left
+                    if (course.isFree)
+                      Positioned(
+                        top: 8,
+                        left: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.success,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'BURE',
+                            style: GoogleFonts.inter(
+                              fontSize: 8,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
-                        child: Icon(
-                          course.isWishlisted
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: course.isWishlisted
-                              ? Colors.red
-                              : Colors.white,
-                          size: 14,
+                      ),
+                    // Bookmark button top-right
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: GestureDetector(
+                        onTap: onWishlistTap,
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(color: Colors.black26, blurRadius: 4),
+                            ],
+                          ),
+                          child: Icon(
+                            course.isWishlisted ? Icons.bookmark : Icons.bookmark_border,
+                            size: 16,
+                            color: course.isWishlisted ? const Color(0xFFE87722) : Colors.grey[700],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             // Content
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     course.title,
                     style: GoogleFonts.poppins(
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: Colors.black87,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Row(
                     children: [
-                      const Icon(
-                        Icons.person_outline,
-                        size: 10,
-                        color: AppColors.textTertiary,
-                      ),
-                      const SizedBox(width: 2),
+                      Icon(Icons.person_outline, size: 13, color: Colors.grey[500]),
+                      const SizedBox(width: 3),
                       Expanded(
                         child: Text(
                           course.trainerName,
-                          style: GoogleFonts.inter(
-                            fontSize: 10,
-                            color: AppColors.textTertiary,
-                          ),
+                          style: GoogleFonts.inter(fontSize: 12, color: Colors.grey[500]),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Row(
                     children: [
-                      const Icon(
-                        Icons.star_rounded,
-                        size: 11,
-                        color: Colors.amber,
-                      ),
-                      const SizedBox(width: 2),
+                      const Icon(Icons.star_rounded, size: 14, color: Color(0xFFFFB800)),
+                      const SizedBox(width: 4),
                       Text(
                         course.averageRating.toStringAsFixed(1),
                         style: GoogleFonts.inter(
-                          fontSize: 10,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textSecondary,
+                          color: Colors.black87,
                         ),
                       ),
                       const Spacer(),
-                      Text(
-                        course.formattedLevel,
-                        style: GoogleFonts.inter(
-                          fontSize: 9,
-                          color: AppColors.primary,
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF0F0F0),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          course.formattedLevel,
+                          style: GoogleFonts.inter(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black54,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
                     course.formattedPrice,
                     style: GoogleFonts.poppins(
-                      fontSize: 12,
+                      fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: course.isFree
-                          ? AppColors.success
-                          : AppColors.primary,
+                      color: course.isFree ? AppColors.success : const Color(0xFFE87722),
                     ),
                   ),
                 ],
