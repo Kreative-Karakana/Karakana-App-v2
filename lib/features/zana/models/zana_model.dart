@@ -69,17 +69,17 @@ class ZanaData {
       route: '/zana/insurance',
     ),
     ZanaTool(
-      id: 'vicoba',
-      name: 'e-VICOBA',
+      id: 'kikoba',
+      name: 'e-KIKOBA',
       fullName: 'Digital Group Savings',
       nameSwahili: 'Akiba ya Kikundi',
-      description: 'Community savings groups (VICOBA) digitized.',
+      description: 'Community savings groups (KIKOBA) digitized.',
       descriptionSwahili:
           'Vikundi vya Kuweka na Kukopa kwa njia ya kidijitali.',
       status: ZanaStatus.comingSoon,
       gradient: [Color(0xFFE65100), Color(0xFFFF8F00)],
       icon: Icons.savings_outlined,
-      route: '/zana/vicoba',
+      route: '/zana/kikoba',
     ),
   ];
 }

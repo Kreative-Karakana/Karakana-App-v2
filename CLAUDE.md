@@ -48,7 +48,7 @@ Version 2.0 — complete rebuild from design spec.
 - Token stored in FlutterSecureStorage
 
 ## Zana Section
-- 4 tools: POS (live), Business Manager (live), Insurance (live), e-VICOBA (coming soon)
+- 4 tools: POS (live), Business Manager (live), Insurance (live), e-KIKOBA (coming soon)
 - Zana is the 3rd tab: /zana
 - Model: lib/features/zana/models/zana_model.dart
 - No backend API yet — static data

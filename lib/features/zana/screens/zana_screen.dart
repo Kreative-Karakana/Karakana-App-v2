@@ -173,7 +173,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: GestureDetector(
-                onTap: () => context.push('/zana/vicoba'),
+                onTap: () => context.push('/zana/kikoba'),
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -214,7 +214,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                             Row(
                               children: [
                                 Text(
-                                  'e-VICOBA',
+                                  'e-KIKOBA',
                                   style: GoogleFonts.poppins(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,

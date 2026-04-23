@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class VicobScreen extends StatefulWidget {
-  const VicobScreen({super.key});
+class KikobaScreen extends StatefulWidget {
+  const KikobaScreen({super.key});
 
   @override
-  State<VicobScreen> createState() => _VicobScreenState();
+  State<KikobaScreen> createState() => _KikobaScreenState();
 }
 
-class _VicobScreenState extends State<VicobScreen> {
+class _KikobaScreenState extends State<KikobaScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -56,7 +56,7 @@ class _VicobScreenState extends State<VicobScreen> {
         backgroundColor: const Color(0xFF3B1A08),
         leading: const BackButton(color: Colors.white),
         title: Text(
-          'e-VICOBA',
+          'e-KIKOBA',
           style: GoogleFonts.poppins(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -127,7 +127,7 @@ class _VicobScreenState extends State<VicobScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'e-VICOBA',
+                          'e-KIKOBA',
                           style: GoogleFonts.poppins(
                             fontSize: 28,
                             fontWeight: FontWeight.w700,
@@ -177,7 +177,7 @@ class _VicobScreenState extends State<VicobScreen> {
               child: Column(
                 children: [
                   Text(
-                    'VICOBA ni Nini?',
+                    'KIKOBA ni Nini?',
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -186,7 +186,7 @@ class _VicobScreenState extends State<VicobScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'VICOBA (Vikundi vya Kuweka na Kukopa) ni mfumo wa akiba wa kikundi unaopendwa Tanzania. Wanachama hukusanya fedha pamoja na kukopa kwa masharti ya kikundi.\n\ne-VICOBA italeta mfumo huu kwenye simu yako — fuatilia akiba, mikopo, na malipo yote kidijitali.',
+                    'KIKOBA (Vikundi vya Kuweka na Kukopa) ni mfumo wa akiba wa kikundi unaopendwa Tanzania. Wanachama hukusanya fedha pamoja na kukopa kwa masharti ya kikundi.\n\ne-KIKOBA italeta mfumo huu kwenye simu yako — fuatilia akiba, mikopo, na malipo yote kidijitali.',
                     style: GoogleFonts.inter(
                       fontSize: 14,
                       color: const Color(0xFF5C3D2E),
@@ -264,7 +264,7 @@ class _VicobScreenState extends State<VicobScreen> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'Jisajili kupata arifa unapozinduliwa e-VICOBA.',
+                      'Jisajili kupata arifa unapozinduliwa e-KIKOBA.',
                       style: GoogleFonts.inter(
                         fontSize: 14,
                         color: const Color(0xFF9E8070),
@@ -433,7 +433,7 @@ class _VicobScreenState extends State<VicobScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Asante! Tutakuarifiwa mara e-VICOBA inapozinduliwa.',
+                            'Asante! Tutakuarifiwa mara e-KIKOBA inapozinduliwa.',
                             style: GoogleFonts.inter(
                               fontSize: 14,
                               color: const Color(0xFF5C3D2E),

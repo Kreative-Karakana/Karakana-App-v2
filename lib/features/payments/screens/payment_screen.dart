@@ -165,7 +165,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget build(BuildContext context) {
     const providers = [
       {'id': 'mpesa', 'name': 'M-Pesa', 'color': Color(0xFF00A651)},
-      {'id': 'tigo', 'name': 'Tigo Pesa', 'color': Color(0xFF009FE3)},
+      {'id': 'mix_by_yas', 'name': 'Mix by Yas', 'color': Color(0xFF009FE3)},
       {'id': 'airtel', 'name': 'Airtel Money', 'color': Color(0xFFEF3B24)},
       {'id': 'halopesa', 'name': 'Halopesa', 'color': Color(0xFF702082)},
     ];
