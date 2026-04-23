@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../core/theme/app_colors.dart';
+
 import '../../courses/screens/explore_screen.dart';
+import '../../fursa/screens/fursa_screen.dart';
 import '../../profile/screens/profile_screen.dart';
 import '../../zana/screens/zana_screen.dart';
 import 'home_screen.dart';
@@ -20,70 +23,99 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     ExploreScreen(),
     ZanaScreen(),
+    FursaScreen(),
     ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 90;
     return Scaffold(
       extendBody: true,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
+      body: MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+          padding: MediaQuery.of(context).padding.copyWith(
+            bottom: bottomPadding,
+          ),
+        ),
+        child: IndexedStack(
+          index: _currentIndex,
+          children: _screens,
+        ),
       ),
-      bottomNavigationBar: _buildFloatingNavBar(),
+      bottomNavigationBar: _buildNavBar(),
     );
   }
 
-  // ── Floating pill ────────────────────────────────────────────────────────────
-
-  Widget _buildFloatingNavBar() {
+  Widget _buildNavBar() {
     return Container(
       color: Colors.transparent,
       child: SafeArea(
         top: false,
-        child: Container(
-          margin: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-          decoration: BoxDecoration(
-            color: const Color(0xFF1C1C1E),
-            borderRadius: BorderRadius.circular(32),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.30),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Row(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
             children: [
-              Expanded(
-                child: _buildNavTab(
-                  index: 0,
-                  icon: Icons.home_outlined,
-                  activeIcon: Icons.home_rounded,
+              // Glassmorphism bar
+              ClipRRect(
+                borderRadius: BorderRadius.circular(32),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(32),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        width: 1.0,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.15),
+                          blurRadius: 24,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _buildNavTab(
+                            index: 0,
+                            icon: Icons.home_outlined,
+                          ),
+                        ),
+                        Expanded(
+                          child: _buildNavTab(
+                            index: 1,
+                            icon: Icons.explore_outlined,
+                          ),
+                        ),
+                        // Placeholder space for raised Zana FAB
+                        const SizedBox(width: 72),
+                        Expanded(
+                          child: _buildNavTab(
+                            index: 3,
+                            icon: Icons.lightbulb_outline,
+                          ),
+                        ),
+                        Expanded(
+                          child: _buildNavTab(
+                            index: 4,
+                            icon: Icons.person_outline,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              Expanded(
-                child: _buildNavTab(
-                  index: 1,
-                  icon: Icons.explore_outlined,
-                  activeIcon: Icons.explore_rounded,
-                ),
-              ),
-              Expanded(
-                child: _buildNavTab(
-                  index: 2,
-                  icon: Icons.construction_outlined,
-                  activeIcon: Icons.construction_rounded,
-                ),
-              ),
-              Expanded(
-                child: _buildNavTab(
-                  index: 3,
-                  icon: Icons.person_outlined,
-                  activeIcon: Icons.person_rounded,
-                ),
+              // Raised Zana FAB — sits above the glass bar via Positioned top: -16
+              Positioned(
+                top: -16,
+                child: _buildZanaButton(),
               ),
             ],
           ),
@@ -92,13 +124,32 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  // ── Tab item ─────────────────────────────────────────────────────────────────
+  Widget _buildZanaButton() {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        setState(() => _currentIndex = 2);
+      },
+      child: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          color: const Color(0xFFE87722),
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFE87722).withValues(alpha: 0.45),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: const Icon(Icons.construction, color: Colors.white, size: 28),
+      ),
+    );
+  }
 
-  Widget _buildNavTab({
-    required int index,
-    required IconData icon,
-    required IconData activeIcon,
-  }) {
+  Widget _buildNavTab({required int index, required IconData icon}) {
     final isSelected = _currentIndex == index;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -112,17 +163,20 @@ class _MainScreenState extends State<MainScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              isSelected ? activeIcon : icon,
-              color: isSelected ? AppColors.primary : Colors.grey[500],
+              icon,
+              color: isSelected
+                  ? const Color(0xFFE87722)
+                  : Colors.white.withValues(alpha: 0.6),
               size: 24,
             ),
             const SizedBox(height: 4),
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
               width: isSelected ? 6 : 0,
               height: isSelected ? 6 : 0,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
+              decoration: const BoxDecoration(
+                color: Color(0xFFE87722),
                 shape: BoxShape.circle,
               ),
             ),

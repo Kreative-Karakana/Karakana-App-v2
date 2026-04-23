@@ -34,6 +34,7 @@ import '../../features/trainer/screens/course_builder_screen.dart';
 import '../../features/trainer/screens/quiz_manager_screen.dart';
 import '../../features/trainer/screens/student_progress_screen.dart';
 import '../../features/trainer/screens/trainer_dashboard_screen.dart';
+import '../../features/fursa/screens/fursa_screen.dart';
 import '../../features/zana/screens/biz_manager_screen.dart';
 import '../../features/zana/screens/insurance_screen.dart';
 import '../../features/zana/screens/pos_screen.dart';
@@ -110,6 +111,7 @@ class AppRouter {
           '/zana/pos',
           '/zana/biz-manager',
           '/zana/insurance',
+          '/fursa',
         ];
 
         // Splash handles its own navigation
@@ -181,6 +183,10 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.zana,
           builder: (context, state) => const ZanaScreen(),
+        ),
+        GoRoute(
+          path: '/fursa',
+          builder: (context, state) => const FursaScreen(),
         ),
         GoRoute(
           path: '/zana/kikoba',
