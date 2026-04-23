@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../providers/theme_provider.dart';
 import '../../auth/providers/auth_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -116,7 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final initial = userName.isNotEmpty ? userName[0].toUpperCase() : 'K';
 
         return Scaffold(
-          backgroundColor: const Color(0xFFFFF8F4),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: CustomScrollView(
             controller: _scroll,
             slivers: [
@@ -408,6 +409,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onTap: () => context.push('/terms'),
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 16),
+                      Consumer<ThemeProvider>(
+                        builder: (context, themeProvider, _) {
+                          return _buildMenuGroup(
+                            'Mipangilio',
+                            [
+                              ListTile(
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 4,
+                                ),
+                                leading: Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFE87722).withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(
+                                    themeProvider.isDark
+                                        ? Icons.dark_mode
+                                        : Icons.light_mode,
+                                    color: const Color(0xFFE87722),
+                                    size: 18,
+                                  ),
+                                ),
+                                title: Text(
+                                  themeProvider.isDark
+                                      ? 'Hali ya Giza'
+                                      : 'Hali ya Mwanga',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 14,
+                                    color: const Color(0xFF3D1800),
+                                  ),
+                                ),
+                                trailing: Switch(
+                                  value: themeProvider.isDark,
+                                  onChanged: (_) => themeProvider.toggleTheme(),
+                                  activeColor: const Color(0xFFE87722),
+                                  activeTrackColor: const Color(0xFFE87722)
+                                      .withValues(alpha: 0.3),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(height: 16),
                       if (auth.isTrainer) ...[

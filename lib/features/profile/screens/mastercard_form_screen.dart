@@ -167,7 +167,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F4),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: AppColors.primaryDark,
         elevation: 0,
@@ -399,7 +399,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
             GoogleFonts.montserrat(fontSize: 13.5, color: Colors.grey.shade400),
         prefixIcon: Icon(icon, color: AppColors.primary, size: 20),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Theme.of(context).cardColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: Color(0xFFE8D5C8)),

@@ -57,7 +57,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F4),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: _color,
         leading: const BackButton(color: Colors.white),
@@ -375,7 +375,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                 color: _color,
                               ),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: Theme.of(context).cardColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: const BorderSide(
@@ -404,7 +404,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                 color: _color,
                               ),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: Theme.of(context).cardColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: const BorderSide(

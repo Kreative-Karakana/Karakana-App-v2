@@ -24,7 +24,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F4),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
         controller: _scroll,
         physics: const BouncingScrollPhysics(),

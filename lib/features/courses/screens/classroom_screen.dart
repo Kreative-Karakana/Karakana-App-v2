@@ -57,7 +57,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
         if (course == null) {
           return Scaffold(
-            backgroundColor: const Color(0xFFFFF8F4),
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: AppBar(
               backgroundColor: const Color(0xFF3D1800),
               leading: const BackButton(color: Colors.white),
@@ -120,7 +120,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         }
 
         return Scaffold(
-          backgroundColor: const Color(0xFFFFF8F4),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
             backgroundColor: const Color(0xFF3D1800),
             leading: const BackButton(color: Colors.white),

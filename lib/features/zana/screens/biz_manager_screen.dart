@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BizManagerScreen extends StatefulWidget {
@@ -56,7 +56,7 @@ class _BizManagerScreenState extends State<BizManagerScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F4),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: _color,
         leading: const BackButton(color: Colors.white),
@@ -310,7 +310,7 @@ class _BizManagerScreenState extends State<BizManagerScreen> {
                                 color: _color,
                               ),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: Theme.of(context).cardColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: const BorderSide(
@@ -339,7 +339,7 @@ class _BizManagerScreenState extends State<BizManagerScreen> {
                                 color: _color,
                               ),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: Theme.of(context).cardColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: const BorderSide(

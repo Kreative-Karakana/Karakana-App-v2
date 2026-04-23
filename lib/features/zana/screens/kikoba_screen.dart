@@ -51,7 +51,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F4),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: const Color(0xFF3D1800),
         leading: const BackButton(color: Colors.white),
@@ -281,7 +281,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                               labelText: 'Jina Lako',
                               prefixIcon: const Icon(Icons.person_outline),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: Theme.of(context).cardColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: const BorderSide(
@@ -306,7 +306,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                               labelText: 'Nambari ya Simu',
                               prefixIcon: const Icon(Icons.phone_outlined),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: Theme.of(context).cardColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: const BorderSide(
@@ -332,7 +332,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                               labelText: 'Barua Pepe (Si lazima)',
                               prefixIcon: const Icon(Icons.email_outlined),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: Theme.of(context).cardColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: const BorderSide(

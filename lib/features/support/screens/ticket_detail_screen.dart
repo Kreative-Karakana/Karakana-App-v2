@@ -120,7 +120,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     }
     if (_ticket == null) {
       return Scaffold(
-        backgroundColor: const Color(0xFFFFF8F4),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           backgroundColor: const Color(0xFF3D1800),
           elevation: 0,
@@ -143,7 +143,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     final subject = _ticket!['subject'] as String? ?? 'Tiketi';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F4),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: const Color(0xFF3D1800),
         elevation: 0,

@@ -132,7 +132,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     const labels = ['Maelezo', 'Sehemu', 'Maswali', 'Chapisha'];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F4),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
@@ -612,7 +612,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         labelText: label,
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Theme.of(context).cardColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: Color(0xFFE8D5C8)),

@@ -1,4 +1,4 @@
-import 'dart:ui';
+﻿import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -64,20 +64,20 @@ class _MainScreenState extends State<MainScreen> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(32),
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+                  filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.55),
+                      color: Colors.black.withValues(alpha: 0.65),
                       borderRadius: BorderRadius.circular(32),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.25),
-                        width: 1.0,
+                        color: Colors.white.withValues(alpha: 0.08),
+                        width: 0.8,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.35),
-                          blurRadius: 24,
-                          offset: const Offset(0, 8),
+                          color: Colors.black.withValues(alpha: 0.25),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
@@ -135,9 +135,9 @@ class _MainScreenState extends State<MainScreen> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFE87722).withValues(alpha: 0.5),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
+                  color: const Color(0xFFE87722).withValues(alpha: 0.25),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
@@ -165,15 +165,15 @@ class _MainScreenState extends State<MainScreen> {
               icon,
               color: isSelected
                   ? const Color(0xFFE87722)
-                  : Colors.white.withValues(alpha: 0.75),
+                  : Colors.white.withValues(alpha: 0.55),
               size: 24,
             ),
             const SizedBox(height: 4),
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
-              width: isSelected ? 6 : 0,
-              height: isSelected ? 6 : 0,
+              width: isSelected ? 5 : 0,
+              height: isSelected ? 5 : 0,
               decoration: const BoxDecoration(
                 color: Color(0xFFE87722),
                 shape: BoxShape.circle,

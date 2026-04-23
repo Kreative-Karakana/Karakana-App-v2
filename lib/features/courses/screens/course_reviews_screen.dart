@@ -447,7 +447,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
             .toDouble();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F4),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: const Color(0xFF3D1800),
         elevation: 0,

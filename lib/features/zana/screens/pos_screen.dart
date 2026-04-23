@@ -56,7 +56,7 @@ class _POSScreenState extends State<POSScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F4),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: _color,
         leading: const BackButton(color: Colors.white),
@@ -310,7 +310,7 @@ class _POSScreenState extends State<POSScreen> {
                                 color: _color,
                               ),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: Theme.of(context).cardColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: const BorderSide(
@@ -339,7 +339,7 @@ class _POSScreenState extends State<POSScreen> {
                                 color: _color,
                               ),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: Theme.of(context).cardColor,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: const BorderSide(

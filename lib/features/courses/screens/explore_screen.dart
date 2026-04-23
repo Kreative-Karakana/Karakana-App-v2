@@ -179,7 +179,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                                 )
                               : null,
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: Theme.of(context).cardColor,
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 14),
                           border: OutlineInputBorder(

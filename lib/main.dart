@@ -1,20 +1,19 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'core/network/api_client.dart';
 import 'core/router/app_router.dart';
-import 'core/theme/app_theme.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/notifications/providers/notification_provider.dart';
 import 'features/courses/providers/course_provider.dart';
+import 'providers/theme_provider.dart';
 
 /// Must be a top-level function — called by FCM for background messages.
 @pragma('vm:entry-point')
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  // Background messages are handled by the OS notification tray.
-  // No extra work needed here for now.
 }
 
 Future<void> main() async {
@@ -22,10 +21,8 @@ Future<void> main() async {
 
   await Firebase.initializeApp();
 
-  // Register background message handler
   FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
 
-  // Request permission (iOS / Android 13+)
   await FirebaseMessaging.instance.requestPermission(
     alert: true,
     badge: true,
@@ -58,25 +55,17 @@ class _KarakanaAppState extends State<KarakanaApp> {
   Future<void> _initFCM() async {
     final messaging = FirebaseMessaging.instance;
 
-    // Register device token with backend when user is logged in
     final token = await messaging.getToken();
     if (token != null) {
       _registerToken(token);
     }
 
-    // Refresh token listener
     messaging.onTokenRefresh.listen(_registerToken);
 
-    // Foreground message handler — show a snackbar / in-app banner
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      // Refresh notifications badge in the app
-      // The NotificationProvider will be notified via its own load call
-      // triggered by the notification screen. No extra work needed here.
-    });
+    FirebaseMessaging.onMessage.listen((_) {});
   }
 
   void _registerToken(String token) {
-    // Best-effort — don't block startup if this fails
     ApiClient().dio.post(
       '/api/v1/accounts/fcm-token/',
       data: {'token': token},
@@ -90,12 +79,47 @@ class _KarakanaAppState extends State<KarakanaApp> {
         ChangeNotifierProvider.value(value: widget.authProvider),
         ChangeNotifierProvider(create: (_) => CourseProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
-      child: MaterialApp.router(
-        title: 'Karakana',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.theme,
-        routerConfig: router,
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) {
+          return MaterialApp.router(
+            title: 'Karakana',
+            debugShowCheckedModeBanner: false,
+            themeMode: themeProvider.themeMode,
+            theme: ThemeData(
+              brightness: Brightness.light,
+              primaryColor: const Color(0xFFE87722),
+              scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+              colorScheme: const ColorScheme.light(
+                primary: Color(0xFFE87722),
+                secondary: Color(0xFF3D1800),
+                surface: Colors.white,
+              ),
+              textTheme: GoogleFonts.montserratTextTheme(
+                ThemeData.light().textTheme,
+              ),
+              cardColor: Colors.white,
+              iconTheme: const IconThemeData(color: Color(0xFF1A1A1A)),
+            ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              primaryColor: const Color(0xFFE87722),
+              scaffoldBackgroundColor: const Color(0xFF121212),
+              colorScheme: const ColorScheme.dark(
+                primary: Color(0xFFE87722),
+                secondary: Color(0xFFFFA726),
+                surface: Color(0xFF1E1E1E),
+              ),
+              textTheme: GoogleFonts.montserratTextTheme(
+                ThemeData.dark().textTheme,
+              ),
+              cardColor: const Color(0xFF1E1E1E),
+              iconTheme: const IconThemeData(color: Colors.white),
+            ),
+            routerConfig: router,
+          );
+        },
       ),
     );
   }

@@ -36,7 +36,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F4),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
@@ -124,7 +124,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                   labelText: 'Mada',
                   hintText: 'Elezea tatizo lako kwa ufupi...',
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: Theme.of(context).cardColor,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
                     borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
@@ -149,7 +149,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                   labelText: 'Ujumbe',
                   hintText: 'Elezea tatizo lako kwa undani...',
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: Theme.of(context).cardColor,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
                     borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
