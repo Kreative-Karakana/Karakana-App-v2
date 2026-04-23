@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -152,7 +152,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Jibu limetumwa kikamilifu!'),
-                                backgroundColor: Color(0xFF2E7D32),
+                                backgroundColor: Color(0xFFE87722),
                               ),
                             );
                           } catch (_) {
@@ -207,7 +207,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Jibu limefutwa.'),
-                                  backgroundColor: Color(0xFF2E7D32),
+                                  backgroundColor: Color(0xFFE87722),
                                 ),
                               );
                             } catch (_) {
@@ -247,7 +247,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
             'Unahitaji kujiandikisha kwenye kozi hii kwanza ili uweze kutoa tathmini.',
             style: GoogleFonts.montserrat(color: Colors.white),
           ),
-          backgroundColor: const Color(0xFF3B1A08),
+          backgroundColor: const Color(0xFF3D1800),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -269,7 +269,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
             'Kamilisha kozi hii kwanza ili uweze kutoa tathmini ya uzoefu wako.',
             style: GoogleFonts.montserrat(color: Colors.white),
           ),
-          backgroundColor: const Color(0xFF3B1A08),
+          backgroundColor: const Color(0xFF3D1800),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -324,7 +324,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                 style: GoogleFonts.montserrat(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF3B1A08),
+                  color: const Color(0xFF3D1800),
                 ),
               ),
               const SizedBox(height: 16),
@@ -336,7 +336,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                     onTap: () => setModalState(() => _selectedRating = i + 1),
                     child: Icon(
                       i < _selectedRating ? Icons.star : Icons.star_border,
-                      color: const Color(0xFFF4B400),
+                      color: const Color(0xFFFFA726),
                       size: 36,
                     ),
                   ),
@@ -357,7 +357,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
                     borderSide: const BorderSide(
-                      color: Color(0xFFC4620A),
+                      color: Color(0xFFE87722),
                       width: 1.5,
                     ),
                   ),
@@ -368,7 +368,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFC4620A),
+                    backgroundColor: const Color(0xFFE87722),
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 52),
                     shape: RoundedRectangleBorder(
@@ -402,7 +402,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                             messenger.showSnackBar(
                               const SnackBar(
                                 content: Text('Asante! Tathmini yako imetumwa.'),
-                                backgroundColor: Color(0xFF2E7D32),
+                                backgroundColor: Color(0xFFE87722),
                               ),
                             );
                           } catch (_) {
@@ -449,7 +449,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3B1A08),
+        backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
         title: Text(
@@ -489,7 +489,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                       style: GoogleFonts.montserrat(
                         fontSize: 48,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFF3B1A08),
+                        color: const Color(0xFF3D1800),
                       ),
                     ),
                     Row(
@@ -497,7 +497,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                         5,
                         (_) => const Icon(
                           Icons.star,
-                          color: Color(0xFFF4B400),
+                          color: Color(0xFFFFA726),
                           size: 16,
                         ),
                       ),
@@ -534,7 +534,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                             const Icon(
                               Icons.star,
                               size: 10,
-                              color: Color(0xFFF4B400),
+                              color: Color(0xFFFFA726),
                             ),
                             const SizedBox(width: 8),
                             Expanded(
@@ -544,7 +544,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                   value: percent,
                                   backgroundColor: const Color(0xFFF0E4DA),
                                   valueColor: const AlwaysStoppedAnimation(
-                                    Color(0xFFF4B400),
+                                    Color(0xFFFFA726),
                                   ),
                                   minHeight: 6,
                                 ),
@@ -583,7 +583,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                       width: 36,
                       height: 36,
                       decoration: const BoxDecoration(
-                        color: Color(0xFFC4620A),
+                        color: Color(0xFFE87722),
                         shape: BoxShape.circle,
                       ),
                       child: const Center(
@@ -617,7 +617,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
           Expanded(
             child: _isLoading
                 ? const Center(
-                    child: CircularProgressIndicator(color: Color(0xFFC4620A)),
+                    child: CircularProgressIndicator(color: Color(0xFFE87722)),
                   )
                 : _reviews.isEmpty
                     ? Center(
@@ -689,7 +689,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                       width: 36,
                                       height: 36,
                                       decoration: const BoxDecoration(
-                                        color: Color(0xFFC4620A),
+                                        color: Color(0xFFE87722),
                                         shape: BoxShape.circle,
                                       ),
                                       child: Center(
@@ -715,7 +715,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                             style: GoogleFonts.montserrat(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w600,
-                                              color: const Color(0xFF3B1A08),
+                                              color: const Color(0xFF3D1800),
                                             ),
                                           ),
                                           Row(
@@ -725,7 +725,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                                 j < rating
                                                     ? Icons.star
                                                     : Icons.star_border,
-                                                color: const Color(0xFFF4B400),
+                                                color: const Color(0xFFFFA726),
                                                 size: 14,
                                               ),
                                             ),
@@ -759,7 +759,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                           children: [
                                             const Icon(
                                               Icons.reply,
-                                              color: Color(0xFFC4620A),
+                                              color: Color(0xFFE87722),
                                               size: 16,
                                             ),
                                             const SizedBox(width: 4),
@@ -768,7 +768,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                               style: GoogleFonts.montserrat(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w700,
-                                                color: const Color(0xFFC4620A),
+                                                color: const Color(0xFFE87722),
                                               ),
                                             ),
                                           ],

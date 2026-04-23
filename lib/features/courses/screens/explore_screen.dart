@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -695,7 +695,7 @@ class _FeaturedCard extends StatelessWidget {
     const colorPairs = [
       [Color(0xFF1A3A5C), Color(0xFF2E6DA4)],
       [Color(0xFF1F3D1A), Color(0xFF3A7A30)],
-      [Color(0xFF3B1A08), Color(0xFFC4620A)],
+      [Color(0xFF3D1800), Color(0xFFE87722)],
       [Color(0xFF2A0A3A), Color(0xFF7B3FA0)],
     ];
     final pair = colorPairs[seed % colorPairs.length];

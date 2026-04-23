@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
@@ -280,7 +280,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           'Wasifu umesasishwa kikamilifu!',
           style: GoogleFonts.montserrat(color: Colors.white),
         ),
-        backgroundColor: const Color(0xFF2E7D32),
+        backgroundColor: const Color(0xFFE87722),
       ),
     );
     context.pop();

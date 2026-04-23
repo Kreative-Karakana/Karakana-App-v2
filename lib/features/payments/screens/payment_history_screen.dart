@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -53,7 +53,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3B1A08),
+        backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
         title: Text(
@@ -67,7 +67,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFFC4620A)),
+              child: CircularProgressIndicator(color: Color(0xFFE87722)),
             )
           : _payments.isEmpty
               ? _buildEmptyState(context)
@@ -114,7 +114,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                             height: 48,
                             decoration: BoxDecoration(
                               color: isSuccessful
-                                  ? const Color(0xFFE8F5E9)
+                                  ? const Color(0xFFF5E6D8)
                                   : const Color(0xFFFFEBEE),
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -123,7 +123,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                   ? Icons.check_circle_outline
                                   : Icons.error_outline,
                               color: isSuccessful
-                                  ? const Color(0xFF2E7D32)
+                                  ? const Color(0xFFE87722)
                                   : const Color(0xFFB71C1C),
                               size: 24,
                             ),
@@ -140,7 +140,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                   style: GoogleFonts.montserrat(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF3B1A08),
+                                    color: const Color(0xFF3D1800),
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -160,7 +160,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                         style: GoogleFonts.montserrat(
                                           fontSize: 9,
                                           fontWeight: FontWeight.w700,
-                                          color: const Color(0xFFC4620A),
+                                          color: const Color(0xFFE87722),
                                         ),
                                       ),
                                     ),
@@ -185,7 +185,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
-                                  color: const Color(0xFFC4620A),
+                                  color: const Color(0xFFE87722),
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -196,7 +196,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                 ),
                                 decoration: BoxDecoration(
                                   color: isSuccessful
-                                      ? const Color(0xFFE8F5E9)
+                                      ? const Color(0xFFF5E6D8)
                                       : const Color(0xFFFFEBEE),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -206,7 +206,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                     fontSize: 10,
                                     fontWeight: FontWeight.w700,
                                     color: isSuccessful
-                                        ? const Color(0xFF2E7D32)
+                                        ? const Color(0xFFE87722)
                                         : const Color(0xFFB71C1C),
                                   ),
                                 ),
@@ -229,7 +229,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
           const Icon(
             Icons.receipt_long_outlined,
             size: 48,
-            color: Color(0xFFC4620A),
+            color: Color(0xFFE87722),
           ),
           const SizedBox(height: 20),
           Text(
@@ -244,7 +244,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
           ElevatedButton(
             onPressed: () => context.go('/home'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFC4620A),
+              backgroundColor: const Color(0xFFE87722),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(28),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/network/api_client.dart';
@@ -68,7 +68,7 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3B1A08),
+        backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
         title: Text(
@@ -131,7 +131,7 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: const BorderSide(
-                    color: Color(0xFFC4620A),
+                    color: Color(0xFFE87722),
                     width: 1.5,
                   ),
                 ),
@@ -149,7 +149,7 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
           Expanded(
             child: _isLoading
                 ? const Center(
-                    child: CircularProgressIndicator(color: Color(0xFFC4620A)),
+                    child: CircularProgressIndicator(color: Color(0xFFE87722)),
                   )
                 : _error != null
                     ? _ErrorState(
@@ -165,7 +165,7 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
                     : _filtered.isEmpty
                         ? _EmptyState(hasSearch: _search.isNotEmpty)
                         : RefreshIndicator(
-                            color: const Color(0xFFC4620A),
+                            color: const Color(0xFFE87722),
                             onRefresh: () async {
                               setState(() => _isLoading = true);
                               await _load();
@@ -211,13 +211,13 @@ class _SummaryBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
       child: Row(
         children: [
-          _stat('$completed', 'Wamekamilisha', const Color(0xFF2E7D32)),
+          _stat('$completed', 'Wamekamilisha', const Color(0xFFE87722)),
           _divider(),
           _stat('${students.length - completed}', 'Wanaendelea',
-              const Color(0xFFC4620A)),
+              const Color(0xFFE87722)),
           _divider(),
           _stat('${avgProgress.toStringAsFixed(0)}%', 'Wastani',
-              const Color(0xFF1A2E5A)),
+              const Color(0xFF3D1800)),
         ],
       ),
     );
@@ -304,7 +304,7 @@ class _StudentCard extends StatelessWidget {
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFFC4620A),
+                          color: const Color(0xFFE87722),
                         ),
                       )
                     : null,
@@ -320,7 +320,7 @@ class _StudentCard extends StatelessWidget {
                       style: GoogleFonts.montserrat(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF3B1A08),
+                        color: const Color(0xFF3D1800),
                       ),
                     ),
                     if (email.isNotEmpty)
@@ -340,13 +340,13 @@ class _StudentCard extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: isCompleted
-                      ? const Color(0xFFE8F5E9)
+                      ? const Color(0xFFF5E6D8)
                       : const Color(0xFFFFF8F4),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: isCompleted
-                        ? const Color(0xFF2E7D32)
-                        : const Color(0xFFC4620A),
+                        ? const Color(0xFFE87722)
+                        : const Color(0xFFE87722),
                   ),
                 ),
                 child: Text(
@@ -355,8 +355,8 @@ class _StudentCard extends StatelessWidget {
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     color: isCompleted
-                        ? const Color(0xFF2E7D32)
-                        : const Color(0xFFC4620A),
+                        ? const Color(0xFFE87722)
+                        : const Color(0xFFE87722),
                   ),
                 ),
               ),
@@ -385,8 +385,8 @@ class _StudentCard extends StatelessWidget {
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: isCompleted
-                          ? const Color(0xFF2E7D32)
-                          : const Color(0xFFC4620A),
+                          ? const Color(0xFFE87722)
+                          : const Color(0xFFE87722),
                     ),
                   ),
                 ],
@@ -400,8 +400,8 @@ class _StudentCard extends StatelessWidget {
                   backgroundColor: const Color(0xFFF0E4DA),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     isCompleted
-                        ? const Color(0xFF2E7D32)
-                        : const Color(0xFFC4620A),
+                        ? const Color(0xFFE87722)
+                        : const Color(0xFFE87722),
                   ),
                 ),
               ),
@@ -483,7 +483,7 @@ class _ErrorState extends StatelessWidget {
             ElevatedButton(
               onPressed: onRetry,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFC4620A),
+                backgroundColor: const Color(0xFFE87722),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(28),

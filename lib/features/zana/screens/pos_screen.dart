@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class POSScreen extends StatefulWidget {
@@ -15,8 +15,8 @@ class _POSScreenState extends State<POSScreen> {
   bool _isSubmitting = false;
   bool _isSubmitted = false;
 
-  static const _color = Color(0xFF1A2E5A);
-  static const _colorLight = Color(0xFFE8EEF8);
+  static const _color = Color(0xFF3D1800);
+  static const _colorLight = Color(0xFFF5E6D8);
 
   @override
   void dispose() {
@@ -80,9 +80,9 @@ class _POSScreenState extends State<POSScreen> {
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Color(0xFF0D1B3E),
-                    Color(0xFF1A2E5A),
-                    Color(0xFF2A4A8A),
+                    Color(0xFF1A0A00),
+                    Color(0xFF3D1800),
+                    Color(0xFF7B3A10),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -410,7 +410,7 @@ class _POSScreenState extends State<POSScreen> {
                     Container(
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE8EEF8),
+                        color: const Color(0xFFF5E6D8),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: _color.withValues(alpha: 0.3),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -47,7 +47,7 @@ class _SupportScreenState extends State<SupportScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3B1A08),
+        backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
         title: Text(
@@ -61,7 +61,7 @@ class _SupportScreenState extends State<SupportScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/support/new'),
-        backgroundColor: const Color(0xFFC4620A),
+        backgroundColor: const Color(0xFFE87722),
         icon: const Icon(Icons.add, color: Colors.white),
         label: Text(
           'Tiketi Mpya',
@@ -84,7 +84,7 @@ class _SupportScreenState extends State<SupportScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF3B1A08),
+                    color: const Color(0xFF3D1800),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -136,7 +136,7 @@ class _SupportScreenState extends State<SupportScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF3B1A08),
+                    color: const Color(0xFF3D1800),
                   ),
                 ),
                 const Spacer(),
@@ -154,12 +154,12 @@ class _SupportScreenState extends State<SupportScreen> {
             child: _isLoading
                 ? const Center(
                     child:
-                        CircularProgressIndicator(color: Color(0xFFC4620A)),
+                        CircularProgressIndicator(color: Color(0xFFE87722)),
                   )
                 : _tickets.isEmpty
                     ? _buildEmptyState()
                     : RefreshIndicator(
-                        color: const Color(0xFFC4620A),
+                        color: const Color(0xFFE87722),
                         onRefresh: () async {
                           setState(() {
                             _isLoading = true;
@@ -204,7 +204,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                     ),
                                     child: const Icon(
                                       Icons.support_agent_outlined,
-                                      color: Color(0xFFC4620A),
+                                      color: Color(0xFFE87722),
                                       size: 22,
                                     ),
                                   ),
@@ -229,7 +229,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                           style: GoogleFonts.montserrat(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600,
-                                            color: const Color(0xFF3B1A08),
+                                            color: const Color(0xFF3D1800),
                                           ),
                                         ),
                                       ],
@@ -242,13 +242,13 @@ class _SupportScreenState extends State<SupportScreen> {
                                     ),
                                     decoration: BoxDecoration(
                                       color: isResolved
-                                          ? const Color(0xFFE8F5E9)
+                                          ? const Color(0xFFF5E6D8)
                                           : const Color(0xFFFFF8F4),
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(
                                         color: isResolved
-                                            ? const Color(0xFF2E7D32)
-                                            : const Color(0xFFC4620A),
+                                            ? const Color(0xFFE87722)
+                                            : const Color(0xFFE87722),
                                       ),
                                     ),
                                     child: Text(
@@ -257,8 +257,8 @@ class _SupportScreenState extends State<SupportScreen> {
                                         fontSize: 10,
                                         fontWeight: FontWeight.w700,
                                         color: isResolved
-                                            ? const Color(0xFF2E7D32)
-                                            : const Color(0xFFC4620A),
+                                            ? const Color(0xFFE87722)
+                                            : const Color(0xFFE87722),
                                       ),
                                     ),
                                   ),
@@ -292,7 +292,7 @@ class _SupportScreenState extends State<SupportScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: const Color(0xFFC4620A), size: 24),
+            Icon(icon, color: const Color(0xFFE87722), size: 24),
             const SizedBox(height: 6),
             Text(
               label,
@@ -324,7 +324,7 @@ class _SupportScreenState extends State<SupportScreen> {
             child: const Icon(
               Icons.support_agent_outlined,
               size: 48,
-              color: Color(0xFFC4620A),
+              color: Color(0xFFE87722),
             ),
           ),
           const SizedBox(height: 20),

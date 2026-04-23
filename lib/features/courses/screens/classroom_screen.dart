@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +38,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             appBar: _ClassroomAppBarPlaceholder(),
             body: Center(
               child: CircularProgressIndicator(
-                color: Color(0xFFC4620A),
+                color: Color(0xFFE87722),
               ),
             ),
           );
@@ -59,7 +59,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           return Scaffold(
             backgroundColor: const Color(0xFFFFF8F4),
             appBar: AppBar(
-              backgroundColor: const Color(0xFF3B1A08),
+              backgroundColor: const Color(0xFF3D1800),
               leading: const BackButton(color: Colors.white),
               title: Text(
                 'Darasani',
@@ -79,7 +79,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     const Icon(
                       Icons.error_outline_rounded,
                       size: 48,
-                      color: Color(0xFFC4620A),
+                      color: Color(0xFFE87722),
                     ),
                     const SizedBox(height: 14),
                     Text(
@@ -95,7 +95,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     ElevatedButton(
                       onPressed: () => provider.loadCourseDetail(widget.courseId),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFC4620A),
+                        backgroundColor: const Color(0xFFE87722),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 20,
@@ -122,7 +122,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         return Scaffold(
           backgroundColor: const Color(0xFFFFF8F4),
           appBar: AppBar(
-            backgroundColor: const Color(0xFF3B1A08),
+            backgroundColor: const Color(0xFF3D1800),
             leading: const BackButton(color: Colors.white),
             title: Text(
               course.title.isNotEmpty ? course.title : 'Darasani',
@@ -139,7 +139,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
               child: LinearProgressIndicator(
                 value: progress,
                 backgroundColor: Colors.white.withValues(alpha: 0.2),
-                valueColor: const AlwaysStoppedAnimation(Color(0xFFC4620A)),
+                valueColor: const AlwaysStoppedAnimation(Color(0xFFE87722)),
                 minHeight: 4,
               ),
             ),
@@ -162,7 +162,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                             strokeWidth: 5,
                             backgroundColor: const Color(0xFFF5E6D8),
                             valueColor: const AlwaysStoppedAnimation(
-                              Color(0xFFC4620A),
+                              Color(0xFFE87722),
                             ),
                           ),
                           Text(
@@ -170,7 +170,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                             style: GoogleFonts.montserrat(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFFC4620A),
+                              color: const Color(0xFFE87722),
                             ),
                           ),
                         ],
@@ -193,7 +193,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                             style: GoogleFonts.montserrat(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFF3B1A08),
+                              color: const Color(0xFF3D1800),
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -204,7 +204,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                             style: GoogleFonts.montserrat(
                               fontSize: 12,
                               color: progress >= 1.0
-                                  ? const Color(0xFF2E7D32)
+                                  ? const Color(0xFFE87722)
                                   : const Color(0xFF9E8070),
                             ),
                           ),
@@ -219,7 +219,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                               extra: {'courseTitle': course.title},
                             ),
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Color(0xFF2E7D32)),
+                          side: const BorderSide(color: Color(0xFFE87722)),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -233,7 +233,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                           style: GoogleFonts.montserrat(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF2E7D32),
+                            color: const Color(0xFFE87722),
                           ),
                         ),
                       ),
@@ -282,7 +282,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                         width: 28,
                                         height: 28,
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFC4620A),
+                                          color: Color(0xFFE87722),
                                           shape: BoxShape.circle,
                                         ),
                                         child: Center(
@@ -307,7 +307,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                               style: GoogleFonts.montserrat(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
-                                                color: const Color(0xFF3B1A08),
+                                                color: const Color(0xFF3D1800),
                                               ),
                                             ),
                                             Text(
@@ -324,7 +324,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                         isExpanded
                                             ? Icons.expand_less
                                             : Icons.expand_more,
-                                        color: const Color(0xFFC4620A),
+                                        color: const Color(0xFFE87722),
                                       ),
                                     ],
                                   ),
@@ -337,7 +337,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                   return Container(
                                     decoration: BoxDecoration(
                                       color: lesson.isRead
-                                          ? const Color(0xFFE8F5E9)
+                                          ? const Color(0xFFF5E6D8)
                                           : Colors.white,
                                       border: const Border(
                                         bottom: BorderSide(
@@ -357,7 +357,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                         height: 40,
                                         decoration: BoxDecoration(
                                           color: lesson.isRead
-                                              ? const Color(0xFF2E7D32)
+                                              ? const Color(0xFFE87722)
                                                   .withValues(alpha: 0.1)
                                               : const Color(0xFFF5E6D8),
                                           borderRadius:
@@ -367,7 +367,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                           child: lesson.isRead
                                               ? const Icon(
                                                   Icons.check,
-                                                  color: Color(0xFF2E7D32),
+                                                  color: Color(0xFFE87722),
                                                   size: 20,
                                                 )
                                               : Text(
@@ -376,7 +376,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w700,
                                                     color:
-                                                        const Color(0xFFC4620A),
+                                                        const Color(0xFFE87722),
                                                   ),
                                                 ),
                                         ),
@@ -390,13 +390,13 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                               : FontWeight.w600,
                                           color: lesson.isRead
                                               ? const Color(0xFF5C3D2E)
-                                              : const Color(0xFF3B1A08),
+                                              : const Color(0xFF3D1800),
                                         ),
                                       ),
                                       trailing: lesson.hasVideo
                                           ? const Icon(
                                               Icons.play_circle_outline,
-                                              color: Color(0xFFC4620A),
+                                              color: Color(0xFFE87722),
                                               size: 22,
                                             )
                                           : const Icon(
@@ -432,7 +432,7 @@ class _ClassroomAppBarPlaceholder extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: const Color(0xFF3B1A08),
+      backgroundColor: const Color(0xFF3D1800),
       leading: const BackButton(color: Colors.white),
       title: Text(
         'Darasani',
@@ -447,7 +447,7 @@ class _ClassroomAppBarPlaceholder extends StatelessWidget
         child: LinearProgressIndicator(
           value: 0,
           backgroundColor: Colors.white.withValues(alpha: 0.2),
-          valueColor: const AlwaysStoppedAnimation(Color(0xFFC4620A)),
+          valueColor: const AlwaysStoppedAnimation(Color(0xFFE87722)),
           minHeight: 4,
         ),
       ),
@@ -478,7 +478,7 @@ class _EmptyClassroomState extends StatelessWidget {
             Icon(
               hasError ? Icons.lock_outline : Icons.menu_book_outlined,
               size: 42,
-              color: const Color(0xFFC4620A),
+              color: const Color(0xFFE87722),
             ),
             const SizedBox(height: 14),
             Text(
@@ -489,7 +489,7 @@ class _EmptyClassroomState extends StatelessWidget {
               style: GoogleFonts.montserrat(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF3B1A08),
+                color: const Color(0xFF3D1800),
               ),
             ),
             const SizedBox(height: 8),
@@ -508,7 +508,7 @@ class _EmptyClassroomState extends StatelessWidget {
             OutlinedButton(
               onPressed: onRetry,
               style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFFC4620A),
+                foregroundColor: const Color(0xFFE87722),
                 side: const BorderSide(
                   color: Color(0xFFE8D5C8),
                 ),

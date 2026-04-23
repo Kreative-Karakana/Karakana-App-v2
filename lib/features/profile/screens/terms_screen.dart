@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TermsScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class _TermsScreenState extends State<TermsScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3B1A08),
+        backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
         title: Text(
@@ -35,7 +35,7 @@ class _TermsScreenState extends State<TermsScreen> {
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: _lang,
-                dropdownColor: const Color(0xFF3B1A08),
+                dropdownColor: const Color(0xFF3D1800),
                 icon: const Icon(Icons.language, color: Colors.white, size: 18),
                 style: GoogleFonts.montserrat(color: Colors.white, fontSize: 13),
                 items: const [
@@ -74,7 +74,7 @@ class _TermsScreenState extends State<TermsScreen> {
                     style: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFFC4620A),
+                      color: const Color(0xFFE87722),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -249,7 +249,7 @@ class _TermsScreenState extends State<TermsScreen> {
       style: GoogleFonts.montserrat(
         fontSize: 16,
         fontWeight: FontWeight.w700,
-        color: const Color(0xFF3B1A08),
+        color: const Color(0xFF3D1800),
       ),
     );
   }
@@ -259,7 +259,7 @@ class _TermsScreenState extends State<TermsScreen> {
       text,
       style: GoogleFonts.montserrat(
         fontSize: 14,
-        color: const Color(0xFF3B1A08),
+        color: const Color(0xFF3D1800),
         height: 1.6,
       ),
     );

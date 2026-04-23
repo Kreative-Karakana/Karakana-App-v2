@@ -39,7 +39,7 @@ class ZanaData {
       descriptionSwahili:
           'Simamia mauzo na hesabu za biashara yako kwa urahisi.',
       status: ZanaStatus.live,
-      gradient: [Color(0xFF1A2E5A), Color(0xFF2D4A8A)],
+      gradient: [Color(0xFF3D1800), Color(0xFF7B3A10)],
       icon: Icons.point_of_sale_outlined,
       route: '/zana/pos',
     ),
@@ -51,7 +51,7 @@ class ZanaData {
       description: 'Tools to manage your business operations.',
       descriptionSwahili: 'Zana za kusimamia operesheni za biashara yako.',
       status: ZanaStatus.live,
-      gradient: [Color(0xFF2E5A1A), Color(0xFF3A8A2D)],
+      gradient: [Color(0xFFE87722), Color(0xFFFFA726)],
       icon: Icons.business_center_outlined,
       route: '/zana/biz-manager',
     ),
@@ -64,7 +64,7 @@ class ZanaData {
       descriptionSwahili:
           'Bima zilizoundwa kwa wajasiriamali wadogo Tanzania.',
       status: ZanaStatus.live,
-      gradient: [Color(0xFF5A1A1A), Color(0xFF8A2D2D)],
+      gradient: [Color(0xFF3D1800), Color(0xFF7B3A10)],
       icon: Icons.security_outlined,
       route: '/zana/insurance',
     ),
@@ -77,7 +77,7 @@ class ZanaData {
       descriptionSwahili:
           'Vikundi vya Kuweka na Kukopa kwa njia ya kidijitali.',
       status: ZanaStatus.comingSoon,
-      gradient: [Color(0xFFE65100), Color(0xFFFF8F00)],
+      gradient: [Color(0xFFE87722), Color(0xFFFFA726)],
       icon: Icons.savings_outlined,
       route: '/zana/kikoba',
     ),

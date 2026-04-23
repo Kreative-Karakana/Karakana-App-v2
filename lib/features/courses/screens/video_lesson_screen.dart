@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
@@ -51,7 +51,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Somo limekamilika! ✓'),
-          backgroundColor: Color(0xFF2E7D32),
+          backgroundColor: Color(0xFFE87722),
         ),
       );
     } catch (_) {}
@@ -63,7 +63,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
       return const Scaffold(
         backgroundColor: Color(0xFF1A0A00),
         body: Center(
-          child: CircularProgressIndicator(color: Color(0xFFC4620A)),
+          child: CircularProgressIndicator(color: Color(0xFFE87722)),
         ),
       );
     }
@@ -90,7 +90,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
           if (_isCompleted)
             const Padding(
               padding: EdgeInsets.only(right: 12),
-              child: Icon(Icons.check_circle, color: Color(0xFF2E7D32), size: 24),
+              child: Icon(Icons.check_circle, color: Color(0xFFE87722), size: 24),
             )
           else
             TextButton(
@@ -100,7 +100,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                 style: GoogleFonts.montserrat(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFFC4620A),
+                  color: const Color(0xFFE87722),
                 ),
               ),
             ),
@@ -174,7 +174,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                       style: GoogleFonts.montserrat(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFF3B1A08),
+                        color: const Color(0xFF3D1800),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -202,7 +202,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF2E7D32),
+                            backgroundColor: const Color(0xFFE87722),
                             foregroundColor: Colors.white,
                             minimumSize: const Size(double.infinity, 52),
                             shape: RoundedRectangleBorder(
@@ -216,14 +216,14 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE8F5E9),
+                          color: const Color(0xFFF5E6D8),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Row(
                           children: [
                             const Icon(
                               Icons.check_circle,
-                              color: Color(0xFF2E7D32),
+                              color: Color(0xFFE87722),
                               size: 24,
                             ),
                             const SizedBox(width: 12),
@@ -232,7 +232,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                               style: GoogleFonts.montserrat(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFF2E7D32),
+                                color: const Color(0xFFE87722),
                               ),
                             ),
                           ],
@@ -393,7 +393,7 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
                   child: Text(
                     'Jaribu tena',
                     style: GoogleFonts.montserrat(
-                      color: const Color(0xFFC4620A),
+                      color: const Color(0xFFE87722),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -411,7 +411,7 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
         child: Container(
           color: Colors.black,
           child: const Center(
-            child: CircularProgressIndicator(color: Color(0xFFC4620A)),
+            child: CircularProgressIndicator(color: Color(0xFFE87722)),
           ),
         ),
       );
@@ -489,7 +489,7 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
                             _controller,
                             allowScrubbing: true,
                             colors: const VideoProgressColors(
-                              playedColor: Color(0xFFC4620A),
+                              playedColor: Color(0xFFE87722),
                               bufferedColor: Colors.white38,
                               backgroundColor: Colors.white12,
                             ),
@@ -537,7 +537,7 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
           // Buffering spinner
           if (value.isBuffering)
             const CircularProgressIndicator(
-              color: Color(0xFFC4620A),
+              color: Color(0xFFE87722),
               strokeWidth: 2,
             ),
         ],

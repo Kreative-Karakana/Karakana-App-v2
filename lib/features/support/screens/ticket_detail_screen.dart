@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -114,7 +114,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
       return const Scaffold(
         backgroundColor: Color(0xFFFFF8F4),
         body: Center(
-          child: CircularProgressIndicator(color: Color(0xFFC4620A)),
+          child: CircularProgressIndicator(color: Color(0xFFE87722)),
         ),
       );
     }
@@ -122,7 +122,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
       return Scaffold(
         backgroundColor: const Color(0xFFFFF8F4),
         appBar: AppBar(
-          backgroundColor: const Color(0xFF3B1A08),
+          backgroundColor: const Color(0xFF3D1800),
           elevation: 0,
           leading: const BackButton(color: Colors.white),
         ),
@@ -145,7 +145,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3B1A08),
+        backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
         title: Column(
@@ -190,7 +190,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                     style: GoogleFonts.montserrat(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFFC4620A),
+                      color: const Color(0xFFE87722),
                     ),
                   ),
                 ),
@@ -200,13 +200,13 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: isResolved
-                        ? const Color(0xFFE8F5E9)
+                        ? const Color(0xFFF5E6D8)
                         : const Color(0xFFFFF8F4),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: isResolved
-                          ? const Color(0xFF2E7D32)
-                          : const Color(0xFFC4620A),
+                          ? const Color(0xFFE87722)
+                          : const Color(0xFFE87722),
                     ),
                   ),
                   child: Text(
@@ -215,8 +215,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: isResolved
-                          ? const Color(0xFF2E7D32)
-                          : const Color(0xFFC4620A),
+                          ? const Color(0xFFE87722)
+                          : const Color(0xFFE87722),
                     ),
                   ),
                 ),
@@ -265,8 +265,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                     decoration: const BoxDecoration(
                                       gradient: LinearGradient(
                                         colors: [
-                                          Color(0xFFC4620A),
-                                          Color(0xFFE07030)
+                                          Color(0xFFE87722),
+                                          Color(0xFFFFA726)
                                         ],
                                       ),
                                       shape: BoxShape.circle,
@@ -292,7 +292,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                     ),
                                     decoration: BoxDecoration(
                                       color: isUser
-                                          ? const Color(0xFFC4620A)
+                                          ? const Color(0xFFE87722)
                                           : Colors.white,
                                       borderRadius: BorderRadius.only(
                                         topLeft: const Radius.circular(16),
@@ -321,7 +321,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                             style: GoogleFonts.montserrat(
                                               fontSize: 11,
                                               fontWeight: FontWeight.w600,
-                                              color: const Color(0xFFC4620A),
+                                              color: const Color(0xFFE87722),
                                             ),
                                           ),
                                           const SizedBox(height: 4),
@@ -333,7 +333,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                             height: 1.4,
                                             color: isUser
                                                 ? Colors.white
-                                                : const Color(0xFF3B1A08),
+                                                : const Color(0xFF3D1800),
                                           ),
                                         ),
                                       ],
@@ -391,7 +391,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(24),
                           borderSide: const BorderSide(
-                            color: Color(0xFFC4620A),
+                            color: Color(0xFFE87722),
                             width: 1.5,
                           ),
                         ),
@@ -410,7 +410,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       height: 48,
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [Color(0xFFC4620A), Color(0xFFE07030)],
+                          colors: [Color(0xFFE87722), Color(0xFFFFA726)],
                         ),
                         shape: BoxShape.circle,
                       ),

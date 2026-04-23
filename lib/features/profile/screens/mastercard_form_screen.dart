@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -158,7 +158,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
       SnackBar(
         content: Text(message,
             style: GoogleFonts.montserrat(color: Colors.white)),
-        backgroundColor: success ? const Color(0xFF2E7D32) : AppColors.primary,
+        backgroundColor: success ? const Color(0xFFE87722) : AppColors.primary,
         duration: const Duration(milliseconds: 4000),
       ),
     );

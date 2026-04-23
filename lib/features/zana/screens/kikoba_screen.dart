@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -53,7 +53,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3B1A08),
+        backgroundColor: const Color(0xFF3D1800),
         leading: const BackButton(color: Colors.white),
         title: Text(
           'e-KIKOBA',
@@ -74,8 +74,8 @@ class _KikobaScreenState extends State<KikobaScreen> {
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Color(0xFFFF6B35),
-                    Color(0xFFE65100),
+                    Color(0xFFE87722),
+                    Color(0xFFE87722),
                     Color(0xFFBF360C),
                   ],
                   begin: Alignment.topLeft,
@@ -220,7 +220,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                             ),
                             child: Icon(
                               item[0] as IconData,
-                              color: const Color(0xFFE65100),
+                              color: const Color(0xFFE87722),
                               size: 22,
                             ),
                           ),
@@ -291,7 +291,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: const BorderSide(
-                                  color: Color(0xFFE65100),
+                                  color: Color(0xFFE87722),
                                   width: 1.5,
                                 ),
                               ),
@@ -316,7 +316,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: const BorderSide(
-                                  color: Color(0xFFE65100),
+                                  color: Color(0xFFE87722),
                                   width: 1.5,
                                 ),
                               ),
@@ -342,7 +342,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: const BorderSide(
-                                  color: Color(0xFFE65100),
+                                  color: Color(0xFFE87722),
                                   width: 1.5,
                                 ),
                               ),
@@ -353,7 +353,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                             width: double.infinity,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFE65100),
+                                backgroundColor: const Color(0xFFE87722),
                                 foregroundColor: Colors.white,
                                 minimumSize: const Size(double.infinity, 54),
                                 shape: RoundedRectangleBorder(
@@ -401,10 +401,10 @@ class _KikobaScreenState extends State<KikobaScreen> {
                     Container(
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE8F5E9),
+                        color: const Color(0xFFF5E6D8),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: const Color(0xFF2E7D32).withValues(alpha: 0.3),
+                          color: const Color(0xFFE87722).withValues(alpha: 0.3),
                         ),
                       ),
                       child: Column(
@@ -413,7 +413,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                             width: 72,
                             height: 72,
                             decoration: const BoxDecoration(
-                              color: Color(0xFF2E7D32),
+                              color: Color(0xFFE87722),
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -428,7 +428,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                             style: GoogleFonts.montserrat(
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFF2E7D32),
+                              color: const Color(0xFFE87722),
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -449,7 +449,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                               style: GoogleFonts.montserrat(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFF1A2E5A),
+                                color: const Color(0xFF3D1800),
                               ),
                             ),
                           ),

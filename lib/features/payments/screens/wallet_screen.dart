@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
@@ -90,7 +90,7 @@ class _WalletScreenState extends State<WalletScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF3B1A08),
+                color: const Color(0xFF3D1800),
               ),
             ),
             const SizedBox(height: 20),
@@ -101,7 +101,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 labelText: 'Kiasi cha Kutoa',
                 prefixIcon: const Icon(
                   Icons.payments_outlined,
-                  color: Color(0xFFC4620A),
+                  color: Color(0xFFE87722),
                 ),
                 filled: true,
                 fillColor: const Color(0xFFFFF8F4),
@@ -112,7 +112,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: const BorderSide(
-                    color: Color(0xFFC4620A),
+                    color: Color(0xFFE87722),
                     width: 1.5,
                   ),
                 ),
@@ -125,7 +125,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 labelText: 'Maelezo (hiari)',
                 prefixIcon: const Icon(
                   Icons.notes_outlined,
-                  color: Color(0xFFC4620A),
+                  color: Color(0xFFE87722),
                 ),
                 filled: true,
                 fillColor: const Color(0xFFFFF8F4),
@@ -136,7 +136,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: const BorderSide(
-                    color: Color(0xFFC4620A),
+                    color: Color(0xFFE87722),
                     width: 1.5,
                   ),
                 ),
@@ -147,7 +147,7 @@ class _WalletScreenState extends State<WalletScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFC4620A),
+                  backgroundColor: const Color(0xFFE87722),
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 54),
                   shape: RoundedRectangleBorder(
@@ -170,7 +170,7 @@ class _WalletScreenState extends State<WalletScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Ombi limetumwa kikamilifu!'),
-                        backgroundColor: Color(0xFF2E7D32),
+                        backgroundColor: Color(0xFFE87722),
                       ),
                     );
                     _loadWallet();
@@ -206,19 +206,19 @@ class _WalletScreenState extends State<WalletScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: const BackButton(color: Color(0xFF3B1A08)),
+        leading: const BackButton(color: Color(0xFF3D1800)),
         title: Text(
           'Mkoba Wangu',
           style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
-            color: const Color(0xFF3B1A08),
+            color: const Color(0xFF3D1800),
           ),
         ),
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFFC4620A)),
+              child: CircularProgressIndicator(color: Color(0xFFE87722)),
             )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(20),
@@ -230,9 +230,9 @@ class _WalletScreenState extends State<WalletScreen> {
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [
-                          Color(0xFF3B1A08),
-                          Color(0xFF6B2E0A),
-                          Color(0xFFC4620A),
+                          Color(0xFF3D1800),
+                          Color(0xFF7B3A10),
+                          Color(0xFFE87722),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -240,7 +240,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFC4620A).withValues(alpha: 0.3),
+                          color: const Color(0xFFE87722).withValues(alpha: 0.3),
                           blurRadius: 24,
                           offset: const Offset(0, 8),
                         ),
@@ -355,7 +355,7 @@ class _WalletScreenState extends State<WalletScreen> {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFFC4620A),
+                              foregroundColor: const Color(0xFFE87722),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -367,7 +367,7 @@ class _WalletScreenState extends State<WalletScreen> {
                               style: GoogleFonts.montserrat(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFFC4620A),
+                                color: const Color(0xFFE87722),
                               ),
                             ),
                           ),
@@ -384,7 +384,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF3B1A08),
+                          color: const Color(0xFF3D1800),
                         ),
                       ),
                     ],
@@ -438,7 +438,7 @@ class _WalletScreenState extends State<WalletScreen> {
                               height: 40,
                               decoration: BoxDecoration(
                                 color: isSuccessful
-                                    ? const Color(0xFFE8F5E9)
+                                    ? const Color(0xFFF5E6D8)
                                     : const Color(0xFFFFF0E6),
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -447,8 +447,8 @@ class _WalletScreenState extends State<WalletScreen> {
                                     ? Icons.arrow_upward_rounded
                                     : Icons.pending_outlined,
                                 color: isSuccessful
-                                    ? const Color(0xFF2E7D32)
-                                    : const Color(0xFFE65100),
+                                    ? const Color(0xFFE87722)
+                                    : const Color(0xFFE87722),
                                 size: 20,
                               ),
                             ),
@@ -462,7 +462,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                     style: GoogleFonts.montserrat(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF3B1A08),
+                                      color: const Color(0xFF3D1800),
                                     ),
                                   ),
                                   Text(
@@ -481,8 +481,8 @@ class _WalletScreenState extends State<WalletScreen> {
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
                                 color: isSuccessful
-                                    ? const Color(0xFF2E7D32)
-                                    : const Color(0xFFE65100),
+                                    ? const Color(0xFFE87722)
+                                    : const Color(0xFFE87722),
                               ),
                             ),
                           ],

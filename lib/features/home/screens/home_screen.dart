@@ -1,4 +1,4 @@
-
+﻿
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -373,7 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF1A2E5A).withValues(alpha: 0.18),
+                              color: const Color(0xFF3D1800).withValues(alpha: 0.18),
                               blurRadius: 18,
                               offset: const Offset(0, 10),
                             ),
@@ -738,7 +738,7 @@ class _BannerCarouselState extends State<_BannerCarousel> {
                 style: GoogleFonts.montserrat(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF3B1A08),
+                  color: const Color(0xFF3D1800),
                 ),
                 textAlign: TextAlign.center,
               )

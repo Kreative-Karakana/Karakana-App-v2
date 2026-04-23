@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -77,14 +77,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const CircularProgressIndicator(color: Color(0xFFC4620A)),
+            const CircularProgressIndicator(color: Color(0xFFE87722)),
             const SizedBox(height: 18),
             Text(
               'Inashughulikia Malipo...',
               style: GoogleFonts.montserrat(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF3B1A08),
+                color: const Color(0xFF3D1800),
               ),
             ),
             const SizedBox(height: 10),
@@ -164,16 +164,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     const providers = [
-      {'id': 'mpesa', 'name': 'M-Pesa', 'color': Color(0xFF00A651)},
-      {'id': 'mix_by_yas', 'name': 'Mix by Yas', 'color': Color(0xFF009FE3)},
-      {'id': 'airtel', 'name': 'Airtel Money', 'color': Color(0xFFEF3B24)},
-      {'id': 'halopesa', 'name': 'Halopesa', 'color': Color(0xFF702082)},
+      {'id': 'mpesa', 'name': 'M-Pesa', 'color': Color(0xFFE87722)},
+      {'id': 'mix_by_yas', 'name': 'Mix by Yas', 'color': Color(0xFF3D1800)},
+      {'id': 'airtel', 'name': 'Airtel Money', 'color': Color(0xFF3D1800)},
+      {'id': 'halopesa', 'name': 'Halopesa', 'color': Color(0xFF3D1800)},
     ];
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3B1A08),
+        backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
         title: Text(
@@ -230,7 +230,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           style: GoogleFonts.montserrat(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF3B1A08),
+                            color: const Color(0xFF3D1800),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -239,7 +239,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           style: GoogleFonts.montserrat(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
-                            color: const Color(0xFFC4620A),
+                            color: const Color(0xFFE87722),
                           ),
                         ),
                       ],
@@ -254,7 +254,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF3B1A08),
+                color: const Color(0xFF3D1800),
               ),
             ),
             const SizedBox(height: 4),
@@ -319,7 +319,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               style: GoogleFonts.montserrat(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: const Color(0xFF3B1A08),
+                                color: const Color(0xFF3D1800),
                               ),
                             ),
                             Text(
@@ -361,7 +361,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF3B1A08),
+                color: const Color(0xFF3D1800),
               ),
             ),
             const SizedBox(height: 8),
@@ -381,7 +381,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       style: GoogleFonts.montserrat(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF3B1A08),
+                        color: const Color(0xFF3D1800),
                       ),
                     ),
                   ),
@@ -394,7 +394,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     onChanged: (_) => setState(() {}),
                     style: GoogleFonts.montserrat(
                       fontSize: 15,
-                      color: const Color(0xFF3B1A08),
+                      color: const Color(0xFF3D1800),
                     ),
                     decoration: InputDecoration(
                       hintText: '7XX XXX XXX',
@@ -413,7 +413,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                         borderSide: const BorderSide(
-                          color: Color(0xFFC4620A),
+                          color: Color(0xFFE87722),
                           width: 1.5,
                         ),
                       ),
@@ -459,7 +459,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF3B1A08),
+                          color: const Color(0xFF3D1800),
                         ),
                       ),
                     ],
@@ -479,7 +479,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         'Bure',
                         style: GoogleFonts.montserrat(
                           fontSize: 14,
-                          color: const Color(0xFF2E7D32),
+                          color: const Color(0xFFE87722),
                         ),
                       ),
                     ],
@@ -496,7 +496,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         style: GoogleFonts.montserrat(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF3B1A08),
+                          color: const Color(0xFF3D1800),
                         ),
                       ),
                       Text(
@@ -504,7 +504,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         style: GoogleFonts.montserrat(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFFC4620A),
+                          color: const Color(0xFFE87722),
                         ),
                       ),
                     ],
@@ -517,7 +517,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFC4620A),
+                  backgroundColor: const Color(0xFFE87722),
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 56),
                   shape: RoundedRectangleBorder(
@@ -584,7 +584,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       ),
       child: const Icon(
         Icons.school_outlined,
-        color: Color(0xFFC4620A),
+        color: Color(0xFFE87722),
       ),
     );
   }

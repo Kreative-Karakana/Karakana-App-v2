@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -38,7 +38,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3B1A08),
+        backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
         title: Text(
@@ -62,7 +62,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                 style: GoogleFonts.montserrat(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF3B1A08),
+                  color: const Color(0xFF3D1800),
                 ),
               ),
               const SizedBox(height: 12),
@@ -81,12 +81,12 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                       ),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? const Color(0xFFC4620A)
+                            ? const Color(0xFFE87722)
                             : Colors.white,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isSelected
-                              ? const Color(0xFFC4620A)
+                              ? const Color(0xFFE87722)
                               : const Color(0xFFE8D5C8),
                         ),
                       ),
@@ -132,7 +132,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
                     borderSide: const BorderSide(
-                      color: Color(0xFFC4620A),
+                      color: Color(0xFFE87722),
                       width: 1.5,
                     ),
                   ),
@@ -157,7 +157,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
                     borderSide: const BorderSide(
-                      color: Color(0xFFC4620A),
+                      color: Color(0xFFE87722),
                       width: 1.5,
                     ),
                   ),
@@ -169,7 +169,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFC4620A),
+                    backgroundColor: const Color(0xFFE87722),
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 54),
                     shape: RoundedRectangleBorder(
@@ -230,7 +230,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Tiketi imesailiwa kikamilifu!'),
-          backgroundColor: Color(0xFF2E7D32),
+          backgroundColor: Color(0xFFE87722),
         ),
       );
       // Go directly into the new ticket thread

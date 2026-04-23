@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +26,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3B1A08),
+        backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
         title: Text(
@@ -58,7 +58,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         builder: (_, provider, __) {
           if (provider.isLoading) {
             return const Center(
-              child: CircularProgressIndicator(color: Color(0xFFC4620A)),
+              child: CircularProgressIndicator(color: Color(0xFFE87722)),
             );
           }
           if (provider.notifications.isEmpty) {
@@ -82,7 +82,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: isUnread
-                            ? const [Color(0xFFC4620A), Color(0xFFE07030)]
+                            ? const [Color(0xFFE87722), Color(0xFFFFA726)]
                             : const [Color(0xFFBDA99C), Color(0xFF9E8070)],
                       ),
                       shape: BoxShape.circle,
@@ -99,7 +99,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       fontSize: 14,
                       fontWeight:
                           isUnread ? FontWeight.w600 : FontWeight.w400,
-                      color: const Color(0xFF3B1A08),
+                      color: const Color(0xFF3D1800),
                     ),
                   ),
                   subtitle: Column(
@@ -131,7 +131,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           width: 8,
                           height: 8,
                           decoration: const BoxDecoration(
-                            color: Color(0xFFC4620A),
+                            color: Color(0xFFE87722),
                             shape: BoxShape.circle,
                           ),
                         )
@@ -191,7 +191,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             child: const Icon(
               Icons.notifications_none_rounded,
               size: 48,
-              color: Color(0xFFC4620A),
+              color: Color(0xFFE87722),
             ),
           ),
           const SizedBox(height: 20),

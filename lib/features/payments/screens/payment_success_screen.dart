@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -20,12 +20,12 @@ class PaymentSuccessScreen extends StatelessWidget {
                 width: 120,
                 height: 120,
                 decoration: const BoxDecoration(
-                  color: Color(0xFFE8F5E9),
+                  color: Color(0xFFF5E6D8),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.check_circle_rounded,
-                  color: Color(0xFF2E7D32),
+                  color: Color(0xFFE87722),
                   size: 64,
                 ),
               ),
@@ -36,7 +36,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                 style: GoogleFonts.montserrat(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF3B1A08),
+                  color: const Color(0xFF3D1800),
                 ),
               ),
               const SizedBox(height: 12),
@@ -76,7 +76,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2E7D32),
+                            color: const Color(0xFFE87722),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
@@ -106,7 +106,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                           style: GoogleFonts.montserrat(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF3B1A08),
+                            color: const Color(0xFF3D1800),
                           ),
                         ),
                       ],
@@ -127,7 +127,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFC4620A),
+                    backgroundColor: const Color(0xFFE87722),
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 54),
                     shape: RoundedRectangleBorder(

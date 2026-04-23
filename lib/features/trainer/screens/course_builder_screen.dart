@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -101,7 +101,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
             'Kozi imehifadhiwa! Itaonekana kwenye dashibodi yako.',
             style: GoogleFonts.montserrat(fontSize: 14),
           ),
-          backgroundColor: const Color(0xFF2E7D32),
+          backgroundColor: const Color(0xFFE87722),
           behavior: SnackBarBehavior.floating,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -134,7 +134,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3B1A08),
+        backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
         title: Text(
@@ -166,7 +166,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                             height: 32,
                             decoration: BoxDecoration(
                               color: i <= _currentStep
-                                  ? const Color(0xFFC4620A)
+                                  ? const Color(0xFFE87722)
                                   : const Color(0xFFF5E6D8),
                               shape: BoxShape.circle,
                             ),
@@ -192,7 +192,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                             style: GoogleFonts.montserrat(
                               fontSize: 9,
                               color: i <= _currentStep
-                                  ? const Color(0xFFC4620A)
+                                  ? const Color(0xFFE87722)
                                   : const Color(0xFF9E8070),
                             ),
                           ),
@@ -204,7 +204,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                             height: 2,
                             margin: const EdgeInsets.only(bottom: 16),
                             color: i < _currentStep
-                                ? const Color(0xFFC4620A)
+                                ? const Color(0xFFE87722)
                                 : const Color(0xFFE8D5C8),
                           ),
                         ),
@@ -285,7 +285,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                             }
                           },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFC4620A),
+                      backgroundColor: const Color(0xFFE87722),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(28),
@@ -353,7 +353,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF3B1A08),
+                color: const Color(0xFF3D1800),
               ),
             ),
             const SizedBox(height: 8),
@@ -391,7 +391,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                       style: GoogleFonts.montserrat(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF3B1A08),
+                        color: const Color(0xFF3D1800),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -530,7 +530,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 children: [
                   const Icon(
                     Icons.info_outline,
-                    color: Color(0xFFC4620A),
+                    color: Color(0xFFE87722),
                     size: 18,
                   ),
                   const SizedBox(width: 8),
@@ -539,7 +539,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                     style: GoogleFonts.montserrat(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF3B1A08),
+                      color: const Color(0xFF3D1800),
                     ),
                   ),
                 ],
@@ -580,7 +580,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         underline: const SizedBox(),
         items: items,
         onChanged: onChanged,
-        style: GoogleFonts.montserrat(fontSize: 14, color: const Color(0xFF3B1A08)),
+        style: GoogleFonts.montserrat(fontSize: 14, color: const Color(0xFF3D1800)),
         dropdownColor: Colors.white,
         borderRadius: BorderRadius.circular(14),
       ),
@@ -592,7 +592,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         style: GoogleFonts.montserrat(
           fontSize: 17,
           fontWeight: FontWeight.w700,
-          color: const Color(0xFF3B1A08),
+          color: const Color(0xFF3D1800),
         ),
       );
 
@@ -620,7 +620,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide:
-              const BorderSide(color: Color(0xFFC4620A), width: 1.5),
+              const BorderSide(color: Color(0xFFE87722), width: 1.5),
         ),
       ),
     );
@@ -653,7 +653,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               color: const Color(0xFFF5E6D8),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: const Color(0xFFC4620A), size: 20),
+            child: Icon(icon, color: const Color(0xFFE87722), size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -665,7 +665,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF3B1A08),
+                    color: const Color(0xFF3D1800),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -694,12 +694,12 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFFFFF0E6),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFC4620A).withValues(alpha: 0.3)),
+        border: Border.all(color: const Color(0xFFE87722).withValues(alpha: 0.3)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: const Color(0xFFC4620A), size: 20),
+          Icon(icon, color: const Color(0xFFE87722), size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -710,7 +710,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF3B1A08),
+                    color: const Color(0xFF3D1800),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -756,7 +756,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF3B1A08),
+                color: const Color(0xFF3D1800),
               ),
             ),
           ),

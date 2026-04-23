@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -71,7 +71,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
           SliverAppBar(
             expandedHeight: 180,
             pinned: true,
-            backgroundColor: const Color(0xFF3B1A08),
+            backgroundColor: const Color(0xFF3D1800),
             leading: IconButton(
               icon: const Icon(
                 Icons.arrow_back_ios_new,
@@ -113,9 +113,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Color(0xFF3B1A08),
-                      Color(0xFF6B2E0A),
-                      Color(0xFFC4620A),
+                      Color(0xFF3D1800),
+                      Color(0xFF7B3A10),
+                      Color(0xFFE87722),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -184,7 +184,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                       'Maoni ya Jumla',
                       '0',
                       Icons.visibility_outlined,
-                      const Color(0xFF1A2E5A),
+                      const Color(0xFF3D1800),
                       '+0%',
                       true,
                     ),
@@ -195,7 +195,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                       'Wasomi Wapya',
                       '0',
                       Icons.person_add_outlined,
-                      const Color(0xFF2E5A1A),
+                      const Color(0xFF3D1800),
                       '+0%',
                       true,
                     ),
@@ -214,7 +214,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                       'Ukamilishaji',
                       '0%',
                       Icons.check_circle_outline,
-                      const Color(0xFFC4620A),
+                      const Color(0xFFE87722),
                       '0% ya wanafunzi',
                       true,
                     ),
@@ -225,7 +225,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                       'Ukadiriaji',
                       _avgRating.toStringAsFixed(1),
                       Icons.star_outline,
-                      const Color(0xFFE65100),
+                      const Color(0xFFE87722),
                       '0 tathmini',
                       true,
                     ),
@@ -253,14 +253,14 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                     icon: const Icon(
                       Icons.add,
                       size: 16,
-                      color: Color(0xFFC4620A),
+                      color: Color(0xFFE87722),
                     ),
                     label: Text(
                       'Ongeza',
                       style: GoogleFonts.montserrat(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFFC4620A),
+                        color: const Color(0xFFE87722),
                       ),
                     ),
                   ),
@@ -273,7 +273,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
               child: Padding(
                 padding: EdgeInsets.all(32),
                 child: Center(
-                  child: CircularProgressIndicator(color: Color(0xFFC4620A)),
+                  child: CircularProgressIndicator(color: Color(0xFFE87722)),
                 ),
               ),
             )
@@ -294,7 +294,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                       style: GoogleFonts.montserrat(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF3B1A08),
+                        color: const Color(0xFF3D1800),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -309,7 +309,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                     ElevatedButton(
                       onPressed: () => context.push('/trainer/course-builder'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFC4620A),
+                        backgroundColor: const Color(0xFFE87722),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(28),
@@ -408,7 +408,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                     const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                 decoration: BoxDecoration(
                   color: trendUp
-                      ? const Color(0xFFE8F5E9)
+                      ? const Color(0xFFF5E6D8)
                       : const Color(0xFFFFEBEE),
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -418,7 +418,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
                     color: trendUp
-                        ? const Color(0xFF2E7D32)
+                        ? const Color(0xFFE87722)
                         : const Color(0xFFB71C1C),
                   ),
                 ),
@@ -431,7 +431,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 22,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF3B1A08),
+              color: const Color(0xFF3D1800),
             ),
           ),
           const SizedBox(height: 4),
@@ -481,7 +481,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF3B1A08),
+                    color: const Color(0xFF3D1800),
                   ),
                 ),
               ),
@@ -491,13 +491,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: isPublished
-                      ? const Color(0xFFE8F5E9)
+                      ? const Color(0xFFF5E6D8)
                       : const Color(0xFFFFF8F4),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: isPublished
-                        ? const Color(0xFF2E7D32)
-                        : const Color(0xFFC4620A),
+                        ? const Color(0xFFE87722)
+                        : const Color(0xFFE87722),
                   ),
                 ),
                 child: Text(
@@ -506,8 +506,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     color: isPublished
-                        ? const Color(0xFF2E7D32)
-                        : const Color(0xFFC4620A),
+                        ? const Color(0xFFE87722)
+                        : const Color(0xFFE87722),
                   ),
                 ),
               ),
@@ -547,7 +547,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                 child: ElevatedButton(
                   onPressed: () => context.push('/trainer/course-builder'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFC4620A),
+                    backgroundColor: const Color(0xFFE87722),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),

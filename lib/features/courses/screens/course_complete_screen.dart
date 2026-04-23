@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -41,14 +41,14 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                     height: 100,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFF4B400), Color(0xFFFF8F00)],
+                        colors: [Color(0xFFFFA726), Color(0xFFFFA726)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFF4B400).withValues(alpha: 0.4),
+                          color: const Color(0xFFFFA726).withValues(alpha: 0.4),
                           blurRadius: 24,
                           offset: const Offset(0, 8),
                         ),
@@ -68,7 +68,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 30,
                     fontWeight: FontWeight.w700,
-                    color: const Color(0xFF3B1A08),
+                    color: const Color(0xFF3D1800),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -78,7 +78,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF3B1A08),
+                    color: const Color(0xFF3D1800),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -87,7 +87,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
                     fontSize: 15,
-                    color: const Color(0xFFC4620A),
+                    color: const Color(0xFFE87722),
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -103,7 +103,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                     ),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: const Color(0xFFC4620A).withValues(alpha: 0.3),
+                      color: const Color(0xFFE87722).withValues(alpha: 0.3),
                       width: 1.5,
                     ),
                     boxShadow: const [
@@ -122,7 +122,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                             width: 32,
                             height: 32,
                             decoration: const BoxDecoration(
-                              color: Color(0xFFC4620A),
+                              color: Color(0xFFE87722),
                               shape: BoxShape.circle,
                             ),
                             child: Center(
@@ -145,7 +145,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF3B1A08),
+                                  color: const Color(0xFF3D1800),
                                   letterSpacing: 2,
                                 ),
                               ),
@@ -162,7 +162,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       ),
                       const SizedBox(height: 16),
                       Divider(
-                        color: const Color(0xFFC4620A).withValues(alpha: 0.3),
+                        color: const Color(0xFFE87722).withValues(alpha: 0.3),
                       ),
                       const SizedBox(height: 16),
                       Text(
@@ -178,7 +178,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                         style: GoogleFonts.montserrat(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF3B1A08),
+                          color: const Color(0xFF3D1800),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -196,7 +196,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFFC4620A),
+                          color: const Color(0xFFE87722),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -209,7 +209,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       ),
                       const SizedBox(height: 16),
                       Divider(
-                        color: const Color(0xFFC4620A).withValues(alpha: 0.3),
+                        color: const Color(0xFFE87722).withValues(alpha: 0.3),
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -244,7 +244,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFC4620A),
+                      backgroundColor: const Color(0xFFE87722),
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 54),
                       shape: RoundedRectangleBorder(
@@ -274,7 +274,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                   child: OutlinedButton.icon(
                     icon: const Icon(
                       Icons.share_outlined,
-                      color: Color(0xFFC4620A),
+                      color: Color(0xFFE87722),
                       size: 18,
                     ),
                     label: Text(
@@ -282,11 +282,11 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       style: GoogleFonts.montserrat(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFFC4620A),
+                        color: const Color(0xFFE87722),
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFFC4620A)),
+                      side: const BorderSide(color: Color(0xFFE87722)),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(28),
                       ),

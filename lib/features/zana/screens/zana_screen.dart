@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -32,7 +32,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
           SliverAppBar(
             expandedHeight: _expandedHeight,
             pinned: true,
-            backgroundColor: const Color(0xFF1A2E5A),
+            backgroundColor: const Color(0xFF3D1800),
             title: AnimatedBuilder(
               animation: _scroll,
               builder: (context, _) {
@@ -57,9 +57,9 @@ class _ZanaScreenState extends State<ZanaScreen> {
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Color(0xFF0F1E3D),
-                      Color(0xFF1A2E5A),
-                      Color(0xFF1E5FA8),
+                      Color(0xFF1A0A00),
+                      Color(0xFF3D1800),
+                      Color(0xFF7B3A10),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -89,7 +89,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                         height: 140,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: const Color(0xFFC4620A).withValues(alpha: 0.18),
+                          color: const Color(0xFFE87722).withValues(alpha: 0.18),
                         ),
                       ),
                     ),
@@ -128,7 +128,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFC4620A),
+                                color: const Color(0xFFE87722),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
@@ -156,7 +156,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                               'Zana za Biashara kwa Ujasiriamali',
                               style: GoogleFonts.montserrat(
                                 fontSize: 13,
-                                color: const Color(0xFFB8C8E8),
+                                color: Colors.white.withValues(alpha: 0.75),
                                 height: 1.4,
                               ),
                             ),
@@ -178,14 +178,14 @@ class _ZanaScreenState extends State<ZanaScreen> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFFF6B35), Color(0xFFE65100)],
+                      colors: [Color(0xFFE87722), Color(0xFFFFA726)],
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                     ),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFE65100).withValues(alpha: 0.3),
+                        color: const Color(0xFFE87722).withValues(alpha: 0.3),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
@@ -266,7 +266,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
-                                  color: const Color(0xFFE65100),
+                                  color: const Color(0xFFE87722),
                                 ),
                               ),
                             ),
@@ -334,7 +334,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                       ),
                       child: const Icon(
                         Icons.add_circle_outline,
-                        color: Color(0xFFC4620A),
+                        color: Color(0xFFE87722),
                         size: 24,
                       ),
                     ),

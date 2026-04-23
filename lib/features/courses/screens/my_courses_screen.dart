@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -45,7 +45,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3B1A08),
+        backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
         title: Text(
@@ -59,7 +59,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFFC4620A)),
+              child: CircularProgressIndicator(color: Color(0xFFE87722)),
             )
           : _courses.isEmpty
               ? _buildEmptyState(context)
@@ -123,7 +123,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                                       style: GoogleFonts.montserrat(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
-                                        color: const Color(0xFF3B1A08),
+                                        color: const Color(0xFF3D1800),
                                       ),
                                     ),
                                     const SizedBox(height: 4),
@@ -143,7 +143,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                                             vertical: 4,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFF2E7D32),
+                                            color: const Color(0xFFE87722),
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                           ),
@@ -193,7 +193,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
             child: const Icon(
               Icons.school_outlined,
               size: 48,
-              color: Color(0xFFC4620A),
+              color: Color(0xFFE87722),
             ),
           ),
           const SizedBox(height: 20),
@@ -217,7 +217,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
           ElevatedButton(
             onPressed: () => context.go('/home'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFC4620A),
+              backgroundColor: const Color(0xFFE87722),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(28),
@@ -242,7 +242,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
       color: const Color(0xFFF5E6D8),
       child: const Icon(
         Icons.play_circle_outline,
-        color: Color(0xFFC4620A),
+        color: Color(0xFFE87722),
         size: 32,
       ),
     );

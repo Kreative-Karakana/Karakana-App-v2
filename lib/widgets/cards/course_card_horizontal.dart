@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
@@ -167,7 +167,7 @@ class CourseCardHorizontal extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      const Icon(Icons.star_rounded, size: 14, color: Color(0xFFFFB800)),
+                      const Icon(Icons.star_rounded, size: 14, color: Color(0xFFFFA726)),
                       const SizedBox(width: 4),
                       Text(
                         course.averageRating.toStringAsFixed(1),

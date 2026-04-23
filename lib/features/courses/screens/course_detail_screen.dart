@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -41,7 +41,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
             backgroundColor: Colors.white,
             body: Center(
               child: CircularProgressIndicator(
-                color: Color(0xFFC4620A),
+                color: Color(0xFFE87722),
               ),
             ),
           );
@@ -76,7 +76,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     ElevatedButton(
                       onPressed: () => provider.loadCourseDetail(widget.courseId),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFC4620A),
+                        backgroundColor: const Color(0xFFE87722),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 22,
@@ -108,7 +108,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
               SliverAppBar(
                 expandedHeight: 240,
                 pinned: true,
-                backgroundColor: const Color(0xFF3B1A08),
+                backgroundColor: const Color(0xFF3D1800),
                 leading: Container(
                   margin: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -137,7 +137,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                             ? Icons.bookmark
                             : Icons.bookmark_border,
                         color: course.isWishlisted
-                            ? const Color(0xFFC4620A)
+                            ? const Color(0xFFE87722)
                             : Colors.white,
                         size: 22,
                       ),
@@ -165,7 +165,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         Container(
                           decoration: const BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [Color(0xFF3B1A08), Color(0xFFC4620A)],
+                              colors: [Color(0xFF3D1800), Color(0xFFE87722)],
                             ),
                           ),
                         ),
@@ -174,7 +174,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           gradient: LinearGradient(
                             colors: [
                               Colors.transparent,
-                              const Color(0xFF3B1A08).withValues(alpha: 0.8),
+                              const Color(0xFF3D1800).withValues(alpha: 0.8),
                             ],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
@@ -192,7 +192,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFC4620A),
+                                color: const Color(0xFFE87722),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
@@ -212,7 +212,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF2E7D32),
+                                  color: const Color(0xFFE87722),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
@@ -243,7 +243,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         style: GoogleFonts.montserrat(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF3B1A08),
+                          color: const Color(0xFF3D1800),
                           height: 1.3,
                         ),
                       ),
@@ -252,7 +252,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         children: [
                           const Icon(
                             Icons.star,
-                            color: Color(0xFFF4B400),
+                            color: Color(0xFFFFA726),
                             size: 18,
                           ),
                           const SizedBox(width: 4),
@@ -318,7 +318,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF3B1A08),
+                                  color: const Color(0xFF3D1800),
                                 ),
                               ),
                             ],
@@ -352,8 +352,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                     fontSize: 26,
                                     fontWeight: FontWeight.w700,
                                     color: course.isFree
-                                        ? const Color(0xFF2E7D32)
-                                        : const Color(0xFFC4620A),
+                                        ? const Color(0xFFE87722)
+                                        : const Color(0xFFE87722),
                                   ),
                                 ),
                                 if (!course.isFree)
@@ -377,7 +377,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF3B1A08),
+                          color: const Color(0xFF3D1800),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -406,7 +406,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                             style: GoogleFonts.montserrat(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFF3B1A08),
+                              color: const Color(0xFF3D1800),
                             ),
                           ),
                           Text(
@@ -434,7 +434,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                             children: [
                               const Icon(
                                 Icons.lock_outline,
-                                color: Color(0xFFC4620A),
+                                color: Color(0xFFE87722),
                                 size: 20,
                               ),
                               const SizedBox(width: 12),
@@ -469,7 +469,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                 children: [
                                   const Icon(
                                     Icons.info_outline,
-                                    color: Color(0xFFC4620A),
+                                    color: Color(0xFFE87722),
                                     size: 20,
                                   ),
                                   const SizedBox(width: 12),
@@ -482,7 +482,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                           style: GoogleFonts.montserrat(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
-                                            color: const Color(0xFF3B1A08),
+                                            color: const Color(0xFF3D1800),
                                           ),
                                         ),
                                         const SizedBox(height: 4),
@@ -512,7 +512,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                               OutlinedButton(
                                 onPressed: () => provider.loadCourseDetail(widget.courseId),
                                 style: OutlinedButton.styleFrom(
-                                  foregroundColor: const Color(0xFFC4620A),
+                                  foregroundColor: const Color(0xFFE87722),
                                   side: const BorderSide(
                                     color: Color(0xFFE8D5C8),
                                   ),
@@ -545,7 +545,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                             children: [
                               const Icon(
                                 Icons.menu_book_outlined,
-                                color: Color(0xFFC4620A),
+                                color: Color(0xFFE87722),
                                 size: 20,
                               ),
                               const SizedBox(width: 12),
@@ -587,7 +587,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                               style: GoogleFonts.montserrat(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
-                                color: const Color(0xFF3B1A08),
+                                color: const Color(0xFF3D1800),
                               ),
                             ),
                             TextButton(
@@ -598,7 +598,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
-                                  color: const Color(0xFFC4620A),
+                                  color: const Color(0xFFE87722),
                                 ),
                               ),
                             ),
@@ -638,7 +638,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
             ),
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2E7D32),
+            backgroundColor: const Color(0xFFE87722),
             foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 52),
             shape: RoundedRectangleBorder(
@@ -655,7 +655,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
         width: double.infinity,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFC4620A),
+            backgroundColor: const Color(0xFFE87722),
             foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 52),
             shape: RoundedRectangleBorder(
@@ -695,7 +695,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFC4620A),
+          backgroundColor: const Color(0xFFE87722),
           foregroundColor: Colors.white,
           minimumSize: const Size(double.infinity, 52),
           shape: RoundedRectangleBorder(
@@ -729,7 +729,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
         style: GoogleFonts.montserrat(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: const Color(0xFF3B1A08),
+          color: const Color(0xFF3D1800),
         ),
       ),
       subtitle: Text(
@@ -739,7 +739,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
           color: const Color(0xFF9E8070),
         ),
       ),
-      iconColor: const Color(0xFFC4620A),
+      iconColor: const Color(0xFFE87722),
       collapsedIconColor: const Color(0xFF9E8070),
       children: section.lessons
           .map(
@@ -751,7 +751,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                 height: 36,
                 decoration: BoxDecoration(
                   color: lesson.isRead
-                      ? const Color(0xFF2E7D32).withValues(alpha: 0.1)
+                      ? const Color(0xFFE87722).withValues(alpha: 0.1)
                       : const Color(0xFFF5E6D8),
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -760,8 +760,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       ? Icons.check_circle
                       : Icons.play_circle_outline,
                   color: lesson.isRead
-                      ? const Color(0xFF2E7D32)
-                      : const Color(0xFFC4620A),
+                      ? const Color(0xFFE87722)
+                      : const Color(0xFFE87722),
                   size: 20,
                 ),
               ),
@@ -769,7 +769,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                 lesson.title,
                 style: GoogleFonts.montserrat(
                   fontSize: 13,
-                  color: const Color(0xFF3B1A08),
+                  color: const Color(0xFF3D1800),
                 ),
               ),
               trailing: !isEnrolled
@@ -827,7 +827,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       style: GoogleFonts.montserrat(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF3B1A08),
+                        color: const Color(0xFF3D1800),
                       ),
                     ),
                     Row(
@@ -837,7 +837,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           Icons.star,
                           size: 12,
                           color: i < review.rating
-                              ? const Color(0xFFF4B400)
+                              ? const Color(0xFFFFA726)
                               : const Color(0xFFE8D5C8),
                         ),
                       ),
@@ -877,7 +877,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                   const Icon(
                     Icons.reply,
                     size: 14,
-                    color: Color(0xFFC4620A),
+                    color: Color(0xFFE87722),
                   ),
                   const SizedBox(width: 6),
                   Expanded(
@@ -905,7 +905,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       color: const Color(0xFFF5E6D8),
       child: const Icon(
         Icons.person,
-        color: Color(0xFFC4620A),
+        color: Color(0xFFE87722),
         size: 20,
       ),
     );
@@ -922,7 +922,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 14,
             fontWeight: FontWeight.w700,
-            color: const Color(0xFFC4620A),
+            color: const Color(0xFFE87722),
           ),
         ),
       ),

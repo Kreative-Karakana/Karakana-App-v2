@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -75,7 +75,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Ombi limetumwa! Tutakujibu hivi karibuni.'),
-          backgroundColor: Color(0xFF2E7D32),
+          backgroundColor: Color(0xFFE87722),
         ),
       );
       context.pop();
@@ -97,7 +97,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3B1A08),
+        backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
         title: Text(
@@ -111,7 +111,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFFC4620A)),
+              child: CircularProgressIndicator(color: Color(0xFFE87722)),
             )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(20),
@@ -122,7 +122,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFC4620A), Color(0xFFE07030)],
+                        colors: [Color(0xFFE87722), Color(0xFFFFA726)],
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                       ),
@@ -216,7 +216,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                             width: double.infinity,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFC4620A),
+                                backgroundColor: const Color(0xFFE87722),
                                 foregroundColor: Colors.white,
                                 minimumSize: const Size(double.infinity, 54),
                                 shape: RoundedRectangleBorder(
@@ -256,10 +256,10 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
   Widget _buildStatusCard(Map application) {
     final status = application['status'] as String? ?? 'pending';
     final color = status == 'approved'
-        ? const Color(0xFF2E7D32)
+        ? const Color(0xFFE87722)
         : status == 'rejected'
             ? const Color(0xFFB71C1C)
-            : const Color(0xFFE65100);
+            : const Color(0xFFE87722);
     final icon = status == 'approved'
         ? Icons.check_circle_outline
         : status == 'rejected'
@@ -292,7 +292,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF3B1A08),
+              color: const Color(0xFF3D1800),
             ),
           ),
           const SizedBox(height: 8),
@@ -333,7 +333,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(
-            color: Color(0xFFC4620A),
+            color: Color(0xFFE87722),
             width: 1.5,
           ),
         ),

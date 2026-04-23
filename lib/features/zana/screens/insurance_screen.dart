@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class InsuranceScreen extends StatefulWidget {
@@ -15,7 +15,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
   bool _isSubmitting = false;
   bool _isSubmitted = false;
 
-  static const _color = Color(0xFF5A1A1A);
+  static const _color = Color(0xFF3D1800);
   static const _colorLight = Color(0xFFF5E8E8);
 
   @override
@@ -82,7 +82,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                 gradient: LinearGradient(
                   colors: [
                     Color(0xFF3A0A0A),
-                    Color(0xFF5A1A1A),
+                    Color(0xFF3D1800),
                     Color(0xFF8A2A2A),
                   ],
                   begin: Alignment.topLeft,

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/network/api_client.dart';
@@ -64,7 +64,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
             'Maswali yamehifadhiwa!',
             style: GoogleFonts.montserrat(fontSize: 14),
           ),
-          backgroundColor: const Color(0xFF2E7D32),
+          backgroundColor: const Color(0xFFE87722),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
@@ -125,7 +125,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                 style: GoogleFonts.montserrat(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF3B1A08),
+                  color: const Color(0xFF3D1800),
                 ),
               ),
               const SizedBox(height: 16),
@@ -153,19 +153,19 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: selectedCorrect == i
-                                  ? const Color(0xFFC4620A)
+                                  ? const Color(0xFFE87722)
                                   : const Color(0xFFE8D5C8),
                               width: 2,
                             ),
                             color: selectedCorrect == i
-                                ? const Color(0xFFC4620A).withValues(alpha: 0.12)
+                                ? const Color(0xFFE87722).withValues(alpha: 0.12)
                                 : Colors.transparent,
                           ),
                           child: selectedCorrect == i
                               ? const Icon(
                                   Icons.check,
                                   size: 14,
-                                  color: Color(0xFFC4620A),
+                                  color: Color(0xFFE87722),
                                 )
                               : null,
                         ),
@@ -206,7 +206,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFC4620A),
+                    backgroundColor: const Color(0xFFE87722),
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 52),
                     shape: RoundedRectangleBorder(
@@ -238,7 +238,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8F4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF3B1A08),
+        backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
         title: Text(
@@ -298,7 +298,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                         style: GoogleFonts.montserrat(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF3B1A08),
+                          color: const Color(0xFF3D1800),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -322,7 +322,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                     style: GoogleFonts.montserrat(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFFC4620A),
+                      color: const Color(0xFFE87722),
                     ),
                     decoration: InputDecoration(
                       suffix: Text(
@@ -338,7 +338,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: Color(0xFFC4620A)),
+                        borderSide: const BorderSide(color: Color(0xFFE87722)),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -410,7 +410,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                                   width: 28,
                                   height: 28,
                                   decoration: const BoxDecoration(
-                                    color: Color(0xFFC4620A),
+                                    color: Color(0xFFE87722),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Center(
@@ -431,7 +431,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                                     style: GoogleFonts.montserrat(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF3B1A08),
+                                      color: const Color(0xFF3D1800),
                                     ),
                                   ),
                                 ),
@@ -461,7 +461,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                                           decoration: BoxDecoration(
                                             color: e.key ==
                                                     (q['correct'] as int? ?? 0)
-                                                ? const Color(0xFF2E7D32)
+                                                ? const Color(0xFFE87722)
                                                 : const Color(0xFFF5E6D8),
                                             shape: BoxShape.circle,
                                           ),
@@ -515,7 +515,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFC4620A),
+                  backgroundColor: const Color(0xFFE87722),
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 52),
                   shape: RoundedRectangleBorder(

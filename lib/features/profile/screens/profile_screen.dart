@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+﻿import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -123,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SliverAppBar(
                 expandedHeight: _expandedHeight,
                 pinned: true,
-                backgroundColor: const Color(0xFF3B1A08),
+                backgroundColor: const Color(0xFF3D1800),
                 title: AnimatedBuilder(
                   animation: _scroll,
                   builder: (context, _) {
@@ -157,7 +157,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   background: Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xFF2A0F04), Color(0xFF3B1A08), Color(0xFF6B2E0A)],
+                        colors: [Color(0xFF2A0F04), Color(0xFF3D1800), Color(0xFF7B3A10)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -184,7 +184,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             height: 130,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: const Color(0xFFC4620A).withValues(alpha: 0.15),
+                              color: const Color(0xFFE87722).withValues(alpha: 0.15),
                             ),
                           ),
                         ),
@@ -251,7 +251,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFC4620A).withValues(alpha: 0.08),
+                          color: const Color(0xFFE87722).withValues(alpha: 0.08),
                           blurRadius: 20,
                           offset: const Offset(0, 4),
                         ),
@@ -263,7 +263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: const Color(0xFFC4620A),
+                              color: const Color(0xFFE87722),
                               width: 2.5,
                             ),
                             boxShadow: [
@@ -314,10 +314,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFC4620A).withValues(alpha: 0.1),
+                                  color: const Color(0xFFE87722).withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: const Color(0xFFC4620A).withValues(alpha: 0.4),
+                                    color: const Color(0xFFE87722).withValues(alpha: 0.4),
                                   ),
                                 ),
                                 child: Text(
@@ -325,7 +325,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   style: GoogleFonts.montserrat(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
-                                    color: const Color(0xFFC4620A),
+                                    color: const Color(0xFFE87722),
                                   ),
                                 ),
                               ),
@@ -347,7 +347,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         [
                           _buildMenuItem(
                             Icons.school_outlined,
-                            const Color(0xFF2E7D32),
+                            const Color(0xFFE87722),
                             'Kozi Zangu',
                             subtitle: 'Kozi ulizojiandikisha',
                             onTap: () => context.push('/my-courses'),
@@ -366,13 +366,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         [
                           _buildMenuItem(
                             Icons.person_outlined,
-                            const Color(0xFF1A2E5A),
+                            const Color(0xFF3D1800),
                             'Hariri Wasifu',
                             onTap: () => context.push('/profile/edit'),
                           ),
                           _buildMenuItem(
                             Icons.payment_outlined,
-                            const Color(0xFF2E7D32),
+                            const Color(0xFFE87722),
                             'Historia ya Malipo',
                             onTap: () => context.push('/payment/history'),
                           ),
@@ -391,19 +391,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         [
                           _buildMenuItem(
                             Icons.headset_mic_outlined,
-                            const Color(0xFFC4620A),
+                            const Color(0xFFE87722),
                             'Msaada',
                             onTap: () => context.push('/support'),
                           ),
                           _buildMenuItem(
                             Icons.notifications_outlined,
-                            const Color(0xFFE65100),
+                            const Color(0xFFE87722),
                             'Arifa',
                             onTap: () => context.push('/notifications'),
                           ),
                           _buildMenuItem(
                             Icons.gavel_outlined,
-                            const Color(0xFF1A2E5A),
+                            const Color(0xFF3D1800),
                             'Masharti na Vigezo',
                             onTap: () => context.push('/terms'),
                           ),
@@ -416,13 +416,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           [
                             _buildMenuItem(
                               Icons.dashboard_outlined,
-                              const Color(0xFF3B1A08),
+                              const Color(0xFF3D1800),
                               'Dashibodi ya Mwalimu',
                               onTap: () => context.push('/trainer/dashboard'),
                             ),
                             _buildMenuItem(
                               Icons.add_box_outlined,
-                              const Color(0xFFC4620A),
+                              const Color(0xFFE87722),
                               'Unda Kozi Mpya',
                               onTap: () => context.push('/trainer/course-builder'),
                             ),
@@ -436,7 +436,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
-                                colors: [Color(0xFFC4620A), Color(0xFFE07030)],
+                                colors: [Color(0xFFE87722), Color(0xFFFFA726)],
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
                               ),
@@ -602,7 +602,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       width: 88,
       height: 88,
-      color: const Color(0xFFC4620A),
+      color: const Color(0xFFE87722),
       child: Center(
         child: Text(
           initial,
@@ -687,7 +687,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         label,
         style: GoogleFonts.montserrat(
           fontSize: 14,
-          color: const Color(0xFF3B1A08),
+          color: const Color(0xFF3D1800),
         ),
       ),
       subtitle: subtitle != null
