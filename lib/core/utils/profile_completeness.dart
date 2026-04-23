@@ -30,7 +30,7 @@ Future<void> checkAndPromptMastercard(BuildContext context) async {
         SnackBar(
           content: Text(
             'Tafadhali jaza taarifa za fomu ifuatayo.',
-            style: GoogleFonts.inter(color: Colors.white),
+            style: GoogleFonts.montserrat(color: Colors.white),
           ),
           backgroundColor: AppColors.primary,
           duration: const Duration(milliseconds: 3500),

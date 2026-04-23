@@ -69,7 +69,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         SnackBar(
           content: Text(
             'Jaza jina na maelezo ya kozi.',
-            style: GoogleFonts.inter(fontSize: 14),
+            style: GoogleFonts.montserrat(fontSize: 14),
           ),
           backgroundColor: const Color(0xFFB00020),
           behavior: SnackBarBehavior.floating,
@@ -99,7 +99,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         SnackBar(
           content: Text(
             'Kozi imehifadhiwa! Itaonekana kwenye dashibodi yako.',
-            style: GoogleFonts.inter(fontSize: 14),
+            style: GoogleFonts.montserrat(fontSize: 14),
           ),
           backgroundColor: const Color(0xFF2E7D32),
           behavior: SnackBarBehavior.floating,
@@ -114,7 +114,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         SnackBar(
           content: Text(
             ApiClient().parseError(e),
-            style: GoogleFonts.inter(fontSize: 14),
+            style: GoogleFonts.montserrat(fontSize: 14),
           ),
           backgroundColor: const Color(0xFFB00020),
           behavior: SnackBarBehavior.floating,
@@ -139,7 +139,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Unda Kozi Mpya',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -176,7 +176,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                                       color: Colors.white, size: 16)
                                   : Text(
                                       '${i + 1}',
-                                      style: GoogleFonts.poppins(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w700,
                                         color: i <= _currentStep
@@ -189,7 +189,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                           const SizedBox(height: 4),
                           Text(
                             labels[i],
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 9,
                               color: i <= _currentStep
                                   ? const Color(0xFFC4620A)
@@ -249,7 +249,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                       ),
                       child: Text(
                         'Nyuma',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF9E8070),
                         ),
@@ -268,7 +268,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                                   SnackBar(
                                     content: Text(
                                       'Jaza jina na maelezo ya kozi.',
-                                      style: GoogleFonts.inter(fontSize: 14),
+                                      style: GoogleFonts.montserrat(fontSize: 14),
                                     ),
                                     backgroundColor: const Color(0xFFB00020),
                                     behavior: SnackBarBehavior.floating,
@@ -303,7 +303,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                           )
                         : Text(
                             _currentStep < 3 ? 'Endelea' : 'Chapisha Kozi',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.montserrat(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                             ),
@@ -350,7 +350,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           if (_categories.isNotEmpty) ...[
             Text(
               'Kategoria',
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.montserrat(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF3B1A08),
@@ -363,7 +363,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                   .map((c) => DropdownMenuItem(
                         value: c['id'].toString(),
                         child: Text(c['name'] as String? ?? '',
-                            style: GoogleFonts.inter(fontSize: 14)),
+                            style: GoogleFonts.montserrat(fontSize: 14)),
                       ))
                   .toList(),
               onChanged: (v) => setState(() => _selectedCategory = v ?? ''),
@@ -388,7 +388,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                   children: [
                     Text(
                       'Kiwango',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.montserrat(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF3B1A08),
@@ -401,7 +401,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                           .map((l) => DropdownMenuItem(
                                 value: l.$1,
                                 child: Text(l.$2,
-                                    style: GoogleFonts.inter(fontSize: 14)),
+                                    style: GoogleFonts.montserrat(fontSize: 14)),
                               ))
                           .toList(),
                       onChanged: (v) =>
@@ -426,7 +426,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         const SizedBox(height: 8),
         Text(
           'Sehemu na masomo yanaweza kuongezwa baada ya kozi kuchapishwa kutoka kwenye dashibodi.',
-          style: GoogleFonts.inter(
+          style: GoogleFonts.montserrat(
             fontSize: 13,
             color: const Color(0xFF9E8070),
             height: 1.5,
@@ -464,7 +464,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         const SizedBox(height: 8),
         Text(
           'Maswali yanaweza kuongezwa baada ya kozi kuchapishwa.',
-          style: GoogleFonts.inter(
+          style: GoogleFonts.montserrat(
             fontSize: 13,
             color: const Color(0xFF9E8070),
             height: 1.5,
@@ -536,7 +536,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                   const SizedBox(width: 8),
                   Text(
                     'Baada ya Kuchapisha',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF3B1A08),
@@ -547,7 +547,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               const SizedBox(height: 8),
               Text(
                 'Kozi itahifadhiwa kama rasimu. Unaweza kuongeza sehemu, masomo, na maswali kutoka dashibodi kabla ya kuiruhusu wanafunzi kuisajili.',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.montserrat(
                   fontSize: 13,
                   color: const Color(0xFF9E8070),
                   height: 1.5,
@@ -580,7 +580,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         underline: const SizedBox(),
         items: items,
         onChanged: onChanged,
-        style: GoogleFonts.inter(fontSize: 14, color: const Color(0xFF3B1A08)),
+        style: GoogleFonts.montserrat(fontSize: 14, color: const Color(0xFF3B1A08)),
         dropdownColor: Colors.white,
         borderRadius: BorderRadius.circular(14),
       ),
@@ -589,7 +589,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
 
   Widget _sectionTitle(String title) => Text(
         title,
-        style: GoogleFonts.poppins(
+        style: GoogleFonts.montserrat(
           fontSize: 17,
           fontWeight: FontWeight.w700,
           color: const Color(0xFF3B1A08),
@@ -662,7 +662,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.montserrat(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF3B1A08),
@@ -671,7 +671,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: 12,
                     color: const Color(0xFF9E8070),
                   ),
@@ -707,7 +707,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.montserrat(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF3B1A08),
@@ -716,7 +716,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 const SizedBox(height: 4),
                 Text(
                   body,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: 12,
                     color: const Color(0xFF5C3D2E),
                     height: 1.6,
@@ -744,7 +744,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.montserrat(
               fontSize: 13,
               color: const Color(0xFF9E8070),
             ),
@@ -753,7 +753,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
             child: Text(
               value,
               textAlign: TextAlign.end,
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.montserrat(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF3B1A08),

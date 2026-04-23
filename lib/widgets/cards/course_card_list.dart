@@ -99,7 +99,7 @@ class CourseListCard extends StatelessWidget {
                           ),
                           child: Text(
                             course.formattedLevel,
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 9,
                               fontWeight: FontWeight.w600,
                               color: AppColors.primary,
@@ -109,7 +109,7 @@ class CourseListCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           course.title,
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.montserrat(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary,
@@ -120,7 +120,7 @@ class CourseListCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           course.trainerName,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 11,
                             color: AppColors.textTertiary,
                           ),
@@ -138,7 +138,7 @@ class CourseListCard extends StatelessWidget {
                             const SizedBox(width: 2),
                             Text(
                               course.averageRating.toStringAsFixed(1),
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.textSecondary,
@@ -147,7 +147,7 @@ class CourseListCard extends StatelessWidget {
                             const SizedBox(width: 8),
                             Text(
                               course.formattedPrice,
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
                                 color: course.isFree

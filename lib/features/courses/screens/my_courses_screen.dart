@@ -50,7 +50,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Kozi Zangu',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -120,7 +120,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                                       title,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.poppins(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: const Color(0xFF3B1A08),
@@ -129,7 +129,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                                     const SizedBox(height: 4),
                                     Text(
                                       trainerName,
-                                      style: GoogleFonts.inter(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 12,
                                         color: const Color(0xFF9E8070),
                                       ),
@@ -149,7 +149,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                                           ),
                                           child: Text(
                                             'Imeandikishwa',
-                                            style: GoogleFonts.inter(
+                                            style: GoogleFonts.montserrat(
                                               fontSize: 10,
                                               fontWeight: FontWeight.w700,
                                               color: Colors.white,
@@ -199,7 +199,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
           const SizedBox(height: 20),
           Text(
             'Hujajiunga Kozi Yoyote',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF1A0A00),
@@ -208,7 +208,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
           const SizedBox(height: 8),
           Text(
             'Tafuta kozi na uanze kujifunza.',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.montserrat(
               fontSize: 14,
               color: const Color(0xFF9E8070),
             ),
@@ -227,7 +227,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
             ),
             child: Text(
               'Tafuta Kozi',
-              style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+              style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
             ),
           ),
         ],

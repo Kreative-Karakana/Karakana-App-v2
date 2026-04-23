@@ -102,7 +102,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 'Dashibodi',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.montserrat(
                   fontSize: 17,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
@@ -129,7 +129,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                       children: [
                         Text(
                           'Dashibodi ya Mwalimu',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 13,
                             color: Colors.white.withValues(alpha: 0.7),
                           ),
@@ -138,7 +138,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                         Consumer<AuthProvider>(
                           builder: (_, auth, __) => Text(
                             'Habari, ${auth.userFullName}! 👋',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.montserrat(
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
@@ -242,7 +242,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                 children: [
                   Text(
                     'Kozi Zangu',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF1A0A00),
@@ -257,7 +257,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                     ),
                     label: Text(
                       'Ongeza',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFFC4620A),
@@ -291,7 +291,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                     const SizedBox(height: 16),
                     Text(
                       'Huna Kozi Bado',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.montserrat(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF3B1A08),
@@ -300,7 +300,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                     const SizedBox(height: 8),
                     Text(
                       'Unda kozi yako ya kwanza leo!',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 14,
                         color: const Color(0xFF9E8070),
                       ),
@@ -317,7 +317,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                       ),
                       child: Text(
                         'Unda Kozi',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -350,7 +350,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
         const SizedBox(height: 4),
         Text(
           value,
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: Colors.white,
@@ -358,7 +358,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
         ),
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.montserrat(
             fontSize: 11,
             color: Colors.white.withValues(alpha: 0.6),
           ),
@@ -414,7 +414,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                 ),
                 child: Text(
                   trend,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
                     color: trendUp
@@ -428,7 +428,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
           const SizedBox(height: 12),
           Text(
             value,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.montserrat(
               fontSize: 22,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF3B1A08),
@@ -437,7 +437,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
           const SizedBox(height: 4),
           Text(
             title,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.montserrat(
               fontSize: 12,
               color: const Color(0xFF9E8070),
             ),
@@ -478,7 +478,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                   title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.montserrat(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF3B1A08),
@@ -502,7 +502,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                 ),
                 child: Text(
                   isPublished ? 'Imechapishwa' : 'Draft',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     color: isPublished
@@ -535,7 +535,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                   ),
                   child: Text(
                     'Wanafunzi',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF9E8070),
                     ),
@@ -555,7 +555,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
                   ),
                   child: Text(
                     'Hariri',
-                    style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                    style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -574,7 +574,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen> {
         const SizedBox(width: 4),
         Text(
           label,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.montserrat(
             fontSize: 12,
             color: const Color(0xFF9E8070),
           ),

@@ -33,7 +33,7 @@ class PaymentSuccessScreen extends StatelessWidget {
               Text(
                 'Malipo Yamefanikiwa!',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.montserrat(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
                   color: const Color(0xFF3B1A08),
@@ -43,7 +43,7 @@ class PaymentSuccessScreen extends StatelessWidget {
               Text(
                 'Umeingia kwenye kozi yako. Anza kujifunza sasa hivi!',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.montserrat(
                   fontSize: 15,
                   color: const Color(0xFF9E8070),
                   height: 1.5,
@@ -65,7 +65,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Hali',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 13,
                             color: const Color(0xFF9E8070),
                           ),
@@ -81,7 +81,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                           ),
                           child: Text(
                             'Imefaulu',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
@@ -96,14 +96,14 @@ class PaymentSuccessScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Tarehe',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 13,
                             color: const Color(0xFF9E8070),
                           ),
                         ),
                         Text(
                           DateFormat('dd MMM yyyy').format(DateTime.now()),
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF3B1A08),
@@ -121,7 +121,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                   icon: const Icon(Icons.play_arrow_rounded),
                   label: Text(
                     'Anza Kujifunza',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -142,7 +142,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                 onPressed: () => context.go('/home'),
                 child: Text(
                   'Rudi Nyumbani',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: 14,
                     color: const Color(0xFF9E8070),
                   ),

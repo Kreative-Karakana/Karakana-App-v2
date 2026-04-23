@@ -122,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             errorBuilder: (_, __, ___) => Center(
                               child: Text(
                                 'K',
-                                style: GoogleFonts.poppins(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,
                                   color: AppColors.primary,
@@ -135,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(width: 10),
                       Text(
                         'Karakana',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
@@ -186,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       _getFirstName(auth).isNotEmpty
                                           ? _getFirstName(auth)[0].toUpperCase()
                                           : 'K',
-                                      style: GoogleFonts.poppins(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
                                         color: Colors.white,
@@ -267,7 +267,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     const SizedBox(width: 6),
                                     Text(
                                       _getGreeting(),
-                                      style: GoogleFonts.inter(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                         color: Colors.white.withValues(alpha: 0.55),
@@ -280,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 // ── Name ──
                                 Text(
                                   _getFirstName(auth),
-                                  style: GoogleFonts.poppins(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 30,
                                     fontWeight: FontWeight.w800,
                                     color: Colors.white,
@@ -294,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 // ── Tagline ──
                                 Text(
                                   _getTagline(),
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 12,
                                     color: Colors.white.withValues(alpha: 0.42),
                                     letterSpacing: 0.1,
@@ -326,7 +326,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         Expanded(
                                           child: Text(
                                             'Tafuta kozi, mada, mwalimu...',
-                                            style: GoogleFonts.inter(
+                                            style: GoogleFonts.montserrat(
                                               fontSize: 13,
                                               color: Colors.white.withValues(alpha: 0.5),
                                             ),
@@ -399,7 +399,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     children: [
                                       Text(
                                         'ZANA',
-                                        style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white),
+                                        style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white),
                                       ),
                                       const SizedBox(width: 8),
                                       Container(
@@ -407,7 +407,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(999)),
                                         child: Text(
                                           'MPYA',
-                                          style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+                                          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
                                         ),
                                       ),
                                     ],
@@ -415,7 +415,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   const SizedBox(height: 6),
                                   Text(
                                     'POS, biashara, bima, na huduma zinazokuja hivi karibuni kwa mjasiriamali wa Tanzania.',
-                                    style: GoogleFonts.inter(fontSize: 13, height: 1.45, color: Colors.white.withValues(alpha: 0.82)),
+                                    style: GoogleFonts.montserrat(fontSize: 13, height: 1.45, color: Colors.white.withValues(alpha: 0.82)),
                                   ),
                                 ],
                               ),
@@ -480,12 +480,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   Text(
                                     'Fundisha Ulichonacho',
-                                    style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.primaryDark),
+                                    style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.primaryDark),
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
                                     'Geuza uzoefu wako wa biashara kuwa kozi na ufikie wanafunzi wengi zaidi kupitia Karakana.',
-                                    style: GoogleFonts.inter(fontSize: 13, height: 1.45, color: AppColors.textTertiary),
+                                    style: GoogleFonts.montserrat(fontSize: 13, height: 1.45, color: AppColors.textTertiary),
                                   ),
                                   const SizedBox(height: 14),
                                   FilledButton(
@@ -495,7 +495,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       foregroundColor: Colors.white,
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                                     ),
-                                    child: Text('Jiunge Kama Mwalimu', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+                                    child: Text('Jiunge Kama Mwalimu', style: GoogleFonts.montserrat(fontWeight: FontWeight.w600)),
                                   ),
                                 ],
                               ),
@@ -560,7 +560,7 @@ class _HomeScreenState extends State<HomeScreen> {
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: AppColors.border),
         ),
-        child: Text(text, textAlign: TextAlign.center, style: GoogleFonts.inter(fontSize: 13, color: AppColors.textTertiary)),
+        child: Text(text, textAlign: TextAlign.center, style: GoogleFonts.montserrat(fontSize: 13, color: AppColors.textTertiary)),
       ),
     );
   }
@@ -600,7 +600,7 @@ class _SectionHeader extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.montserrat(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
@@ -609,7 +609,7 @@ class _SectionHeader extends StatelessWidget {
               if (subtitle != null)
                 Text(
                   subtitle!,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: 12,
                     color: AppColors.textTertiary,
                   ),
@@ -621,7 +621,7 @@ class _SectionHeader extends StatelessWidget {
               onTap: onTapAll,
               child: Text(
                 'Tazama Zote →',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.montserrat(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: AppColors.primary,
@@ -735,7 +735,7 @@ class _BannerCarouselState extends State<_BannerCarousel> {
         child: title != null
             ? Text(
                 title,
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.montserrat(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF3B1A08),

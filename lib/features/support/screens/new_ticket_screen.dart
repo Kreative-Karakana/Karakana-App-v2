@@ -43,7 +43,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Tiketi Mpya',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -59,7 +59,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
             children: [
               Text(
                 'Aina ya Tatizo',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.montserrat(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF3B1A08),
@@ -103,7 +103,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                           const SizedBox(width: 6),
                           Text(
                             type[1] as String,
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: isSelected
@@ -188,7 +188,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                         )
                       : Text(
                           'Tuma Tiketi',
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.montserrat(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),

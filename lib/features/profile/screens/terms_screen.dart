@@ -23,7 +23,7 @@ class _TermsScreenState extends State<TermsScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           isSw ? 'Masharti na Vigezo' : 'Terms & Conditions',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -37,7 +37,7 @@ class _TermsScreenState extends State<TermsScreen> {
                 value: _lang,
                 dropdownColor: const Color(0xFF3B1A08),
                 icon: const Icon(Icons.language, color: Colors.white, size: 18),
-                style: GoogleFonts.inter(color: Colors.white, fontSize: 13),
+                style: GoogleFonts.montserrat(color: Colors.white, fontSize: 13),
                 items: const [
                   DropdownMenuItem(value: 'sw', child: Text('Kiswahili')),
                   DropdownMenuItem(value: 'en', child: Text('English')),
@@ -62,7 +62,7 @@ class _TermsScreenState extends State<TermsScreen> {
                   Text(
                     isSw ? 'Masharti na Vigezo' : 'Terms and Conditions',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 22,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF1A0A00),
@@ -71,7 +71,7 @@ class _TermsScreenState extends State<TermsScreen> {
                   const SizedBox(height: 4),
                   Text(
                     'Kreative Karakana',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFFC4620A),
@@ -82,7 +82,7 @@ class _TermsScreenState extends State<TermsScreen> {
                     isSw
                         ? 'Ilisasishwa: 12 Agosti 2025'
                         : 'Last Updated: 12 August 2025',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: 13,
                       color: const Color(0xFF9E8070),
                     ),
@@ -231,7 +231,7 @@ class _TermsScreenState extends State<TermsScreen> {
               child: Text(
                 '©️ 2025 Kreative Karakana. All Rights Reserved.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.montserrat(
                   fontSize: 12,
                   color: const Color(0xFF9E8070),
                 ),
@@ -246,7 +246,7 @@ class _TermsScreenState extends State<TermsScreen> {
   Widget _sectionTitle(String text) {
     return Text(
       text,
-      style: GoogleFonts.poppins(
+      style: GoogleFonts.montserrat(
         fontSize: 16,
         fontWeight: FontWeight.w700,
         color: const Color(0xFF3B1A08),
@@ -257,7 +257,7 @@ class _TermsScreenState extends State<TermsScreen> {
   Widget _body(String text) {
     return Text(
       text,
-      style: GoogleFonts.inter(
+      style: GoogleFonts.montserrat(
         fontSize: 14,
         color: const Color(0xFF3B1A08),
         height: 1.6,

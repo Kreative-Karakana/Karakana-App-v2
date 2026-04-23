@@ -39,19 +39,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return TextFormField(
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
-      style: GoogleFonts.inter(fontSize: compact ? 13 : 14, color: Colors.white),
+      style: GoogleFonts.montserrat(fontSize: compact ? 13 : 14, color: Colors.white),
       cursorColor: AppColors.primaryMid,
       onChanged: (_) => context.read<AuthProvider>().clearError(),
       validator: (v) =>
           v!.isEmpty || !v.contains('@') ? 'Barua pepe si sahihi' : null,
       decoration: InputDecoration(
         labelText: 'Barua Pepe',
-        labelStyle: GoogleFonts.inter(
+        labelStyle: GoogleFonts.montserrat(
           fontSize: compact ? 11.5 : 12,
           color: AppColors.textTertiary,
         ),
         hintText: 'jina@mfano.com',
-        hintStyle: GoogleFonts.inter(
+        hintStyle: GoogleFonts.montserrat(
           fontSize: compact ? 12.5 : 13,
           color: AppColors.textTertiary.withValues(alpha: 0.55),
         ),
@@ -151,7 +151,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   children: [
                                     Text(
                                       'Badili Neno la Siri',
-                                      style: GoogleFonts.poppins(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: compact ? 27 : 31,
                                         fontWeight: FontWeight.w700,
                                         color: Colors.white,
@@ -161,7 +161,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     const SizedBox(height: 8),
                                     Text(
                                       'Weka barua pepe yako na tutakutumia kiungo cha kurejesha akaunti yako.',
-                                      style: GoogleFonts.inter(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: compact ? 12.5 : 13.5,
                                         color: AppColors.primaryMid,
                                         height: 1.35,
@@ -186,7 +186,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                         ),
                                         child: Text(
                                           authProvider.errorMessage!,
-                                          style: GoogleFonts.inter(
+                                          style: GoogleFonts.montserrat(
                                             fontSize: 12.5,
                                             color: Colors.red.shade200,
                                           ),
@@ -212,7 +212,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 children: [
                                   Text(
                                     'Barua Pepe Imetumwa',
-                                    style: GoogleFonts.poppins(
+                                    style: GoogleFonts.montserrat(
                                       fontSize: compact ? 27 : 31,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white,
@@ -222,7 +222,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   const SizedBox(height: 8),
                                   Text(
                                     'Angalia kisanduku chako cha barua pepe na ufuate maelekezo ya kubadili neno la siri.',
-                                    style: GoogleFonts.inter(
+                                    style: GoogleFonts.montserrat(
                                       fontSize: compact ? 12.5 : 13.5,
                                       color: AppColors.primaryMid,
                                       height: 1.35,
@@ -253,7 +253,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                         Expanded(
                                           child: Text(
                                             'Kiungo cha kurejesha kimepelekwa kwenye barua pepe yako.',
-                                            style: GoogleFonts.inter(
+                                            style: GoogleFonts.montserrat(
                                               fontSize: compact ? 12 : 13,
                                               color: Colors.white,
                                               height: 1.35,
@@ -301,7 +301,7 @@ class _BrandRow extends StatelessWidget {
           const SizedBox(width: 12),
           Text(
             'Karakana',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.montserrat(
               fontSize: 24,
               fontWeight: FontWeight.w700,
               color: Colors.white,

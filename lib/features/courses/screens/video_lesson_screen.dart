@@ -80,7 +80,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
         title: Text(
           _lesson?['title'] ?? 'Somo',
           maxLines: 1,
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -97,7 +97,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
               onPressed: _markComplete,
               child: Text(
                 'Kamilisha',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.montserrat(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFFC4620A),
@@ -132,7 +132,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                       const SizedBox(height: 12),
                       Text(
                         'Somo la Maandishi',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 14,
                           color: Colors.white.withValues(alpha: 0.6),
                         ),
@@ -171,7 +171,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                     const SizedBox(height: 16),
                     Text(
                       _lesson?['title'] ?? '',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.montserrat(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF3B1A08),
@@ -182,7 +182,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                         (_lesson!['content'] as String).isNotEmpty)
                       Text(
                         _lesson!['content'],
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 14,
                           color: const Color(0xFF5C3D2E),
                           height: 1.6,
@@ -196,7 +196,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                           icon: const Icon(Icons.check_rounded),
                           label: Text(
                             'Kamilisha Somo',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.montserrat(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                             ),
@@ -229,7 +229,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                             const SizedBox(width: 12),
                             Text(
                               'Umekamilisha somo hili!',
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFF2E7D32),
@@ -379,7 +379,7 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
                 const SizedBox(height: 12),
                 Text(
                   'Hitilafu ya kupakia video',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: 13,
                     color: Colors.white.withValues(alpha: 0.6),
                   ),
@@ -392,7 +392,7 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
                   },
                   child: Text(
                     'Jaribu tena',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       color: const Color(0xFFC4620A),
                       fontWeight: FontWeight.w600,
                     ),

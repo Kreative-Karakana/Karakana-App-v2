@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
 
@@ -76,7 +77,9 @@ class AppTheme {
             textStyle: AppTextStyles.buttonLarge,
           ),
         ),
-        textTheme: TextTheme(
+        textTheme: GoogleFonts.montserratTextTheme(
+          ThemeData.light().textTheme,
+        ).copyWith(
           displayLarge: AppTextStyles.displayLarge,
           displayMedium: AppTextStyles.displayMedium,
           headlineLarge: AppTextStyles.h1,

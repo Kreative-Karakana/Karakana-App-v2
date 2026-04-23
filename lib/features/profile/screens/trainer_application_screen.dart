@@ -102,7 +102,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Omba Kuwa Mwalimu',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -136,7 +136,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                             children: [
                               Text(
                                 'Kuwa Mwalimu Karakana',
-                                style: GoogleFonts.poppins(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white,
@@ -145,7 +145,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                               const SizedBox(height: 8),
                               Text(
                                 'Shiriki ujuzi wako na upate kipato kwa kufundisha wengine.',
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 13,
                                   color: Colors.white.withValues(alpha: 0.85),
                                   height: 1.4,
@@ -236,7 +236,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                     )
                                   : Text(
                                       'Tuma Ombi',
-                                      style: GoogleFonts.poppins(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -289,7 +289,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
           const SizedBox(height: 12),
           Text(
             title,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF3B1A08),
@@ -299,7 +299,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.montserrat(
               fontSize: 14,
               color: const Color(0xFF9E8070),
               height: 1.4,

@@ -131,7 +131,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
                           errorBuilder: (_, __, ___) => Center(
                             child: Text(
                               'K',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 36,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.primary,
@@ -158,7 +158,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
 
                   Text(
                     'Ingia Kwa Usalama',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 26,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -170,7 +170,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
 
                   Text(
                     'Tumia alama yako ya vidole au uso kuthibitisha utambulisho wako na kuingia salama',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: 14,
                       color: AppColors.textTertiary,
                       height: 1.5,
@@ -189,7 +189,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
                       children: [
                         Text(
                           'Uthibitishaji umeshindwa',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 14,
                             color: Colors.red.shade300,
                           ),
@@ -207,7 +207,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
                           onPressed: () => context.go('/login'),
                           child: Text(
                             'Ingia kwa Nywila',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                               color: AppColors.primaryMid,
@@ -221,7 +221,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
                       onPressed: _authenticate,
                       child: Text(
                         'Gusa kwa kidole',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: AppColors.primaryMid,

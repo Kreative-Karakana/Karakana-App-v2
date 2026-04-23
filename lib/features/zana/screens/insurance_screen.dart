@@ -63,7 +63,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Bima ya Biashara',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -138,7 +138,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                         const SizedBox(height: 16),
                         Text(
                           'Bima ya Biashara',
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.montserrat(
                             fontSize: 26,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -147,7 +147,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                         const SizedBox(height: 6),
                         Text(
                           'Linda biashara yako dhidi ya hatari yoyote',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 13,
                             color: Colors.white.withValues(alpha: 0.8),
                           ),
@@ -167,7 +167,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                           ),
                           child: Text(
                             'INAKAMILISHWA',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
@@ -190,7 +190,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                   // ── Description ───────────────────────────────────────
                   Text(
                     'Kwa Nini Bima?',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF1A0A00),
@@ -199,7 +199,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'Biashara yoyote inaweza kukabiliana na hatari zisizotarajiwa — moto, wizi, magonjwa, au majanga ya asili. Bima inahakikisha hata wakati mgumu haufutu jasho lako la miaka.',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: 14,
                       color: const Color(0xFF5C3D2E),
                       height: 1.6,
@@ -210,7 +210,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                   // ── Products ──────────────────────────────────────────
                   Text(
                     'Aina za Bima',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF1A0A00),
@@ -254,7 +254,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                               children: [
                                 Text(
                                   item[1] as String,
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFF1A0A00),
@@ -263,7 +263,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                 const SizedBox(height: 2),
                                 Text(
                                   item[2] as String,
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 12,
                                     color: const Color(0xFF9E8070),
                                     height: 1.4,
@@ -282,7 +282,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                   // ── How it works ──────────────────────────────────────
                   Text(
                     'Jinsi Inavyofanya Kazi',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF1A0A00),
@@ -304,7 +304,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                           child: Center(
                             child: Text(
                               step[0],
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
@@ -319,7 +319,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                             children: [
                               Text(
                                 step[1],
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                   color: const Color(0xFF1A0A00),
@@ -328,7 +328,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                               const SizedBox(height: 2),
                               Text(
                                 step[2],
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 13,
                                   color: const Color(0xFF9E8070),
                                   height: 1.4,
@@ -347,7 +347,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                   if (!_isSubmitted) ...[
                     Text(
                       'Kupata Bima Mapema',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.montserrat(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF1A0A00),
@@ -356,7 +356,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                     const SizedBox(height: 6),
                     Text(
                       'Jisajili kupata taarifa na bei maalum za awali.',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 14,
                         color: const Color(0xFF9E8070),
                       ),
@@ -461,7 +461,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                     )
                                   : Text(
                                       'Niarifu Ninapozinduliwa',
-                                      style: GoogleFonts.poppins(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -499,7 +499,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                           const SizedBox(height: 16),
                           Text(
                             'Umesajiliwa!',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.montserrat(
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
                               color: _color,
@@ -508,7 +508,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                           const SizedBox(height: 8),
                           Text(
                             'Asante! Tutakuwasiliana nawe mara Bima inapopatikana.',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 14,
                               color: const Color(0xFF5C3D2E),
                               height: 1.5,

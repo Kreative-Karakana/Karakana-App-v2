@@ -66,7 +66,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     Text(
                       provider.errorMessage ?? 'Hatukuweza kupata kozi hii.',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 14,
                         color: AppColors.textSecondary,
                         height: 1.5,
@@ -88,7 +88,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       ),
                       child: Text(
                         'Jaribu tena',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -197,7 +197,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                               ),
                               child: Text(
                                 course.formattedLevel,
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
@@ -217,7 +217,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                 ),
                                 child: Text(
                                   'BURE',
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.white,
@@ -240,7 +240,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     children: [
                       Text(
                         course.title,
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF3B1A08),
@@ -258,7 +258,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           const SizedBox(width: 4),
                           Text(
                             course.averageRating.toStringAsFixed(1),
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.montserrat(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF5C3D2E),
@@ -267,7 +267,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           const SizedBox(width: 4),
                           Text(
                             '(${course.reviewCount} tathmini)',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 13,
                               color: const Color(0xFF9E8070),
                             ),
@@ -281,7 +281,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           const SizedBox(width: 4),
                           Text(
                             '${course.studentCount} wanafunzi',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 13,
                               color: const Color(0xFF9E8070),
                             ),
@@ -308,14 +308,14 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                             children: [
                               Text(
                                 'Mwalimu',
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 11,
                                   color: const Color(0xFF9E8070),
                                 ),
                               ),
                               Text(
                                 course.trainerName,
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                   color: const Color(0xFF3B1A08),
@@ -348,7 +348,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                               children: [
                                 Text(
                                   course.formattedPrice,
-                                  style: GoogleFonts.poppins(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 26,
                                     fontWeight: FontWeight.w700,
                                     color: course.isFree
@@ -359,7 +359,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                 if (!course.isFree)
                                   Text(
                                     '/ kozi mzima',
-                                    style: GoogleFonts.inter(
+                                    style: GoogleFonts.montserrat(
                                       fontSize: 12,
                                       color: const Color(0xFF9E8070),
                                     ),
@@ -374,7 +374,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       const SizedBox(height: 24),
                       Text(
                         'Muhtasari',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF3B1A08),
@@ -383,7 +383,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       const SizedBox(height: 8),
                       Text(
                         course.excerpt,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 14,
                           color: const Color(0xFF5C3D2E),
                           height: 1.6,
@@ -403,7 +403,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         children: [
                           Text(
                             'Mtaala',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.montserrat(
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF3B1A08),
@@ -411,7 +411,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           ),
                           Text(
                             '${provider.sections.length} sehemu',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 13,
                               color: const Color(0xFF9E8070),
                             ),
@@ -441,7 +441,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                               Expanded(
                                 child: Text(
                                   'Jiandikishe ili ufikie mtaala wote',
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 13,
                                     color: const Color(0xFF5C3D2E),
                                   ),
@@ -479,7 +479,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                       children: [
                                         Text(
                                           'Hatukuweza kufungua mtaala sasa hivi',
-                                          style: GoogleFonts.poppins(
+                                          style: GoogleFonts.montserrat(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
                                             color: const Color(0xFF3B1A08),
@@ -488,7 +488,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                         const SizedBox(height: 4),
                                         Text(
                                           provider.sectionsErrorMessage!,
-                                          style: GoogleFonts.inter(
+                                          style: GoogleFonts.montserrat(
                                             fontSize: 12,
                                             color: const Color(0xFF5C3D2E),
                                             height: 1.5,
@@ -497,7 +497,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                         const SizedBox(height: 8),
                                         Text(
                                           'Jaribu kuingia tena au fungua ukurasa huu baada ya ruhusa za kozi kusasishwa.',
-                                          style: GoogleFonts.inter(
+                                          style: GoogleFonts.montserrat(
                                             fontSize: 12,
                                             color: const Color(0xFF9E8070),
                                             height: 1.5,
@@ -522,7 +522,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                 ),
                                 child: Text(
                                   'Jaribu tena',
-                                  style: GoogleFonts.poppins(
+                                  style: GoogleFonts.montserrat(
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -552,7 +552,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                               Expanded(
                                 child: Text(
                                   'Mtaala wa kozi hii bado haujaonekana hapa.',
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 13,
                                     color: const Color(0xFF5C3D2E),
                                   ),
@@ -584,7 +584,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           children: [
                             Text(
                               'Tathmini',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
                                 color: const Color(0xFF3B1A08),
@@ -595,7 +595,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                   context.push('/course/${course.id}/reviews'),
                               child: Text(
                                 'Zote (${course.reviewCount})',
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
                                   color: const Color(0xFFC4620A),
@@ -632,7 +632,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
           icon: const Icon(Icons.play_arrow_rounded),
           label: Text(
             'Endelea Kujifunza',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.montserrat(
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
@@ -682,7 +682,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                 )
               : Text(
                   'Jiandikishe Bure',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.montserrat(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -712,7 +712,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
         ),
         child: Text(
           'Nunua Kozi • ${course.formattedPrice}',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -726,7 +726,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       tilePadding: EdgeInsets.zero,
       title: Text(
         section.title,
-        style: GoogleFonts.poppins(
+        style: GoogleFonts.montserrat(
           fontSize: 14,
           fontWeight: FontWeight.w600,
           color: const Color(0xFF3B1A08),
@@ -734,7 +734,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       ),
       subtitle: Text(
         '${section.lessons.length} masomo',
-        style: GoogleFonts.inter(
+        style: GoogleFonts.montserrat(
           fontSize: 12,
           color: const Color(0xFF9E8070),
         ),
@@ -767,7 +767,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
               ),
               title: Text(
                 lesson.title,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.montserrat(
                   fontSize: 13,
                   color: const Color(0xFF3B1A08),
                 ),
@@ -824,7 +824,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                   children: [
                     Text(
                       review.userName,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF3B1A08),
@@ -847,7 +847,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
               ),
               Text(
                 _formatReviewDate(review.createdAt),
-                style: GoogleFonts.inter(
+                style: GoogleFonts.montserrat(
                   fontSize: 11,
                   color: const Color(0xFF9E8070),
                 ),
@@ -857,7 +857,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
           const SizedBox(height: 8),
           Text(
             review.content,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.montserrat(
               fontSize: 13,
               color: const Color(0xFF5C3D2E),
               height: 1.5,
@@ -883,7 +883,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                   Expanded(
                     child: Text(
                       review.trainerReply!,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 12,
                         color: const Color(0xFF5C3D2E),
                       ),
@@ -919,7 +919,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       child: Center(
         child: Text(
           review.userName.isNotEmpty ? review.userName[0] : 'U',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 14,
             fontWeight: FontWeight.w700,
             color: const Color(0xFFC4620A),

@@ -129,7 +129,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
         body: Center(
           child: Text(
             'Hatukuweza kufungua tiketi hii.',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.montserrat(
               fontSize: 14,
               color: const Color(0xFF9E8070),
             ),
@@ -153,7 +153,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
           children: [
             Text(
               'TKT-${widget.ticketId.toString().padLeft(4, '0')}',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.montserrat(
                 fontSize: 11,
                 color: Colors.white.withValues(alpha: 0.6),
               ),
@@ -162,7 +162,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               subject,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.montserrat(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
@@ -187,7 +187,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   ),
                   child: Text(
                     'Msaada',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFFC4620A),
@@ -211,7 +211,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   ),
                   child: Text(
                     isResolved ? 'Imemalizwa' : 'Wazi',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: isResolved
@@ -229,7 +229,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 ? Center(
                     child: Text(
                       'Hakuna ujumbe bado.',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 14,
                         color: const Color(0xFF9E8070),
                       ),
@@ -318,7 +318,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                         if (isStaff) ...[
                                           Text(
                                             'Msaada wa Karakana',
-                                            style: GoogleFonts.inter(
+                                            style: GoogleFonts.montserrat(
                                               fontSize: 11,
                                               fontWeight: FontWeight.w600,
                                               color: const Color(0xFFC4620A),
@@ -328,7 +328,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                         ],
                                         Text(
                                           msg['message'] as String? ?? '',
-                                          style: GoogleFonts.inter(
+                                          style: GoogleFonts.montserrat(
                                             fontSize: 14,
                                             height: 1.4,
                                             color: isUser
@@ -353,7 +353,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                 ),
                                 child: Text(
                                   ts,
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 10,
                                     color: const Color(0xFFBDA99C),
                                   ),
@@ -377,7 +377,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       maxLines: null,
                       decoration: InputDecoration(
                         hintText: 'Andika ujumbe...',
-                        hintStyle: GoogleFonts.inter(
+                        hintStyle: GoogleFonts.montserrat(
                           fontSize: 14,
                           color: const Color(0xFFBDA99C),
                         ),
@@ -439,7 +439,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               child: Text(
                 'Tiketi hii imefungwa.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.montserrat(
                   fontSize: 13,
                   color: const Color(0xFFBDA99C),
                 ),

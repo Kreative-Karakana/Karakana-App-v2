@@ -102,7 +102,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         maxLength: 1,
-        style: GoogleFonts.poppins(
+        style: GoogleFonts.montserrat(
           fontSize: compact ? 22 : 24,
           fontWeight: FontWeight.w700,
           color: Colors.white,
@@ -192,7 +192,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           children: [
                             Text(
                               'Thibitisha\nBarua Pepe',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.montserrat(
                                 fontSize: compact ? 26 : 30,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
@@ -202,7 +202,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                             SizedBox(height: compact ? 10 : 12),
                             Text(
                               'Weka msimbo wa tarakimu 6 tuliokutumia kwenye:',
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.montserrat(
                                 fontSize: compact ? 12.5 : 13,
                                 color: Colors.white.withValues(alpha: 0.55),
                                 height: 1.4,
@@ -220,7 +220,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                 Flexible(
                                   child: Text(
                                     _email,
-                                    style: GoogleFonts.inter(
+                                    style: GoogleFonts.montserrat(
                                       fontSize: compact ? 12.5 : 13,
                                       fontWeight: FontWeight.w600,
                                       color: AppColors.primaryMid,
@@ -259,7 +259,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                     Expanded(
                                       child: Text(
                                         authProvider.errorMessage!,
-                                        style: GoogleFonts.inter(
+                                        style: GoogleFonts.montserrat(
                                           fontSize: 12,
                                           color: Colors.red.shade200,
                                         ),
@@ -295,7 +295,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                       children: [
                                         Text(
                                           'Hukupokea msimbo? ',
-                                          style: GoogleFonts.inter(
+                                          style: GoogleFonts.montserrat(
                                             fontSize: compact ? 12 : 12.5,
                                             color: Colors.white.withValues(alpha: 0.45),
                                           ),
@@ -304,7 +304,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                           onTap: _handleResend,
                                           child: Text(
                                             'Tuma tena',
-                                            style: GoogleFonts.inter(
+                                            style: GoogleFonts.montserrat(
                                               fontSize: compact ? 12 : 12.5,
                                               fontWeight: FontWeight.w700,
                                               color: AppColors.primaryMid,
@@ -343,7 +343,7 @@ class _BrandRow extends StatelessWidget {
           const SizedBox(width: 12),
           Text(
             'Karakana',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.montserrat(
               fontSize: 24,
               fontWeight: FontWeight.w700,
               color: Colors.white,

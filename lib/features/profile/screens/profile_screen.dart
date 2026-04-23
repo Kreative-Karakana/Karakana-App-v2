@@ -31,25 +31,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (_) => AlertDialog(
         title: Text(
           'Futa Akaunti',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w700),
+          style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
         ),
         content: Text(
           'Je, una uhakika unataka kufuta akaunti yako? Hatua hii haiwezi kutenduliwa na data yako yote itafutwa kabisa.',
-          style: GoogleFonts.inter(),
+          style: GoogleFonts.montserrat(),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
               'Hapana',
-              style: GoogleFonts.inter(color: const Color(0xFF9E8070)),
+              style: GoogleFonts.montserrat(color: const Color(0xFF9E8070)),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
               'Ndio, Futa',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.montserrat(
                 color: const Color(0xFFB71C1C),
                 fontWeight: FontWeight.w600,
               ),
@@ -72,18 +72,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (ctx) => AlertDialog(
           title: Text(
             'Tutakukosa! 💙',
-            style: GoogleFonts.poppins(fontWeight: FontWeight.w700),
+            style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
           ),
           content: Text(
             'Akaunti yako imefutwa. Asante kwa muda wako pamoja nasi — karibu tena wakati wowote!',
-            style: GoogleFonts.inter(),
+            style: GoogleFonts.montserrat(),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
               child: Text(
                 'Kwa heri',
-                style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
               ),
             ),
           ],
@@ -99,7 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SnackBar(
           content: Text(
             'Imeshindikana kufuta akaunti. Jaribu tena.',
-            style: GoogleFonts.inter(color: Colors.white),
+            style: GoogleFonts.montserrat(color: Colors.white),
           ),
           backgroundColor: const Color(0xFFB71C1C),
         ),
@@ -134,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       duration: const Duration(milliseconds: 200),
                       child: Text(
                         'Akaunti',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
@@ -205,7 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               children: [
                                 Text(
                                   'Akaunti',
-                                  style: GoogleFonts.poppins(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 38,
                                     fontWeight: FontWeight.w800,
                                     color: Colors.white,
@@ -215,7 +215,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 const SizedBox(height: 6),
                                 Text(
                                   'Wasifu na Mipangilio Yako',
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 13,
                                     color: Colors.white.withValues(alpha: 0.55),
                                     height: 1.4,
@@ -292,7 +292,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               Text(
                                 userName,
-                                style: GoogleFonts.poppins(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w700,
                                   color: const Color(0xFF1A0A00),
@@ -303,7 +303,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               const SizedBox(height: 2),
                               Text(
                                 userEmail,
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 12,
                                   color: const Color(0xFF9E8070),
                                 ),
@@ -322,7 +322,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 child: Text(
                                   auth.isTrainer ? 'Mwalimu' : 'Mwanafunzi',
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFFC4620A),
@@ -452,7 +452,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     children: [
                                       Text(
                                         'Kuwa Mwalimu',
-                                        style: GoogleFonts.poppins(
+                                        style: GoogleFonts.montserrat(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w700,
                                           color: Colors.white,
@@ -460,7 +460,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                       Text(
                                         'Fundisha na upate kipato',
-                                        style: GoogleFonts.inter(
+                                        style: GoogleFonts.montserrat(
                                           fontSize: 12,
                                           color: Colors.white.withValues(alpha: 0.8),
                                         ),
@@ -484,18 +484,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               builder: (_) => AlertDialog(
                                 title: Text(
                                   'Toka',
-                                  style: GoogleFonts.poppins(fontWeight: FontWeight.w700),
+                                  style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
                                 ),
                                 content: Text(
                                   'Una uhakika unataka kutoka?',
-                                  style: GoogleFonts.inter(),
+                                  style: GoogleFonts.montserrat(),
                                 ),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(context),
                                     child: Text(
                                       'Hapana',
-                                      style: GoogleFonts.inter(color: const Color(0xFF9E8070)),
+                                      style: GoogleFonts.montserrat(color: const Color(0xFF9E8070)),
                                     ),
                                   ),
                                   TextButton(
@@ -506,7 +506,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     },
                                     child: Text(
                                       'Ndiyo, Toka',
-                                      style: GoogleFonts.inter(
+                                      style: GoogleFonts.montserrat(
                                         color: const Color(0xFFB71C1C),
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -519,7 +519,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           icon: const Icon(Icons.logout, color: Color(0xFFB71C1C), size: 20),
                           label: Text(
                             'Toka',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFFB71C1C),
@@ -547,7 +547,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           label: Text(
                             'Futa Akaunti',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
                               color: const Color(0xFF9E8070),
@@ -587,7 +587,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(width: 6),
           Text(
             label,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.montserrat(
               fontSize: 11,
               fontWeight: FontWeight.w500,
               color: Colors.white.withValues(alpha: 0.85),
@@ -606,7 +606,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Center(
         child: Text(
           initial,
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 32,
             fontWeight: FontWeight.w700,
             color: Colors.white,
@@ -637,7 +637,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF9E8070),
@@ -685,7 +685,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       title: Text(
         label,
-        style: GoogleFonts.inter(
+        style: GoogleFonts.montserrat(
           fontSize: 14,
           color: const Color(0xFF3B1A08),
         ),
@@ -693,7 +693,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       subtitle: subtitle != null
           ? Text(
               subtitle,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.montserrat(
                 fontSize: 12,
                 color: const Color(0xFF9E8070),
               ),

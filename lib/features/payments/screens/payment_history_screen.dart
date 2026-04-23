@@ -58,7 +58,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Historia ya Malipo',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -137,7 +137,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                   courseTitle,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFF3B1A08),
@@ -157,7 +157,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                       ),
                                       child: Text(
                                         method.toUpperCase(),
-                                        style: GoogleFonts.inter(
+                                        style: GoogleFonts.montserrat(
                                           fontSize: 9,
                                           fontWeight: FontWeight.w700,
                                           color: const Color(0xFFC4620A),
@@ -167,7 +167,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                     const SizedBox(width: 8),
                                     Text(
                                       formattedDate,
-                                      style: GoogleFonts.inter(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 12,
                                         color: const Color(0xFF9E8070),
                                       ),
@@ -182,7 +182,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                             children: [
                               Text(
                                 _formatPrice(amount),
-                                style: GoogleFonts.poppins(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                   color: const Color(0xFFC4620A),
@@ -202,7 +202,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                 ),
                                 child: Text(
                                   isSuccessful ? 'Imefaulu' : 'Imeshindwa',
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w700,
                                     color: isSuccessful
@@ -234,7 +234,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
           const SizedBox(height: 20),
           Text(
             'Hakuna Historia ya Malipo',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF1A0A00),
@@ -252,7 +252,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
             ),
             child: Text(
               'Tafuta Kozi',
-              style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+              style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
             ),
           ),
         ],

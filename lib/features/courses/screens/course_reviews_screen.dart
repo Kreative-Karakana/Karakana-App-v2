@@ -91,7 +91,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
               const SizedBox(height: 16),
               Text(
                 'Jibu Maoni',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.montserrat(
                   fontSize: 18, fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
                 ),
@@ -99,7 +99,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
               const SizedBox(height: 6),
               Text(
                 'Fikia wanafunzi kwa kujibu maoni yao',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.montserrat(
                   fontSize: 13, color: Colors.grey.shade600,
                 ),
               ),
@@ -161,7 +161,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                             ScaffoldMessenger.of(ctx).showSnackBar(
                               SnackBar(
                                 content: Text('Zoezi limeshindikana. Jaribu tena.',
-                                    style: GoogleFonts.inter(color: Colors.white)),
+                                    style: GoogleFonts.montserrat(color: Colors.white)),
                                 backgroundColor: AppColors.primary,
                               ),
                             );
@@ -174,7 +174,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                           existingReply != null && existingReply.isNotEmpty
                               ? 'Hariri Jibu'
                               : 'Tuma Jibu',
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.montserrat(
                               fontSize: 15, fontWeight: FontWeight.w600),
                         ),
                 ),
@@ -216,14 +216,14 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                               ScaffoldMessenger.of(ctx).showSnackBar(
                                 SnackBar(
                                   content: Text('Zoezi limeshindikana.',
-                                      style: GoogleFonts.inter(color: Colors.white)),
+                                      style: GoogleFonts.montserrat(color: Colors.white)),
                                   backgroundColor: AppColors.primary,
                                 ),
                               );
                             }
                           },
                     child: Text('Futa Jibu',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                             fontSize: 15, fontWeight: FontWeight.w600)),
                   ),
                 ),
@@ -245,7 +245,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
         SnackBar(
           content: Text(
             'Unahitaji kujiandikisha kwenye kozi hii kwanza ili uweze kutoa tathmini.',
-            style: GoogleFonts.inter(color: Colors.white),
+            style: GoogleFonts.montserrat(color: Colors.white),
           ),
           backgroundColor: const Color(0xFF3B1A08),
           behavior: SnackBarBehavior.floating,
@@ -267,7 +267,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
         SnackBar(
           content: Text(
             'Kamilisha kozi hii kwanza ili uweze kutoa tathmini ya uzoefu wako.',
-            style: GoogleFonts.inter(color: Colors.white),
+            style: GoogleFonts.montserrat(color: Colors.white),
           ),
           backgroundColor: const Color(0xFF3B1A08),
           behavior: SnackBarBehavior.floating,
@@ -321,7 +321,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
               const SizedBox(height: 16),
               Text(
                 'Andika Tathmini',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.montserrat(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: const Color(0xFF3B1A08),
@@ -422,7 +422,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                         )
                       : Text(
                           'Tuma Tathmini',
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.montserrat(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                           ),
@@ -454,7 +454,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Tathmini',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -466,7 +466,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
               onPressed: _onWriteReviewTap,
               child: Text(
                 'Tathmini',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.montserrat(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFFE8A96A),
@@ -486,7 +486,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                   children: [
                     Text(
                       _reviews.isEmpty ? '0.0' : average.toStringAsFixed(1),
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.montserrat(
                         fontSize: 48,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF3B1A08),
@@ -504,7 +504,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                     ),
                     Text(
                       '${_reviews.length} Tathmini',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 12,
                         color: const Color(0xFF9E8070),
                       ),
@@ -525,7 +525,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                           children: [
                             Text(
                               '$stars',
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 12,
                                 color: const Color(0xFF5C3D2E),
                               ),
@@ -555,7 +555,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                               width: 24,
                               child: Text(
                                 '$count',
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 11,
                                   color: const Color(0xFF9E8070),
                                 ),
@@ -603,7 +603,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Andika tathmini yako...',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 14,
                             color: const Color(0xFFBDA99C),
                           ),
@@ -632,7 +632,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                             const SizedBox(height: 16),
                             Text(
                               'Hakuna Tathmini Bado',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFF1A0A00),
@@ -641,7 +641,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                             const SizedBox(height: 8),
                             Text(
                               'Kuwa wa kwanza kutoa tathmini!',
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 14,
                                 color: const Color(0xFF9E8070),
                               ),
@@ -697,7 +697,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                           name.isNotEmpty
                                               ? name[0].toUpperCase()
                                               : 'U',
-                                          style: GoogleFonts.poppins(
+                                          style: GoogleFonts.montserrat(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w700,
                                             color: Colors.white,
@@ -712,7 +712,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                         children: [
                                           Text(
                                             name.isEmpty ? 'Mwanafunzi' : name,
-                                            style: GoogleFonts.inter(
+                                            style: GoogleFonts.montserrat(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w600,
                                               color: const Color(0xFF3B1A08),
@@ -738,7 +738,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                 const SizedBox(height: 10),
                                 Text(
                                   content,
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 14,
                                     color: const Color(0xFF5C3D2E),
                                     height: 1.5,
@@ -765,7 +765,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                             const SizedBox(width: 4),
                                             Text(
                                               'Jibu la Mwalimu',
-                                              style: GoogleFonts.inter(
+                                              style: GoogleFonts.montserrat(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w700,
                                                 color: const Color(0xFFC4620A),
@@ -776,7 +776,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                         const SizedBox(height: 6),
                                         Text(
                                           reply,
-                                          style: GoogleFonts.inter(
+                                          style: GoogleFonts.montserrat(
                                             fontSize: 13,
                                             color: const Color(0xFF5C3D2E),
                                             height: 1.4,
@@ -804,7 +804,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                         reply != null && reply.isNotEmpty
                                             ? 'Hariri Jibu'
                                             : 'Jibu',
-                                        style: GoogleFonts.inter(
+                                        style: GoogleFonts.montserrat(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w600,
                                           color: AppColors.primary,

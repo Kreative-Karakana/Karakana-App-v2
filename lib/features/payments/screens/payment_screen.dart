@@ -51,7 +51,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: GoogleFonts.inter(fontSize: 14)),
+        content: Text(message, style: GoogleFonts.montserrat(fontSize: 14)),
         backgroundColor: const Color(0xFFB00020),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -81,7 +81,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             const SizedBox(height: 18),
             Text(
               'Inashughulikia Malipo...',
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.montserrat(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: const Color(0xFF3B1A08),
@@ -91,7 +91,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             Text(
               'Thibitisha malipo kwenye simu yako.\nUsifunge programu hii.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.montserrat(
                 fontSize: 13,
                 color: const Color(0xFF5C3D2E),
                 height: 1.5,
@@ -178,7 +178,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Lipia Kozi',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -227,7 +227,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           widget.courseTitle,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.montserrat(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF3B1A08),
@@ -236,7 +236,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         const SizedBox(height: 8),
                         Text(
                           _formatPrice(widget.coursePrice),
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.montserrat(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color: const Color(0xFFC4620A),
@@ -251,7 +251,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             const SizedBox(height: 24),
             Text(
               'Chagua Njia ya Malipo',
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.montserrat(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF3B1A08),
@@ -260,7 +260,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             const SizedBox(height: 4),
             Text(
               'Tumia nambari yako ya simu kulipa',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.montserrat(
                 fontSize: 13,
                 color: const Color(0xFF9E8070),
               ),
@@ -316,7 +316,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           children: [
                             Text(
                               provider['name']! as String,
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFF3B1A08),
@@ -324,7 +324,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             ),
                             Text(
                               'Lipa kwa ${provider['name']}',
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 12,
                                 color: const Color(0xFF9E8070),
                               ),
@@ -358,7 +358,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             const SizedBox(height: 24),
             Text(
               'Nambari ya Simu',
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.montserrat(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF3B1A08),
@@ -378,7 +378,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   child: Center(
                     child: Text(
                       '+255',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF3B1A08),
@@ -392,13 +392,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
                     onChanged: (_) => setState(() {}),
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: 15,
                       color: const Color(0xFF3B1A08),
                     ),
                     decoration: InputDecoration(
                       hintText: '7XX XXX XXX',
-                      hintStyle: GoogleFonts.inter(
+                      hintStyle: GoogleFonts.montserrat(
                         fontSize: 14,
                         color: const Color(0xFFBDA99C),
                       ),
@@ -429,7 +429,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             const SizedBox(height: 8),
             Text(
               'Mfano: 0712345678 au 712345678',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.montserrat(
                 fontSize: 11,
                 color: const Color(0xFFBDA99C),
               ),
@@ -449,14 +449,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     children: [
                       Text(
                         'Jumla',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 14,
                           color: const Color(0xFF9E8070),
                         ),
                       ),
                       Text(
                         _formatPrice(widget.coursePrice),
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF3B1A08),
@@ -470,14 +470,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     children: [
                       Text(
                         'Ada ya Malipo',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 14,
                           color: const Color(0xFF9E8070),
                         ),
                       ),
                       Text(
                         'Bure',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 14,
                           color: const Color(0xFF2E7D32),
                         ),
@@ -493,7 +493,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     children: [
                       Text(
                         'Jumla ya Kulipa',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF3B1A08),
@@ -501,7 +501,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       ),
                       Text(
                         _formatPrice(widget.coursePrice),
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFFC4620A),
@@ -541,7 +541,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       )
                     : Text(
                         'Lipa ${_formatPrice(widget.coursePrice)}',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -560,7 +560,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 const SizedBox(width: 6),
                 Text(
                   'Malipo Salama na AzamPay',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: 12,
                     color: const Color(0xFF9E8070),
                   ),

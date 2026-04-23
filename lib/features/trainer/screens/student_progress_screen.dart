@@ -73,7 +73,7 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Maendeleo ya Wanafunzi',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -92,7 +92,7 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
                 ),
                 child: Text(
                   '${_students.length} wanafunzi',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: 12,
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -113,7 +113,7 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
               onChanged: (v) => setState(() => _search = v),
               decoration: InputDecoration(
                 hintText: 'Tafuta mwanafunzi...',
-                hintStyle: GoogleFonts.inter(
+                hintStyle: GoogleFonts.montserrat(
                   fontSize: 14,
                   color: const Color(0xFFBDA99C),
                 ),
@@ -229,7 +229,7 @@ class _SummaryBar extends StatelessWidget {
         children: [
           Text(
             value,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: color,
@@ -237,7 +237,7 @@ class _SummaryBar extends StatelessWidget {
           ),
           Text(
             label,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.montserrat(
               fontSize: 11,
               color: const Color(0xFF9E8070),
             ),
@@ -301,7 +301,7 @@ class _StudentCard extends StatelessWidget {
                 child: avatar == null
                     ? Text(
                         name.isNotEmpty ? name[0].toUpperCase() : 'M',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFFC4620A),
@@ -317,7 +317,7 @@ class _StudentCard extends StatelessWidget {
                   children: [
                     Text(
                       name,
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.montserrat(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF3B1A08),
@@ -326,7 +326,7 @@ class _StudentCard extends StatelessWidget {
                     if (email.isNotEmpty)
                       Text(
                         email,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 12,
                           color: const Color(0xFF9E8070),
                         ),
@@ -351,7 +351,7 @@ class _StudentCard extends StatelessWidget {
                 ),
                 child: Text(
                   isCompleted ? 'Amekamilisha' : '${progress.toInt()}%',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     color: isCompleted
@@ -374,14 +374,14 @@ class _StudentCard extends StatelessWidget {
                     totalLessons > 0
                         ? '$completedLessons / $totalLessons masomo'
                         : 'Maendeleo',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: 11,
                       color: const Color(0xFF9E8070),
                     ),
                   ),
                   Text(
                     '${progress.toInt()}%',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: isCompleted
@@ -433,7 +433,7 @@ class _EmptyState extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             hasSearch ? 'Hakuna matokeo' : 'Hakuna Wanafunzi Bado',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF1A0A00),
@@ -444,7 +444,7 @@ class _EmptyState extends StatelessWidget {
             hasSearch
                 ? 'Jaribu kutafuta jina tofauti.'
                 : 'Wanafunzi wataonekana hapa wanaposajiliwa.',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.montserrat(
               fontSize: 14,
               color: const Color(0xFF9E8070),
             ),
@@ -474,7 +474,7 @@ class _ErrorState extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.montserrat(
                 fontSize: 14,
                 color: const Color(0xFF9E8070),
               ),
@@ -491,7 +491,7 @@ class _ErrorState extends StatelessWidget {
               ),
               child: Text(
                 'Jaribu Tena',
-                style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
               ),
             ),
           ],

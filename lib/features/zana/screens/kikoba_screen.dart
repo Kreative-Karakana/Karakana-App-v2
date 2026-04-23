@@ -57,7 +57,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'e-KIKOBA',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 18,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -128,7 +128,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                         const SizedBox(height: 16),
                         Text(
                           'e-KIKOBA',
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.montserrat(
                             fontSize: 28,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -138,7 +138,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                         const SizedBox(height: 6),
                         Text(
                           'Akiba ya Kikundi Kidijitali',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 14,
                             color: Colors.white.withValues(alpha: 0.85),
                           ),
@@ -158,7 +158,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                           ),
                           child: Text(
                             'INAKUJA HIVI KARIBUNI',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
@@ -178,7 +178,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                 children: [
                   Text(
                     'KIKOBA ni Nini?',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF1A0A00),
@@ -187,7 +187,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'KIKOBA (Vikundi vya Kuweka na Kukopa) ni mfumo wa akiba wa kikundi unaopendwa Tanzania. Wanachama hukusanya fedha pamoja na kukopa kwa masharti ya kikundi.\n\ne-KIKOBA italeta mfumo huu kwenye simu yako — fuatilia akiba, mikopo, na malipo yote kidijitali.',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: 14,
                       color: const Color(0xFF5C3D2E),
                       height: 1.6,
@@ -231,7 +231,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                               children: [
                                 Text(
                                   item[1] as String,
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFF1A0A00),
@@ -240,7 +240,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                                 const SizedBox(height: 2),
                                 Text(
                                   item[2] as String,
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 12,
                                     color: const Color(0xFF9E8070),
                                   ),
@@ -256,7 +256,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                   if (!_isSubmitted) ...[
                     Text(
                       'Kuwa wa Kwanza Kujua!',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.montserrat(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF1A0A00),
@@ -265,7 +265,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                     const SizedBox(height: 6),
                     Text(
                       'Jisajili kupata arifa unapozinduliwa e-KIKOBA.',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 14,
                         color: const Color(0xFF9E8070),
                       ),
@@ -387,7 +387,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                                     )
                                   : Text(
                                       'Niarifu Ninapozinduliwa',
-                                      style: GoogleFonts.poppins(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -425,7 +425,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                           const SizedBox(height: 16),
                           Text(
                             'Umesajiliwa!',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.montserrat(
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF2E7D32),
@@ -434,7 +434,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                           const SizedBox(height: 8),
                           Text(
                             'Asante! Tutakuarifiwa mara e-KIKOBA inapozinduliwa.',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 14,
                               color: const Color(0xFF5C3D2E),
                               height: 1.5,
@@ -446,7 +446,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                             onPressed: () => context.pop(),
                             child: Text(
                               'Rudi Zana',
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFF1A2E5A),

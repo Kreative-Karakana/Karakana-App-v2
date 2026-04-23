@@ -43,7 +43,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                   duration: const Duration(milliseconds: 200),
                   child: Text(
                     'Zana',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -133,7 +133,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                               ),
                               child: Text(
                                 'BETA',
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white,
@@ -144,7 +144,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                             const SizedBox(height: 10),
                             Text(
                               'Zana',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 42,
                                 fontWeight: FontWeight.w800,
                                 color: Colors.white,
@@ -154,7 +154,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                             const SizedBox(height: 6),
                             Text(
                               'Zana za Biashara kwa Ujasiriamali',
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 13,
                                 color: const Color(0xFFB8C8E8),
                                 height: 1.4,
@@ -215,7 +215,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                               children: [
                                 Text(
                                   'e-KIKOBA',
-                                  style: GoogleFonts.poppins(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.white,
@@ -233,7 +233,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                                   ),
                                   child: Text(
                                     'INAKUJA',
-                                    style: GoogleFonts.inter(
+                                    style: GoogleFonts.montserrat(
                                       fontSize: 9,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white,
@@ -246,7 +246,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                             const SizedBox(height: 4),
                             Text(
                               'Daftari la Akiba la Kikundi Chako',
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 12,
                                 color: Colors.white.withValues(alpha: 0.85),
                               ),
@@ -263,7 +263,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                               ),
                               child: Text(
                                 'Arifiwa Unapopatikana',
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
                                   color: const Color(0xFFE65100),
@@ -284,7 +284,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
               padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
               child: Text(
                 'Zana Zinazopatikana',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.montserrat(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: const Color(0xFF1A0A00),
@@ -345,7 +345,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                         children: [
                           Text(
                             'Zaidi Zinakuja!',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.montserrat(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFF1A0A00),
@@ -354,7 +354,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                           const SizedBox(height: 4),
                           Text(
                             'Tunaendelea kuongeza zana mpya. Shikilia!',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 12,
                               color: const Color(0xFF9E8070),
                               height: 1.4,
@@ -444,7 +444,7 @@ class _ZanaToolCard extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(
                     tool.nameSwahili,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                       color: Colors.white,
@@ -454,7 +454,7 @@ class _ZanaToolCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       tool.descriptionSwahili,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 11,
                         color: Colors.white.withValues(alpha: 0.7),
                         height: 1.4,
@@ -469,7 +469,7 @@ class _ZanaToolCard extends StatelessWidget {
                       children: [
                         Text(
                           'Fungua',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
@@ -498,7 +498,7 @@ class _ZanaToolCard extends StatelessWidget {
                       ),
                       child: Text(
                         'Niarifu',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,

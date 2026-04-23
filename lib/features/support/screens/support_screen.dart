@@ -52,7 +52,7 @@ class _SupportScreenState extends State<SupportScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Msaada',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -65,7 +65,7 @@ class _SupportScreenState extends State<SupportScreen> {
         icon: const Icon(Icons.add, color: Colors.white),
         label: Text(
           'Tiketi Mpya',
-          style: GoogleFonts.inter(
+          style: GoogleFonts.montserrat(
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -81,7 +81,7 @@ class _SupportScreenState extends State<SupportScreen> {
               children: [
                 Text(
                   'Tunawezaje Kukusaidia?',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.montserrat(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF3B1A08),
@@ -133,7 +133,7 @@ class _SupportScreenState extends State<SupportScreen> {
               children: [
                 Text(
                   'Tiketi Zangu',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.montserrat(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF3B1A08),
@@ -142,7 +142,7 @@ class _SupportScreenState extends State<SupportScreen> {
                 const Spacer(),
                 Text(
                   '${_tickets.length} Tiketi',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: 13,
                     color: const Color(0xFF9E8070),
                   ),
@@ -216,7 +216,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                       children: [
                                         Text(
                                           'TKT-${ticketId.toString().padLeft(4, '0')}',
-                                          style: GoogleFonts.inter(
+                                          style: GoogleFonts.montserrat(
                                             fontSize: 11,
                                             color: const Color(0xFFBDA99C),
                                           ),
@@ -226,7 +226,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                           subject,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.inter(
+                                          style: GoogleFonts.montserrat(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600,
                                             color: const Color(0xFF3B1A08),
@@ -253,7 +253,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                     ),
                                     child: Text(
                                       isResolved ? 'Imemalizwa' : 'Wazi',
-                                      style: GoogleFonts.inter(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w700,
                                         color: isResolved
@@ -297,7 +297,7 @@ class _SupportScreenState extends State<SupportScreen> {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.montserrat(
                 fontSize: 11,
                 color: const Color(0xFF5C3D2E),
                 height: 1.3,
@@ -330,7 +330,7 @@ class _SupportScreenState extends State<SupportScreen> {
           const SizedBox(height: 20),
           Text(
             'Hakuna Tiketi Bado',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF1A0A00),
@@ -339,7 +339,7 @@ class _SupportScreenState extends State<SupportScreen> {
           const SizedBox(height: 8),
           Text(
             'Unda tiketi ili upate msaada.',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.montserrat(
               fontSize: 14,
               color: const Color(0xFF9E8070),
             ),

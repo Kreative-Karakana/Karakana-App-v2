@@ -77,18 +77,18 @@ class _SignupScreenState extends State<SignupScreen>
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText,
-      style: GoogleFonts.inter(fontSize: compact ? 13 : 14, color: Colors.white),
+      style: GoogleFonts.montserrat(fontSize: compact ? 13 : 14, color: Colors.white),
       cursorColor: AppColors.primaryMid,
       validator: validator,
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: GoogleFonts.inter(
+        labelStyle: GoogleFonts.montserrat(
           fontSize: compact ? 11.5 : 12,
           color: AppColors.textTertiary,
         ),
         hintText: hint,
-        hintStyle: GoogleFonts.inter(
+        hintStyle: GoogleFonts.montserrat(
           fontSize: compact ? 12.5 : 13,
           color: AppColors.textTertiary.withValues(alpha: 0.55),
         ),
@@ -260,7 +260,7 @@ class _SignupContent extends StatelessWidget {
               children: [
                 Text(
                   'Fungua Akaunti',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.montserrat(
                     fontSize: compact ? 27 : 31,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
@@ -270,7 +270,7 @@ class _SignupContent extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   'Jenga akaunti yako na uanze safari yako ya kujifunza na kukuza biashara.',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: compact ? 12.5 : 13.5,
                     color: AppColors.primaryMid,
                     height: 1.35,
@@ -355,7 +355,7 @@ class _SignupContent extends StatelessWidget {
                     ),
                     child: Text(
                       authProvider.errorMessage!,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 12.5,
                         color: Colors.red.shade200,
                       ),
@@ -394,7 +394,7 @@ class _SignupContent extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
                         'Njia nyingine',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: compact ? 11 : 12,
                           color: AppColors.textTertiary,
                         ),
@@ -425,7 +425,7 @@ class _SignupContent extends StatelessWidget {
                           child: Center(
                             child: Text(
                               'G',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
                                 color: const Color(0xFF4285F4),
@@ -460,7 +460,7 @@ class _SignupContent extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: 'Una akaunti? ',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: compact ? 13 : 14,
                       color: Colors.white.withValues(alpha: 0.74),
                     ),
@@ -471,7 +471,7 @@ class _SignupContent extends StatelessWidget {
                       onTap: () => context.go('/login'),
                       child: Text(
                         'Ingia',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: compact ? 13 : 14,
                           fontWeight: FontWeight.w700,
                           color: AppColors.primaryMid,
@@ -502,7 +502,7 @@ class _BrandRow extends StatelessWidget {
           const SizedBox(width: 12),
           Text(
             'Karakana',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.montserrat(
               fontSize: 24,
               fontWeight: FontWeight.w700,
               color: Colors.white,
@@ -608,7 +608,7 @@ class _MethodButton extends StatelessWidget {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.montserrat(
                 fontSize: compact ? 11.5 : 12.5,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,

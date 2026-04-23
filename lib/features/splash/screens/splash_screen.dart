@@ -146,7 +146,7 @@ class _SplashScreenState extends State<SplashScreen>
                               errorBuilder: (_, __, ___) => Center(
                                 child: Text(
                                   'K',
-                                  style: GoogleFonts.poppins(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 36,
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.primary,
@@ -163,7 +163,7 @@ class _SplashScreenState extends State<SplashScreen>
                       // App name
                       Text(
                         'KARAKANA',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 28,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
@@ -176,7 +176,7 @@ class _SplashScreenState extends State<SplashScreen>
                       // Tagline
                       Text(
                         'Fundisha • Jifunze • Kua',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 13,
                           color: AppColors.primaryMid,
                           letterSpacing: 2.0,
@@ -208,7 +208,7 @@ class _SplashScreenState extends State<SplashScreen>
               child: Text(
                 'v2.0.0',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.montserrat(
                   fontSize: 11,
                   color: AppColors.textTertiary,
                 ),

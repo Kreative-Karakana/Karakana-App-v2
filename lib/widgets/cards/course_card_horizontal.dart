@@ -97,7 +97,7 @@ class CourseCardHorizontal extends StatelessWidget {
                           ),
                           child: Text(
                             'BURE',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 8,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
@@ -141,7 +141,7 @@ class CourseCardHorizontal extends StatelessWidget {
                 children: [
                   Text(
                     course.title,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
@@ -157,7 +157,7 @@ class CourseCardHorizontal extends StatelessWidget {
                       Expanded(
                         child: Text(
                           course.trainerName,
-                          style: GoogleFonts.inter(fontSize: 12, color: Colors.grey[500]),
+                          style: GoogleFonts.montserrat(fontSize: 12, color: Colors.grey[500]),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -171,7 +171,7 @@ class CourseCardHorizontal extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         course.averageRating.toStringAsFixed(1),
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
@@ -186,7 +186,7 @@ class CourseCardHorizontal extends StatelessWidget {
                         ),
                         child: Text(
                           course.formattedLevel,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
                             color: Colors.black54,
@@ -198,7 +198,7 @@ class CourseCardHorizontal extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     course.formattedPrice,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: course.isFree ? AppColors.success : const Color(0xFFE87722),

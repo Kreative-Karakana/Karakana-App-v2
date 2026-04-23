@@ -65,7 +65,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                 Text(
                   'Hongera!',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.montserrat(
                     fontSize: 30,
                     fontWeight: FontWeight.w700,
                     color: const Color(0xFF3B1A08),
@@ -75,7 +75,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                 Text(
                   'Umekamilisha kozi kwa mafanikio!',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.montserrat(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF3B1A08),
@@ -85,7 +85,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                 Text(
                   widget.courseTitle,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: 15,
                     color: const Color(0xFFC4620A),
                     fontStyle: FontStyle.italic,
@@ -128,7 +128,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                             child: Center(
                               child: Text(
                                 'K',
-                                style: GoogleFonts.poppins(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white,
@@ -142,7 +142,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                             children: [
                               Text(
                                 'KARAKANA',
-                                style: GoogleFonts.poppins(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                   color: const Color(0xFF3B1A08),
@@ -151,7 +151,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                               ),
                               Text(
                                 'Cheti cha Ukamilishaji',
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 10,
                                   color: const Color(0xFF9E8070),
                                 ),
@@ -167,7 +167,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       const SizedBox(height: 16),
                       Text(
                         'Hii inathibitisha kwamba',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 13,
                           color: const Color(0xFF9E8070),
                         ),
@@ -175,7 +175,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       const SizedBox(height: 8),
                       Text(
                         auth.userFullName,
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF3B1A08),
@@ -184,7 +184,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       const SizedBox(height: 8),
                       Text(
                         'amekamilisha kwa mafanikio',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 13,
                           color: const Color(0xFF9E8070),
                         ),
@@ -193,7 +193,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       Text(
                         widget.courseTitle,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFFC4620A),
@@ -202,7 +202,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       const SizedBox(height: 16),
                       Text(
                         DateFormat('dd MMMM yyyy').format(DateTime.now()),
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 12,
                           color: const Color(0xFF9E8070),
                         ),
@@ -214,7 +214,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       const SizedBox(height: 8),
                       Text(
                         'Imeidhinishwa na Karakana',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 11,
                           color: const Color(0xFFBDA99C),
                         ),
@@ -238,7 +238,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                         : const Icon(Icons.share_outlined),
                     label: Text(
                       'Shiriki Cheti',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.montserrat(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -279,7 +279,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                     ),
                     label: Text(
                       'Shiriki Mafanikio',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFFC4620A),
@@ -309,7 +309,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                   onPressed: () => context.go('/home'),
                   child: Text(
                     'Rudi Nyumbani',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: 14,
                       color: const Color(0xFF9E8070),
                     ),

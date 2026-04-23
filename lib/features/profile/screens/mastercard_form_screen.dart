@@ -157,7 +157,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message,
-            style: GoogleFonts.inter(color: Colors.white)),
+            style: GoogleFonts.montserrat(color: Colors.white)),
         backgroundColor: success ? const Color(0xFF2E7D32) : AppColors.primary,
         duration: const Duration(milliseconds: 4000),
       ),
@@ -174,7 +174,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Fomu ya Taarifa',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -189,7 +189,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
           children: [
             Text(
               'Maboresho ya wasifu wa mtumiaji',
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.montserrat(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: AppColors.textPrimary,
@@ -215,7 +215,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                   Expanded(
                     child: Text(
                       'Maelezo yako ni ya siri na yatatumika kwa madhumuni ya takwimu tu, ili tuweze kuboresha huduma zetu.',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 13,
                         color: AppColors.textPrimary,
                         height: 1.4,
@@ -228,7 +228,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
             const SizedBox(height: 8),
             Text(
               'Tafadhali jaza maelezo yote kwa ukamilifu',
-              style: GoogleFonts.inter(
+              style: GoogleFonts.montserrat(
                   fontSize: 13.5, color: Colors.grey.shade600),
             ),
             const SizedBox(height: 28),
@@ -243,7 +243,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
               items: _locationTypes
                   .map((o) => DropdownMenuItem(
                       value: o.value,
-                      child: Text(o.label, style: GoogleFonts.inter())))
+                      child: Text(o.label, style: GoogleFonts.montserrat())))
                   .toList(),
               onChanged: (v) => setState(() => _locationType = v),
             ),
@@ -263,7 +263,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                 items: _regions
                     .map((r) => DropdownMenuItem(
                         value: r.code,
-                        child: Text(r.name, style: GoogleFonts.inter())))
+                        child: Text(r.name, style: GoogleFonts.montserrat())))
                     .toList(),
                 onChanged: (v) {
                   setState(() {
@@ -282,7 +282,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
             if (_selectedRegionCode == null)
               Text(
                 'Chagua mkoa kwanza',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.montserrat(
                     fontSize: 13, color: Colors.grey.shade400),
               )
             else if (_loadingDistricts)
@@ -296,7 +296,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                 items: _districts
                     .map((d) => DropdownMenuItem(
                         value: d.code,
-                        child: Text(d.name, style: GoogleFonts.inter())))
+                        child: Text(d.name, style: GoogleFonts.montserrat())))
                     .toList(),
                 onChanged: (v) => setState(() => _selectedDistrictCode = v),
               ),
@@ -314,7 +314,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                   .map((o) => DropdownMenuItem(
                         value: o.value,
                         child: Text(o.label,
-                            style: GoogleFonts.inter(fontSize: 13)),
+                            style: GoogleFonts.montserrat(fontSize: 13)),
                       ))
                   .toList(),
               onChanged: (v) => setState(() => _educationLevel = v),
@@ -370,7 +370,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                       )
                     : Text(
                         'Wasilisha Fomu',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -385,7 +385,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
 
   Widget _sectionLabel(String text) => Text(
         text,
-        style: GoogleFonts.poppins(
+        style: GoogleFonts.montserrat(
           fontSize: 14,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
@@ -396,7 +396,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
       InputDecoration(
         hintText: hint,
         hintStyle:
-            GoogleFonts.inter(fontSize: 13.5, color: Colors.grey.shade400),
+            GoogleFonts.montserrat(fontSize: 13.5, color: Colors.grey.shade400),
         prefixIcon: Icon(icon, color: AppColors.primary, size: 20),
         filled: true,
         fillColor: Colors.white,
@@ -426,7 +426,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
           Expanded(
             child: Text(
               label,
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.montserrat(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: AppColors.textPrimary,

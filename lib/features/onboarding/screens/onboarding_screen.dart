@@ -194,7 +194,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 children: [
                   Text(
                     slide.title,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 26,
                       fontWeight: FontWeight.w700,
                       color: Colors.black87,
@@ -205,7 +205,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   const SizedBox(height: 16),
                   Text(
                     slide.subtitle,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: 15,
                       color: Colors.black54,
                       height: 1.6,
@@ -295,7 +295,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       ),
                       child: Text(
                         'Ruka',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           color: Colors.white.withValues(alpha: 0.9),
@@ -347,7 +347,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                   ),
                                   child: Text(
                                     'Anza Sasa',
-                                    style: GoogleFonts.poppins(
+                                    style: GoogleFonts.montserrat(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                       letterSpacing: 0.3,

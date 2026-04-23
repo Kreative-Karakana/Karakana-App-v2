@@ -48,7 +48,7 @@ class CourseListScreen extends StatelessWidget {
         leading: const BackButton(color: Colors.white),
         title: Text(
           title,
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -80,7 +80,7 @@ class CourseListScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     Text(
                       'Hakuna kozi kwa sasa',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.montserrat(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFF3B1A08),
@@ -90,7 +90,7 @@ class CourseListScreen extends StatelessWidget {
                     Text(
                       'Jaribu tena baadaye au tafuta kozi nyingine.',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 13,
                         color: const Color(0xFF9E8070),
                       ),

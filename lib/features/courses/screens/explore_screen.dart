@@ -132,7 +132,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                     children: [
                       Text(
                         'Tafuta',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 30,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
@@ -142,7 +142,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                       const SizedBox(height: 4),
                       Text(
                         'Gundua kozi yako inayofuata',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 13,
                           color: Colors.white.withValues(alpha: 0.55),
                         ),
@@ -152,13 +152,13 @@ class _ExploreScreenState extends State<ExploreScreen>
                       TextField(
                         controller: _searchController,
                         onChanged: _onSearchChanged,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 14,
                           color: AppColors.textPrimary,
                         ),
                         decoration: InputDecoration(
                           hintText: 'Tafuta kozi yoyote...',
-                          hintStyle: GoogleFonts.inter(
+                          hintStyle: GoogleFonts.montserrat(
                             fontSize: 14,
                             color: AppColors.textHint,
                           ),
@@ -247,7 +247,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                                   ? 'Zote'
                                   : provider
                                       .categories[i - 1].name,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: isSelected
@@ -269,7 +269,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                   children: [
                     Text(
                       '${displayCourses.length} Kozi Zimepatikana',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 13,
                         color: AppColors.textTertiary,
                       ),
@@ -334,7 +334,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                             const SizedBox(height: 16),
                             Text(
                               'Kozi haikupatikana',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.textPrimary,
@@ -343,7 +343,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                             const SizedBox(height: 8),
                             Text(
                               'Jaribu maneno mengine ya utafutaji',
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 14,
                                 color: AppColors.textTertiary,
                               ),
@@ -450,7 +450,7 @@ class _ExploreCarouselState extends State<_ExploreCarousel> {
                 children: [
                   Text(
                     'Maarufu Sasa',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
@@ -458,7 +458,7 @@ class _ExploreCarouselState extends State<_ExploreCarousel> {
                   ),
                   Text(
                     'Kozi zinazovuma',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: 12,
                       color: AppColors.textTertiary,
                     ),
@@ -470,7 +470,7 @@ class _ExploreCarouselState extends State<_ExploreCarousel> {
                     extra: {'type': 'popular', 'title': 'Maarufu Sasa'}),
                 child: Text(
                   'Tazama Zote →',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.montserrat(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: AppColors.primary,
@@ -515,7 +515,7 @@ class _ExploreCarouselState extends State<_ExploreCarousel> {
         const SizedBox(height: 20),
         Text(
           'Kozi Zote',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -590,7 +590,7 @@ class _FeaturedCard extends StatelessWidget {
                           ),
                           child: Text(
                             tag,
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
@@ -609,7 +609,7 @@ class _FeaturedCard extends StatelessWidget {
                           ),
                           child: Text(
                             course.formattedPrice,
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white),
@@ -622,7 +622,7 @@ class _FeaturedCard extends StatelessWidget {
                       course.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.montserrat(
                         fontSize: 17,
                         height: 1.2,
                         fontWeight: FontWeight.w700,
@@ -657,7 +657,7 @@ class _FeaturedCard extends StatelessWidget {
                             course.trainerName,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                                 fontSize: 11,
                                 color: Colors.white.withValues(alpha: 0.8)),
                           ),
@@ -670,7 +670,7 @@ class _FeaturedCard extends StatelessWidget {
                           course.averageRating > 0
                               ? course.averageRating.toStringAsFixed(1)
                               : 'Mpya',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: Colors.white.withValues(alpha: 0.85)),

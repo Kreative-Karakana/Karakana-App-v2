@@ -101,7 +101,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
         SnackBar(
           content: Text(
             'Tafadhali weka namba ya balozi',
-            style: GoogleFonts.inter(color: Colors.white),
+            style: GoogleFonts.montserrat(color: Colors.white),
           ),
           backgroundColor: AppColors.primary,
         ),
@@ -121,7 +121,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
           SnackBar(
             content: Text(
               'Namba ya balozi imewasilishwa kwa mafanikio',
-              style: GoogleFonts.inter(color: Colors.white),
+              style: GoogleFonts.montserrat(color: Colors.white),
             ),
             backgroundColor: AppColors.primary,
           ),
@@ -135,7 +135,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
           SnackBar(
             content: Text(
               'Zoezi limeshindikana. Tafadhali jaribu tena.',
-              style: GoogleFonts.inter(color: Colors.white),
+              style: GoogleFonts.montserrat(color: Colors.white),
             ),
             backgroundColor: AppColors.primary,
           ),
@@ -208,7 +208,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
               Text(
                 'Je, umepata usaidizi kutoka\nkwa balozi wetu?',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.montserrat(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
@@ -219,7 +219,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
               Text(
                 'Tumeanzisha huduma hii ya balozi ili kuboresha huduma zetu. Tungependa kufahamu kama ulipata usaidizi kutoka kwa balozi wetu.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
+                style: GoogleFonts.montserrat(
                   fontSize: 13.5,
                   color: Colors.grey.shade600,
                   height: 1.5,
@@ -250,7 +250,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
                 ),
                 child: Text(
                   'Ndiyo',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.montserrat(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -281,7 +281,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
                       )
                     : Text(
                         'Hapana',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                         ),
@@ -316,7 +316,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
         const SizedBox(height: 20),
         Text(
           'Weka Namba ya Balozi',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: AppColors.textPrimary,
@@ -325,7 +325,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
         const SizedBox(height: 6),
         Text(
           'Weka namba uliyopewa na balozi wetu ili kusajili ushirikiano wenu.',
-          style: GoogleFonts.inter(
+          style: GoogleFonts.montserrat(
             fontSize: 13,
             color: Colors.grey.shade600,
             height: 1.4,
@@ -335,14 +335,14 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
         TextField(
           controller: _codeController,
           textCapitalization: TextCapitalization.characters,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.montserrat(
             fontSize: 15,
             fontWeight: FontWeight.w500,
             color: AppColors.textPrimary,
           ),
           decoration: InputDecoration(
             hintText: 'Mfano: AMB-12345',
-            hintStyle: GoogleFonts.inter(
+            hintStyle: GoogleFonts.montserrat(
               fontSize: 14,
               color: Colors.grey.shade400,
             ),
@@ -391,7 +391,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
                       )
                     : Text(
                         'Wasilisha',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                         ),
@@ -418,7 +418,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
                 ),
                 child: Text(
                   'Rudi Nyuma',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.montserrat(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),

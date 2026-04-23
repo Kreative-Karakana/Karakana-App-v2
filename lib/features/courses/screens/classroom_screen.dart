@@ -63,7 +63,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
               leading: const BackButton(color: Colors.white),
               title: Text(
                 'Darasani',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.montserrat(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
@@ -85,7 +85,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     Text(
                       provider.errorMessage ?? 'Hatukuweza kufungua darasa hili.',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 14,
                         color: const Color(0xFF5C3D2E),
                         height: 1.5,
@@ -107,7 +107,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                       ),
                       child: Text(
                         'Jaribu tena',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -126,7 +126,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             leading: const BackButton(color: Colors.white),
             title: Text(
               course.title.isNotEmpty ? course.title : 'Darasani',
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.montserrat(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
@@ -167,7 +167,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                           ),
                           Text(
                             '${(progress * 100).round()}%',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.montserrat(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFFC4620A),
@@ -183,14 +183,14 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         children: [
                           Text(
                             'Maendeleo Yako',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 12,
                               color: const Color(0xFF9E8070),
                             ),
                           ),
                           Text(
                             '$completedLessons / $totalLessons Masomo',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.montserrat(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF3B1A08),
@@ -201,7 +201,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                             progress >= 1.0
                                 ? 'Kozi imekamilika!'
                                 : 'Endelea vizuri!',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 12,
                               color: progress >= 1.0
                                   ? const Color(0xFF2E7D32)
@@ -230,7 +230,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         ),
                         child: Text(
                           'Cheti',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF2E7D32),
@@ -288,7 +288,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                         child: Center(
                                           child: Text(
                                             '${sectionIndex + 1}',
-                                            style: GoogleFonts.poppins(
+                                            style: GoogleFonts.montserrat(
                                               fontSize: 12,
                                               fontWeight: FontWeight.w700,
                                               color: Colors.white,
@@ -304,7 +304,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                           children: [
                                             Text(
                                               section.title,
-                                              style: GoogleFonts.poppins(
+                                              style: GoogleFonts.montserrat(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w600,
                                                 color: const Color(0xFF3B1A08),
@@ -312,7 +312,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                             ),
                                             Text(
                                               '$completedInSection/${section.lessons.length} masomo',
-                                              style: GoogleFonts.inter(
+                                              style: GoogleFonts.montserrat(
                                                 fontSize: 12,
                                                 color: const Color(0xFF9E8070),
                                               ),
@@ -372,7 +372,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                                 )
                                               : Text(
                                                   '${lessonIndex + 1}',
-                                                  style: GoogleFonts.poppins(
+                                                  style: GoogleFonts.montserrat(
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w700,
                                                     color:
@@ -383,7 +383,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                       ),
                                       title: Text(
                                         lesson.title,
-                                        style: GoogleFonts.inter(
+                                        style: GoogleFonts.montserrat(
                                           fontSize: 14,
                                           fontWeight: lesson.isRead
                                               ? FontWeight.w400
@@ -436,7 +436,7 @@ class _ClassroomAppBarPlaceholder extends StatelessWidget
       leading: const BackButton(color: Colors.white),
       title: Text(
         'Darasani',
-        style: GoogleFonts.poppins(
+        style: GoogleFonts.montserrat(
           fontSize: 16,
           fontWeight: FontWeight.w600,
           color: Colors.white,
@@ -486,7 +486,7 @@ class _EmptyClassroomState extends StatelessWidget {
                   ? 'Hatukuweza kufungua masomo ya darasa hili'
                   : 'Masomo bado hayajaonekana hapa',
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.montserrat(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: const Color(0xFF3B1A08),
@@ -498,7 +498,7 @@ class _EmptyClassroomState extends StatelessWidget {
                   ? sectionsErrorMessage!
                   : 'Rudi baadae au jaribu tena baada ya data ya kozi kupakiwa.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.montserrat(
                 fontSize: 13,
                 color: const Color(0xFF5C3D2E),
                 height: 1.5,
@@ -518,7 +518,7 @@ class _EmptyClassroomState extends StatelessWidget {
               ),
               child: Text(
                 'Jaribu tena',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.montserrat(
                   fontWeight: FontWeight.w600,
                 ),
               ),

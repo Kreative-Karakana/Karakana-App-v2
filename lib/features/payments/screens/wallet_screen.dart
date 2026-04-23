@@ -87,7 +87,7 @@ class _WalletScreenState extends State<WalletScreen> {
             const SizedBox(height: 20),
             Text(
               'Omba Malipo',
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.montserrat(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: const Color(0xFF3B1A08),
@@ -186,7 +186,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 },
                 child: Text(
                   'Tuma Ombi',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.montserrat(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -209,7 +209,7 @@ class _WalletScreenState extends State<WalletScreen> {
         leading: const BackButton(color: Color(0xFF3B1A08)),
         title: Text(
           'Mkoba Wangu',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: const Color(0xFF3B1A08),
@@ -257,7 +257,7 @@ class _WalletScreenState extends State<WalletScreen> {
                               children: [
                                 Text(
                                   'Salio Linalopatikana',
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 12,
                                     color:
                                         Colors.white.withValues(alpha: 0.7),
@@ -266,7 +266,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 const SizedBox(height: 4),
                                 Text(
                                   'TZS ${_formatPrice(_wallet?['balance'] ?? 0)}',
-                                  style: GoogleFonts.poppins(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 28,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.white,
@@ -298,7 +298,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 children: [
                                   Text(
                                     'Mapato Yote',
-                                    style: GoogleFonts.inter(
+                                    style: GoogleFonts.montserrat(
                                       fontSize: 11,
                                       color:
                                           Colors.white.withValues(alpha: 0.6),
@@ -307,7 +307,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                   const SizedBox(height: 4),
                                   Text(
                                     'TZS ${_formatPrice(_wallet?['total_income'] ?? 0)}',
-                                    style: GoogleFonts.poppins(
+                                    style: GoogleFonts.montserrat(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white,
@@ -329,7 +329,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                   children: [
                                     Text(
                                       'Iliyotolewa',
-                                      style: GoogleFonts.inter(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 11,
                                         color: Colors.white.withValues(alpha: 0.6),
                                       ),
@@ -337,7 +337,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                     const SizedBox(height: 4),
                                     Text(
                                       'TZS ${_formatPrice(_wallet?['total_disbursed'] ?? 0)}',
-                                      style: GoogleFonts.poppins(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w700,
                                         color: Colors.white,
@@ -364,7 +364,7 @@ class _WalletScreenState extends State<WalletScreen> {
                             onPressed: _showWithdrawSheet,
                             child: Text(
                               'Omba Malipo',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFFC4620A),
@@ -381,7 +381,7 @@ class _WalletScreenState extends State<WalletScreen> {
                     children: [
                       Text(
                         'Historia ya Malipo',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF3B1A08),
@@ -396,7 +396,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       child: Center(
                         child: Text(
                           'Hakuna historia ya malipo bado.',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 14,
                             color: const Color(0xFF9E8070),
                           ),
@@ -459,7 +459,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 children: [
                                   Text(
                                     remark.isEmpty ? 'Ombi la Malipo' : remark,
-                                    style: GoogleFonts.inter(
+                                    style: GoogleFonts.montserrat(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                       color: const Color(0xFF3B1A08),
@@ -467,7 +467,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                   ),
                                   Text(
                                     formattedDate,
-                                    style: GoogleFonts.inter(
+                                    style: GoogleFonts.montserrat(
                                       fontSize: 11,
                                       color: const Color(0xFF9E8070),
                                     ),
@@ -477,7 +477,7 @@ class _WalletScreenState extends State<WalletScreen> {
                             ),
                             Text(
                               '${isSuccessful ? '-' : '~'}TZS ${_formatPrice(amount)}',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.montserrat(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w700,
                                 color: isSuccessful

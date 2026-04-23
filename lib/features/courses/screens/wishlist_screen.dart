@@ -59,7 +59,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Vipendwa Vyangu',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -129,7 +129,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                       title,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.poppins(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
                                         color: const Color(0xFF3B1A08),
@@ -138,7 +138,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                     const SizedBox(height: 4),
                                     Text(
                                       trainerName,
-                                      style: GoogleFonts.inter(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 12,
                                         color: const Color(0xFF9E8070),
                                       ),
@@ -149,7 +149,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                         Expanded(
                                           child: Text(
                                             'Fungua maelezo ya kozi',
-                                            style: GoogleFonts.inter(
+                                            style: GoogleFonts.montserrat(
                                               fontSize: 11,
                                               color: const Color(0xFFBDA99C),
                                             ),
@@ -202,7 +202,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
           Text(
             'Hujaweka Kozi Yoyote Kwenye Vipendwa',
             textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF1A0A00),
@@ -211,7 +211,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
           const SizedBox(height: 8),
           Text(
             'Tafuta kozi nzuri na uziweke hapa.',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.montserrat(
               fontSize: 14,
               color: const Color(0xFF9E8070),
             ),

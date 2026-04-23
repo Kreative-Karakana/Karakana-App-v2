@@ -62,7 +62,7 @@ class _POSScreenState extends State<POSScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Mfumo wa Mauzo (POS)',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -137,7 +137,7 @@ class _POSScreenState extends State<POSScreen> {
                         const SizedBox(height: 16),
                         Text(
                           'Mfumo wa Mauzo',
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.montserrat(
                             fontSize: 26,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
@@ -146,7 +146,7 @@ class _POSScreenState extends State<POSScreen> {
                         const SizedBox(height: 6),
                         Text(
                           'Simamia biashara yako kwa urahisi',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 13,
                             color: Colors.white.withValues(alpha: 0.8),
                           ),
@@ -166,7 +166,7 @@ class _POSScreenState extends State<POSScreen> {
                           ),
                           child: Text(
                             'INAKAMILISHWA',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
@@ -189,7 +189,7 @@ class _POSScreenState extends State<POSScreen> {
                   // ── Description ───────────────────────────────────────
                   Text(
                     'POS ni Nini?',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF1A0A00),
@@ -198,7 +198,7 @@ class _POSScreenState extends State<POSScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'Mfumo wa Mauzo (Point of Sale) ni zana ya kisasa inayokuwezesha kusimamia biashara yako yote kutoka simu moja. Rekodi mauzo, simamia bidhaa, na pata ripoti kamili — kila wakati, kila mahali.',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: 14,
                       color: const Color(0xFF5C3D2E),
                       height: 1.6,
@@ -209,7 +209,7 @@ class _POSScreenState extends State<POSScreen> {
                   // ── Features ──────────────────────────────────────────
                   Text(
                     'Utakachopata',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF1A0A00),
@@ -253,7 +253,7 @@ class _POSScreenState extends State<POSScreen> {
                               children: [
                                 Text(
                                   item[1] as String,
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFF1A0A00),
@@ -262,7 +262,7 @@ class _POSScreenState extends State<POSScreen> {
                                 const SizedBox(height: 2),
                                 Text(
                                   item[2] as String,
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.montserrat(
                                     fontSize: 12,
                                     color: const Color(0xFF9E8070),
                                     height: 1.4,
@@ -282,7 +282,7 @@ class _POSScreenState extends State<POSScreen> {
                   if (!_isSubmitted) ...[
                     Text(
                       'Kuwa wa Kwanza Kujua!',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.montserrat(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF1A0A00),
@@ -291,7 +291,7 @@ class _POSScreenState extends State<POSScreen> {
                     const SizedBox(height: 6),
                     Text(
                       'Jisajili kupata arifa wakati POS inapopatikana.',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 14,
                         color: const Color(0xFF9E8070),
                       ),
@@ -396,7 +396,7 @@ class _POSScreenState extends State<POSScreen> {
                                     )
                                   : Text(
                                       'Niarifu Ninapozinduliwa',
-                                      style: GoogleFonts.poppins(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -434,7 +434,7 @@ class _POSScreenState extends State<POSScreen> {
                           const SizedBox(height: 16),
                           Text(
                             'Umesajiliwa!',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.montserrat(
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
                               color: _color,
@@ -443,7 +443,7 @@ class _POSScreenState extends State<POSScreen> {
                           const SizedBox(height: 8),
                           Text(
                             'Asante! Tutakuarifiwa mara POS inapopatikana.',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.montserrat(
                               fontSize: 14,
                               color: const Color(0xFF5C3D2E),
                               height: 1.5,

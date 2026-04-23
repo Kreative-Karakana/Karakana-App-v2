@@ -30,7 +30,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
         SnackBar(
           content: Text(
             'Ongeza maswali angalau moja kwanza.',
-            style: GoogleFonts.inter(fontSize: 14),
+            style: GoogleFonts.montserrat(fontSize: 14),
           ),
           backgroundColor: const Color(0xFFB00020),
           behavior: SnackBarBehavior.floating,
@@ -62,7 +62,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
         SnackBar(
           content: Text(
             'Maswali yamehifadhiwa!',
-            style: GoogleFonts.inter(fontSize: 14),
+            style: GoogleFonts.montserrat(fontSize: 14),
           ),
           backgroundColor: const Color(0xFF2E7D32),
           behavior: SnackBarBehavior.floating,
@@ -75,7 +75,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
         SnackBar(
           content: Text(
             ApiClient().parseError(e),
-            style: GoogleFonts.inter(fontSize: 14),
+            style: GoogleFonts.montserrat(fontSize: 14),
           ),
           backgroundColor: const Color(0xFFB00020),
           behavior: SnackBarBehavior.floating,
@@ -122,7 +122,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
               const SizedBox(height: 16),
               Text(
                 'Ongeza Swali',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.montserrat(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: const Color(0xFF3B1A08),
@@ -215,7 +215,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                   ),
                   child: Text(
                     'Hifadhi Swali',
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                    style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -243,7 +243,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Majaribio',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -269,7 +269,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
               onPressed: _saveQuiz,
               child: Text(
                 'Hifadhi',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.montserrat(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
@@ -295,7 +295,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                     children: [
                       Text(
                         'Alama ya Kufaulu',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.montserrat(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF3B1A08),
@@ -304,7 +304,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                       const SizedBox(height: 4),
                       Text(
                         'Wanafunzi wanahitaji kupata alama hii kufaulu.',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 12,
                           color: const Color(0xFF9E8070),
                         ),
@@ -319,7 +319,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                     controller: _passingScoreController,
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFFC4620A),
@@ -327,7 +327,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                     decoration: InputDecoration(
                       suffix: Text(
                         '%',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 14,
                           color: const Color(0xFF9E8070),
                         ),
@@ -365,7 +365,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                         const SizedBox(height: 16),
                         Text(
                           'Hakuna Maswali Bado',
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.montserrat(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFF1A0A00),
@@ -374,7 +374,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                         const SizedBox(height: 8),
                         Text(
                           'Ongeza maswali ya mtihani.',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.montserrat(
                             fontSize: 14,
                             color: const Color(0xFF9E8070),
                           ),
@@ -416,7 +416,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                                   child: Center(
                                     child: Text(
                                       '${i + 1}',
-                                      style: GoogleFonts.poppins(
+                                      style: GoogleFonts.montserrat(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w700,
                                         color: Colors.white,
@@ -428,7 +428,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                                 Expanded(
                                   child: Text(
                                     q['question'] as String? ?? '',
-                                    style: GoogleFonts.inter(
+                                    style: GoogleFonts.montserrat(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
                                       color: const Color(0xFF3B1A08),
@@ -468,7 +468,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                                           child: Center(
                                             child: Text(
                                               ['A', 'B', 'C', 'D'][e.key],
-                                              style: GoogleFonts.inter(
+                                              style: GoogleFonts.montserrat(
                                                 fontSize: 10,
                                                 fontWeight: FontWeight.w700,
                                                 color: e.key ==
@@ -484,7 +484,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                                         Expanded(
                                           child: Text(
                                             e.value,
-                                            style: GoogleFonts.inter(
+                                            style: GoogleFonts.montserrat(
                                               fontSize: 13,
                                               color: const Color(0xFF5C3D2E),
                                             ),
@@ -509,7 +509,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                 icon: const Icon(Icons.add),
                 label: Text(
                   'Ongeza Swali Jipya',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.montserrat(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),

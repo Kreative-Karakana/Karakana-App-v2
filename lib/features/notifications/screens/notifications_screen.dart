@@ -31,7 +31,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Arifa',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -44,7 +44,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     onPressed: provider.markAllRead,
                     child: Text(
                       'Soma Zote',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.montserrat(
                         fontSize: 13,
                         color: Colors.white.withValues(alpha: 0.7),
                       ),
@@ -95,7 +95,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ),
                   title: Text(
                     notif.title,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.montserrat(
                       fontSize: 14,
                       fontWeight:
                           isUnread ? FontWeight.w600 : FontWeight.w400,
@@ -110,7 +110,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         notif.message,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 13,
                           color: const Color(0xFF9E8070),
                           height: 1.4,
@@ -119,7 +119,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       const SizedBox(height: 4),
                       Text(
                         _timeAgo(notif.createdAt),
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.montserrat(
                           fontSize: 11,
                           color: const Color(0xFFBDA99C),
                         ),
@@ -197,7 +197,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           const SizedBox(height: 20),
           Text(
             'Hakuna Arifa Bado',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: const Color(0xFF1A0A00),
@@ -206,7 +206,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           const SizedBox(height: 8),
           Text(
             'Arifa zako zitaonekana hapa.',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.montserrat(
               fontSize: 14,
               color: const Color(0xFF9E8070),
             ),

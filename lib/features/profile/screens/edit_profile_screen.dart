@@ -118,12 +118,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
               title: Text('Chagua kutoka Matunzio',
-                  style: GoogleFonts.inter(fontSize: 15)),
+                  style: GoogleFonts.montserrat(fontSize: 15)),
               onTap: () => Navigator.pop(context, ImageSource.gallery),
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt_outlined),
-              title: Text('Piga Picha', style: GoogleFonts.inter(fontSize: 15)),
+              title: Text('Piga Picha', style: GoogleFonts.montserrat(fontSize: 15)),
               onTap: () => Navigator.pop(context, ImageSource.camera),
             ),
             const SizedBox(height: 8),
@@ -160,7 +160,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         SnackBar(
           content: Text(
             'Tarehe ya kuzaliwa lazima iwe zaidi ya miaka 3 iliyopita',
-            style: GoogleFonts.inter(color: Colors.white),
+            style: GoogleFonts.montserrat(color: Colors.white),
           ),
           backgroundColor: AppColors.primary,
         ),
@@ -181,7 +181,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         SnackBar(
           content: Text(
             'Tafadhali weka tarehe ya kuzaliwa',
-            style: GoogleFonts.inter(color: Colors.white),
+            style: GoogleFonts.montserrat(color: Colors.white),
           ),
           backgroundColor: AppColors.primary,
         ),
@@ -222,7 +222,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               : 'Zoezi limeshindikana. Jaribu tena.';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(msg, style: GoogleFonts.inter(color: Colors.white)),
+          content: Text(msg, style: GoogleFonts.montserrat(color: Colors.white)),
           backgroundColor: AppColors.error,
         ),
       );
@@ -261,7 +261,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             SnackBar(
               content: Text(
                 'Maelezo yamehifadhiwa lakini picha hazikupakiwa. Jaribu tena.',
-                style: GoogleFonts.inter(color: Colors.white),
+                style: GoogleFonts.montserrat(color: Colors.white),
               ),
               backgroundColor: AppColors.primary,
             ),
@@ -278,7 +278,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       SnackBar(
         content: Text(
           'Wasifu umesasishwa kikamilifu!',
-          style: GoogleFonts.inter(color: Colors.white),
+          style: GoogleFonts.montserrat(color: Colors.white),
         ),
         backgroundColor: const Color(0xFF2E7D32),
       ),
@@ -301,7 +301,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Hariri Wasifu',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -319,7 +319,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   )
                 : Text(
                     'Hifadhi',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.montserrat(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
@@ -399,7 +399,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             Icons.cake_outlined,
                           ).copyWith(
                             hintText: 'Bonyeza kuchagua tarehe',
-                            hintStyle: GoogleFonts.inter(
+                            hintStyle: GoogleFonts.montserrat(
                               fontSize: 14,
                               color: Colors.grey.shade400,
                             ),
@@ -474,7 +474,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               )
                             : Text(
                                 'Hifadhi Mabadiliko',
-                                style: GoogleFonts.poppins(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -494,7 +494,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget _sectionLabel(String text) {
     return Text(
       text,
-      style: GoogleFonts.poppins(
+      style: GoogleFonts.montserrat(
         fontSize: 14,
         fontWeight: FontWeight.w600,
         color: AppColors.textPrimary,
@@ -506,7 +506,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       {Color? iconColor}) {
     return InputDecoration(
       labelText: label,
-      labelStyle: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade600),
+      labelStyle: GoogleFonts.montserrat(fontSize: 13, color: Colors.grey.shade600),
       prefixIcon: Icon(icon, color: iconColor ?? AppColors.primary, size: 20),
       filled: true,
       fillColor: Colors.white,
@@ -548,10 +548,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       maxLines: maxLines,
       keyboardType: keyboardType,
       validator: validator,
-      style: GoogleFonts.inter(fontSize: 14, color: AppColors.textPrimary),
+      style: GoogleFonts.montserrat(fontSize: 14, color: AppColors.textPrimary),
       decoration: _inputDecoration(label, icon, iconColor: iconColor).copyWith(
         hintText: hint,
-        hintStyle: GoogleFonts.inter(fontSize: 13, color: Colors.grey.shade400),
+        hintStyle: GoogleFonts.montserrat(fontSize: 13, color: Colors.grey.shade400),
       ),
     );
   }
@@ -676,7 +676,7 @@ class _CoverAvatarHeader extends StatelessWidget {
       child: Center(
         child: Text(
           name.isNotEmpty ? name[0].toUpperCase() : 'K',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.montserrat(
             fontSize: 30,
             fontWeight: FontWeight.w700,
             color: Colors.white,
