@@ -19,12 +19,14 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
+  // MUST match navbar order exactly:
+  // 0=Nyumbani  1=Tafuta  2=Zana  3=Fursa  4=Akaunti
   final List<Widget> _screens = const [
-    HomeScreen(),
-    ExploreScreen(),
-    ZanaScreen(),
-    FursaScreen(),
-    ProfileScreen(),
+    HomeScreen(),    // 0
+    ExploreScreen(), // 1
+    ZanaScreen(),    // 2
+    FursaScreen(),   // 3
+    ProfileScreen(), // 4
   ];
 
   @override
@@ -62,18 +64,18 @@ class _MainScreenState extends State<MainScreen> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(32),
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                  filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
+                      color: Colors.black.withValues(alpha: 0.55),
                       borderRadius: BorderRadius.circular(32),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: Colors.white.withValues(alpha: 0.25),
                         width: 1.0,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
+                          color: Colors.black.withValues(alpha: 0.35),
                           blurRadius: 24,
                           offset: const Offset(0, 8),
                         ),
@@ -82,39 +84,27 @@ class _MainScreenState extends State<MainScreen> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: _buildNavTab(
-                            index: 0,
-                            icon: Icons.home_outlined,
-                          ),
+                          child: _buildNavTab(index: 0, icon: Icons.home_outlined),
                         ),
                         Expanded(
-                          child: _buildNavTab(
-                            index: 1,
-                            icon: Icons.explore_outlined,
-                          ),
+                          child: _buildNavTab(index: 1, icon: Icons.explore_outlined),
                         ),
                         // Placeholder space for raised Zana FAB
                         const SizedBox(width: 72),
                         Expanded(
-                          child: _buildNavTab(
-                            index: 3,
-                            icon: Icons.lightbulb_outline,
-                          ),
+                          child: _buildNavTab(index: 3, icon: Icons.lightbulb_outline),
                         ),
                         Expanded(
-                          child: _buildNavTab(
-                            index: 4,
-                            icon: Icons.person_outline,
-                          ),
+                          child: _buildNavTab(index: 4, icon: Icons.person_outline),
                         ),
                       ],
                     ),
                   ),
                 ),
               ),
-              // Raised Zana FAB — sits above the glass bar via Positioned top: -16
+              // Raised Zana FAB — outside ClipRRect so it is never clipped
               Positioned(
-                top: -16,
+                top: -18,
                 child: _buildZanaButton(),
               ),
             ],
@@ -131,20 +121,29 @@ class _MainScreenState extends State<MainScreen> {
         setState(() => _currentIndex = 2);
       },
       child: Container(
-        width: 60,
-        height: 60,
+        width: 68,
+        height: 68,
         decoration: BoxDecoration(
-          color: const Color(0xFFE87722),
+          color: Colors.black.withValues(alpha: 0.5),
           shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFE87722).withValues(alpha: 0.45),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
         ),
-        child: const Icon(Icons.construction, color: Colors.white, size: 28),
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFE87722),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFE87722).withValues(alpha: 0.5),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(Icons.construction, color: Colors.white, size: 28),
+          ),
+        ),
       ),
     );
   }
@@ -166,7 +165,7 @@ class _MainScreenState extends State<MainScreen> {
               icon,
               color: isSelected
                   ? const Color(0xFFE87722)
-                  : Colors.white.withValues(alpha: 0.6),
+                  : Colors.white.withValues(alpha: 0.75),
               size: 24,
             ),
             const SizedBox(height: 4),
