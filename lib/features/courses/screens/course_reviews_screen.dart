@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../providers/course_provider.dart';
 
 class CourseReviewsScreen extends StatefulWidget {
   final int courseId;
@@ -234,7 +235,63 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
     );
   }
 
+  void _onWriteReviewTap() {
+    final provider = context.read<CourseProvider>();
+    final course = provider.selectedCourse;
+    final isEnrolled = course?.isEnrolled ?? false;
+
+    if (!isEnrolled) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Unahitaji kujiandikisha kwenye kozi hii kwanza ili uweze kutoa tathmini.',
+            style: GoogleFonts.inter(color: Colors.white),
+          ),
+          backgroundColor: const Color(0xFF3B1A08),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    final sections = provider.sections;
+    final totalLessons = sections.fold<int>(0, (sum, s) => sum + s.lessons.length);
+    final completedLessons = sections.fold<int>(
+      0,
+      (sum, s) => sum + s.lessons.where((l) => l.isRead).length,
+    );
+    final progress = totalLessons > 0 ? completedLessons / totalLessons : 0.0;
+
+    if (progress < 0.8) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Kamilisha kozi hii kwanza ili uweze kutoa tathmini ya uzoefu wako.',
+            style: GoogleFonts.inter(color: Colors.white),
+          ),
+          backgroundColor: const Color(0xFF3B1A08),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    _showReviewForm();
+  }
+
   void _showReviewForm() {
+    final provider = context.read<CourseProvider>();
+    final course = provider.selectedCourse;
+    final isEnrolled = course?.isEnrolled ?? false;
+    if (!isEnrolled) return;
+    final sections = provider.sections;
+    final totalLessons = sections.fold<int>(0, (sum, s) => sum + s.lessons.length);
+    final completedLessons = sections.fold<int>(
+      0,
+      (sum, s) => sum + s.lessons.where((l) => l.isRead).length,
+    );
+    final progress = totalLessons > 0 ? completedLessons / totalLessons : 0.0;
+    if (progress < 0.8) return;
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -406,7 +463,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
         actions: [
           if (!_hasReviewed)
             TextButton(
-              onPressed: _showReviewForm,
+              onPressed: _onWriteReviewTap,
               child: Text(
                 'Tathmini',
                 style: GoogleFonts.inter(
@@ -516,7 +573,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
           const Divider(height: 1, color: Color(0xFFF0E4DA)),
           if (!_hasReviewed)
             GestureDetector(
-              onTap: _showReviewForm,
+              onTap: _onWriteReviewTap,
               child: Container(
                 color: const Color(0xFFFFF8F4),
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
