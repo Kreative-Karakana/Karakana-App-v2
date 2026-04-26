@@ -140,34 +140,116 @@ class _SignupScreenState extends State<SignupScreen>
             children: [
               const _AuthBackground(),
               SafeArea(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(
-                    22,
-                    compact ? 20 : 28,
-                    22,
-                    MediaQuery.viewInsetsOf(context).bottom + (compact ? 10 : 16),
+                child: AnimatedPadding(
+                  duration: const Duration(milliseconds: 180),
+                  curve: Curves.easeOut,
+                  padding: EdgeInsets.only(
+                    bottom: keyboardOpen
+                        ? MediaQuery.viewInsetsOf(context).bottom
+                        : 0,
                   ),
-                  child: _SignupContent(
-                    compact: compact,
-                    keyboardOpen: keyboardOpen,
-                    authProvider: authProvider,
-                    formKey: _formKey,
-                    firstNameController: _firstNameController,
-                    emailController: _emailController,
-                    passwordController: _passwordController,
-                    confirmController: _confirmController,
-                    obscurePassword: _obscurePassword,
-                    obscureConfirm: _obscureConfirm,
-                    onTogglePassword: () => setState(
-                      () => _obscurePassword = !_obscurePassword,
-                    ),
-                    onToggleConfirm: () => setState(
-                      () => _obscureConfirm = !_obscureConfirm,
-                    ),
-                    onHandleSignup: _handleSignup,
-                    onGoogleSignIn: _handleGoogleSignIn,
-                    onAppleSignIn: _handleAppleSignIn,
-                    buildField: _buildField,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: keyboardOpen
+                              ? const ClampingScrollPhysics()
+                              : const NeverScrollableScrollPhysics(),
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(
+                              22,
+                              compact ? 32 : 44,
+                              22,
+                              compact ? 12 : 16,
+                            ),
+                            child: _SignupContent(
+                              compact: compact,
+                              keyboardOpen: keyboardOpen,
+                              authProvider: authProvider,
+                              formKey: _formKey,
+                              firstNameController: _firstNameController,
+                              emailController: _emailController,
+                              passwordController: _passwordController,
+                              confirmController: _confirmController,
+                              obscurePassword: _obscurePassword,
+                              obscureConfirm: _obscureConfirm,
+                              onTogglePassword: () => setState(
+                                () => _obscurePassword = !_obscurePassword,
+                              ),
+                              onToggleConfirm: () => setState(
+                                () => _obscureConfirm = !_obscureConfirm,
+                              ),
+                              onHandleSignup: _handleSignup,
+                              onGoogleSignIn: _handleGoogleSignIn,
+                              onAppleSignIn: _handleAppleSignIn,
+                              buildField: _buildField,
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (!keyboardOpen)
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            22,
+                            compact ? 12 : 16,
+                            22,
+                            compact ? 20 : 28,
+                          ),
+                          child: Center(
+                            child: GestureDetector(
+                              onTap: () => context.go('/login'),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: compact ? 20 : 24,
+                                  vertical: compact ? 12 : 14,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.05),
+                                  borderRadius: BorderRadius.circular(50),
+                                  border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.10),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Una akaunti?',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: compact ? 13 : 14,
+                                        color: Colors.white.withValues(alpha: 0.74),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: compact ? 14 : 16,
+                                        vertical: compact ? 5 : 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                          colors: [AppColors.primary, Color(0xFFE07A2F)],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      child: Text(
+                                        'Ingia',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: compact ? 12.5 : 13.5,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),
@@ -233,7 +315,7 @@ class _SignupContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const _BrandRow(),
-        SizedBox(height: keyboardOpen ? (compact ? 12 : 16) : (compact ? 28 : 40)),
+        SizedBox(height: keyboardOpen ? (compact ? 10 : 12) : (compact ? 18 : 24)),
         Container(
           constraints: const BoxConstraints(maxWidth: 420),
           padding: EdgeInsets.all(compact ? 18 : 22),
@@ -378,135 +460,69 @@ class _SignupContent extends StatelessWidget {
         ),
         if (!keyboardOpen) ...[
           SizedBox(height: compact ? 18 : 22),
-          Container(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Divider(
-                        color: Colors.white.withValues(alpha: 0.10),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        'Njia nyingine',
-                        style: GoogleFonts.montserrat(
-                          fontSize: compact ? 11 : 12,
-                          color: AppColors.textTertiary,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        color: Colors.white.withValues(alpha: 0.10),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: compact ? 12 : 14),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _MethodButton(
-                        compact: compact,
-                        label: 'Google',
-                        onTap: onGoogleSignIn,
-                        icon: Container(
-                          width: compact ? 22 : 24,
-                          height: compact ? 22 : 24,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Text(
-                              'G',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF4285F4),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _MethodButton(
-                        compact: compact,
-                        label: 'Apple',
-                        onTap: onAppleSignIn,
-                        icon: Icon(
-                          Icons.apple,
-                          color: Colors.white,
-                          size: compact ? 22 : 24,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: compact ? 14 : 20),
-          Center(
-            child: GestureDetector(
-              onTap: () => context.go('/login'),
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: compact ? 20 : 24,
-                  vertical: compact ? 12 : 14,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(50),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.10),
+          Row(
+            children: [
+              Expanded(
+                child: Divider(color: Colors.white.withValues(alpha: 0.10)),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  'Njia nyingine',
+                  style: GoogleFonts.montserrat(
+                    fontSize: compact ? 11 : 12,
+                    color: AppColors.textTertiary,
                   ),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Una akaunti?',
-                      style: GoogleFonts.montserrat(
-                        fontSize: compact ? 13 : 14,
-                        color: Colors.white.withValues(alpha: 0.74),
-                      ),
+              ),
+              Expanded(
+                child: Divider(color: Colors.white.withValues(alpha: 0.10)),
+              ),
+            ],
+          ),
+          SizedBox(height: compact ? 12 : 14),
+          Row(
+            children: [
+              Expanded(
+                child: _MethodButton(
+                  compact: compact,
+                  label: 'Google',
+                  onTap: onGoogleSignIn,
+                  icon: Container(
+                    width: compact ? 22 : 24,
+                    height: compact ? 22 : 24,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
                     ),
-                    const SizedBox(width: 10),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: compact ? 14 : 16,
-                        vertical: compact ? 5 : 6,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [AppColors.primary, Color(0xFFE07A2F)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
+                    child: Center(
                       child: Text(
-                        'Ingia',
+                        'G',
                         style: GoogleFonts.montserrat(
-                          fontSize: compact ? 12.5 : 13.5,
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: const Color(0xFF4285F4),
                         ),
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _MethodButton(
+                  compact: compact,
+                  label: 'Apple',
+                  onTap: onAppleSignIn,
+                  icon: Icon(
+                    Icons.apple,
+                    color: Colors.white,
+                    size: compact ? 22 : 24,
+                  ),
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: compact ? 20 : 28),
         ],
       ],
     );
