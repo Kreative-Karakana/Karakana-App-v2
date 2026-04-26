@@ -51,6 +51,7 @@ class ApiClient {
         if (kDebugMode) {
           debugPrint(
               '[API] ERROR ${error.response?.statusCode} ${error.requestOptions.uri}');
+          debugPrint('[API] ERROR BODY: ${error.response?.data}');
         }
         if (error.response?.statusCode == 401) {
           await SecureStorage().clearAll();

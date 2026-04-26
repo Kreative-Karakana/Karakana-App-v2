@@ -170,6 +170,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     setState(() => _dateOfBirth = picked);
   }
 
+  String? _nullIfEmpty(String text) => text.isEmpty ? null : text;
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -200,15 +202,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         data: {
           'first_name': _firstNameController.text.trim(),
           'last_name': _lastNameController.text.trim(),
-          'biography': _biographyController.text.trim(),
-          'phone_number': _phoneController.text.trim(),
+          'biography': _nullIfEmpty(_biographyController.text.trim()),
+          'phone_number': _nullIfEmpty(_phoneController.text.trim()),
           if (_selectedGender != null) 'gender': _selectedGender,
           if (_dateOfBirth != null)
             'date_of_birth': DateFormat('yyyy-MM-dd').format(_dateOfBirth!),
-          'facebook_username': _facebookController.text.trim(),
-          'instagram_username': _instagramController.text.trim(),
-          'x_username': _xController.text.trim(),
-          'linkedin_username': _linkedinController.text.trim(),
+          'facebook_username':
+              _nullIfEmpty(_facebookController.text.trim()),
+          'instagram_username':
+              _nullIfEmpty(_instagramController.text.trim()),
+          'x_username': _nullIfEmpty(_xController.text.trim()),
+          'linkedin_username':
+              _nullIfEmpty(_linkedinController.text.trim()),
         },
       );
     } catch (e) {
@@ -272,6 +277,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     if (!mounted) return;
     await auth.initialize();
+    if (!mounted) return;
     setState(() => _isSaving = false);
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -372,7 +378,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                     // Gender dropdown
                     DropdownButtonFormField<String>(
-                      value: _selectedGender,
+                      initialValue: _selectedGender,
                       decoration: _inputDecoration('Jinsia', Icons.people_outline),
                       items: const [
                         DropdownMenuItem(value: 'M', child: Text('Mwanaume')),
@@ -591,7 +597,7 @@ class _CoverAvatarHeader extends StatelessWidget {
             child: Container(
               width: double.infinity,
               height: 155,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.primaryDark,
               ),
               child: Stack(
