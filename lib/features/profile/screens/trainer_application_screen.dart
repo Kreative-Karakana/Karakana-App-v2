@@ -1,8 +1,12 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/theme/app_colors.dart';
 
 class TrainerApplicationScreen extends StatefulWidget {
   const TrainerApplicationScreen({super.key});
@@ -22,6 +26,9 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
   final TextEditingController _whyController = TextEditingController();
   final TextEditingController _topicsController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  File? _cvFile;
+  String? _cvFileName;
+  bool _isPickingFile = false;
 
   @override
   void initState() {
@@ -57,18 +64,60 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
     }
   }
 
+  Future<void> _pickCV() async {
+    setState(() => _isPickingFile = true);
+    try {
+      final picker = ImagePicker();
+      final result = await picker.pickImage(source: ImageSource.gallery);
+      if (result != null) {
+        setState(() {
+          _cvFile = File(result.path);
+          _cvFileName = result.name;
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Hitilafu ya kuchagua faili. Jaribu tena.'),
+        backgroundColor: AppColors.error,
+      ));
+    } finally {
+      if (mounted) setState(() => _isPickingFile = false);
+    }
+  }
+
   Future<void> _submitApplication() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_cvFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text(
+            'Inashauriwa kupakia CV yako ili ombi lako likubalike.'),
+        backgroundColor: AppColors.warning,
+        action: SnackBarAction(
+          label: 'Endelea',
+          textColor: Colors.white,
+          onPressed: _submitWithoutCV,
+        ),
+      ));
+      return;
+    }
+    await _doSubmit();
+  }
+
+  Future<void> _submitWithoutCV() async => _doSubmit();
+
+  Future<void> _doSubmit() async {
     setState(() => _isSubmitting = true);
     try {
       await ApiClient().dio.post(
         '/api/v1/trainer-application/',
         data: {
-          'professional_title': _titleController.text,
-          'professional_bio': _bioController.text,
-          'teaching_experience': _experienceController.text,
-          'why_do_you_want_to_teach': _whyController.text,
-          'topics_of_interest': _topicsController.text,
+          'title': _titleController.text,
+          'bio': _bioController.text,
+          'experience': _experienceController.text,
+          'why': _whyController.text,
+          'topics': _topicsController.text,
+          'has_cv': _cvFile != null,
         },
       );
       if (!mounted) return;
@@ -210,6 +259,122 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                             hint: 'Mfano: Ujasiriamali, Fedha, Uongozi',
                             validator: (v) =>
                                 v == null || v.isEmpty ? 'Weka mada zako' : null,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'CV / Portfolio',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Pakia CV yako au portfolio ili tuweze kukutathmini vizuri zaidi.',
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              color: AppColors.textTertiary,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          GestureDetector(
+                            onTap: _isPickingFile ? null : _pickCV,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: _cvFile != null
+                                    ? AppColors.successLight
+                                    : Colors.white,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: _cvFile != null
+                                      ? AppColors.success
+                                      : AppColors.inputBorder,
+                                  width: _cvFile != null ? 1.5 : 1,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 44,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      color: _cvFile != null
+                                          ? AppColors.success
+                                              .withValues(alpha: 0.1)
+                                          : AppColors.primaryLight,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: _isPickingFile
+                                        ? const Center(
+                                            child: SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: AppColors.primary,
+                                              ),
+                                            ),
+                                          )
+                                        : Icon(
+                                            _cvFile != null
+                                                ? Icons.check_circle_outline
+                                                : Icons.upload_file_outlined,
+                                            color: _cvFile != null
+                                                ? AppColors.success
+                                                : AppColors.primary,
+                                            size: 24,
+                                          ),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          _cvFile != null
+                                              ? (_cvFileName ??
+                                                  'Faili limechaguliwa')
+                                              : 'Pakia CV / Portfolio',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: _cvFile != null
+                                                ? AppColors.success
+                                                : AppColors.textPrimary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          _cvFile != null
+                                              ? 'Bonyeza kubadilisha faili'
+                                              : 'PDF, Word, au picha (max 5MB)',
+                                          style: GoogleFonts.inter(
+                                            fontSize: 11,
+                                            color: AppColors.textTertiary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (_cvFile != null)
+                                    GestureDetector(
+                                      onTap: () => setState(() {
+                                        _cvFile = null;
+                                        _cvFileName = null;
+                                      }),
+                                      child: const Icon(
+                                        Icons.close,
+                                        color: AppColors.textTertiary,
+                                        size: 18,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 28),
                           SizedBox(
