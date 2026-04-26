@@ -289,7 +289,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         backgroundColor: const Color(0xFFE87722),
       ),
     );
-    context.pop();
+    context.go('/account');
   }
 
   @override
