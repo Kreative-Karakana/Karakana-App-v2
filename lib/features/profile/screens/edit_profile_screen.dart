@@ -365,7 +365,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             v == null || v.isEmpty ? 'Weka jina la kwanza' : null),
                     const SizedBox(height: 12),
                     _buildField('Jina la Familia', _lastNameController,
-                        Icons.person_outline),
+                        Icons.person_outline,
+                        validator: (v) => v == null || v.isEmpty
+                            ? 'Weka jina la familia'
+                            : null),
                     const SizedBox(height: 12),
                     _buildField('Maelezo Mafupi', _biographyController,
                         Icons.info_outline,
