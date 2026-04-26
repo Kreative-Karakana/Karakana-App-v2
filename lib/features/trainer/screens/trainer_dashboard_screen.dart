@@ -137,6 +137,12 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor =
         isDark ? const Color(0xFF1A0A00) : const Color(0xFFFFF8F4);
+    final surfaceColor =
+        isDark ? const Color(0xFF2A1400) : Colors.white;
+    final textPrimary =
+        isDark ? Colors.white : const Color(0xFF1A0A00);
+    final textSecondary =
+        isDark ? Colors.white60 : const Color(0xFF7B3A10);
 
     return Scaffold(
         backgroundColor: bgColor,
@@ -152,9 +158,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 : TabBarView(
                     controller: _tabController,
                     children: [
-                      Center(
-                          child: Text('Muhtasari - inajengwa',
-                              style: GoogleFonts.montserrat())),
+                      _buildOverviewTab(bgColor, surfaceColor, textPrimary, textSecondary),
                       Center(
                           child: Text('Kozi - inajengwa',
                               style: GoogleFonts.montserrat())),
@@ -165,6 +169,345 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           child: Text('Vyeti - inajengwa',
                               style: GoogleFonts.montserrat())),
                     ])));
+  }
+
+  Widget _buildOverviewTab(Color bgColor, Color surfaceColor,
+      Color textPrimary, Color textSecondary) {
+    return RefreshIndicator(
+        color: const Color(0xFFE87722),
+        onRefresh: () async => _loadAll(),
+        child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 80),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              // ── QUICK ACTIONS ──
+              Row(children: [
+                _buildQuickAction(Icons.add_circle_outline_rounded, 'Unda Kozi',
+                    const Color(0xFFE87722),
+                    () => context.push('/trainer/course-builder')),
+                const SizedBox(width: 10),
+                _buildQuickAction(Icons.people_outline_rounded, 'Wanafunzi',
+                    const Color(0xFF1A2E5A), () => _tabController.animateTo(2)),
+                const SizedBox(width: 10),
+                _buildQuickAction(Icons.workspace_premium_outlined, 'Vyeti',
+                    const Color(0xFF2E7D32), () => _tabController.animateTo(3)),
+                const SizedBox(width: 10),
+                _buildQuickAction(Icons.account_balance_wallet_outlined, 'Mkoba',
+                    const Color(0xFF7B3A10), () => context.push('/wallet')),
+              ]),
+
+              const SizedBox(height: 28),
+
+              // ── STATS TITLE ──
+              Text('Takwimu za Jumla',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: textPrimary)),
+
+              const SizedBox(height: 14),
+
+              // ── STATS 2x2 GRID ──
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Expanded(
+                    child: _buildStatCard(
+                        'Wanafunzi Wote',
+                        _formatNumber(_stats['total_students'] ?? 0),
+                        Icons.people_outlined,
+                        const Color(0xFF1A2E5A),
+                        '+12%',
+                        true,
+                        surfaceColor,
+                        textPrimary)),
+                const SizedBox(width: 12),
+                Expanded(
+                    child: _buildStatCard(
+                        'Maoni ya Jumla',
+                        _formatNumber(_stats['total_views'] ?? 0),
+                        Icons.visibility_outlined,
+                        const Color(0xFFE87722),
+                        '+8%',
+                        true,
+                        surfaceColor,
+                        textPrimary)),
+              ]),
+
+              const SizedBox(height: 12),
+
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Expanded(
+                    child: _buildStatCard(
+                        'Ukamilishaji',
+                        '${_stats['completion_rate'] ?? 0}%',
+                        Icons.check_circle_outline,
+                        const Color(0xFF2E7D32),
+                        'wastani',
+                        true,
+                        surfaceColor,
+                        textPrimary)),
+                const SizedBox(width: 12),
+                Expanded(
+                    child: _buildStatCard(
+                        'Ukadiriaji',
+                        '${(_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1)}★',
+                        Icons.star_outline,
+                        const Color(0xFFFFA726),
+                        'kwa kozi',
+                        true,
+                        surfaceColor,
+                        textPrimary)),
+              ]),
+
+              const SizedBox(height: 28),
+
+              // ── RECENT COURSES HEADER ──
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Kozi Zangu',
+                        style: GoogleFonts.montserrat(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: textPrimary)),
+                    GestureDetector(
+                        onTap: () => _tabController.animateTo(1),
+                        child: Text('Zote →',
+                            style: GoogleFonts.montserrat(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFFE87722)))),
+                  ]),
+
+              const SizedBox(height: 14),
+
+              // ── RECENT COURSES (max 3) ──
+              if (_courses.isEmpty)
+                _buildEmptyState(
+                    'Huna kozi bado.\nBonyeza + kuunda kozi yako ya kwanza!',
+                    Icons.school_outlined,
+                    surfaceColor)
+              else
+                ..._courses
+                    .take(3)
+                    .map((c) => _buildCourseCard(
+                        c as Map, surfaceColor, textPrimary, textSecondary)),
+
+              const SizedBox(height: 80),
+            ])));
+  }
+
+  Widget _buildQuickAction(
+      IconData icon, String label, Color color, VoidCallback onTap) {
+    return Expanded(
+        child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(14),
+                    border:
+                        Border.all(color: color.withValues(alpha: 0.2))),
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                          color: color.withValues(alpha: 0.12),
+                          shape: BoxShape.circle),
+                      child: Icon(icon, color: color, size: 18)),
+                  const SizedBox(height: 6),
+                  Text(label,
+                      style: GoogleFonts.montserrat(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: color),
+                      textAlign: TextAlign.center),
+                ]))));
+  }
+
+  Widget _buildStatCard(
+      String title,
+      String value,
+      IconData icon,
+      Color color,
+      String trend,
+      bool trendUp,
+      Color surfaceColor,
+      Color textPrimary) {
+    return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                  color: const Color(0xFFE87722).withValues(alpha: 0.08),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4))
+            ]),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12)),
+                child: Icon(icon, color: color, size: 20)),
+            Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                    color: trendUp
+                        ? const Color(0xFF2E7D32).withValues(alpha: 0.1)
+                        : const Color(0xFFB71C1C).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8)),
+                child: Text(trend,
+                    style: GoogleFonts.montserrat(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: trendUp
+                            ? const Color(0xFF2E7D32)
+                            : const Color(0xFFB71C1C)))),
+          ]),
+          const SizedBox(height: 14),
+          Text(value,
+              style: GoogleFonts.montserrat(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: textPrimary)),
+          const SizedBox(height: 4),
+          Text(title,
+              style: GoogleFonts.montserrat(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF7B3A10))),
+        ]));
+  }
+
+  Widget _buildEmptyState(
+      String message, IconData icon, Color surfaceColor) {
+    return Center(
+        child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 40),
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Container(
+                  width: 88,
+                  height: 88,
+                  decoration: const BoxDecoration(
+                      color: Color(0xFFF5E6D8), shape: BoxShape.circle),
+                  child: Icon(icon, size: 44, color: const Color(0xFFE87722))),
+              const SizedBox(height: 20),
+              Text(message,
+                  style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF7B3A10),
+                      height: 1.5),
+                  textAlign: TextAlign.center),
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                  onPressed: () =>
+                      context.push('/trainer/course-builder'),
+                  icon: const Icon(Icons.add_rounded, size: 18),
+                  label: Text('Unda Kozi',
+                      style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.w700)),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFE87722),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28)),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28, vertical: 14))),
+            ])));
+  }
+
+  Widget _buildCourseCard(Map course, Color surfaceColor, Color textPrimary,
+      Color textSecondary) {
+    final title = course['title'] as String? ?? 'Kozi';
+    final status = course['status'] as String? ?? 'draft';
+    final students = course['student_count'] as int? ?? 0;
+    final rating =
+        (course['average_rating'] as num? ?? 0.0).toDouble();
+    final isPublished = status == 'published';
+
+    return GestureDetector(
+        onTap: () =>
+            context.push('/trainer/course/${course['id']}'),
+        child: Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                      color:
+                          const Color(0xFFE87722).withValues(alpha: 0.06),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3))
+                ]),
+            child: Row(children: [
+              Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                      color: const Color(0xFFE87722).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12)),
+                  child: const Icon(Icons.play_circle_outline_rounded,
+                      color: Color(0xFFE87722), size: 24)),
+              const SizedBox(width: 14),
+              Expanded(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                    Text(title,
+                        style: GoogleFonts.montserrat(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: textPrimary),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis),
+                    const SizedBox(height: 4),
+                    Row(children: [
+                      Icon(Icons.people_outlined,
+                          size: 12, color: textSecondary),
+                      const SizedBox(width: 4),
+                      Text('$students wanafunzi',
+                          style: GoogleFonts.montserrat(
+                              fontSize: 11, color: textSecondary)),
+                      const SizedBox(width: 10),
+                      const Icon(Icons.star_outline,
+                          size: 12, color: Color(0xFFFFA726)),
+                      const SizedBox(width: 2),
+                      Text(rating.toStringAsFixed(1),
+                          style: GoogleFonts.montserrat(
+                              fontSize: 11,
+                              color: const Color(0xFFFFA726))),
+                    ]),
+                  ])),
+              Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                      color: isPublished
+                          ? const Color(0xFF2E7D32).withValues(alpha: 0.1)
+                          : const Color(0xFF7B3A10).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Text(
+                      isPublished ? 'Imechapishwa' : 'Rasimu',
+                      style: GoogleFonts.montserrat(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: isPublished
+                              ? const Color(0xFF2E7D32)
+                              : const Color(0xFF7B3A10)))),
+            ])));
   }
 
   Widget _buildHeroAppBar(bool innerBoxIsScrolled) {
