@@ -187,7 +187,57 @@ class _SignupScreenState extends State<SignupScreen>
                           ),
                         ),
                       ),
-                      if (!keyboardOpen)
+                      if (!keyboardOpen) ...[
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(22, compact ? 12 : 16, 22, 0),
+                          child: Row(
+                            children: [
+                              Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.10))),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(
+                                  'Njia nyingine',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: compact ? 11 : 12,
+                                    color: AppColors.textTertiary,
+                                  ),
+                                ),
+                              ),
+                              Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.10))),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(22, compact ? 10 : 12, 22, 0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: _MethodButton(
+                                  compact: compact,
+                                  label: 'Google',
+                                  onTap: _handleGoogleSignIn,
+                                  icon: Container(
+                                    width: compact ? 22 : 24,
+                                    height: compact ? 22 : 24,
+                                    decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                                    child: Center(
+                                      child: Text('G', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w700, color: const Color(0xFF4285F4))),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: _MethodButton(
+                                  compact: compact,
+                                  label: 'Apple',
+                                  onTap: _handleAppleSignIn,
+                                  icon: Icon(Icons.apple, color: Colors.white, size: compact ? 22 : 24),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                         Padding(
                           padding: EdgeInsets.fromLTRB(
                             22,
@@ -249,6 +299,7 @@ class _SignupScreenState extends State<SignupScreen>
                             ),
                           ),
                         ),
+                    ],
                     ],
                   ),
                 ),
@@ -458,72 +509,6 @@ class _SignupContent extends StatelessWidget {
             ),
           ),
         ),
-        if (!keyboardOpen) ...[
-          SizedBox(height: compact ? 18 : 22),
-          Row(
-            children: [
-              Expanded(
-                child: Divider(color: Colors.white.withValues(alpha: 0.10)),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  'Njia nyingine',
-                  style: GoogleFonts.montserrat(
-                    fontSize: compact ? 11 : 12,
-                    color: AppColors.textTertiary,
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Divider(color: Colors.white.withValues(alpha: 0.10)),
-              ),
-            ],
-          ),
-          SizedBox(height: compact ? 12 : 14),
-          Row(
-            children: [
-              Expanded(
-                child: _MethodButton(
-                  compact: compact,
-                  label: 'Google',
-                  onTap: onGoogleSignIn,
-                  icon: Container(
-                    width: compact ? 22 : 24,
-                    height: compact ? 22 : 24,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        'G',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF4285F4),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _MethodButton(
-                  compact: compact,
-                  label: 'Apple',
-                  onTap: onAppleSignIn,
-                  icon: Icon(
-                    Icons.apple,
-                    color: Colors.white,
-                    size: compact ? 22 : 24,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
       ],
     );
   }
