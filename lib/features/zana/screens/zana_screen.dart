@@ -201,7 +201,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: const Icon(
-                          Icons.savings_outlined,
+                          Icons.account_balance_outlined,
                           color: Colors.white,
                           size: 28,
                         ),

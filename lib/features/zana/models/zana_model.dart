@@ -78,7 +78,7 @@ class ZanaData {
           'Vikundi vya Kuweka na Kukopa kwa njia ya kidijitali.',
       status: ZanaStatus.comingSoon,
       gradient: [Color(0xFFE87722), Color(0xFFFFA726)],
-      icon: Icons.savings_outlined,
+      icon: Icons.account_balance_outlined,
       route: '/zana/kikoba',
     ),
   ];

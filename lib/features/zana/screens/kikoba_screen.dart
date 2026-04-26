@@ -34,7 +34,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
         'Weka rekodi za wanachama na michango',
       ],
       [
-        Icons.savings_outlined,
+        Icons.account_balance_outlined,
         'Fuatilia akiba',
         'Angalia akiba ya kila mwanachama wakati wowote',
       ],
@@ -120,7 +120,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
                             borderRadius: BorderRadius.circular(24),
                           ),
                           child: const Icon(
-                            Icons.savings_outlined,
+                            Icons.account_balance_outlined,
                             color: Colors.white,
                             size: 40,
                           ),
