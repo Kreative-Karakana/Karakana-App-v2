@@ -4,7 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/buttons/gradient_button.dart';
+import '../../../widgets/common/terms_dialog.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -62,7 +64,13 @@ class _LoginScreenState extends State<LoginScreen>
       _emailController.text.trim(),
       _passwordController.text,
     );
-    if (success && mounted) context.go('/home');
+    if (success && mounted) {
+      final termsAccepted = await SecureStorage().isTermsAccepted();
+      if (!termsAccepted && mounted) {
+        await showTermsDialog(context);
+      }
+      if (mounted) context.go('/home');
+    }
   }
 
   Future<void> _handleGoogleSignIn() async {

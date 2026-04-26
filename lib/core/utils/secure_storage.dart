@@ -114,6 +114,20 @@ class SecureStorage {
     await prefs.setBool(AppConstants.mastercardDoneKey, true);
   }
 
+  Future<void> setTermsAccepted() async {
+    try {
+      await _storage.write(key: 'terms_accepted', value: 'true');
+    } catch (_) {}
+  }
+
+  Future<bool> isTermsAccepted() async {
+    try {
+      return await _storage.read(key: 'terms_accepted') == 'true';
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<void> clearAll() async {
     final prefs = await _prefs;
     try {
