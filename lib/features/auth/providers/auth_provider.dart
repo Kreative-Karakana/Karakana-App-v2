@@ -13,6 +13,7 @@ class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _isAuthenticated = false;
   Map<String, dynamic>? _user;
+  List<dynamic>? _roles;
   String? _errorMessage;
   bool _isOnboardingComplete = false;
 
@@ -46,10 +47,25 @@ class AuthProvider extends ChangeNotifier {
   int? get userId => _user?['id'];
 
   bool get isTrainer {
-    final roles = _user?['roles'];
-    if (roles is List) return roles.contains('trainer');
+    // _roles is populated from the signin response; profile/me doesn't return roles
+    final rolesList = _roles ?? _user?['roles'];
+    if (rolesList is List) return rolesList.contains('trainers');
     return false;
   }
+
+  List<dynamic>? _extractRoles(dynamic data) {
+    if (data is! Map) return null;
+    final direct = data['roles'];
+    if (direct is List) return direct;
+    final nested = data['user'];
+    if (nested is Map) {
+      final nestedRoles = nested['roles'];
+      if (nestedRoles is List) return nestedRoles;
+    }
+    return null;
+  }
+
+  String get homeRoute => isTrainer ? '/trainer/dashboard' : '/home';
 
   Future<void> initialize() async {
     _isOnboardingComplete = await SecureStorage().isOnboardingComplete();
@@ -81,6 +97,8 @@ class AuthProvider extends ChangeNotifier {
       final token = response.data['token'] ?? response.data['key'];
       if (token != null) {
         await SecureStorage().saveToken(token.toString());
+        _roles = _extractRoles(response.data);
+        debugPrint('[AUTH] Signin roles: $_roles');
         await getCurrentUser();
         _isAuthenticated = true;
         _isLoading = false;
@@ -155,6 +173,7 @@ class AuthProvider extends ChangeNotifier {
       final token = response.data['token'] ?? response.data['key'];
       if (token != null) {
         await SecureStorage().saveToken(token.toString());
+        _roles = _extractRoles(response.data);
         await getCurrentUser();
         _isAuthenticated = true;
         _isLoading = false;
@@ -198,6 +217,7 @@ class AuthProvider extends ChangeNotifier {
     await SecureStorage().clearAll();
     _isAuthenticated = false;
     _user = null;
+    _roles = null;
     _errorMessage = null;
     notifyListeners();
   }
@@ -325,6 +345,7 @@ class AuthProvider extends ChangeNotifier {
     final token = data['token'] ?? data['key'];
     if (token != null) {
       await SecureStorage().saveToken(token.toString());
+      _roles = _extractRoles(data);
       await getCurrentUser();
       _isAuthenticated = true;
       _isLoading = false;

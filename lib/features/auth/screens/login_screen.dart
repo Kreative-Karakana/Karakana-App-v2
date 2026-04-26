@@ -69,20 +69,20 @@ class _LoginScreenState extends State<LoginScreen>
       if (!termsAccepted && mounted) {
         await showTermsDialog(context);
       }
-      if (mounted) context.go('/home');
+      if (mounted) context.go(auth.homeRoute);
     }
   }
 
   Future<void> _handleGoogleSignIn() async {
     final auth = context.read<AuthProvider>();
     final success = await auth.loginWithGoogle();
-    if (success && mounted) context.go('/home');
+    if (success && mounted) context.go(auth.homeRoute);
   }
 
   Future<void> _handleAppleSignIn() async {
     final auth = context.read<AuthProvider>();
     final success = await auth.loginWithApple();
-    if (success && mounted) context.go('/home');
+    if (success && mounted) context.go(auth.homeRoute);
   }
 
   void _handleBiometricUnavailable() {

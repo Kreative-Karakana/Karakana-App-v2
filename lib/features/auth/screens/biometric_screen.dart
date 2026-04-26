@@ -2,8 +2,10 @@
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../widgets/buttons/gradient_button.dart';
+import '../providers/auth_provider.dart';
 
 class BiometricScreen extends StatefulWidget {
   const BiometricScreen({super.key});
@@ -39,7 +41,8 @@ class _BiometricScreenState extends State<BiometricScreen> {
         ),
       );
       if (success && mounted) {
-        context.go('/home');
+        final auth = context.read<AuthProvider>();
+        context.go(auth.homeRoute);
       } else if (mounted) {
         setState(() {
           _isAuthenticating = false;

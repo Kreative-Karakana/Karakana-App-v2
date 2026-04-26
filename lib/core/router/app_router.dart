@@ -132,7 +132,7 @@ class AppRouter {
 
         // Already logged in: redirect away from auth screens
         if (isAuth && authRoutes.contains(location)) {
-          return AppRoutes.home;
+          return authProvider.isTrainer ? AppRoutes.trainerDashboard : AppRoutes.home;
         }
 
         return null;

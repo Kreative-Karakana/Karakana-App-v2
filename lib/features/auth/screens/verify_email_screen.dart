@@ -76,7 +76,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       if (!termsAccepted && mounted) {
         await showTermsDialog(context);
       }
-      if (mounted) context.go('/home');
+      if (mounted) context.go(auth.homeRoute);
     }
   }
 

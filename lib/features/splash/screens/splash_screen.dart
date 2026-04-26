@@ -49,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen>
       if (!auth.isOnboardingComplete) {
         context.go('/onboarding');
       } else if (auth.isAuthenticated) {
-        context.go('/home');
+        context.go(auth.homeRoute);
       } else {
         context.go('/login');
       }
