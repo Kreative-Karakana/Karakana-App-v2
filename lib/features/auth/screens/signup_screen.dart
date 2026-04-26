@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../widgets/buttons/gradient_button.dart';
-import '../../../widgets/common/app_logo.dart';
 import '../providers/auth_provider.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -144,7 +143,7 @@ class _SignupScreenState extends State<SignupScreen>
                 child: SingleChildScrollView(
                   padding: EdgeInsets.fromLTRB(
                     22,
-                    compact ? 14 : 24,
+                    compact ? 20 : 28,
                     22,
                     MediaQuery.viewInsetsOf(context).bottom + (compact ? 10 : 16),
                   ),
@@ -261,7 +260,7 @@ class _SignupContent extends StatelessWidget {
                 Text(
                   'Fungua Akaunti',
                   style: GoogleFonts.montserrat(
-                    fontSize: compact ? 27 : 31,
+                    fontSize: compact ? 22 : 24,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
                     height: 1.02,
@@ -272,7 +271,7 @@ class _SignupContent extends StatelessWidget {
                   'Jenga akaunti yako na uanze safari yako ya kujifunza na kukuza biashara.',
                   style: GoogleFonts.montserrat(
                     fontSize: compact ? 12.5 : 13.5,
-                    color: AppColors.primaryMid,
+                    color: Colors.white.withValues(alpha: 0.72),
                     height: 1.35,
                   ),
                 ),
@@ -455,34 +454,59 @@ class _SignupContent extends StatelessWidget {
           ),
           SizedBox(height: compact ? 14 : 20),
           Center(
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Una akaunti? ',
-                    style: GoogleFonts.montserrat(
-                      fontSize: compact ? 13 : 14,
-                      color: Colors.white.withValues(alpha: 0.74),
-                    ),
+            child: GestureDetector(
+              onTap: () => context.go('/login'),
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: compact ? 20 : 24,
+                  vertical: compact ? 12 : 14,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.10),
                   ),
-                  WidgetSpan(
-                    alignment: PlaceholderAlignment.middle,
-                    child: GestureDetector(
-                      onTap: () => context.go('/login'),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Una akaunti?',
+                      style: GoogleFonts.montserrat(
+                        fontSize: compact ? 13 : 14,
+                        color: Colors.white.withValues(alpha: 0.74),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: compact ? 14 : 16,
+                        vertical: compact ? 5 : 6,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [AppColors.primary, Color(0xFFE07A2F)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
                       child: Text(
                         'Ingia',
                         style: GoogleFonts.montserrat(
-                          fontSize: compact ? 13 : 14,
+                          fontSize: compact ? 12.5 : 13.5,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.primaryMid,
+                          color: Colors.white,
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
+          SizedBox(height: compact ? 20 : 28),
         ],
       ],
     );
@@ -495,15 +519,39 @@ class _BrandRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Row(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const AppLogo(size: 60, showBackground: false),
-          const SizedBox(width: 12),
+          Container(
+            width: 88,
+            height: 88,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Image.asset(
+                'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) => Center(
+                  child: Text(
+                    'K',
+                    style: GoogleFonts.poppins(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
           Text(
             'Karakana',
-            style: GoogleFonts.montserrat(
-              fontSize: 24,
+            style: GoogleFonts.poppins(
+              fontSize: 32,
               fontWeight: FontWeight.w700,
               color: Colors.white,
             ),

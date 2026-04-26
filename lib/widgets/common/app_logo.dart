@@ -26,13 +26,6 @@ class AppLogo extends StatelessWidget {
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.08),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.22),
-            blurRadius: 18,
-            offset: const Offset(0, 10),
-          ),
-        ],
       ),
       child: Stack(
         alignment: Alignment.center,

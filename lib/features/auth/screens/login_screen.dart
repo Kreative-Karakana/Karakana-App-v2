@@ -199,21 +199,14 @@ class _LoginScreenState extends State<LoginScreen>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                      const SizedBox(height: 60),
+                      const SizedBox(height: 28),
                       Center(
                         child: Container(
                           width: 88,
                           height: 88,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.3),
-                                blurRadius: 24,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(16),
@@ -238,20 +231,12 @@ class _LoginScreenState extends State<LoginScreen>
                       Text(
                         'Karakana',
                         style: GoogleFonts.poppins(
-                          fontSize: 24,
+                          fontSize: 32,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Ingia kwenye akaunti yako',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          color: Colors.white.withValues(alpha: 0.7),
-                        ),
-                      ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: 20),
                       Align(
                         alignment: Alignment.center,
                         child: Container(
@@ -281,7 +266,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   Text(
                                     'Karibu Tena',
                                     style: GoogleFonts.montserrat(
-                                      fontSize: compact ? 27 : 31,
+                                      fontSize: compact ? 22 : 24,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white,
                                       height: 1.02,
@@ -292,7 +277,7 @@ class _LoginScreenState extends State<LoginScreen>
                                     'Ingia kwa akaunti yako na uendelee na masomo yako bila usumbufu.',
                                     style: GoogleFonts.montserrat(
                                       fontSize: compact ? 12.5 : 13.5,
-                                      color: AppColors.primaryMid,
+                                      color: Colors.white.withValues(alpha: 0.72),
                                       height: 1.35,
                                     ),
                                   ),
@@ -341,7 +326,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   ),
                                   SizedBox(height: compact ? 4 : 8),
                                   Align(
-                                    alignment: Alignment.centerRight,
+                                    alignment: Alignment.centerLeft,
                                     child: TextButton(
                                       onPressed: () =>
                                           context.push('/forgot-password'),
@@ -536,6 +521,7 @@ class _LoginScreenState extends State<LoginScreen>
                         const Center(
                           child: _SignupFooter(),
                         ),
+                        SizedBox(height: compact ? 20 : 28),
                       ],
                         ],
                       ),
@@ -559,31 +545,55 @@ class _SignupFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     final compact = MediaQuery.sizeOf(context).height < 760;
 
-    return RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: 'Huna akaunti? ',
-            style: GoogleFonts.montserrat(
-              fontSize: compact ? 13 : 14,
-              color: Colors.white.withValues(alpha: 0.74),
-            ),
+    return GestureDetector(
+      onTap: () => context.push('/signup'),
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: compact ? 20 : 24,
+          vertical: compact ? 12 : 14,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(50),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.10),
           ),
-          WidgetSpan(
-            alignment: PlaceholderAlignment.middle,
-            child: GestureDetector(
-              onTap: () => context.push('/signup'),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Huna akaunti?',
+              style: GoogleFonts.montserrat(
+                fontSize: compact ? 13 : 14,
+                color: Colors.white.withValues(alpha: 0.74),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: compact ? 14 : 16,
+                vertical: compact ? 5 : 6,
+              ),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppColors.primary, Color(0xFFE07A2F)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(50),
+              ),
               child: Text(
                 'Jisajili Sasa',
                 style: GoogleFonts.montserrat(
-                  fontSize: compact ? 13 : 14,
+                  fontSize: compact ? 12.5 : 13.5,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.primaryMid,
+                  color: Colors.white,
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
