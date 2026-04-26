@@ -158,9 +158,9 @@ class _SignupScreenState extends State<SignupScreen>
                           child: Padding(
                             padding: EdgeInsets.fromLTRB(
                               22,
-                              compact ? 32 : 44,
+                              compact ? 16 : 22,
                               22,
-                              compact ? 12 : 16,
+                              compact ? 8 : 10,
                             ),
                             child: _SignupContent(
                               compact: compact,
@@ -366,10 +366,10 @@ class _SignupContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         const _BrandRow(),
-        SizedBox(height: keyboardOpen ? (compact ? 10 : 12) : (compact ? 18 : 24)),
+        SizedBox(height: keyboardOpen ? (compact ? 8 : 10) : (compact ? 12 : 16)),
         Container(
           constraints: const BoxConstraints(maxWidth: 420),
-          padding: EdgeInsets.all(compact ? 18 : 22),
+          padding: EdgeInsets.all(compact ? 16 : 18),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(30),
@@ -408,7 +408,7 @@ class _SignupContent extends StatelessWidget {
                     height: 1.35,
                   ),
                 ),
-                SizedBox(height: compact ? 18 : 22),
+                SizedBox(height: compact ? 12 : 16),
                 buildField(
                   label: 'Jina la Kwanza',
                   hint: 'Jina lako',
@@ -495,12 +495,12 @@ class _SignupContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                 ],
-                SizedBox(height: compact ? 8 : 12),
+                SizedBox(height: compact ? 8 : 10),
                 SizedBox(
                   width: double.infinity,
                   child: GradientButton(
                     text: 'Jisajili',
-                    height: compact ? 52 : 58,
+                    height: compact ? 48 : 52,
                     isLoading: authProvider.isLoading,
                     onTap: onHandleSignup,
                   ),
