@@ -38,6 +38,7 @@ import '../../features/fursa/screens/fursa_screen.dart';
 import '../../features/zana/screens/biz_manager_screen.dart';
 import '../../features/zana/screens/insurance_screen.dart';
 import '../../features/zana/screens/pos_screen.dart';
+import '../../features/zana/screens/ebooks_screen.dart';
 import '../../features/zana/screens/kikoba_screen.dart';
 import '../../features/zana/screens/zana_screen.dart';
 
@@ -203,6 +204,10 @@ class AppRouter {
         GoRoute(
           path: '/zana/insurance',
           builder: (context, state) => const InsuranceScreen(),
+        ),
+        GoRoute(
+          path: '/zana/ebooks',
+          builder: (context, state) => const EBooksScreen(),
         ),
         GoRoute(
           path: AppRoutes.account,

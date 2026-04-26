@@ -69,6 +69,18 @@ class ZanaData {
       route: '/zana/insurance',
     ),
     ZanaTool(
+      id: 'ebooks',
+      name: 'eBooks',
+      fullName: 'Digital Library',
+      nameSwahili: 'Maktaba ya Kidijitali',
+      description: 'Business and entrepreneurship eBooks.',
+      descriptionSwahili: 'Vitabu vya biashara na ujasiriamali.',
+      status: ZanaStatus.live,
+      gradient: [Color(0xFF4A1A6B), Color(0xFF7B2D9E)],
+      icon: Icons.menu_book_outlined,
+      route: '/zana/ebooks',
+    ),
+    ZanaTool(
       id: 'kikoba',
       name: 'e-KIKOBA',
       fullName: 'Digital Group Savings',
