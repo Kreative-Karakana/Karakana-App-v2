@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,7 +17,6 @@ class TrainerDashboardScreen extends StatefulWidget {
 class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  // ignore: unused_field
   List _courses = [];
   bool _isLoading = true;
   // ignore: unused_field
@@ -86,7 +86,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     }
   }
 
-  // ignore: unused_element
   Future<void> _togglePublish(Map course) async {
     final id = course['id'];
     final isPublished = course['status'] == 'published';
@@ -159,9 +158,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     controller: _tabController,
                     children: [
                       _buildOverviewTab(bgColor, surfaceColor, textPrimary, textSecondary),
-                      Center(
-                          child: Text('Kozi - inajengwa',
-                              style: GoogleFonts.montserrat())),
+                      _buildCoursesTab(bgColor, surfaceColor, textPrimary, textSecondary),
                       Center(
                           child: Text('Wanafunzi - inajengwa',
                               style: GoogleFonts.montserrat())),
@@ -427,87 +424,298 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             ])));
   }
 
+  Widget _buildCoursesTab(Color bgColor, Color surfaceColor,
+      Color textPrimary, Color textSecondary) {
+    return RefreshIndicator(
+        color: const Color(0xFFE87722),
+        onRefresh: () async => _loadAll(),
+        child: _courses.isEmpty
+            ? _buildEmptyState(
+                'Huna kozi bado.\nAnza kuunda kozi yako ya kwanza!',
+                Icons.school_outlined,
+                surfaceColor)
+            : ListView.builder(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 80),
+                itemCount: _courses.length,
+                itemBuilder: (_, i) => _buildCourseCard(
+                    _courses[i] as Map,
+                    surfaceColor,
+                    textPrimary,
+                    textSecondary)));
+  }
+
   Widget _buildCourseCard(Map course, Color surfaceColor, Color textPrimary,
       Color textSecondary) {
-    final title = course['title'] as String? ?? 'Kozi';
-    final status = course['status'] as String? ?? 'draft';
+    final isPublished = course['status'] == 'published';
+    final title = course['title'] as String? ?? '';
+    final thumbnail = course['cover_photo'] as String?;
     final students = course['student_count'] as int? ?? 0;
-    final rating =
-        (course['average_rating'] as num? ?? 0.0).toDouble();
-    final isPublished = status == 'published';
+    final rating = (course['average_rating'] as num? ?? 0).toDouble();
+    final price = course['price'];
+    final courseId = course['id'] as int? ?? 0;
 
-    return GestureDetector(
-        onTap: () =>
-            context.push('/trainer/course/${course['id']}'),
-        child: Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-                color: surfaceColor,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                      color:
-                          const Color(0xFFE87722).withValues(alpha: 0.06),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3))
-                ]),
-            child: Row(children: [
-              Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                      color: const Color(0xFFE87722).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12)),
-                  child: const Icon(Icons.play_circle_outline_rounded,
-                      color: Color(0xFFE87722), size: 24)),
-              const SizedBox(width: 14),
-              Expanded(
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+    return Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                  color: const Color(0xFFE87722).withValues(alpha: 0.08),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4))
+            ]),
+        child: Column(children: [
+          // ── THUMBNAIL WITH STATUS BADGE ──
+          ClipRRect(
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16)),
+              child: Stack(children: [
+                thumbnail != null && thumbnail.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: thumbnail,
+                        height: 130,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        placeholder: (_, __) => Container(
+                            height: 130,
+                            color: const Color(0xFFF5E6D8),
+                            child: const Center(
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Color(0xFFE87722)))),
+                        errorWidget: (_, __, ___) => Container(
+                            height: 130,
+                            color: const Color(0xFFF5E6D8),
+                            child: const Icon(Icons.school_outlined,
+                                color: Color(0xFFE87722), size: 44)))
+                    : Container(
+                        height: 130,
+                        color: const Color(0xFFF5E6D8),
+                        child: const Center(
+                            child: Icon(Icons.school_outlined,
+                                color: Color(0xFFE87722), size: 44))),
+
+                // Dark gradient at bottom of thumbnail
+                Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                        height: 48,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(colors: [
+                          Colors.transparent,
+                          const Color(0xFF1A0A00).withValues(alpha: 0.55)
+                        ], begin: Alignment.topCenter, end: Alignment.bottomCenter)))),
+
+                // Status badge top-right
+                Positioned(
+                    top: 10,
+                    right: 10,
+                    child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                            color: isPublished
+                                ? const Color(0xFF2E7D32)
+                                : const Color(0xFF7B3A10),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Row(mainAxisSize: MainAxisSize.min, children: [
+                          Container(
+                              width: 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isPublished
+                                      ? const Color(0xFF81C784)
+                                      : const Color(0xFFFFB74D))),
+                          const SizedBox(width: 5),
+                          Text(isPublished ? 'Imechapishwa' : 'Rasimu',
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white)),
+                        ]))),
+              ])),
+
+          // ── COURSE DETAILS ──
+          Padding(
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(title,
                         style: GoogleFonts.montserrat(
-                            fontSize: 13,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: textPrimary),
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis),
-                    const SizedBox(height: 4),
+
+                    const SizedBox(height: 10),
+
+                    // Metrics row
                     Row(children: [
-                      Icon(Icons.people_outlined,
-                          size: 12, color: textSecondary),
+                      const Icon(Icons.people_outline,
+                          size: 13, color: Color(0xFF7B3A10)),
                       const SizedBox(width: 4),
                       Text('$students wanafunzi',
                           style: GoogleFonts.montserrat(
-                              fontSize: 11, color: textSecondary)),
-                      const SizedBox(width: 10),
-                      const Icon(Icons.star_outline,
-                          size: 12, color: Color(0xFFFFA726)),
-                      const SizedBox(width: 2),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF7B3A10))),
+                      const SizedBox(width: 14),
+                      const Icon(Icons.star_rounded,
+                          size: 13, color: Color(0xFFFFA726)),
+                      const SizedBox(width: 3),
                       Text(rating.toStringAsFixed(1),
                           style: GoogleFonts.montserrat(
                               fontSize: 11,
-                              color: const Color(0xFFFFA726))),
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF7B3A10))),
+                      const Spacer(),
+                      Text(_formatPrice(price),
+                          style: GoogleFonts.montserrat(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFFE87722))),
+                    ]),
+
+                    const SizedBox(height: 12),
+                    const Divider(height: 1, color: Color(0xFFF5E6D8)),
+                    const SizedBox(height: 10),
+
+                    // ── ACTION BUTTONS ROW ──
+                    Row(children: [
+                      // Publish toggle
+                      GestureDetector(
+                          onTap: () => _showPublishConfirm(course),
+                          child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 7),
+                              decoration: BoxDecoration(
+                                  color: isPublished
+                                      ? const Color(0xFF2E7D32)
+                                          .withValues(alpha: 0.08)
+                                      : const Color(0xFFE87722)
+                                          .withValues(alpha: 0.08),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                      color: isPublished
+                                          ? const Color(0xFF2E7D32)
+                                              .withValues(alpha: 0.35)
+                                          : const Color(0xFFE87722)
+                                              .withValues(alpha: 0.35))),
+                              child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                        isPublished
+                                            ? Icons.visibility_outlined
+                                            : Icons.visibility_off_outlined,
+                                        size: 13,
+                                        color: isPublished
+                                            ? const Color(0xFF2E7D32)
+                                            : const Color(0xFFE87722)),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                        isPublished
+                                            ? 'Imechapishwa'
+                                            : 'Chapisha',
+                                        style: GoogleFonts.montserrat(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w700,
+                                            color: isPublished
+                                                ? const Color(0xFF2E7D32)
+                                                : const Color(0xFFE87722))),
+                                  ]))),
+
+                      const Spacer(),
+
+                      // Quiz button
+                      _buildSmallAction('Majaribio', Icons.quiz_outlined,
+                          () => context.push('/trainer/quiz/$courseId')),
+                      const SizedBox(width: 6),
+
+                      // Edit button
+                      _buildSmallAction(
+                          'Hariri',
+                          Icons.edit_outlined,
+                          () => context.push(
+                              '/trainer/course-builder?courseId=$courseId')),
                     ]),
                   ])),
-              Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                      color: isPublished
-                          ? const Color(0xFF2E7D32).withValues(alpha: 0.1)
-                          : const Color(0xFF7B3A10).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Text(
-                      isPublished ? 'Imechapishwa' : 'Rasimu',
-                      style: GoogleFonts.montserrat(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: isPublished
-                              ? const Color(0xFF2E7D32)
-                              : const Color(0xFF7B3A10)))),
+        ]));
+  }
+
+  Widget _buildSmallAction(
+      String label, IconData icon, VoidCallback onTap) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+                color: const Color(0xFFF5E6D8),
+                borderRadius: BorderRadius.circular(10)),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Icon(icon, size: 12, color: const Color(0xFF7B3A10)),
+              const SizedBox(width: 4),
+              Text(label,
+                  style: GoogleFonts.montserrat(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF7B3A10))),
             ])));
+  }
+
+  void _showPublishConfirm(Map course) {
+    final isPublished = course['status'] == 'published';
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                title: Text(isPublished ? 'Ficha Kozi?' : 'Chapisha Kozi?',
+                    style: GoogleFonts.montserrat(
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF1A0A00))),
+                content: Text(
+                    isPublished
+                        ? 'Kozi itafichwa na wanafunzi hawataweza kuiona tena.'
+                        : 'Kozi itaonekana kwa wanafunzi wote. Tayari?',
+                    style: GoogleFonts.montserrat(
+                        fontSize: 13,
+                        color: const Color(0xFF7B3A10),
+                        height: 1.5)),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text('Hapana',
+                          style: GoogleFonts.montserrat(
+                              color: const Color(0xFF7B3A10)))),
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _togglePublish(course);
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: isPublished
+                              ? const Color(0xFFB71C1C)
+                              : const Color(0xFF2E7D32),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12))),
+                      child: Text(
+                          isPublished ? 'Ndiyo, Ficha' : 'Ndiyo, Chapisha',
+                          style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white))),
+                ]));
   }
 
   Widget _buildHeroAppBar(bool innerBoxIsScrolled) {
