@@ -369,7 +369,12 @@ class _SignupContent extends StatelessWidget {
         SizedBox(height: keyboardOpen ? (compact ? 8 : 10) : (compact ? 12 : 16)),
         Container(
           constraints: const BoxConstraints(maxWidth: 420),
-          padding: EdgeInsets.all(compact ? 16 : 18),
+          padding: EdgeInsets.fromLTRB(
+            compact ? 16 : 18,
+            compact ? 16 : 18,
+            compact ? 16 : 18,
+            compact ? 24 : 28,
+          ),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(30),
