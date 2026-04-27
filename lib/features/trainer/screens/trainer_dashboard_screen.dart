@@ -30,14 +30,14 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     'total_views': 0,
   };
 
-  final List _pendingCerts = [
+  final List<Map<String, dynamic>> _pendingCerts = [
     {'name': 'Juma Ally', 'course': 'Misingi ya Ujasiriamali',
       'progress': 100, 'date': '24 Apr 2026', 'is_approved': false},
     {'name': 'Fatuma Hassan', 'course': 'Fedha za Biashara',
       'progress': 100, 'date': '23 Apr 2026', 'is_approved': false},
     {'name': 'Peter Kimaro', 'course': 'Masoko ya Kidijitali',
       'progress': 100, 'date': '22 Apr 2026', 'is_approved': true},
-    {'name': 'Amina Juma', 'course': 'Uongozi na Timu',
+    {'name': 'Amina Salim', 'course': 'Uongozi na Timu',
       'progress': 98, 'date': '21 Apr 2026', 'is_approved': false},
   ];
 
@@ -1073,11 +1073,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   Widget _buildCertificatesTab(Color bgColor, Color surfaceColor,
       Color textPrimary, Color textSecondary) {
 
-    final pending = _pendingCerts
-      .where((c) => !(c['is_approved'] as bool)).length;
-    final approved = _pendingCerts
-      .where((c) => c['is_approved'] as bool).length;
-    final total = _pendingCerts.length;
+    final pending = _pendingCerts.where((c) => !(c['is_approved'] as bool)).length;
+    final approved = _pendingCerts.where((c) => c['is_approved'] as bool).length;
 
     return RefreshIndicator(
       color: const Color(0xFFE87722),
@@ -1092,7 +1089,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFE87722).withValues(alpha: 0.07),
+              color: const Color(0xFFE87722).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: const Color(0xFFE87722).withValues(alpha: 0.25))),
@@ -1105,20 +1102,19 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                 Text('Uthibitishaji wa Vyeti',
-                  style: GoogleFonts.montserrat(fontSize: 14,
-                    fontWeight: FontWeight.w700, color: const Color(0xFF3D1800))),
-                const SizedBox(height: 5),
-                Text(
-                  'Kagua ukamilishaji wa mwanafunzi kisha uthibitishe '
-                  'cheti chake rasmi. Mwanafunzi ataweza kupakua '
-                  'cheti baada ya uthibitisho wako.',
+                  style: GoogleFonts.montserrat(fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF3D1800))),
+                const SizedBox(height: 4),
+                Text('Kagua ukamilishaji wa mwanafunzi kisha '
+                  'thibitisha ili apate cheti rasmi cha Karakana.',
                   style: GoogleFonts.montserrat(fontSize: 12,
                     fontWeight: FontWeight.w400,
                     color: const Color(0xFF7B3A10), height: 1.5)),
               ])),
             ])),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // ── SUMMARY STATS ROW ──
           Row(children: [
@@ -1126,7 +1122,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             const SizedBox(width: 10),
             _buildMiniStat('$approved', 'Zilizoidhinishwa', const Color(0xFF2E7D32)),
             const SizedBox(width: 10),
-            _buildMiniStat('$total', 'Zote', const Color(0xFF1A2E5A)),
+            _buildMiniStat('${_pendingCerts.length}', 'Zote', const Color(0xFF1A2E5A)),
           ]),
 
           const SizedBox(height: 24),
@@ -1138,203 +1134,184 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
           const SizedBox(height: 14),
 
-          // ── CERTIFICATES LIST ──
-          if (_pendingCerts.isEmpty)
-            _buildEmptyState(
-              'Hakuna maombi ya vyeti bado.\nWanafunzi wakikamilisha kozi, '
-              'maombi yataonekana hapa.',
-              Icons.workspace_premium_outlined, surfaceColor)
-          else
-            ..._pendingCerts.asMap().entries.map((entry) {
-              final index = entry.key;
-              final cert = entry.value as Map;
-              return _buildCertCard(cert, index, surfaceColor, textPrimary);
-            }),
+          // ── CERTIFICATE CARDS ──
+          ..._pendingCerts.asMap().entries.map((entry) {
+            final index = entry.key;
+            final cert = entry.value;
+            final isApproved = cert['is_approved'] as bool;
+            final progress = cert['progress'] as int;
+            final name = cert['name'] as String;
+            final course = cert['course'] as String;
+            final date = cert['date'] as String;
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 14),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isApproved
+                    ? const Color(0xFF2E7D32).withValues(alpha: 0.2)
+                    : const Color(0xFFE87722).withValues(alpha: 0.15)),
+                boxShadow: [BoxShadow(
+                  color: const Color(0xFFE87722).withValues(alpha: 0.07),
+                  blurRadius: 10, offset: const Offset(0, 3))]),
+              child: Column(children: [
+
+                // ── STUDENT INFO ──
+                Padding(padding: const EdgeInsets.all(16), child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                  // Avatar with initial
+                  Container(width: 50, height: 50,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF3D1800), Color(0xFFE87722)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight),
+                      shape: BoxShape.circle),
+                    child: Center(child: Text(
+                      name[0].toUpperCase(),
+                      style: GoogleFonts.montserrat(fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white)))),
+                  const SizedBox(width: 12),
+                  Expanded(child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                    Text(name, style: GoogleFonts.montserrat(fontSize: 14,
+                      fontWeight: FontWeight.w600, color: textPrimary)),
+                    const SizedBox(height: 3),
+                    Text(course, style: GoogleFonts.montserrat(fontSize: 12,
+                      fontWeight: FontWeight.w400, color: const Color(0xFF7B3A10)),
+                      maxLines: 1, overflow: TextOverflow.ellipsis),
+                    const SizedBox(height: 5),
+                    Row(children: [
+                      const Icon(Icons.calendar_today_outlined,
+                        size: 11, color: Color(0xFFBDA99C)),
+                      const SizedBox(width: 4),
+                      Text(date, style: GoogleFonts.montserrat(fontSize: 10,
+                        fontWeight: FontWeight.w400, color: const Color(0xFFBDA99C))),
+                    ]),
+                  ])),
+                  // Status badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: isApproved
+                        ? const Color(0xFF2E7D32).withValues(alpha: 0.1)
+                        : const Color(0xFFFFA726).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(20)),
+                    child: Text(
+                      isApproved ? '✓ Imethibitishwa' : '⏳ Inasubiri',
+                      style: GoogleFonts.montserrat(fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: isApproved
+                          ? const Color(0xFF2E7D32)
+                          : const Color(0xFFFFA726)))),
+                ])),
+
+                // ── PROGRESS BAR ──
+                Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                      Text('Ukamilishaji wa Kozi',
+                        style: GoogleFonts.montserrat(fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF7B3A10))),
+                      Text('$progress%',
+                        style: GoogleFonts.montserrat(fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: progress == 100
+                            ? const Color(0xFF2E7D32)
+                            : const Color(0xFFE87722))),
+                    ]),
+                    const SizedBox(height: 6),
+                    ClipRRect(borderRadius: BorderRadius.circular(6),
+                      child: LinearProgressIndicator(
+                        value: progress / 100,
+                        backgroundColor: const Color(0xFFF5E6D8),
+                        valueColor: AlwaysStoppedAnimation(
+                          progress == 100
+                            ? const Color(0xFF2E7D32)
+                            : const Color(0xFFE87722)),
+                        minHeight: 8)),
+                  ])),
+
+                const SizedBox(height: 14),
+
+                // ── ACTION BUTTONS ──
+                Padding(padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+                  child: !isApproved
+                    ? Row(children: [
+                        // Reject
+                        Expanded(child: OutlinedButton(
+                          onPressed: () => _rejectCertificate(index),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: const Color(0xFFB71C1C).withValues(alpha: 0.4)),
+                            foregroundColor: const Color(0xFFB71C1C),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(28)),
+                            padding: const EdgeInsets.symmetric(vertical: 10)),
+                          child: Text('Kataa',
+                            style: GoogleFonts.montserrat(fontSize: 13,
+                              fontWeight: FontWeight.w700)))),
+                        const SizedBox(width: 10),
+                        // Approve
+                        Expanded(child: ElevatedButton.icon(
+                          onPressed: () => _showApproveConfirm(index, cert),
+                          icon: const Icon(Icons.workspace_premium_outlined,
+                            size: 15),
+                          label: Text('Thibitisha Cheti',
+                            style: GoogleFonts.montserrat(fontSize: 13,
+                              fontWeight: FontWeight.w700)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2E7D32),
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(28)),
+                            padding: const EdgeInsets.symmetric(vertical: 10)))),
+                      ])
+                    // Already approved state
+                    : Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2E7D32).withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(28)),
+                        child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                          const Icon(Icons.check_circle_outline,
+                            color: Color(0xFF2E7D32), size: 16),
+                          const SizedBox(width: 8),
+                          Text('Cheti Kimethibitishwa',
+                            style: GoogleFonts.montserrat(fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: const Color(0xFF2E7D32))),
+                        ]))),
+              ]));
+          }),
         ])));
   }
 
-  Widget _buildCertCard(Map cert, int index,
-      Color surfaceColor, Color textPrimary) {
-    final isApproved = cert['is_approved'] as bool;
-    final progress = cert['progress'] as int;
-    final name = cert['name'] as String;
-    final course = cert['course'] as String;
-    final date = cert['date'] as String;
-    final initial = name[0].toUpperCase();
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      decoration: BoxDecoration(
-        color: surfaceColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isApproved
-            ? const Color(0xFF2E7D32).withValues(alpha: 0.2)
-            : const Color(0xFFE87722).withValues(alpha: 0.15)),
-        boxShadow: [BoxShadow(
-          color: const Color(0xFFE87722).withValues(alpha: 0.06),
-          blurRadius: 10, offset: const Offset(0, 3))]),
-      child: Column(children: [
-
-        // ── STUDENT INFO ──
-        Padding(padding: const EdgeInsets.all(16), child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-          // Avatar with gradient
-          Container(width: 50, height: 50,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF3D1800), Color(0xFFE87722)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight),
-              shape: BoxShape.circle),
-            child: Center(child: Text(initial,
-              style: GoogleFonts.montserrat(fontSize: 20,
-                fontWeight: FontWeight.w700, color: Colors.white)))),
-
-          const SizedBox(width: 14),
-
-          // Name + course + date
-          Expanded(child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-            Text(name,
-              style: GoogleFonts.montserrat(fontSize: 14,
-                fontWeight: FontWeight.w700, color: textPrimary)),
-            const SizedBox(height: 3),
-            Text(course,
-              style: GoogleFonts.montserrat(fontSize: 12,
-                fontWeight: FontWeight.w400, color: const Color(0xFF7B3A10)),
-              maxLines: 1, overflow: TextOverflow.ellipsis),
-            const SizedBox(height: 5),
-            Row(children: [
-              const Icon(Icons.calendar_today_outlined,
-                size: 11, color: Color(0xFFBDA99C)),
-              const SizedBox(width: 4),
-              Text(date,
-                style: GoogleFonts.montserrat(fontSize: 10,
-                  fontWeight: FontWeight.w400, color: const Color(0xFFBDA99C))),
-            ]),
-          ])),
-
-          // Status badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: isApproved
-                ? const Color(0xFF2E7D32).withValues(alpha: 0.1)
-                : const Color(0xFFFFA726).withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(20)),
-            child: Text(
-              isApproved ? '✓ Imethibitishwa' : '⏳ Inasubiri',
-              style: GoogleFonts.montserrat(fontSize: 10,
-                fontWeight: FontWeight.w700,
-                color: isApproved
-                  ? const Color(0xFF2E7D32)
-                  : const Color(0xFFFFA726)))),
-        ])),
-
-        // ── PROGRESS BAR ──
-        Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-          child: Column(children: [
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-            Text('Ukamilishaji wa Kozi',
-              style: GoogleFonts.montserrat(fontSize: 11,
-                fontWeight: FontWeight.w500, color: const Color(0xFF7B3A10))),
-            Text('$progress%',
-              style: GoogleFonts.montserrat(fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: progress == 100
-                  ? const Color(0xFF2E7D32)
-                  : const Color(0xFFE87722))),
-          ]),
-          const SizedBox(height: 6),
-          ClipRRect(borderRadius: BorderRadius.circular(6),
-            child: LinearProgressIndicator(
-              value: progress / 100,
-              backgroundColor: const Color(0xFFF5E6D8),
-              valueColor: AlwaysStoppedAnimation(
-                progress == 100
-                  ? const Color(0xFF2E7D32)
-                  : const Color(0xFFE87722)),
-              minHeight: 8)),
-        ])),
-
-        const Divider(height: 1, color: Color(0xFFF5E6D8)),
-
-        // ── ACTION BUTTONS ──
-        if (!isApproved)
-          Padding(padding: const EdgeInsets.all(14),
-            child: Row(children: [
-            // Reject button
-            Expanded(child: OutlinedButton(
-              onPressed: () => _showRejectConfirm(cert, index),
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(
-                  color: const Color(0xFFB71C1C).withValues(alpha: 0.4)),
-                foregroundColor: const Color(0xFFB71C1C),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28)),
-                padding: const EdgeInsets.symmetric(vertical: 10)),
-              child: Text('Kataa',
-                style: GoogleFonts.montserrat(fontSize: 13,
-                  fontWeight: FontWeight.w700)))),
-
-            const SizedBox(width: 12),
-
-            // Approve button
-            Expanded(child: ElevatedButton.icon(
-              onPressed: () => _showApproveConfirm(cert, index),
-              icon: const Icon(Icons.workspace_premium_outlined, size: 15),
-              label: Text('Idhibiti Cheti',
-                style: GoogleFonts.montserrat(fontSize: 13,
-                  fontWeight: FontWeight.w700)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2E7D32),
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28)),
-                padding: const EdgeInsets.symmetric(vertical: 10)))),
-          ]))
-        else
-          // Already approved state
-          Padding(padding: const EdgeInsets.all(14),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: const Color(0xFF2E7D32).withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(28)),
-              child: Row(mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                const Icon(Icons.check_circle_outline,
-                  color: Color(0xFF2E7D32), size: 16),
-                const SizedBox(width: 8),
-                Text('Cheti Kimethibitishwa',
-                  style: GoogleFonts.montserrat(fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF2E7D32))),
-              ]))),
-      ]));
-  }
-
-  void _showApproveConfirm(Map cert, int index) {
+  void _showApproveConfirm(int index, Map<String, dynamic> cert) {
     showDialog(context: context, builder: (_) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       title: Row(children: [
-        const Icon(Icons.workspace_premium_outlined, color: Color(0xFFE87722), size: 22),
+        const Icon(Icons.workspace_premium_outlined, color: Color(0xFFE87722)),
         const SizedBox(width: 8),
-        Text('Thibitisha Cheti',
-          style: GoogleFonts.montserrat(fontWeight: FontWeight.w700,
-            color: const Color(0xFF1A0A00))),
+        Text('Thibitisha Cheti', style: GoogleFonts.montserrat(
+          fontWeight: FontWeight.w700, color: const Color(0xFF1A0A00))),
       ]),
       content: Text(
         'Unathibitisha kwamba ${cert['name']} amekamilisha '
-        '"${cert['course']}" kwa mafanikio na anastahili '
-        'cheti rasmi cha Karakana?',
+        '"${cert['course']}" kwa mafanikio na anastahili cheti rasmi?',
         style: GoogleFonts.montserrat(fontSize: 13,
           color: const Color(0xFF7B3A10), height: 1.5)),
       actions: [
@@ -1346,10 +1323,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           onPressed: () {
             Navigator.pop(context);
             setState(() {
-              _pendingCerts[index] = {
-                ..._pendingCerts[index] as Map,
-                'is_approved': true,
-              };
+              _pendingCerts[index]['is_approved'] = true;
             });
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
@@ -1361,8 +1335,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 borderRadius: BorderRadius.circular(12))));
           },
           icon: const Icon(Icons.workspace_premium_outlined, size: 16),
-          label: Text('Thibitisha',
-            style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
+          label: Text('Thibitisha', style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w700)),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF2E7D32),
             foregroundColor: Colors.white,
@@ -1372,20 +1346,14 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       ]));
   }
 
-  void _showRejectConfirm(Map cert, int index) {
+  void _rejectCertificate(int index) {
     showDialog(context: context, builder: (_) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Row(children: [
-        const Icon(Icons.cancel_outlined, color: Color(0xFFB71C1C), size: 22),
-        const SizedBox(width: 8),
-        Text('Kataa Ombi',
-          style: GoogleFonts.montserrat(fontWeight: FontWeight.w700,
-            color: const Color(0xFF1A0A00))),
-      ]),
+      title: Text('Kataa Ombi?', style: GoogleFonts.montserrat(
+        fontWeight: FontWeight.w700, color: const Color(0xFF1A0A00))),
       content: Text(
-        'Una uhakika unataka kukataa ombi la cheti la '
-        '${cert['name']} kwa "${cert['course']}"?\n\n'
-        'Mwanafunzi ataarifu kupitia arifa.',
+        'Ombi la cheti la ${_pendingCerts[index]['name']} litakataliwa. '
+        'Mwanafunzi ataarifiwa.',
         style: GoogleFonts.montserrat(fontSize: 13,
           color: const Color(0xFF7B3A10), height: 1.5)),
       actions: [
@@ -1398,8 +1366,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             Navigator.pop(context);
             setState(() => _pendingCerts.removeAt(index));
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(
-                'Ombi la ${cert['name']} limekataliwa.',
+              content: Text('Ombi limekataliwa.',
                 style: GoogleFonts.montserrat()),
               backgroundColor: const Color(0xFFB71C1C),
               behavior: SnackBarBehavior.floating,
