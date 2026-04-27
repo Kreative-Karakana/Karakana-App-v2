@@ -664,7 +664,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                   .trim();
                           final rating = review['rating'] as int? ?? 0;
                           final content = review['content'] as String? ?? '';
-                          final reply = review['trainer_reply'] as String?;
+                          final reply = review['reply'] as String?;
                           final isTrainer = context.read<AuthProvider>().isTrainer;
                           return Container(
                             margin: const EdgeInsets.only(bottom: 16),
@@ -744,7 +744,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                     height: 1.5,
                                   ),
                                 ),
-                                if (reply != null) ...[
+                                if (reply != null && reply.isNotEmpty) ...[
                                   const SizedBox(height: 12),
                                   Container(
                                     padding: const EdgeInsets.all(12),

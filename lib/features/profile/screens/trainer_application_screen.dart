@@ -26,6 +26,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
   final TextEditingController _experienceController = TextEditingController();
   final TextEditingController _whyController = TextEditingController();
   final TextEditingController _topicsController = TextEditingController();
+  final TextEditingController _countryController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   File? _cvFile;
   String? _cvFileName;
@@ -44,6 +45,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
     _experienceController.dispose();
     _whyController.dispose();
     _topicsController.dispose();
+    _countryController.dispose();
     super.dispose();
   }
 
@@ -135,6 +137,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
           'experience': _experienceController.text,
           'why': _whyController.text,
           'topics': _topicsController.text,
+          'country': _countryController.text,
           'has_cv': _cvFile != null,
         },
       );
@@ -279,6 +282,14 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                             hint: 'Mfano: Ujasiriamali, Fedha, Uongozi',
                             validator: (v) =>
                                 v == null || v.isEmpty ? 'Weka mada zako' : null,
+                          ),
+                          const SizedBox(height: 16),
+                          _buildField(
+                            'Nchi Unayoishi *',
+                            _countryController,
+                            hint: 'Mfano: Tanzania, Kenya, Uganda',
+                            validator: (v) =>
+                                v == null || v.isEmpty ? 'Weka nchi unayoishi' : null,
                           ),
                           const SizedBox(height: 16),
                           Text(

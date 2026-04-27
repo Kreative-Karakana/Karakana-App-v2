@@ -330,7 +330,12 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.courseBuilder,
-          builder: (context, state) => const CourseBuilderScreen(),
+          builder: (context, state) {
+            final courseId = int.tryParse(
+              state.uri.queryParameters['courseId'] ?? '',
+            );
+            return CourseBuilderScreen(courseId: courseId);
+          },
         ),
         GoRoute(
           path: AppRoutes.trainerStudents,

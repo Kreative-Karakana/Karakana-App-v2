@@ -30,8 +30,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     'total_students': 0,
     'avg_rating': 0.0,
     'balance': 0,
-    'completion_rate': 78,
-    'total_views': 0,
+    'published_courses': 0,
+    'draft_courses': 0,
   };
 
   List _certs = [];
@@ -90,8 +90,12 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                 .toDouble()) /
                     courses.length,
             'balance': wallet['balance'] ?? 0,
-            'completion_rate': 78,
-            'total_views': totalStudents * 4,
+            'published_courses': courses
+                .where((c) => (c as Map)['status'] == 'published')
+                .length,
+            'draft_courses': courses
+                .where((c) => (c as Map)['status'] != 'published')
+                .length,
           };
           _isLoading = false;
         });
@@ -423,11 +427,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 const SizedBox(width: 12),
                 Expanded(
                     child: _buildStatCard(
-                        'Maoni ya Jumla',
-                        _formatNumber(_stats['total_views'] ?? 0),
-                        Icons.visibility_outlined,
+                        'Kozi Zilizochapishwa',
+                        _formatNumber(_stats['published_courses'] ?? 0),
+                        Icons.check_circle_outline,
                         const Color(0xFFE87722),
-                        '+8%',
+                        'hai',
                         true,
                         surfaceColor,
                         textPrimary)),
@@ -438,11 +442,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Expanded(
                     child: _buildStatCard(
-                        'Ukamilishaji',
-                        '${_stats['completion_rate'] ?? 0}%',
-                        Icons.check_circle_outline,
+                        'Kozi Rasimu',
+                        _formatNumber(_stats['draft_courses'] ?? 0),
+                        Icons.edit_outlined,
                         const Color(0xFF7B3A10),
-                        'wastani',
+                        'zinasubiri',
                         true,
                         surfaceColor,
                         textPrimary)),
@@ -964,31 +968,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(
+                            Container(
                                 width: 52,
                                 height: 52,
-                                child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      CircularProgressIndicator(
-                                          value: (_stats['completion_rate']
-                                                      as int? ??
-                                                  0) /
-                                              100,
-                                          strokeWidth: 5,
-                                          backgroundColor:
-                                              Colors.white.withValues(alpha: 0.2),
-                                          valueColor:
-                                              const AlwaysStoppedAnimation(
-                                                  Color(0xFFFFA726))),
-                                      Text('${_stats['completion_rate']}%',
-                                          style: GoogleFonts.montserrat(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.white)),
-                                    ])),
+                                decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.12),
+                                    shape: BoxShape.circle),
+                                child: const Icon(Icons.school_outlined,
+                                    color: Colors.white, size: 26)),
                             const SizedBox(height: 4),
-                            Text('Ukamilishaji',
+                            Text('Kozi Zote',
                                 style: GoogleFonts.montserrat(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w500,
@@ -1002,11 +991,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 Row(children: [
                   _buildMiniStat('$totalStudents', 'Wote', const Color(0xFF3D1800)),
                   const SizedBox(width: 10),
-                  _buildMiniStat('${(totalStudents * 0.78).round()}',
-                      'Wanaoendelea', const Color(0xFFE87722)),
+                  _buildMiniStat('${_stats['published_courses'] ?? 0}',
+                      'Kozi Hai', const Color(0xFFE87722)),
                   const SizedBox(width: 10),
-                  _buildMiniStat('${(totalStudents * 0.65).round()}',
-                      'Wamekamilisha', const Color(0xFF7B3A10)),
+                  _buildMiniStat('${_stats['draft_courses'] ?? 0}',
+                      'Rasimu', const Color(0xFF7B3A10)),
                 ]),
 
                 const SizedBox(height: 24),
@@ -1028,9 +1017,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       (course['average_rating'] as num? ?? 0).toDouble();
                   final isPublished = course['status'] == 'published';
                   final courseId = course['id'] as int? ?? 0;
-                  final completionRate = students > 0 ? 0.65 : 0.0;
-                  final activeRate = students > 0 ? 0.78 : 0.0;
-
                   return Container(
                       margin: const EdgeInsets.only(bottom: 14),
                       padding: const EdgeInsets.all(16),
@@ -1132,18 +1118,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                             const Divider(height: 1, color: Color(0xFFF5E6D8)),
                             const SizedBox(height: 14),
 
-                            _buildProgressRow('Wamekamilisha', completionRate,
-                                const Color(0xFF7B3A10),
-                                '${(completionRate * 100).round()}%'),
-
-                            const SizedBox(height: 10),
-
-                            _buildProgressRow('Wanaoendelea', activeRate,
-                                const Color(0xFFE87722),
-                                '${(activeRate * 100).round()}%'),
-
-                            const SizedBox(height: 14),
-
                             SizedBox(
                                 width: double.infinity,
                                 child: OutlinedButton.icon(
@@ -1191,30 +1165,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       fontSize: 9, fontWeight: FontWeight.w600, color: color),
                   textAlign: TextAlign.center),
             ])));
-  }
-
-  Widget _buildProgressRow(
-      String label, double value, Color color, String valueText) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(label,
-            style: GoogleFonts.montserrat(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF7B3A10))),
-        Text(valueText,
-            style: GoogleFonts.montserrat(
-                fontSize: 11, fontWeight: FontWeight.w700, color: color)),
-      ]),
-      const SizedBox(height: 6),
-      ClipRRect(
-          borderRadius: BorderRadius.circular(6),
-          child: LinearProgressIndicator(
-              value: value,
-              backgroundColor: const Color(0xFFF5E6D8),
-              valueColor: AlwaysStoppedAnimation(color),
-              minHeight: 8)),
-    ]);
   }
 
   // ── CERTIFICATES TAB ──────────────────────────────────────────────────────
