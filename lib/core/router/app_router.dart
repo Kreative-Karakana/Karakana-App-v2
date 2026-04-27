@@ -31,6 +31,7 @@ import '../../features/support/screens/new_ticket_screen.dart';
 import '../../features/support/screens/support_screen.dart';
 import '../../features/support/screens/ticket_detail_screen.dart';
 import '../../features/trainer/screens/course_builder_screen.dart';
+import '../../features/trainer/screens/lesson_manager_screen.dart';
 import '../../features/trainer/screens/quiz_manager_screen.dart';
 import '../../features/trainer/screens/student_progress_screen.dart';
 import '../../features/trainer/screens/trainer_dashboard_screen.dart';
@@ -74,6 +75,7 @@ class AppRoutes {
   static const String supportNew = '/support/new';
   static const String supportDetail = '/support/:ticketId';
   static const String trainerStudents = '/trainer/students';
+  static const String lessonManager = '/trainer/course/:courseId/sections';
   static const String mastercardForm = '/mastercard-form';
   static const String terms = '/terms';
 }
@@ -344,6 +346,17 @@ class AppRouter {
           builder: (context, state) {
             final courseId = int.tryParse(state.pathParameters['courseId'] ?? '') ?? 0;
             return QuizManagerScreen(courseId: courseId);
+          },
+        ),
+        GoRoute(
+          path: '/trainer/course/:courseId/sections',
+          builder: (context, state) {
+            final courseId = int.tryParse(state.pathParameters['courseId'] ?? '') ?? 0;
+            final extra = state.extra as Map?;
+            return LessonManagerScreen(
+              courseId: courseId,
+              courseTitle: extra?['title'] as String? ?? 'Kozi',
+            );
           },
         ),
 

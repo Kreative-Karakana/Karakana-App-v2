@@ -92,13 +92,14 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         if (_selectedCategory.isNotEmpty) 'category': int.tryParse(_selectedCategory),
       };
 
-      await ApiClient().dio.post('/api/v1/courses/', data: body);
+      final res = await ApiClient().dio.post('/api/v1/courses/', data: body);
+      final createdId = (res.data as Map?)?['id'] as int?;
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Kozi imehifadhiwa! Itaonekana kwenye dashibodi yako.',
+            'Kozi imehifadhiwa! Ongeza sehemu na masomo sasa.',
             style: GoogleFonts.montserrat(fontSize: 14),
           ),
           backgroundColor: const Color(0xFFE87722),
@@ -107,7 +108,14 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       );
-      context.pop();
+      if (createdId != null) {
+        context.pushReplacement(
+          '/trainer/course/$createdId/sections',
+          extra: {'title': _titleController.text.trim()},
+        );
+      } else {
+        context.pop();
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -22,6 +23,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   late TabController _tabController;
   List _courses = [];
   bool _isLoading = true;
+  // ignore: unused_field
   Map _wallet = {};
   Map _stats = {
     'total_courses': 0,
@@ -32,16 +34,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     'total_views': 0,
   };
 
-  final List<Map<String, dynamic>> _pendingCerts = [
-    {'name': 'Juma Ally', 'course': 'Misingi ya Ujasiriamali',
-      'progress': 100, 'date': '24 Apr 2026', 'is_approved': false},
-    {'name': 'Fatuma Hassan', 'course': 'Fedha za Biashara',
-      'progress': 100, 'date': '23 Apr 2026', 'is_approved': false},
-    {'name': 'Peter Kimaro', 'course': 'Masoko ya Kidijitali',
-      'progress': 100, 'date': '22 Apr 2026', 'is_approved': true},
-    {'name': 'Amina Salim', 'course': 'Uongozi na Timu',
-      'progress': 98, 'date': '21 Apr 2026', 'is_approved': false},
-  ];
+  List _certs = [];
 
   @override
   void initState() {
@@ -66,18 +59,24 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       final results = await Future.wait([
         ApiClient().dio.get('/api/v1/courses/?enrolled=true&page_size=50'),
         ApiClient().dio.get('/api/v1/wallet/me/'),
+        ApiClient().dio.get('/api/v1/certificates/?trainer=true'),
       ]);
       final coursesData = results[0].data;
       final courses = coursesData is Map
           ? (coursesData['results'] as List? ?? [])
           : (coursesData as List? ?? []);
       final wallet = results[1].data as Map? ?? {};
+      final certsData = results[2].data;
+      final certs = certsData is Map
+          ? (certsData['results'] as List? ?? [])
+          : (certsData as List? ?? []);
       final totalStudents = courses.fold<int>(
           0, (sum, c) => sum + ((c as Map)['student_count'] as int? ?? 0));
       if (mounted) {
         setState(() {
           _courses = courses;
           _wallet = wallet;
+          _certs = certs;
           _stats = {
             'total_courses': courses.length,
             'total_students': totalStudents,
@@ -145,6 +144,77 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       return 'TZS ${v.toStringAsFixed(0)}';
     } catch (_) {
       return 'TZS $p';
+    }
+  }
+
+  // ── CERT HELPERS ──────────────────────────────────────────────────────────
+
+  String _certStudentName(Map cert) {
+    final s = cert['student'] as Map?;
+    if (s == null) return 'Mwanafunzi';
+    final full = s['full_name'] as String?;
+    if (full != null && full.trim().isNotEmpty) return full.trim();
+    final fn = s['first_name'] as String? ?? '';
+    final ln = s['last_name'] as String? ?? '';
+    final name = '$fn $ln'.trim();
+    return name.isNotEmpty ? name : 'Mwanafunzi';
+  }
+
+  String _certCourseName(Map cert) {
+    final c = cert['course'] as Map?;
+    return c?['title'] as String? ?? cert['course_title'] as String? ?? '';
+  }
+
+  String _certDate(Map cert) {
+    final raw = cert['created_at'] as String? ?? cert['date'] as String? ?? '';
+    try {
+      return DateFormat('dd MMM yyyy').format(DateTime.parse(raw));
+    } catch (_) {
+      return raw;
+    }
+  }
+
+  int _certProgress(Map cert) => cert['progress'] as int? ?? 100;
+
+  Future<void> _approveCert(Map cert) async {
+    final id = cert['id'];
+    try {
+      await ApiClient().dio.patch('/api/v1/certificates/$id/', data: {'is_approved': true});
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('✓ Cheti kimethibitishwa!', style: GoogleFonts.montserrat()),
+          backgroundColor: const Color(0xFFE87722),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+      _loadAll();
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Hitilafu. Jaribu tena.', style: GoogleFonts.montserrat()),
+          backgroundColor: const Color(0xFF1A0A00),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+    }
+  }
+
+  Future<void> _rejectCertApi(Map cert) async {
+    final id = cert['id'];
+    try {
+      await ApiClient().dio.patch('/api/v1/certificates/$id/', data: {'status': 'rejected'});
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Ombi limekataliwa.', style: GoogleFonts.montserrat()),
+          backgroundColor: const Color(0xFF3D1800),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+      _loadAll();
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Hitilafu. Jaribu tena.', style: GoogleFonts.montserrat()),
+          backgroundColor: const Color(0xFF1A0A00),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
     }
   }
 
@@ -742,10 +812,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
                       const Spacer(),
 
+                      _buildSmallAction('Masomo', Icons.video_library_outlined,
+                          () => context.push('/trainer/course/$courseId/sections',
+                              extra: {'title': title})),
+                      const SizedBox(width: 6),
                       _buildSmallAction('Majaribio', Icons.quiz_outlined,
                           () => context.push('/trainer/quiz/$courseId')),
                       const SizedBox(width: 6),
-
                       _buildSmallAction(
                           'Hariri',
                           Icons.edit_outlined,
@@ -1148,8 +1221,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   Widget _buildCertificatesTab(Color bgColor, Color surfaceColor,
       Color textPrimary, Color textSecondary) {
-    final pending = _pendingCerts.where((c) => !(c['is_approved'] as bool)).length;
-    final approved = _pendingCerts.where((c) => c['is_approved'] as bool).length;
+    final pending = _certs.where((c) => (c as Map)['is_approved'] != true).length;
+    final approved = _certs.where((c) => (c as Map)['is_approved'] == true).length;
 
     return RefreshIndicator(
       color: const Color(0xFFE87722),
@@ -1195,7 +1268,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             const SizedBox(width: 10),
             _buildMiniStat('$approved', 'Zilizoidhinishwa', const Color(0xFFE87722)),
             const SizedBox(width: 10),
-            _buildMiniStat('${_pendingCerts.length}', 'Zote', const Color(0xFF3D1800)),
+            _buildMiniStat('${_certs.length}', 'Zote', const Color(0xFF3D1800)),
           ]),
 
           const SizedBox(height: 24),
@@ -1207,14 +1280,17 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           const SizedBox(height: 14),
 
           // ── CERTIFICATE CARDS ──
-          ..._pendingCerts.asMap().entries.map((entry) {
-            final index = entry.key;
-            final cert = entry.value;
-            final isApproved = cert['is_approved'] as bool;
-            final progress = cert['progress'] as int;
-            final name = cert['name'] as String;
-            final course = cert['course'] as String;
-            final date = cert['date'] as String;
+          if (_certs.isEmpty)
+            _buildEmptyState('Hakuna maombi ya vyeti bado.',
+                Icons.workspace_premium_outlined, surfaceColor)
+          else
+            ..._certs.map((c) {
+            final cert = c as Map;
+            final isApproved = cert['is_approved'] == true;
+            final progress = _certProgress(cert);
+            final name = _certStudentName(cert);
+            final course = _certCourseName(cert);
+            final date = _certDate(cert);
 
             return Container(
               margin: const EdgeInsets.only(bottom: 14),
@@ -1242,7 +1318,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                 end: Alignment.bottomRight),
                             shape: BoxShape.circle),
                         child: Center(child: Text(
-                            name[0].toUpperCase(),
+                            name.isNotEmpty ? name[0].toUpperCase() : 'M',
                             style: GoogleFonts.montserrat(fontSize: 20,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white)))),
@@ -1317,7 +1393,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     child: !isApproved
                         ? Row(children: [
                             Expanded(child: OutlinedButton(
-                                onPressed: () => _rejectCertificate(index),
+                                onPressed: () => _showRejectConfirm(cert),
                                 style: OutlinedButton.styleFrom(
                                     side: BorderSide(
                                         color: const Color(0xFF3D1800).withValues(alpha: 0.4)),
@@ -1332,8 +1408,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                         fontWeight: FontWeight.w700)))),
                             const SizedBox(width: 10),
                             Expanded(child: ElevatedButton.icon(
-                                onPressed: () =>
-                                    _showApproveConfirm(index, cert),
+                                onPressed: () => _showApproveConfirm(cert),
                                 icon: const Icon(
                                     Icons.workspace_premium_outlined, size: 15),
                                 label: Text('Thibitisha Cheti',
@@ -1374,7 +1449,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     );
   }
 
-  void _showApproveConfirm(int index, Map<String, dynamic> cert) {
+  void _showApproveConfirm(Map cert) {
     showDialog(context: context, builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(children: [
@@ -1384,29 +1459,19 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               fontWeight: FontWeight.w700, color: const Color(0xFF1A0A00))),
         ]),
         content: Text(
-            'Unathibitisha kwamba ${cert['name']} amekamilisha '
-            '"${cert['course']}" kwa mafanikio na anastahili cheti rasmi?',
+            'Unathibitisha kwamba ${_certStudentName(cert)} amekamilisha '
+            '"${_certCourseName(cert)}" kwa mafanikio na anastahili cheti rasmi?',
             style: GoogleFonts.montserrat(fontSize: 13,
                 color: const Color(0xFF7B3A10), height: 1.5)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text('Hapana',
-                  style: GoogleFonts.montserrat(
-                      color: const Color(0xFF7B3A10)))),
+                  style: GoogleFonts.montserrat(color: const Color(0xFF7B3A10)))),
           ElevatedButton.icon(
               onPressed: () {
                 Navigator.pop(context);
-                setState(() {
-                  _pendingCerts[index]['is_approved'] = true;
-                });
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('✓ Cheti cha ${cert['name']} kimethibitishwa!',
-                        style: GoogleFonts.montserrat()),
-                    backgroundColor: const Color(0xFFE87722),
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12))));
+                _approveCert(cert);
               },
               icon: const Icon(Icons.workspace_premium_outlined, size: 16),
               label: Text('Thibitisha',
@@ -1420,13 +1485,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         ]));
   }
 
-  void _rejectCertificate(int index) {
+  void _showRejectConfirm(Map cert) {
     showDialog(context: context, builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text('Kataa Ombi?', style: GoogleFonts.montserrat(
             fontWeight: FontWeight.w700, color: const Color(0xFF1A0A00))),
         content: Text(
-            'Ombi la cheti la ${_pendingCerts[index]['name']} litakataliwa. '
+            'Ombi la cheti la ${_certStudentName(cert)} litakataliwa. '
             'Mwanafunzi ataarifiwa.',
             style: GoogleFonts.montserrat(fontSize: 13,
                 color: const Color(0xFF7B3A10), height: 1.5)),
@@ -1434,19 +1499,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text('Hapana',
-                  style: GoogleFonts.montserrat(
-                      color: const Color(0xFF7B3A10)))),
+                  style: GoogleFonts.montserrat(color: const Color(0xFF7B3A10)))),
           ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
-                setState(() => _pendingCerts.removeAt(index));
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Ombi limekataliwa.',
-                        style: GoogleFonts.montserrat()),
-                    backgroundColor: const Color(0xFF3D1800),
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12))));
+                _rejectCertApi(cert);
               },
               style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF3D1800),
@@ -1455,8 +1512,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12))),
               child: Text('Ndiyo, Kataa',
-                  style: GoogleFonts.montserrat(
-                      fontWeight: FontWeight.w700))),
+                  style: GoogleFonts.montserrat(fontWeight: FontWeight.w700))),
         ]));
   }
 

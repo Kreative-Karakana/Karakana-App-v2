@@ -18,6 +18,7 @@ class TrainerApplicationScreen extends StatefulWidget {
 
 class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
   Map<String, dynamic>? _existingApplication;
+  Map<String, dynamic>? _profileData;
   bool _isLoading = true;
   bool _isSubmitting = false;
   final TextEditingController _titleController = TextEditingController();
@@ -46,16 +47,33 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
     super.dispose();
   }
 
+  bool get _isProfileComplete {
+    final p = _profileData;
+    if (p == null) return false;
+    final hasFirstName = (p['first_name'] as String? ?? '').isNotEmpty;
+    final hasLastName = (p['last_name'] as String? ?? '').isNotEmpty;
+    final hasGender = (p['gender'] as String? ?? '').isNotEmpty;
+    final hasAvatar = (p['avatar'] as String? ?? '').isNotEmpty;
+    final hasPhone = (p['phone'] as String? ?? '').isNotEmpty;
+    final hasDob = (p['date_of_birth'] as String? ?? '').isNotEmpty;
+    return hasFirstName && hasLastName && hasGender && hasAvatar && hasPhone && hasDob;
+  }
+
   Future<void> _loadApplication() async {
     try {
-      final res = await ApiClient().dio.get('/api/v1/trainer-application/');
-      final data = res.data;
-      final results =
-          data is Map ? (data['results'] as List? ?? []) : (data as List? ?? []);
+      final results = await Future.wait([
+        ApiClient().dio.get('/api/v1/trainer-application/'),
+        ApiClient().dio.get('/api/v1/profiles/me/'),
+      ]);
+      final appData = results[0].data;
+      final appList = appData is Map
+          ? (appData['results'] as List? ?? [])
+          : (appData as List? ?? []);
       if (!mounted) return;
       setState(() {
         _existingApplication =
-            results.isNotEmpty ? Map<String, dynamic>.from(results.first as Map) : null;
+            appList.isNotEmpty ? Map<String, dynamic>.from(appList.first as Map) : null;
+        _profileData = Map<String, dynamic>.from(results[1].data as Map? ?? {});
         _isLoading = false;
       });
     } catch (_) {
@@ -212,7 +230,9 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                     ),
                   ),
                   const SizedBox(height: 28),
-                  if (_existingApplication != null)
+                  if (_profileData != null && !_isProfileComplete)
+                    _buildProfileGate()
+                  else if (_existingApplication != null)
                     _buildStatusCard(_existingApplication!)
                   else
                     Form(
@@ -415,6 +435,76 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _buildProfileGate() {
+    final p = _profileData!;
+    final checks = [
+      ('Jina la kwanza na la familia', (p['first_name'] as String? ?? '').isNotEmpty && (p['last_name'] as String? ?? '').isNotEmpty),
+      ('Jinsia', (p['gender'] as String? ?? '').isNotEmpty),
+      ('Picha ya wasifu', (p['avatar'] as String? ?? '').isNotEmpty),
+      ('Namba ya simu', (p['phone'] as String? ?? '').isNotEmpty),
+      ('Tarehe ya kuzaliwa', (p['date_of_birth'] as String? ?? '').isNotEmpty),
+    ];
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF0E6),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE87722).withValues(alpha: 0.4)),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          const Icon(Icons.info_outline, color: Color(0xFFE87722), size: 20),
+          const SizedBox(width: 8),
+          Text('Kamili Wasifu Wako Kwanza',
+              style: GoogleFonts.montserrat(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF3D1800))),
+        ]),
+        const SizedBox(height: 8),
+        Text('Kabla ya kuomba kuwa mwalimu, hakikisha wasifu wako umekamilika:',
+            style: GoogleFonts.montserrat(
+                fontSize: 13, color: const Color(0xFF7B3A10), height: 1.4)),
+        const SizedBox(height: 16),
+        ...checks.map((check) => Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Row(children: [
+            Icon(
+              check.$2 ? Icons.check_circle : Icons.radio_button_unchecked,
+              size: 18,
+              color: check.$2 ? const Color(0xFFE87722) : const Color(0xFFBDA99C),
+            ),
+            const SizedBox(width: 10),
+            Text(check.$1,
+                style: GoogleFonts.montserrat(
+                    fontSize: 13,
+                    fontWeight: check.$2 ? FontWeight.w500 : FontWeight.w400,
+                    color: check.$2
+                        ? const Color(0xFF3D1800)
+                        : const Color(0xFF9E8070))),
+          ]),
+        )),
+        const SizedBox(height: 8),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: () => context.push('/profile/edit'),
+            icon: const Icon(Icons.edit_outlined, size: 18),
+            label: Text('Kamili Wasifu Wako',
+                style: GoogleFonts.montserrat(
+                    fontSize: 14, fontWeight: FontWeight.w600)),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFE87722),
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(28))),
+          ),
+        ),
+      ]),
     );
   }
 
