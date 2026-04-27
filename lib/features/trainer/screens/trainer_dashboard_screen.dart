@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +22,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   late TabController _tabController;
   List _courses = [];
   bool _isLoading = true;
-  // ignore: unused_field
   Map _wallet = {};
   Map _stats = {
     'total_courses': 0,
@@ -45,6 +47,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _tabController.addListener(() {
+      if (mounted && !_tabController.indexIsChanging) setState(() {});
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadAll());
   }
 
@@ -108,20 +113,21 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           content: Text(
               isPublished
                   ? 'Kozi imefichwa kutoka kwa wanafunzi'
-                  : 'Kozi imechapishwa kikamilifu! ✓',
+                  : 'Kozi imechapishwa kikamilifu!',
               style: GoogleFonts.montserrat()),
-          backgroundColor:
-              isPublished ? const Color(0xFF7B3A10) : const Color(0xFF2E7D32),
+          backgroundColor: isPublished
+              ? const Color(0xFF7B3A10)
+              : const Color(0xFFE87722),
           behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
       _loadAll();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Hitilafu. Jaribu tena.',
-              style: GoogleFonts.montserrat()),
-          backgroundColor: const Color(0xFFB71C1C)));
+          content: Text('Hitilafu. Jaribu tena.', style: GoogleFonts.montserrat()),
+          backgroundColor: const Color(0xFF1A0A00),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
     }
   }
 
@@ -145,26 +151,22 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? const Color(0xFF1A0A00) : const Color(0xFFFFF8F4);
-    final surfaceColor =
-        isDark ? const Color(0xFF2A1400) : Colors.white;
-    final textPrimary =
-        isDark ? Colors.white : const Color(0xFF1A0A00);
-    final textSecondary =
-        isDark ? Colors.white60 : const Color(0xFF7B3A10);
+    final bgColor = isDark ? const Color(0xFF1A0A00) : const Color(0xFFFFF8F4);
+    final surfaceColor = isDark ? const Color(0xFF2A1400) : Colors.white;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF1A0A00);
+    final textSecondary = isDark ? Colors.white60 : const Color(0xFF7B3A10);
 
     return Scaffold(
         backgroundColor: bgColor,
+        extendBody: true,
+        bottomNavigationBar: _buildTrainerNavBar(),
         body: NestedScrollView(
             headerSliverBuilder: (_, innerBoxIsScrolled) => [
                   _buildHeroAppBar(innerBoxIsScrolled),
-                  _buildStickyTabBar(),
                 ],
             body: _isLoading
                 ? const Center(
-                    child: CircularProgressIndicator(
-                        color: Color(0xFFE87722)))
+                    child: CircularProgressIndicator(color: Color(0xFFE87722)))
                 : TabBarView(
                     controller: _tabController,
                     children: [
@@ -175,6 +177,131 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     ])));
   }
 
+  // ── BOTTOM NAVBAR ─────────────────────────────────────────────────────────
+
+  Widget _buildTrainerNavBar() {
+    return Container(
+      color: Colors.transparent,
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(32),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.65),
+                      borderRadius: BorderRadius.circular(32),
+                      border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.08),
+                          width: 0.8),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.25),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4)),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(child: _buildNavTab(index: 0, icon: Icons.dashboard_outlined)),
+                        Expanded(child: _buildNavTab(index: 1, icon: Icons.school_outlined)),
+                        const SizedBox(width: 72),
+                        Expanded(child: _buildNavTab(index: 2, icon: Icons.people_outline)),
+                        Expanded(child: _buildNavTab(index: 3, icon: Icons.workspace_premium_outlined)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: -18,
+                child: _buildWalletFab(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWalletFab() {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.lightImpact();
+        context.push('/wallet');
+      },
+      child: Container(
+        width: 68,
+        height: 68,
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.5),
+          shape: BoxShape.circle,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFE87722),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                    color: const Color(0xFFE87722).withValues(alpha: 0.25),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3)),
+              ],
+            ),
+            child: const Icon(
+                Icons.account_balance_wallet_outlined,
+                color: Colors.white,
+                size: 28),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavTab({required int index, required IconData icon}) {
+    final isSelected = _tabController.index == index;
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        HapticFeedback.lightImpact();
+        setState(() => _tabController.animateTo(index));
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon,
+                color: isSelected
+                    ? const Color(0xFFE87722)
+                    : Colors.white.withValues(alpha: 0.55),
+                size: 24),
+            const SizedBox(height: 4),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              width: isSelected ? 5 : 0,
+              height: isSelected ? 5 : 0,
+              decoration: const BoxDecoration(
+                  color: Color(0xFFE87722), shape: BoxShape.circle),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── OVERVIEW TAB ──────────────────────────────────────────────────────────
+
   Widget _buildOverviewTab(Color bgColor, Color surfaceColor,
       Color textPrimary, Color textSecondary) {
     return RefreshIndicator(
@@ -182,7 +309,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         onRefresh: () async => _loadAll(),
         child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 80),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               // ── QUICK ACTIONS ──
@@ -192,10 +319,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     () => context.push('/trainer/course-builder')),
                 const SizedBox(width: 10),
                 _buildQuickAction(Icons.people_outline_rounded, 'Wanafunzi',
-                    const Color(0xFF1A2E5A), () => _tabController.animateTo(2)),
+                    const Color(0xFF3D1800), () => _tabController.animateTo(2)),
                 const SizedBox(width: 10),
                 _buildQuickAction(Icons.workspace_premium_outlined, 'Vyeti',
-                    const Color(0xFF2E7D32), () => _tabController.animateTo(3)),
+                    const Color(0xFF7B3A10), () => _tabController.animateTo(3)),
                 const SizedBox(width: 10),
                 _buildQuickAction(Icons.account_balance_wallet_outlined, 'Mkoba',
                     const Color(0xFF7B3A10), () => context.push('/wallet')),
@@ -203,7 +330,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
               const SizedBox(height: 28),
 
-              // ── STATS TITLE ──
               Text('Takwimu za Jumla',
                   style: GoogleFonts.montserrat(
                       fontSize: 16,
@@ -219,7 +345,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         'Wanafunzi Wote',
                         _formatNumber(_stats['total_students'] ?? 0),
                         Icons.people_outlined,
-                        const Color(0xFF1A2E5A),
+                        const Color(0xFF3D1800),
                         '+12%',
                         true,
                         surfaceColor,
@@ -245,7 +371,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         'Ukamilishaji',
                         '${_stats['completion_rate'] ?? 0}%',
                         Icons.check_circle_outline,
-                        const Color(0xFF2E7D32),
+                        const Color(0xFF7B3A10),
                         'wastani',
                         true,
                         surfaceColor,
@@ -265,27 +391,23 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
               const SizedBox(height: 28),
 
-              // ── RECENT COURSES HEADER ──
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Kozi Zangu',
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text('Kozi Zangu',
+                    style: GoogleFonts.montserrat(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: textPrimary)),
+                GestureDetector(
+                    onTap: () => _tabController.animateTo(1),
+                    child: Text('Zote →',
                         style: GoogleFonts.montserrat(
-                            fontSize: 16,
+                            fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: textPrimary)),
-                    GestureDetector(
-                        onTap: () => _tabController.animateTo(1),
-                        child: Text('Zote →',
-                            style: GoogleFonts.montserrat(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFFE87722)))),
-                  ]),
+                            color: const Color(0xFFE87722)))),
+              ]),
 
               const SizedBox(height: 14),
 
-              // ── RECENT COURSES (max 3) ──
               if (_courses.isEmpty)
                 _buildEmptyState(
                     'Huna kozi bado.\nBonyeza + kuunda kozi yako ya kwanza!',
@@ -297,7 +419,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     .map((c) => _buildCourseCard(
                         c as Map, surfaceColor, textPrimary, textSecondary)),
 
-              const SizedBox(height: 80),
+              const SizedBox(height: 100),
             ])));
   }
 
@@ -311,8 +433,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(14),
-                    border:
-                        Border.all(color: color.withValues(alpha: 0.2))),
+                    border: Border.all(color: color.withValues(alpha: 0.2))),
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
                   Container(
                       width: 36,
@@ -364,17 +485,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                    color: trendUp
-                        ? const Color(0xFF2E7D32).withValues(alpha: 0.1)
-                        : const Color(0xFFB71C1C).withValues(alpha: 0.1),
+                    color: const Color(0xFFE87722).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8)),
                 child: Text(trend,
                     style: GoogleFonts.montserrat(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
-                        color: trendUp
-                            ? const Color(0xFF2E7D32)
-                            : const Color(0xFFB71C1C)))),
+                        color: const Color(0xFFE87722)))),
           ]),
           const SizedBox(height: 14),
           Text(value,
@@ -391,8 +508,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         ]));
   }
 
-  Widget _buildEmptyState(
-      String message, IconData icon, Color surfaceColor) {
+  Widget _buildEmptyState(String message, IconData icon, Color surfaceColor) {
     return Center(
         child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 40),
@@ -414,8 +530,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   textAlign: TextAlign.center),
               const SizedBox(height: 20),
               ElevatedButton.icon(
-                  onPressed: () =>
-                      context.push('/trainer/course-builder'),
+                  onPressed: () => context.push('/trainer/course-builder'),
                   icon: const Icon(Icons.add_rounded, size: 18),
                   label: Text('Unda Kozi',
                       style: GoogleFonts.montserrat(
@@ -431,6 +546,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             ])));
   }
 
+  // ── COURSES TAB ───────────────────────────────────────────────────────────
+
   Widget _buildCoursesTab(Color bgColor, Color surfaceColor,
       Color textPrimary, Color textSecondary) {
     return RefreshIndicator(
@@ -442,13 +559,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 Icons.school_outlined,
                 surfaceColor)
             : ListView.builder(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 80),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
                 itemCount: _courses.length,
                 itemBuilder: (_, i) => _buildCourseCard(
-                    _courses[i] as Map,
-                    surfaceColor,
-                    textPrimary,
-                    textSecondary)));
+                    _courses[i] as Map, surfaceColor, textPrimary, textSecondary)));
   }
 
   Widget _buildCourseCard(Map course, Color surfaceColor, Color textPrimary,
@@ -504,7 +618,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                             child: Icon(Icons.school_outlined,
                                 color: Color(0xFFE87722), size: 44))),
 
-                // Dark gradient at bottom of thumbnail
                 Positioned(
                     bottom: 0,
                     left: 0,
@@ -517,7 +630,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           const Color(0xFF1A0A00).withValues(alpha: 0.55)
                         ], begin: Alignment.topCenter, end: Alignment.bottomCenter)))),
 
-                // Status badge top-right
                 Positioned(
                     top: 10,
                     right: 10,
@@ -526,18 +638,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                             horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
                             color: isPublished
-                                ? const Color(0xFF2E7D32)
+                                ? const Color(0xFF3D1800)
                                 : const Color(0xFF7B3A10),
                             borderRadius: BorderRadius.circular(20)),
                         child: Row(mainAxisSize: MainAxisSize.min, children: [
                           Container(
                               width: 6,
                               height: 6,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: isPublished
-                                      ? const Color(0xFF81C784)
-                                      : const Color(0xFFFFB74D))),
+                                  color: Color(0xFFFFA726))),
                           const SizedBox(width: 5),
                           Text(isPublished ? 'Imechapishwa' : 'Rasimu',
                               style: GoogleFonts.montserrat(
@@ -563,7 +673,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
                     const SizedBox(height: 10),
 
-                    // Metrics row
                     Row(children: [
                       const Icon(Icons.people_outline,
                           size: 13, color: Color(0xFF7B3A10)),
@@ -596,7 +705,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
                     // ── ACTION BUTTONS ROW ──
                     Row(children: [
-                      // Publish toggle
                       GestureDetector(
                           onTap: () => _showPublishConfirm(course),
                           child: AnimatedContainer(
@@ -605,49 +713,39 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                   horizontal: 12, vertical: 7),
                               decoration: BoxDecoration(
                                   color: isPublished
-                                      ? const Color(0xFF2E7D32)
-                                          .withValues(alpha: 0.08)
-                                      : const Color(0xFFE87722)
-                                          .withValues(alpha: 0.08),
+                                      ? const Color(0xFF3D1800).withValues(alpha: 0.08)
+                                      : const Color(0xFFE87722).withValues(alpha: 0.08),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
                                       color: isPublished
-                                          ? const Color(0xFF2E7D32)
-                                              .withValues(alpha: 0.35)
-                                          : const Color(0xFFE87722)
-                                              .withValues(alpha: 0.35))),
-                              child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                        isPublished
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off_outlined,
-                                        size: 13,
+                                          ? const Color(0xFF3D1800).withValues(alpha: 0.35)
+                                          : const Color(0xFFE87722).withValues(alpha: 0.35))),
+                              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                                Icon(
+                                    isPublished
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined,
+                                    size: 13,
+                                    color: isPublished
+                                        ? const Color(0xFF3D1800)
+                                        : const Color(0xFFE87722)),
+                                const SizedBox(width: 5),
+                                Text(
+                                    isPublished ? 'Imechapishwa' : 'Chapisha',
+                                    style: GoogleFonts.montserrat(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
                                         color: isPublished
-                                            ? const Color(0xFF2E7D32)
-                                            : const Color(0xFFE87722)),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                        isPublished
-                                            ? 'Imechapishwa'
-                                            : 'Chapisha',
-                                        style: GoogleFonts.montserrat(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w700,
-                                            color: isPublished
-                                                ? const Color(0xFF2E7D32)
-                                                : const Color(0xFFE87722))),
-                                  ]))),
+                                            ? const Color(0xFF3D1800)
+                                            : const Color(0xFFE87722))),
+                              ]))),
 
                       const Spacer(),
 
-                      // Quiz button
                       _buildSmallAction('Majaribio', Icons.quiz_outlined,
                           () => context.push('/trainer/quiz/$courseId')),
                       const SizedBox(width: 6),
 
-                      // Edit button
                       _buildSmallAction(
                           'Hariri',
                           Icons.edit_outlined,
@@ -658,13 +756,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         ]));
   }
 
-  Widget _buildSmallAction(
-      String label, IconData icon, VoidCallback onTap) {
+  Widget _buildSmallAction(String label, IconData icon, VoidCallback onTap) {
     return GestureDetector(
         onTap: onTap,
         child: Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
                 color: const Color(0xFFF5E6D8),
                 borderRadius: BorderRadius.circular(10)),
@@ -711,8 +807,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: isPublished
-                              ? const Color(0xFFB71C1C)
-                              : const Color(0xFF2E7D32),
+                              ? const Color(0xFF3D1800)
+                              : const Color(0xFFE87722),
                           foregroundColor: Colors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
@@ -724,6 +820,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                               color: Colors.white))),
                 ]));
   }
+
+  // ── STUDENTS TAB ──────────────────────────────────────────────────────────
 
   Widget _buildStudentsTab(Color bgColor, Color surfaceColor,
       Color textPrimary, Color textSecondary) {
@@ -739,7 +837,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               surfaceColor)
           : SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 80),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -755,8 +853,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                              color:
-                                  const Color(0xFF3D1800).withValues(alpha: 0.3),
+                              color: const Color(0xFF3D1800).withValues(alpha: 0.3),
                               blurRadius: 16,
                               offset: const Offset(0, 6))
                         ]),
@@ -778,8 +875,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                 style: GoogleFonts.montserrat(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w500,
-                                    color:
-                                        Colors.white.withValues(alpha: 0.7))),
+                                    color: Colors.white.withValues(alpha: 0.7))),
                             const SizedBox(height: 4),
                             Text('$totalStudents',
                                 style: GoogleFonts.montserrat(
@@ -790,8 +886,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                 style: GoogleFonts.montserrat(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w400,
-                                    color:
-                                        Colors.white.withValues(alpha: 0.6))),
+                                    color: Colors.white.withValues(alpha: 0.6))),
                           ])),
                       Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -803,13 +898,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                     alignment: Alignment.center,
                                     children: [
                                       CircularProgressIndicator(
-                                          value:
-                                              (_stats['completion_rate'] as int? ??
-                                                      0) /
-                                                  100,
+                                          value: (_stats['completion_rate']
+                                                      as int? ??
+                                                  0) /
+                                              100,
                                           strokeWidth: 5,
-                                          backgroundColor: Colors.white
-                                              .withValues(alpha: 0.2),
+                                          backgroundColor:
+                                              Colors.white.withValues(alpha: 0.2),
                                           valueColor:
                                               const AlwaysStoppedAnimation(
                                                   Color(0xFFFFA726))),
@@ -824,8 +919,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                 style: GoogleFonts.montserrat(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w500,
-                                    color:
-                                        Colors.white.withValues(alpha: 0.6))),
+                                    color: Colors.white.withValues(alpha: 0.6))),
                           ]),
                     ])),
 
@@ -833,19 +927,17 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
                 // ── MINI STATS ROW ──
                 Row(children: [
-                  _buildMiniStat(
-                      '$totalStudents', 'Wote', const Color(0xFF1A2E5A)),
+                  _buildMiniStat('$totalStudents', 'Wote', const Color(0xFF3D1800)),
                   const SizedBox(width: 10),
                   _buildMiniStat('${(totalStudents * 0.78).round()}',
                       'Wanaoendelea', const Color(0xFFE87722)),
                   const SizedBox(width: 10),
                   _buildMiniStat('${(totalStudents * 0.65).round()}',
-                      'Wamekamilisha', const Color(0xFF2E7D32)),
+                      'Wamekamilisha', const Color(0xFF7B3A10)),
                 ]),
 
                 const SizedBox(height: 24),
 
-                // ── PER COURSE BREAKDOWN ──
                 Text('Maendeleo kwa Kozi',
                     style: GoogleFonts.montserrat(
                         fontSize: 15,
@@ -882,7 +974,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // ── COURSE HEADER ROW ──
                             Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -899,12 +990,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                                   Container(
                                                       width: 56,
                                                       height: 56,
-                                                      color: const Color(
-                                                          0xFFF5E6D8),
+                                                      color: const Color(0xFFF5E6D8),
                                                       child: const Icon(
                                                           Icons.school_outlined,
-                                                          color: Color(
-                                                              0xFFE87722),
+                                                          color: Color(0xFFE87722),
                                                           size: 26)))
                                           : Container(
                                               width: 56,
@@ -930,26 +1019,22 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                         const SizedBox(height: 6),
                                         Row(children: [
                                           const Icon(Icons.people_outline,
-                                              size: 12,
-                                              color: Color(0xFF7B3A10)),
+                                              size: 12, color: Color(0xFF7B3A10)),
                                           const SizedBox(width: 4),
                                           Text('$students wanafunzi',
                                               style: GoogleFonts.montserrat(
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.w500,
-                                                  color:
-                                                      const Color(0xFF7B3A10))),
+                                                  color: const Color(0xFF7B3A10))),
                                           const SizedBox(width: 10),
                                           const Icon(Icons.star_rounded,
-                                              size: 12,
-                                              color: Color(0xFFFFA726)),
+                                              size: 12, color: Color(0xFFFFA726)),
                                           const SizedBox(width: 3),
                                           Text(rating.toStringAsFixed(1),
                                               style: GoogleFonts.montserrat(
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.w500,
-                                                  color:
-                                                      const Color(0xFF7B3A10))),
+                                                  color: const Color(0xFF7B3A10))),
                                         ]),
                                       ])),
                                   Container(
@@ -957,46 +1042,35 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                           horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
                                           color: isPublished
-                                              ? const Color(0xFF2E7D32)
-                                                  .withValues(alpha: 0.1)
-                                              : const Color(0xFF7B3A10)
-                                                  .withValues(alpha: 0.1),
-                                          borderRadius:
-                                              BorderRadius.circular(8)),
+                                              ? const Color(0xFFE87722).withValues(alpha: 0.1)
+                                              : const Color(0xFF7B3A10).withValues(alpha: 0.1),
+                                          borderRadius: BorderRadius.circular(8)),
                                       child: Text(
                                           isPublished ? 'Hai' : 'Rasimu',
                                           style: GoogleFonts.montserrat(
                                               fontSize: 10,
                                               fontWeight: FontWeight.w700,
                                               color: isPublished
-                                                  ? const Color(0xFF2E7D32)
+                                                  ? const Color(0xFFE87722)
                                                   : const Color(0xFF7B3A10)))),
                                 ]),
 
                             const SizedBox(height: 16),
-                            const Divider(
-                                height: 1, color: Color(0xFFF5E6D8)),
+                            const Divider(height: 1, color: Color(0xFFF5E6D8)),
                             const SizedBox(height: 14),
 
-                            // ── COMPLETION BAR ──
-                            _buildProgressRow(
-                                'Wamekamilisha',
-                                completionRate,
-                                const Color(0xFF2E7D32),
+                            _buildProgressRow('Wamekamilisha', completionRate,
+                                const Color(0xFF7B3A10),
                                 '${(completionRate * 100).round()}%'),
 
                             const SizedBox(height: 10),
 
-                            // ── ACTIVE BAR ──
-                            _buildProgressRow(
-                                'Wanaoendelea',
-                                activeRate,
+                            _buildProgressRow('Wanaoendelea', activeRate,
                                 const Color(0xFFE87722),
                                 '${(activeRate * 100).round()}%'),
 
                             const SizedBox(height: 14),
 
-                            // ── VIEW STUDENTS BUTTON ──
                             SizedBox(
                                 width: double.infinity,
                                 child: OutlinedButton.icon(
@@ -1012,8 +1086,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                         side: BorderSide(
                                             color: const Color(0xFFE87722)
                                                 .withValues(alpha: 0.4)),
-                                        foregroundColor:
-                                            const Color(0xFFE87722),
+                                        foregroundColor: const Color(0xFFE87722),
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(28)),
@@ -1021,7 +1094,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                             vertical: 10)))),
                           ]));
                 }),
-              ])));
+              ])),
+    );
   }
 
   Widget _buildMiniStat(String value, String label, Color color) {
@@ -1070,9 +1144,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     ]);
   }
 
+  // ── CERTIFICATES TAB ──────────────────────────────────────────────────────
+
   Widget _buildCertificatesTab(Color bgColor, Color surfaceColor,
       Color textPrimary, Color textSecondary) {
-
     final pending = _pendingCerts.where((c) => !(c['is_approved'] as bool)).length;
     final approved = _pendingCerts.where((c) => c['is_approved'] as bool).length;
 
@@ -1081,9 +1156,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       onRefresh: () async => _loadAll(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 80),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
 
           // ── INFO BANNER ──
           Container(
@@ -1092,26 +1166,25 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               color: const Color(0xFFE87722).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: const Color(0xFFE87722).withValues(alpha: 0.25))),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+                  color: const Color(0xFFE87722).withValues(alpha: 0.25))),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const Icon(Icons.workspace_premium_outlined,
-                color: Color(0xFFE87722), size: 22),
+                  color: Color(0xFFE87722), size: 22),
               const SizedBox(width: 12),
               Expanded(child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                Text('Uthibitishaji wa Vyeti',
-                  style: GoogleFonts.montserrat(fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF3D1800))),
-                const SizedBox(height: 4),
-                Text('Kagua ukamilishaji wa mwanafunzi kisha '
-                  'thibitisha ili apate cheti rasmi cha Karakana.',
-                  style: GoogleFonts.montserrat(fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: const Color(0xFF7B3A10), height: 1.5)),
-              ])),
+                  Text('Uthibitishaji wa Vyeti',
+                      style: GoogleFonts.montserrat(fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF3D1800))),
+                  const SizedBox(height: 4),
+                  Text('Kagua ukamilishaji wa mwanafunzi kisha '
+                      'thibitisha ili apate cheti rasmi cha Karakana.',
+                      style: GoogleFonts.montserrat(fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: const Color(0xFF7B3A10), height: 1.5)),
+                ])),
             ])),
 
           const SizedBox(height: 16),
@@ -1120,17 +1193,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           Row(children: [
             _buildMiniStat('$pending', 'Zinasubiri', const Color(0xFFFFA726)),
             const SizedBox(width: 10),
-            _buildMiniStat('$approved', 'Zilizoidhinishwa', const Color(0xFF2E7D32)),
+            _buildMiniStat('$approved', 'Zilizoidhinishwa', const Color(0xFFE87722)),
             const SizedBox(width: 10),
-            _buildMiniStat('${_pendingCerts.length}', 'Zote', const Color(0xFF1A2E5A)),
+            _buildMiniStat('${_pendingCerts.length}', 'Zote', const Color(0xFF3D1800)),
           ]),
 
           const SizedBox(height: 24),
 
-          // ── SECTION TITLE ──
           Text('Maombi ya Vyeti',
-            style: GoogleFonts.montserrat(fontSize: 15,
-              fontWeight: FontWeight.w600, color: textPrimary)),
+              style: GoogleFonts.montserrat(fontSize: 15,
+                  fontWeight: FontWeight.w600, color: textPrimary)),
 
           const SizedBox(height: 14),
 
@@ -1150,250 +1222,253 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 color: surfaceColor,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: isApproved
-                    ? const Color(0xFF2E7D32).withValues(alpha: 0.2)
-                    : const Color(0xFFE87722).withValues(alpha: 0.15)),
+                    color: isApproved
+                        ? const Color(0xFFE87722).withValues(alpha: 0.2)
+                        : const Color(0xFFE87722).withValues(alpha: 0.1)),
                 boxShadow: [BoxShadow(
-                  color: const Color(0xFFE87722).withValues(alpha: 0.07),
-                  blurRadius: 10, offset: const Offset(0, 3))]),
+                    color: const Color(0xFFE87722).withValues(alpha: 0.07),
+                    blurRadius: 10, offset: const Offset(0, 3))]),
               child: Column(children: [
 
                 // ── STUDENT INFO ──
                 Padding(padding: const EdgeInsets.all(16), child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                  // Avatar with initial
-                  Container(width: 50, height: 50,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF3D1800), Color(0xFFE87722)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight),
-                      shape: BoxShape.circle),
-                    child: Center(child: Text(
-                      name[0].toUpperCase(),
-                      style: GoogleFonts.montserrat(fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white)))),
-                  const SizedBox(width: 12),
-                  Expanded(child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                    Text(name, style: GoogleFonts.montserrat(fontSize: 14,
-                      fontWeight: FontWeight.w600, color: textPrimary)),
-                    const SizedBox(height: 3),
-                    Text(course, style: GoogleFonts.montserrat(fontSize: 12,
-                      fontWeight: FontWeight.w400, color: const Color(0xFF7B3A10)),
-                      maxLines: 1, overflow: TextOverflow.ellipsis),
-                    const SizedBox(height: 5),
-                    Row(children: [
-                      const Icon(Icons.calendar_today_outlined,
-                        size: 11, color: Color(0xFFBDA99C)),
-                      const SizedBox(width: 4),
-                      Text(date, style: GoogleFonts.montserrat(fontSize: 10,
-                        fontWeight: FontWeight.w400, color: const Color(0xFFBDA99C))),
-                    ]),
+                    Container(width: 50, height: 50,
+                        decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                                colors: [Color(0xFF3D1800), Color(0xFFE87722)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight),
+                            shape: BoxShape.circle),
+                        child: Center(child: Text(
+                            name[0].toUpperCase(),
+                            style: GoogleFonts.montserrat(fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white)))),
+                    const SizedBox(width: 12),
+                    Expanded(child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(name, style: GoogleFonts.montserrat(fontSize: 14,
+                              fontWeight: FontWeight.w600, color: textPrimary)),
+                          const SizedBox(height: 3),
+                          Text(course, style: GoogleFonts.montserrat(fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: const Color(0xFF7B3A10)),
+                              maxLines: 1, overflow: TextOverflow.ellipsis),
+                          const SizedBox(height: 5),
+                          Row(children: [
+                            const Icon(Icons.calendar_today_outlined,
+                                size: 11, color: Color(0xFFBDA99C)),
+                            const SizedBox(width: 4),
+                            Text(date, style: GoogleFonts.montserrat(fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                color: const Color(0xFFBDA99C))),
+                          ]),
+                        ])),
+                    Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                            color: isApproved
+                                ? const Color(0xFFE87722).withValues(alpha: 0.1)
+                                : const Color(0xFFFFA726).withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Text(
+                            isApproved ? '✓ Imethibitishwa' : '⏳ Inasubiri',
+                            style: GoogleFonts.montserrat(fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                color: isApproved
+                                    ? const Color(0xFFE87722)
+                                    : const Color(0xFFFFA726)))),
                   ])),
-                  // Status badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: isApproved
-                        ? const Color(0xFF2E7D32).withValues(alpha: 0.1)
-                        : const Color(0xFFFFA726).withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(20)),
-                    child: Text(
-                      isApproved ? '✓ Imethibitishwa' : '⏳ Inasubiri',
-                      style: GoogleFonts.montserrat(fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: isApproved
-                          ? const Color(0xFF2E7D32)
-                          : const Color(0xFFFFA726)))),
-                ])),
 
                 // ── PROGRESS BAR ──
                 Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                      Text('Ukamilishaji wa Kozi',
-                        style: GoogleFonts.montserrat(fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFF7B3A10))),
-                      Text('$progress%',
-                        style: GoogleFonts.montserrat(fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          color: progress == 100
-                            ? const Color(0xFF2E7D32)
-                            : const Color(0xFFE87722))),
-                    ]),
-                    const SizedBox(height: 6),
-                    ClipRRect(borderRadius: BorderRadius.circular(6),
-                      child: LinearProgressIndicator(
-                        value: progress / 100,
-                        backgroundColor: const Color(0xFFF5E6D8),
-                        valueColor: AlwaysStoppedAnimation(
-                          progress == 100
-                            ? const Color(0xFF2E7D32)
-                            : const Color(0xFFE87722)),
-                        minHeight: 8)),
-                  ])),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Ukamilishaji wa Kozi',
+                                    style: GoogleFonts.montserrat(fontSize: 10,
+                                        fontWeight: FontWeight.w500,
+                                        color: const Color(0xFF7B3A10))),
+                                Text('$progress%',
+                                    style: GoogleFonts.montserrat(fontSize: 10,
+                                        fontWeight: FontWeight.w700,
+                                        color: const Color(0xFFE87722))),
+                              ]),
+                          const SizedBox(height: 6),
+                          ClipRRect(borderRadius: BorderRadius.circular(6),
+                              child: LinearProgressIndicator(
+                                  value: progress / 100,
+                                  backgroundColor: const Color(0xFFF5E6D8),
+                                  valueColor: const AlwaysStoppedAnimation(
+                                      Color(0xFFE87722)),
+                                  minHeight: 8)),
+                        ])),
 
                 const SizedBox(height: 14),
 
                 // ── ACTION BUTTONS ──
                 Padding(padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
-                  child: !isApproved
-                    ? Row(children: [
-                        // Reject
-                        Expanded(child: OutlinedButton(
-                          onPressed: () => _rejectCertificate(index),
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(
-                              color: const Color(0xFFB71C1C).withValues(alpha: 0.4)),
-                            foregroundColor: const Color(0xFFB71C1C),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(28)),
-                            padding: const EdgeInsets.symmetric(vertical: 10)),
-                          child: Text('Kataa',
-                            style: GoogleFonts.montserrat(fontSize: 13,
-                              fontWeight: FontWeight.w700)))),
-                        const SizedBox(width: 10),
-                        // Approve
-                        Expanded(child: ElevatedButton.icon(
-                          onPressed: () => _showApproveConfirm(index, cert),
-                          icon: const Icon(Icons.workspace_premium_outlined,
-                            size: 15),
-                          label: Text('Thibitisha Cheti',
-                            style: GoogleFonts.montserrat(fontSize: 13,
-                              fontWeight: FontWeight.w700)),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF2E7D32),
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(28)),
-                            padding: const EdgeInsets.symmetric(vertical: 10)))),
-                      ])
-                    // Already approved state
-                    : Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2E7D32).withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(28)),
-                        child: Row(mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                          const Icon(Icons.check_circle_outline,
-                            color: Color(0xFF2E7D32), size: 16),
-                          const SizedBox(width: 8),
-                          Text('Cheti Kimethibitishwa',
-                            style: GoogleFonts.montserrat(fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF2E7D32))),
-                        ]))),
+                    child: !isApproved
+                        ? Row(children: [
+                            Expanded(child: OutlinedButton(
+                                onPressed: () => _rejectCertificate(index),
+                                style: OutlinedButton.styleFrom(
+                                    side: BorderSide(
+                                        color: const Color(0xFF3D1800).withValues(alpha: 0.4)),
+                                    foregroundColor: const Color(0xFF3D1800),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(28)),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10)),
+                                child: Text('Kataa',
+                                    style: GoogleFonts.montserrat(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700)))),
+                            const SizedBox(width: 10),
+                            Expanded(child: ElevatedButton.icon(
+                                onPressed: () =>
+                                    _showApproveConfirm(index, cert),
+                                icon: const Icon(
+                                    Icons.workspace_premium_outlined, size: 15),
+                                label: Text('Thibitisha Cheti',
+                                    style: GoogleFonts.montserrat(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700)),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFE87722),
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(28)),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10)))),
+                          ])
+                        : Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                                color: const Color(0xFFE87722).withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(28)),
+                            child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.check_circle_outline,
+                                      color: Color(0xFFE87722), size: 16),
+                                  const SizedBox(width: 8),
+                                  Text('Cheti Kimethibitishwa',
+                                      style: GoogleFonts.montserrat(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFFE87722))),
+                                ]))),
               ]));
           }),
-        ])));
+        ]),
+      ),
+    );
   }
 
   void _showApproveConfirm(int index, Map<String, dynamic> cert) {
     showDialog(context: context, builder: (_) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Row(children: [
-        const Icon(Icons.workspace_premium_outlined, color: Color(0xFFE87722)),
-        const SizedBox(width: 8),
-        Text('Thibitisha Cheti', style: GoogleFonts.montserrat(
-          fontWeight: FontWeight.w700, color: const Color(0xFF1A0A00))),
-      ]),
-      content: Text(
-        'Unathibitisha kwamba ${cert['name']} amekamilisha '
-        '"${cert['course']}" kwa mafanikio na anastahili cheti rasmi?',
-        style: GoogleFonts.montserrat(fontSize: 13,
-          color: const Color(0xFF7B3A10), height: 1.5)),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('Hapana',
-            style: GoogleFonts.montserrat(color: const Color(0xFF7B3A10)))),
-        ElevatedButton.icon(
-          onPressed: () {
-            Navigator.pop(context);
-            setState(() {
-              _pendingCerts[index]['is_approved'] = true;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(
-                '✓ Cheti cha ${cert['name']} kimethibitishwa!',
-                style: GoogleFonts.montserrat()),
-              backgroundColor: const Color(0xFF2E7D32),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12))));
-          },
-          icon: const Icon(Icons.workspace_premium_outlined, size: 16),
-          label: Text('Thibitisha', style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.w700)),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2E7D32),
-            foregroundColor: Colors.white,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12)))),
-      ]));
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Row(children: [
+          const Icon(Icons.workspace_premium_outlined, color: Color(0xFFE87722)),
+          const SizedBox(width: 8),
+          Text('Thibitisha Cheti', style: GoogleFonts.montserrat(
+              fontWeight: FontWeight.w700, color: const Color(0xFF1A0A00))),
+        ]),
+        content: Text(
+            'Unathibitisha kwamba ${cert['name']} amekamilisha '
+            '"${cert['course']}" kwa mafanikio na anastahili cheti rasmi?',
+            style: GoogleFonts.montserrat(fontSize: 13,
+                color: const Color(0xFF7B3A10), height: 1.5)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Hapana',
+                  style: GoogleFonts.montserrat(
+                      color: const Color(0xFF7B3A10)))),
+          ElevatedButton.icon(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() {
+                  _pendingCerts[index]['is_approved'] = true;
+                });
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('✓ Cheti cha ${cert['name']} kimethibitishwa!',
+                        style: GoogleFonts.montserrat()),
+                    backgroundColor: const Color(0xFFE87722),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12))));
+              },
+              icon: const Icon(Icons.workspace_premium_outlined, size: 16),
+              label: Text('Thibitisha',
+                  style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFE87722),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)))),
+        ]));
   }
 
   void _rejectCertificate(int index) {
     showDialog(context: context, builder: (_) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Text('Kataa Ombi?', style: GoogleFonts.montserrat(
-        fontWeight: FontWeight.w700, color: const Color(0xFF1A0A00))),
-      content: Text(
-        'Ombi la cheti la ${_pendingCerts[index]['name']} litakataliwa. '
-        'Mwanafunzi ataarifiwa.',
-        style: GoogleFonts.montserrat(fontSize: 13,
-          color: const Color(0xFF7B3A10), height: 1.5)),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('Hapana',
-            style: GoogleFonts.montserrat(color: const Color(0xFF7B3A10)))),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-            setState(() => _pendingCerts.removeAt(index));
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Ombi limekataliwa.',
-                style: GoogleFonts.montserrat()),
-              backgroundColor: const Color(0xFFB71C1C),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12))));
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFB71C1C),
-            foregroundColor: Colors.white,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12))),
-          child: Text('Ndiyo, Kataa',
-            style: GoogleFonts.montserrat(fontWeight: FontWeight.w700))),
-      ]));
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text('Kataa Ombi?', style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w700, color: const Color(0xFF1A0A00))),
+        content: Text(
+            'Ombi la cheti la ${_pendingCerts[index]['name']} litakataliwa. '
+            'Mwanafunzi ataarifiwa.',
+            style: GoogleFonts.montserrat(fontSize: 13,
+                color: const Color(0xFF7B3A10), height: 1.5)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Hapana',
+                  style: GoogleFonts.montserrat(
+                      color: const Color(0xFF7B3A10)))),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() => _pendingCerts.removeAt(index));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Ombi limekataliwa.',
+                        style: GoogleFonts.montserrat()),
+                    backgroundColor: const Color(0xFF3D1800),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12))));
+              },
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF3D1800),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12))),
+              child: Text('Ndiyo, Kataa',
+                  style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.w700))),
+        ]));
   }
+
+  // ── HERO APP BAR ──────────────────────────────────────────────────────────
 
   Widget _buildHeroAppBar(bool innerBoxIsScrolled) {
     return SliverAppBar(
         expandedHeight: 220,
         pinned: true,
         forceElevated: innerBoxIsScrolled,
+        automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFF3D1800),
-        leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: Colors.white, size: 20),
-            onPressed: () => context.pop()),
         actions: [
           GestureDetector(
               onTap: () => context.push('/wallet'),
@@ -1427,10 +1502,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 decoration: const BoxDecoration(
                     gradient: LinearGradient(
                         colors: [
-                      Color(0xFF3D1800),
-                      Color(0xFF7B3A10),
-                      Color(0xFFE87722)
-                    ],
+                          Color(0xFF3D1800),
+                          Color(0xFF7B3A10),
+                          Color(0xFFE87722)
+                        ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight)),
                 child: Stack(clipBehavior: Clip.hardEdge, children: [
@@ -1442,8 +1517,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           height: 200,
                           decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color:
-                                  Colors.white.withValues(alpha: 0.04)))),
+                              color: Colors.white.withValues(alpha: 0.04)))),
                   Positioned(
                       bottom: 20,
                       left: -40,
@@ -1476,18 +1550,15 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                     child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          const Icon(
-                                              Icons.verified_outlined,
+                                          const Icon(Icons.verified_outlined,
                                               color: Color(0xFFFFA726),
                                               size: 12),
                                           const SizedBox(width: 4),
                                           Text('MWALIMU WA KARAKANA',
                                               style: GoogleFonts.montserrat(
                                                   fontSize: 9,
-                                                  fontWeight:
-                                                      FontWeight.w700,
-                                                  color:
-                                                      const Color(0xFFFFA726),
+                                                  fontWeight: FontWeight.w700,
+                                                  color: const Color(0xFFFFA726),
                                                   letterSpacing: 1.2)),
                                         ])),
                                 const SizedBox(height: 12),
@@ -1515,20 +1586,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                                               FontWeight.w400,
                                                           color: Colors.white
                                                               .withValues(
-                                                                  alpha:
-                                                                      0.7))),
+                                                                  alpha: 0.7))),
                                             ])),
                                 const SizedBox(height: 20),
                                 Row(children: [
-                                  _buildHeroStat(
-                                      '${_stats['total_courses']}',
-                                      'Kozi',
-                                      Icons.school_outlined),
+                                  _buildHeroStat('${_stats['total_courses']}',
+                                      'Kozi', Icons.school_outlined),
                                   Container(
                                       width: 1,
                                       height: 36,
-                                      color: Colors.white
-                                          .withValues(alpha: 0.2)),
+                                      color: Colors.white.withValues(alpha: 0.2)),
                                   _buildHeroStat(
                                       _formatNumber(
                                           _stats['total_students'] ?? 0),
@@ -1537,8 +1604,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                   Container(
                                       width: 1,
                                       height: 36,
-                                      color: Colors.white
-                                          .withValues(alpha: 0.2)),
+                                      color: Colors.white.withValues(alpha: 0.2)),
                                   _buildHeroStat(
                                       '${(_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1)}★',
                                       'Ukadiriaji',
@@ -1546,32 +1612,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                 ]),
                               ])))
                 ]))));
-  }
-
-  Widget _buildStickyTabBar() {
-    return SliverPersistentHeader(
-        pinned: true,
-        delegate: _StickyTabBarDelegate(
-            color: const Color(0xFF3D1800),
-            tabBar: TabBar(
-                controller: _tabController,
-                isScrollable: false,
-                labelStyle: GoogleFonts.montserrat(
-                    fontSize: 12, fontWeight: FontWeight.w700),
-                unselectedLabelStyle: GoogleFonts.montserrat(
-                    fontSize: 12, fontWeight: FontWeight.w500),
-                labelColor: const Color(0xFFE87722),
-                unselectedLabelColor:
-                    Colors.white.withValues(alpha: 0.5),
-                indicatorColor: const Color(0xFFE87722),
-                indicatorWeight: 3,
-                indicatorSize: TabBarIndicatorSize.label,
-                tabs: const [
-                  Tab(text: 'Muhtasari'),
-                  Tab(text: 'Kozi'),
-                  Tab(text: 'Wanafunzi'),
-                  Tab(text: 'Vyeti'),
-                ])));
   }
 
   Widget _buildHeroStat(String value, String label, IconData icon) {
@@ -1591,27 +1631,4 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               color: Colors.white.withValues(alpha: 0.6))),
     ]));
   }
-}
-
-class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
-  final TabBar tabBar;
-  final Color color;
-
-  const _StickyTabBarDelegate({required this.tabBar, required this.color});
-
-  @override
-  double get minExtent => tabBar.preferredSize.height;
-
-  @override
-  double get maxExtent => tabBar.preferredSize.height;
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(color: color, child: tabBar);
-  }
-
-  @override
-  bool shouldRebuild(_StickyTabBarDelegate old) =>
-      tabBar != old.tabBar || color != old.color;
 }

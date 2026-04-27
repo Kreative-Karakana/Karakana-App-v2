@@ -71,6 +71,7 @@ class AuthProvider extends ChangeNotifier {
     _isOnboardingComplete = await SecureStorage().isOnboardingComplete();
     final hasToken = await SecureStorage().hasToken();
     if (hasToken) {
+      _roles = await SecureStorage().loadRoles();
       await getCurrentUser();
     }
     notifyListeners();
@@ -99,6 +100,7 @@ class AuthProvider extends ChangeNotifier {
         await SecureStorage().saveToken(token.toString());
         _roles = _extractRoles(response.data);
         debugPrint('[AUTH] Signin roles: $_roles');
+        if (_roles != null) await SecureStorage().saveRoles(_roles!);
         await getCurrentUser();
         _isAuthenticated = true;
         _isLoading = false;
@@ -174,6 +176,7 @@ class AuthProvider extends ChangeNotifier {
       if (token != null) {
         await SecureStorage().saveToken(token.toString());
         _roles = _extractRoles(response.data);
+        if (_roles != null) await SecureStorage().saveRoles(_roles!);
         await getCurrentUser();
         _isAuthenticated = true;
         _isLoading = false;
@@ -346,6 +349,7 @@ class AuthProvider extends ChangeNotifier {
     if (token != null) {
       await SecureStorage().saveToken(token.toString());
       _roles = _extractRoles(data);
+      if (_roles != null) await SecureStorage().saveRoles(_roles!);
       await getCurrentUser();
       _isAuthenticated = true;
       _isLoading = false;

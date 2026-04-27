@@ -114,6 +114,18 @@ class SecureStorage {
     await prefs.setBool(AppConstants.mastercardDoneKey, true);
   }
 
+  Future<void> saveRoles(List<dynamic> roles) async {
+    final prefs = await _prefs;
+    await prefs.setString(AppConstants.rolesKey, roles.join(','));
+  }
+
+  Future<List<dynamic>?> loadRoles() async {
+    final prefs = await _prefs;
+    final raw = prefs.getString(AppConstants.rolesKey);
+    if (raw == null || raw.isEmpty) return null;
+    return raw.split(',').where((r) => r.isNotEmpty).toList();
+  }
+
   Future<void> setTermsAccepted() async {
     try {
       await _storage.write(key: 'terms_accepted', value: 'true');
@@ -140,5 +152,6 @@ class SecureStorage {
     await prefs.remove(AppConstants.userIdKey);
     await prefs.remove(AppConstants.ambassadorCodeKey);
     await prefs.remove(AppConstants.mastercardDoneKey);
+    await prefs.remove(AppConstants.rolesKey);
   }
 }

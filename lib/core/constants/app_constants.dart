@@ -8,6 +8,7 @@ class AppConstants {
   static const String userIdKey = 'user_id';
   static const String ambassadorCodeKey = 'ambassador_code_state';
   static const String mastercardDoneKey = 'mastercard_done';
+  static const String rolesKey = 'user_roles';
 }
 
 class AppStrings {
