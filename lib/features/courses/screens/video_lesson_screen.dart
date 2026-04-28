@@ -35,7 +35,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
       setState(() {
         _lesson = Map<String, dynamic>.from(res.data as Map);
         _isLoading = false;
-        _isCompleted = res.data['is_read'] == true;
+        _isCompleted = res.data['is_completed'] == true;
       });
     } catch (_) {
       if (!mounted) return;
@@ -68,8 +68,8 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
       );
     }
 
-    final playbackId = _lesson?['playback_url'] as String?;
-    final hasVideo = playbackId != null && playbackId.isNotEmpty;
+    final signedUrl = _lesson?['signed_url'] as String?;
+    final hasVideo = signedUrl != null && signedUrl.isNotEmpty;
 
     return Scaffold(
       backgroundColor: const Color(0xFF1A0A00),
@@ -112,7 +112,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
           // ── Video or placeholder ───────────────────────────────────────
           if (hasVideo)
             _MuxVideoPlayer(
-              playbackId: playbackId,
+              playbackUrl: signedUrl,
               onVideoEnded: _isCompleted ? null : _markComplete,
             )
           else
@@ -253,11 +253,11 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
 // ── Mux Video Player Widget ────────────────────────────────────────────────────
 
 class _MuxVideoPlayer extends StatefulWidget {
-  final String playbackId;
+  final String playbackUrl;
   final VoidCallback? onVideoEnded;
 
   const _MuxVideoPlayer({
-    required this.playbackId,
+    required this.playbackUrl,
     this.onVideoEnded,
   });
 
@@ -279,7 +279,7 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
   }
 
   Future<void> _initPlayer() async {
-    final url = 'https://stream.mux.com/${widget.playbackId}.m3u8';
+    final url = widget.playbackUrl;
     _controller = VideoPlayerController.networkUrl(Uri.parse(url));
 
     _controller.addListener(_onPlayerChanged);

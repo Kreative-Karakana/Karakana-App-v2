@@ -420,7 +420,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         _formatNumber(_stats['total_students'] ?? 0),
                         Icons.people_outlined,
                         const Color(0xFF3D1800),
-                        '+12%',
+                        '${_stats['total_courses'] ?? 0} kozi',
                         true,
                         surfaceColor,
                         textPrimary)),
@@ -639,6 +639,17 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     _courses[i] as Map, surfaceColor, textPrimary, textSecondary)));
   }
 
+  String _computeRevenue(Map course) {
+    final students = course['student_count'] as int? ?? 0;
+    final price = (course['price'] as num? ?? 0).toInt();
+    final commissionRate = (course['commission_rate'] as num?)?.toDouble();
+    int gross = students * price;
+    if (commissionRate != null && commissionRate > 0 && commissionRate <= 100) {
+      gross = (gross * (1 - commissionRate / 100)).round();
+    }
+    return _formatPrice(gross);
+  }
+
   Widget _buildCourseCard(Map course, Color surfaceColor, Color textPrimary,
       Color textSecondary) {
     final isPublished = course['status'] == 'published';
@@ -772,6 +783,20 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFFE87722))),
                     ]),
+
+                    if (students > 0) ...[
+                      const SizedBox(height: 8),
+                      Row(children: [
+                        const Icon(Icons.account_balance_wallet_outlined,
+                            size: 13, color: Color(0xFF7B3A10)),
+                        const SizedBox(width: 4),
+                        Text('Mapato: TZS ${_computeRevenue(course)}',
+                            style: GoogleFonts.montserrat(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF7B3A10))),
+                      ]),
+                    ],
 
                     const SizedBox(height: 12),
                     const Divider(height: 1, color: Color(0xFFF5E6D8)),

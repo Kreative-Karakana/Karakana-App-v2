@@ -203,18 +203,16 @@ class LessonModel {
   final String title;
   final String? content;
   final int ordering;
-  final String? muxPlaybackId;
+  final bool hasVideo;
   bool isRead;
-  final String? signedPlaybackUrl;
 
   LessonModel({
     required this.id,
     required this.title,
     this.content,
     required this.ordering,
-    this.muxPlaybackId,
+    required this.hasVideo,
     required this.isRead,
-    this.signedPlaybackUrl,
   });
 
   factory LessonModel.fromJson(Map<String, dynamic> json) {
@@ -222,14 +220,11 @@ class LessonModel {
       id: json['id'] ?? 0,
       title: json['title'] ?? '',
       content: json['content']?.toString(),
-      ordering: json['ordering'] ?? 0,
-      muxPlaybackId: json['mux_playback_id']?.toString(),
-      isRead: json['is_read'] ?? false,
-      signedPlaybackUrl: json['signed_playback_url']?.toString(),
+      ordering: json['index'] ?? json['ordering'] ?? 0,
+      hasVideo: json['has_video'] ?? false,
+      isRead: json['is_completed'] ?? json['is_read'] ?? false,
     );
   }
-
-  bool get hasVideo => muxPlaybackId != null;
 }
 
 class ReviewModel {

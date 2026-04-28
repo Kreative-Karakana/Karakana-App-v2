@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/network/api_client.dart';
 
@@ -215,11 +216,20 @@ class _WalletScreenState extends State<WalletScreen> {
     );
   }
 
+  Future<void> _openReceipt(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return;
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   Widget _buildCheckoutItem(Map checkout) {
     final isSuccessful = checkout['is_successful'] == true;
     final remark = checkout['remark'] as String? ?? '';
     final amount = checkout['amount'];
     final date = checkout['initiated_at'] as String? ?? '';
+    final receiptUrl = checkout['receipt_image'] as String?;
     String formattedDate = '';
     try {
       formattedDate = DateFormat('dd MMM yyyy').format(DateTime.parse(date));
@@ -269,9 +279,32 @@ class _WalletScreenState extends State<WalletScreen> {
             ),
           ]),
         ])),
-        Text('TZS ${_formatPrice(amount)}',
-            style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w700,
-                color: isSuccessful ? const Color(0xFFE87722) : const Color(0xFFFFA726))),
+        const SizedBox(width: 8),
+        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Text('TZS ${_formatPrice(amount)}',
+              style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w700,
+                  color: isSuccessful ? const Color(0xFFE87722) : const Color(0xFFFFA726))),
+          if (isSuccessful && receiptUrl != null && receiptUrl.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            GestureDetector(
+              onTap: () => _openReceipt(receiptUrl),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5E6D8),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  const Icon(Icons.receipt_outlined, size: 11, color: Color(0xFF7B3A10)),
+                  const SizedBox(width: 3),
+                  Text('Risiti',
+                      style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w700,
+                          color: const Color(0xFF7B3A10))),
+                ]),
+              ),
+            ),
+          ],
+        ]),
       ]),
     );
   }

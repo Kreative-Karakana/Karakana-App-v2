@@ -405,7 +405,11 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                               size: 22,
                                             ),
                                       onTap: () =>
-                                          context.push('/lesson/${lesson.id}'),
+                                          context.push('/lesson/${lesson.id}').then((_) {
+                                            if (context.mounted) {
+                                              context.read<CourseProvider>().loadCourseDetail(widget.courseId);
+                                            }
+                                          }),
                                     ),
                                   );
                                 }),

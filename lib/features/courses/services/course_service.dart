@@ -85,7 +85,7 @@ class CourseService {
     try {
       final response =
           await _dio.post('/api/v1/lessons/$lessonId/progress/');
-      return response.data['is_read'] ?? false;
+      return response.data['is_completed'] ?? response.data['is_read'] ?? false;
     } catch (e) {
       throw ApiClient().parseError(e);
     }
