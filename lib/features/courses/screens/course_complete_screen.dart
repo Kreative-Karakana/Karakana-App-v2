@@ -1,11 +1,14 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart' show Share;
 
+import '../../../core/network/api_client.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../utils/certificate_pdf_generator.dart';
 
 class CourseCompleteScreen extends StatefulWidget {
   final int courseId;
@@ -22,7 +25,69 @@ class CourseCompleteScreen extends StatefulWidget {
 }
 
 class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
-  bool _isGenerating = false;
+  Map<String, dynamic>? _certificate;
+  bool _isRequestingCert = true;
+  bool _isDownloading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _requestCertificate());
+  }
+
+  Future<void> _requestCertificate() async {
+    try {
+      final res = await ApiClient().dio.post(
+        '/api/v1/certificates/',
+        data: {'course_id': widget.courseId},
+      );
+      if (!mounted) return;
+      setState(() {
+        _certificate = Map<String, dynamic>.from(res.data as Map);
+        _isRequestingCert = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isRequestingCert = false);
+    }
+  }
+
+  Future<void> _downloadCertificate(AuthProvider auth) async {
+    setState(() => _isDownloading = true);
+    try {
+      final cert = _certificate;
+      final issuedAt = cert != null && cert['issued_at'] != null
+          ? DateTime.tryParse(cert['issued_at'].toString()) ?? DateTime.now()
+          : DateTime.now();
+      final certNumber = cert?['certificate_number']?.toString() ?? '';
+      final excerpt = cert?['course_excerpt']?.toString() ?? '';
+
+      final doc = await CertificatePdfGenerator.generate(
+        studentName: auth.userFullName,
+        courseTitle: widget.courseTitle,
+        courseExcerpt: excerpt,
+        issuedAt: issuedAt,
+        certificateNumber: certNumber.isNotEmpty ? certNumber : 'KARAKANA',
+      );
+      final bytes = await doc.save();
+
+      if (!mounted) return;
+      await Printing.layoutPdf(
+        onLayout: (_) async => bytes,
+        name: 'Cheti — ${widget.courseTitle}',
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Hitilafu ya kupakua cheti: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isDownloading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,20 +100,17 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
             builder: (_, auth, __) => Column(
               children: [
                 const SizedBox(height: 32),
+                // Trophy icon
                 Center(
                   child: Container(
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFFFA726), Color(0xFFFFA726)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      color: const Color(0xFFE87722),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFFFA726).withValues(alpha: 0.4),
+                          color: const Color(0xFFE87722).withValues(alpha: 0.4),
                           blurRadius: 24,
                           offset: const Offset(0, 8),
                         ),
@@ -92,6 +154,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                   ),
                 ),
                 const SizedBox(height: 32),
+                // Certificate preview card
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(24),
@@ -201,19 +264,38 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        DateFormat('dd MMMM yyyy').format(DateTime.now()),
+                        _certificate != null && _certificate!['issued_at'] != null
+                            ? DateFormat('d MMMM yyyy').format(
+                                DateTime.tryParse(
+                                      _certificate!['issued_at'].toString(),
+                                    )?.toLocal() ??
+                                    DateTime.now(),
+                              )
+                            : DateFormat('d MMMM yyyy').format(DateTime.now()),
                         style: GoogleFonts.montserrat(
                           fontSize: 12,
                           color: const Color(0xFF9E8070),
                         ),
                       ),
+                      if (_certificate != null &&
+                          _certificate!['certificate_number'] != null) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          'No. ${_certificate!['certificate_number'].toString().toUpperCase().replaceAll('-', '').substring(0, 10)}',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 10,
+                            letterSpacing: 1.5,
+                            color: const Color(0xFF9E8070),
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: 16),
                       Divider(
                         color: const Color(0xFFE87722).withValues(alpha: 0.3),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Imeidhinishwa na Karakana',
+                        'Imeidhinishwa na Lameck Lawrence, CEO — Karakana',
                         style: GoogleFonts.montserrat(
                           fontSize: 11,
                           color: const Color(0xFFBDA99C),
@@ -223,10 +305,11 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                   ),
                 ),
                 const SizedBox(height: 28),
+                // Download PDF button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    icon: _isGenerating
+                    icon: _isRequestingCert || _isDownloading
                         ? const SizedBox(
                             width: 18,
                             height: 18,
@@ -235,9 +318,13 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                               strokeWidth: 2,
                             ),
                           )
-                        : const Icon(Icons.share_outlined),
+                        : const Icon(Icons.download_outlined),
                     label: Text(
-                      'Shiriki Cheti',
+                      _isRequestingCert
+                          ? 'Inaandaa cheti...'
+                          : _isDownloading
+                              ? 'Inapakua...'
+                              : 'Pakua Cheti (PDF)',
                       style: GoogleFonts.montserrat(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -251,24 +338,13 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                         borderRadius: BorderRadius.circular(28),
                       ),
                     ),
-                    onPressed: _isGenerating
+                    onPressed: _isRequestingCert || _isDownloading
                         ? null
-                        : () async {
-                            final auth = context.read<AuthProvider>();
-                            final date = DateFormat('dd MMMM yyyy').format(DateTime.now());
-                            final text =
-                                '🎓 CHETI CHA UKAMILISHAJI\n\nHii inathibitisha kwamba\n\n${auth.userFullName}\n\namekamilisha kwa mafanikio kozi ya:\n\n"${widget.courseTitle}"\n\nTarehe: $date\nImeidhinishwa na Karakana\n\nPakua app: https://kreativekarakana.co.tz';
-                            setState(() => _isGenerating = true);
-                            await Share.share(
-                              text,
-                              subject: 'Cheti cha Ukamilishaji — ${widget.courseTitle}',
-                            );
-                            if (!mounted) return;
-                            setState(() => _isGenerating = false);
-                          },
+                        : () => _downloadCertificate(auth),
                   ),
                 ),
                 const SizedBox(height: 12),
+                // Share achievement button
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
@@ -293,8 +369,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       minimumSize: const Size(double.infinity, 52),
                     ),
                     onPressed: () async {
-                      final auth = context.read<AuthProvider>();
-                      final date = DateFormat('dd MMMM yyyy').format(DateTime.now());
+                      final date = DateFormat('d MMMM yyyy').format(DateTime.now());
                       final text =
                           '🎓 Nimekamilisha kozi ya "${widget.courseTitle}" kwenye Karakana!\n\nTarehe: $date\n\n— ${auth.userFullName}\n\nPakua Karakana: https://kreativekarakana.co.tz';
                       await Share.share(
