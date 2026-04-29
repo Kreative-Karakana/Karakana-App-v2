@@ -1043,6 +1043,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     required List<DropdownMenuItem<T>> items,
     required ValueChanged<T?> onChanged,
   }) {
+    final safeValue =
+        items.any((item) => item.value == value) ? value : null;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -1051,7 +1053,10 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         border: Border.all(color: const Color(0xFFE8D5C8)),
       ),
       child: DropdownButton<T>(
-        value: value,
+        value: safeValue,
+        hint: Text('Chagua...',
+            style: GoogleFonts.montserrat(
+                fontSize: 14, color: const Color(0xFF9E8070))),
         isExpanded: true,
         underline: const SizedBox(),
         items: items,
