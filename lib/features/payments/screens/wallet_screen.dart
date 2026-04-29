@@ -16,6 +16,7 @@ class _WalletScreenState extends State<WalletScreen> {
   Map<String, dynamic>? _wallet;
   List<dynamic> _checkouts = [];
   bool _isLoading = true;
+  bool _balanceVisible = true;
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _remarkController = TextEditingController();
 
@@ -339,18 +340,47 @@ class _WalletScreenState extends State<WalletScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: const BackButton(color: Color(0xFF3D1800)),
-          title: Text(
-            'Mkoba Wangu',
-            style: GoogleFonts.montserrat(fontSize: 17, fontWeight: FontWeight.w600, color: const Color(0xFF3D1800)),
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF3D1800), Color(0xFF7B3A10), Color(0xFFE87722)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
           ),
+          leading: Padding(
+            padding: const EdgeInsets.all(10),
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.arrow_back_ios_new_rounded,
+                    color: Colors.white, size: 16),
+              ),
+            ),
+          ),
+          title: Row(mainAxisSize: MainAxisSize.min, children: [
+            const Icon(Icons.account_balance_wallet_outlined,
+                color: Colors.white, size: 18),
+            const SizedBox(width: 8),
+            Text('Mkoba Wangu',
+                style: GoogleFonts.montserrat(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white)),
+          ]),
+          centerTitle: true,
         ),
         body: _isLoading
             ? const Center(child: CircularProgressIndicator(color: Color(0xFFE87722)))
             : Column(children: [
                 // ── BALANCE CARD ──
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(24),
@@ -368,14 +398,29 @@ class _WalletScreenState extends State<WalletScreen> {
                         Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Text('Salio Linalopatikana',
                               style: GoogleFonts.montserrat(fontSize: 12, color: Colors.white.withValues(alpha: 0.7))),
-                          const SizedBox(height: 4),
-                          Text('TZS ${_formatPrice(_wallet?['balance'] ?? 0)}',
-                              style: GoogleFonts.montserrat(fontSize: 28, fontWeight: FontWeight.w700, color: Colors.white)),
+                          const SizedBox(height: 6),
+                          Text(
+                            _balanceVisible
+                                ? 'TZS ${_formatPrice(_wallet?['balance'] ?? 0)}'
+                                : 'TZS ••••••',
+                            style: GoogleFonts.montserrat(fontSize: 28, fontWeight: FontWeight.w700, color: Colors.white),
+                          ),
                         ]),
-                        Container(
-                          width: 56, height: 56,
-                          decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.12), shape: BoxShape.circle),
-                          child: const Icon(Icons.account_balance_wallet_outlined, color: Colors.white, size: 28),
+                        GestureDetector(
+                          onTap: () => setState(() => _balanceVisible = !_balanceVisible),
+                          child: Container(
+                            width: 56, height: 56,
+                            decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.12),
+                                shape: BoxShape.circle),
+                            child: Icon(
+                              _balanceVisible
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
                         ),
                       ]),
                       const SizedBox(height: 24),
@@ -384,8 +429,12 @@ class _WalletScreenState extends State<WalletScreen> {
                           Text('Mapato Yote',
                               style: GoogleFonts.montserrat(fontSize: 11, color: Colors.white.withValues(alpha: 0.6))),
                           const SizedBox(height: 4),
-                          Text('TZS ${_formatPrice(_wallet?['total_income'] ?? 0)}',
-                              style: GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
+                          Text(
+                            _balanceVisible
+                                ? 'TZS ${_formatPrice(_wallet?['total_income'] ?? 0)}'
+                                : 'TZS ••••',
+                            style: GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
+                          ),
                         ])),
                         Container(width: 1, height: 32, color: Colors.white.withValues(alpha: 0.2)),
                         Expanded(child: Padding(
@@ -394,8 +443,12 @@ class _WalletScreenState extends State<WalletScreen> {
                             Text('Iliyotolewa',
                                 style: GoogleFonts.montserrat(fontSize: 11, color: Colors.white.withValues(alpha: 0.6))),
                             const SizedBox(height: 4),
-                            Text('TZS ${_formatPrice(_wallet?['total_disbursed'] ?? 0)}',
-                                style: GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
+                            Text(
+                              _balanceVisible
+                                  ? 'TZS ${_formatPrice(_wallet?['total_disbursed'] ?? 0)}'
+                                  : 'TZS ••••',
+                              style: GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
+                            ),
                           ]),
                         )),
                       ]),
