@@ -540,11 +540,17 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         decoration: BoxDecoration(
             color: surfaceColor,
             borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFE87722).withValues(alpha: 0.15)),
             boxShadow: [
               BoxShadow(
-                  color: const Color(0xFFE87722).withValues(alpha: 0.08),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4))
+                  color: const Color(0xFF3D1800).withValues(alpha: 0.08),
+                  blurRadius: 16,
+                  spreadRadius: 0,
+                  offset: const Offset(0, 4)),
+              BoxShadow(
+                  color: const Color(0xFF3D1800).withValues(alpha: 0.04),
+                  blurRadius: 4,
+                  offset: const Offset(0, 1)),
             ]),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -804,7 +810,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
                     // ── ACTION BUTTONS ROW ──
                     Row(children: [
-                      GestureDetector(
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: GestureDetector(
                           onTap: () => _showPublishConfirm(course),
                           child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
@@ -836,8 +844,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                         fontWeight: FontWeight.w700,
                                         color: isPublished
                                             ? const Color(0xFF3D1800)
-                                            : const Color(0xFFE87722))),
+                                            : const Color(0xFFE87722)),
+                                    overflow: TextOverflow.ellipsis),
                               ]))),
+                      ),
 
                       const Spacer(),
 
@@ -1523,9 +1533,38 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                             color: Colors.white)),
                   ]))),
           IconButton(
-              icon: const Icon(Icons.add_circle_outline,
-                  color: Color(0xFFFFA726), size: 24),
-              onPressed: () => context.push('/trainer/course-builder')),
+              icon: Icon(Icons.logout,
+                  color: Colors.white.withValues(alpha: 0.7), size: 20),
+              tooltip: 'Toka',
+              onPressed: () => showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: Text('Toka?',
+                          style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.w700)),
+                      content: Text('Una uhakika unataka kutoka?',
+                          style: GoogleFonts.montserrat()),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text('Hapana',
+                              style: GoogleFonts.montserrat(
+                                  color: const Color(0xFF9E8070))),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            context.read<AuthProvider>().logout();
+                            context.go('/login');
+                          },
+                          child: Text('Ndiyo, Toka',
+                              style: GoogleFonts.montserrat(
+                                  color: const Color(0xFFB71C1C),
+                                  fontWeight: FontWeight.w600)),
+                        ),
+                      ],
+                    ),
+                  )),
         ],
         flexibleSpace: FlexibleSpaceBar(
             title: const SizedBox.shrink(),
@@ -1567,39 +1606,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 4),
-                                    decoration: BoxDecoration(
-                                        color: const Color(0xFFE87722)
-                                            .withValues(alpha: 0.2),
-                                        borderRadius:
-                                            BorderRadius.circular(20),
-                                        border: Border.all(
-                                            color: const Color(0xFFE87722)
-                                                .withValues(alpha: 0.4))),
-                                    child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Icon(Icons.verified_outlined,
-                                              color: Color(0xFFFFA726),
-                                              size: 12),
-                                          const SizedBox(width: 4),
-                                          Text('MWALIMU WA KARAKANA',
-                                              style: GoogleFonts.montserrat(
-                                                  fontSize: 9,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: const Color(0xFFFFA726),
-                                                  letterSpacing: 1.2)),
-                                        ])),
-                                const SizedBox(height: 12),
                                 Consumer<AuthProvider>(
                                     builder: (_, auth, __) => Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                  'Habari, ${auth.userFullName.split(' ').first}! 👋',
+                                                  'Habari, ${auth.userFullName.split(' ').first}!',
                                                   style:
                                                       GoogleFonts.montserrat(
                                                           fontSize: 22,
