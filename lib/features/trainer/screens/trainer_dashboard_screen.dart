@@ -23,6 +23,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   late TabController _tabController;
   List _courses = [];
   bool _isLoading = true;
+  bool _balanceVisible = true;
   // ignore: unused_field
   Map _wallet = {};
   Map _stats = {
@@ -1511,27 +1512,41 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFF3D1800),
         actions: [
-          GestureDetector(
-              onTap: () => context.push('/wallet'),
-              child: Container(
-                  margin: const EdgeInsets.only(right: 8),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.2))),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(Icons.account_balance_wallet_outlined,
-                        color: Colors.white, size: 14),
-                    const SizedBox(width: 6),
-                    Text(_formatPrice(_stats['balance'] ?? 0),
+          Container(
+              margin: const EdgeInsets.only(right: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(20),
+                  border:
+                      Border.all(color: Colors.white.withValues(alpha: 0.2))),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                GestureDetector(
+                    onTap: () => context.push('/wallet'),
+                    child: const Icon(Icons.account_balance_wallet_outlined,
+                        color: Colors.white, size: 14)),
+                const SizedBox(width: 6),
+                GestureDetector(
+                    onTap: () => context.push('/wallet'),
+                    child: Text(
+                        _balanceVisible
+                            ? _formatPrice(_stats['balance'] ?? 0)
+                            : '••••••',
                         style: GoogleFonts.montserrat(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: Colors.white)),
-                  ]))),
+                            color: Colors.white))),
+                const SizedBox(width: 6),
+                GestureDetector(
+                    onTap: () =>
+                        setState(() => _balanceVisible = !_balanceVisible),
+                    child: Icon(
+                        _balanceVisible
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                        color: Colors.white.withValues(alpha: 0.7),
+                        size: 13)),
+              ])),
           IconButton(
               icon: Icon(Icons.logout,
                   color: Colors.white.withValues(alpha: 0.7), size: 20),
