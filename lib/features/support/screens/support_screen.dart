@@ -44,6 +44,7 @@ class _SupportScreenState extends State<SupportScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -75,7 +76,7 @@ class _SupportScreenState extends State<SupportScreen> {
       body: Column(
         children: [
           Container(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
@@ -99,6 +100,7 @@ class _SupportScreenState extends State<SupportScreen> {
                             content: Text('Inakuja hivi karibuni'),
                           ),
                         ),
+                        isDark: isDark,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -111,6 +113,7 @@ class _SupportScreenState extends State<SupportScreen> {
                             content: Text('support@kreativekarakana.co.tz'),
                           ),
                         ),
+                        isDark: isDark,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -119,6 +122,7 @@ class _SupportScreenState extends State<SupportScreen> {
                         Icons.add_comment_outlined,
                         'Tiketi\nMpya',
                         () => context.push('/support/new'),
+                        isDark: isDark,
                       ),
                     ),
                   ],
@@ -126,7 +130,7 @@ class _SupportScreenState extends State<SupportScreen> {
               ],
             ),
           ),
-          const Divider(height: 1, color: Color(0xFFF0E4DA)),
+          Divider(height: 1, color: isDark ? Colors.white10 : const Color(0xFFF0E4DA)),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
             child: Row(
@@ -136,7 +140,7 @@ class _SupportScreenState extends State<SupportScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF3D1800),
+                    color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
                   ),
                 ),
                 const Spacer(),
@@ -183,7 +187,7 @@ class _SupportScreenState extends State<SupportScreen> {
                               margin: const EdgeInsets.only(bottom: 10),
                               padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Theme.of(context).cardColor,
                                 borderRadius: BorderRadius.circular(14),
                                 boxShadow: const [
                                   BoxShadow(
@@ -199,7 +203,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                     width: 44,
                                     height: 44,
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFF5E6D8),
+                                      color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                                       borderRadius: BorderRadius.circular(11),
                                     ),
                                     child: const Icon(
@@ -278,16 +282,17 @@ class _SupportScreenState extends State<SupportScreen> {
   Widget _buildQuickHelp(
     IconData icon,
     String label,
-    VoidCallback onTap,
-  ) {
+    VoidCallback onTap, {
+    required bool isDark,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color(0xFFFFF8F4),
+          color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE8D5C8)),
+          border: Border.all(color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -310,6 +315,7 @@ class _SupportScreenState extends State<SupportScreen> {
   }
 
   Widget _buildEmptyState() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -317,8 +323,8 @@ class _SupportScreenState extends State<SupportScreen> {
           Container(
             width: 96,
             height: 96,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF5E6D8),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -333,7 +339,7 @@ class _SupportScreenState extends State<SupportScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF1A0A00),
+              color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
             ),
           ),
           const SizedBox(height: 8),

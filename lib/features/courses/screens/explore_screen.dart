@@ -66,8 +66,9 @@ class _ExploreScreenState extends State<ExploreScreen>
 
     final displayCourses = _sortedCourses(provider);
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
           // ── Gradient header ────────────────────────────────────
@@ -206,7 +207,7 @@ class _ExploreScreenState extends State<ExploreScreen>
 
           // ── Filters ────────────────────────────────────────────
           Container(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
             child: Column(
               children: [
@@ -233,13 +234,13 @@ class _ExploreScreenState extends State<ExploreScreen>
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? AppColors.primary
-                                  : AppColors.surface,
+                                  : Theme.of(context).cardColor,
                               borderRadius:
                                   BorderRadius.circular(20),
                               border: Border.all(
                                 color: isSelected
                                     ? AppColors.primary
-                                    : AppColors.border,
+                                    : (isDark ? Colors.white12 : AppColors.border),
                               ),
                             ),
                             child: Text(
@@ -299,8 +300,8 @@ class _ExploreScreenState extends State<ExploreScreen>
                     ),
                   ],
                 ),
-                const Divider(
-                  color: AppColors.divider,
+                Divider(
+                  color: isDark ? Colors.white10 : const Color(0xFFF5E6D8),
                   height: 1,
                   thickness: 1,
                 ),
@@ -337,7 +338,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                               style: GoogleFonts.montserrat(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary,
+                                color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -453,7 +454,7 @@ class _ExploreCarouselState extends State<_ExploreCarousel> {
                     style: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
                     ),
                   ),
                   Text(
@@ -518,7 +519,7 @@ class _ExploreCarouselState extends State<_ExploreCarousel> {
           style: GoogleFonts.montserrat(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
+            color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
           ),
         ),
         const SizedBox(height: 12),

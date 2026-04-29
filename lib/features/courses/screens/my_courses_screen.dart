@@ -77,12 +77,13 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                             .trim()
                         : '';
 
+                    final isDark = Theme.of(context).brightness == Brightness.dark;
                     return GestureDetector(
                       onTap: () => context.push('/course/$courseId/classroom'),
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: const [
                             BoxShadow(
@@ -123,7 +124,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                                       style: GoogleFonts.montserrat(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
-                                        color: const Color(0xFF3D1800),
+                                        color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
                                       ),
                                     ),
                                     const SizedBox(height: 4),
@@ -179,6 +180,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
   }
 
   Widget _buildEmptyState(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -186,8 +188,8 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
           Container(
             width: 96,
             height: 96,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF5E6D8),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -202,7 +204,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF1A0A00),
+              color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
             ),
           ),
           const SizedBox(height: 8),
@@ -236,10 +238,11 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
   }
 
   Widget _coverFallback() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: 100,
       height: 90,
-      color: const Color(0xFFF5E6D8),
+      color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
       child: const Icon(
         Icons.play_circle_outline,
         color: Color(0xFFE87722),

@@ -107,7 +107,7 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
         children: [
           // Search bar
           Container(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
             child: TextField(
               onChanged: (v) => setState(() => _search = v),
@@ -123,7 +123,7 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
                   size: 20,
                 ),
                 filled: true,
-                fillColor: const Color(0xFFFFF8F4),
+                fillColor: Theme.of(context).scaffoldBackgroundColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
@@ -139,7 +139,7 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
               ),
             ),
           ),
-          const Divider(height: 1, color: Color(0xFFF0E4DA)),
+          Divider(height: 1, color: Theme.of(context).brightness == Brightness.dark ? Colors.white10 : const Color(0xFFF0E4DA)),
 
           // Summary bar
           if (!_isLoading && _error == null && _students.isNotEmpty)
@@ -207,7 +207,7 @@ class _SummaryBar extends StatelessWidget {
             students.length;
 
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
       child: Row(
         children: [
@@ -247,10 +247,12 @@ class _SummaryBar extends StatelessWidget {
     );
   }
 
-  Widget _divider() => Container(
-        height: 32,
-        width: 1,
-        color: const Color(0xFFE8D5C8),
+  Widget _divider() => Builder(
+        builder: (context) => Container(
+          height: 32,
+          width: 1,
+          color: Theme.of(context).brightness == Brightness.dark ? Colors.white12 : const Color(0xFFE8D5C8),
+        ),
       );
 }
 
@@ -262,6 +264,7 @@ class _StudentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final name = student['full_name'] as String? ??
         student['username'] as String? ??
         'Mwanafunzi';
@@ -278,7 +281,7 @@ class _StudentCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
@@ -295,7 +298,7 @@ class _StudentCard extends StatelessWidget {
               // Avatar
               CircleAvatar(
                 radius: 22,
-                backgroundColor: const Color(0xFFF5E6D8),
+                backgroundColor: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                 backgroundImage:
                     avatar != null ? NetworkImage(avatar) : null,
                 child: avatar == null
@@ -320,7 +323,7 @@ class _StudentCard extends StatelessWidget {
                       style: GoogleFonts.montserrat(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFF3D1800),
+                        color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
                       ),
                     ),
                     if (email.isNotEmpty)
@@ -340,8 +343,8 @@ class _StudentCard extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: isCompleted
-                      ? const Color(0xFFF5E6D8)
-                      : const Color(0xFFFFF8F4),
+                      ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8))
+                      : (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4)),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: isCompleted
@@ -397,7 +400,7 @@ class _StudentCard extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: (progress / 100).clamp(0.0, 1.0),
                   minHeight: 6,
-                  backgroundColor: const Color(0xFFF0E4DA),
+                  backgroundColor: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF0E4DA),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     isCompleted
                         ? const Color(0xFFE87722)
@@ -436,7 +439,7 @@ class _EmptyState extends StatelessWidget {
             style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF1A0A00),
+              color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
             ),
           ),
           const SizedBox(height: 8),

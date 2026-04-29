@@ -64,7 +64,7 @@ class _WalletScreenState extends State<WalletScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -106,7 +106,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   color: Color(0xFFE87722),
                 ),
                 filled: true,
-                fillColor: const Color(0xFFFFF8F4),
+                fillColor: Theme.of(context).scaffoldBackgroundColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
@@ -130,7 +130,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   color: Color(0xFFE87722),
                 ),
                 filled: true,
-                fillColor: const Color(0xFFFFF8F4),
+                fillColor: Theme.of(context).scaffoldBackgroundColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
                   borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
@@ -226,6 +226,7 @@ class _WalletScreenState extends State<WalletScreen> {
   }
 
   Widget _buildCheckoutItem(Map checkout) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSuccessful = checkout['is_successful'] == true;
     final remark = checkout['remark'] as String? ?? '';
     final amount = checkout['amount'];
@@ -249,7 +250,7 @@ class _WalletScreenState extends State<WalletScreen> {
         Container(
           width: 40, height: 40,
           decoration: BoxDecoration(
-            color: isSuccessful ? const Color(0xFFF5E6D8) : const Color(0xFFFFA726).withValues(alpha: 0.12),
+            color: isSuccessful ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)) : const Color(0xFFFFA726).withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
@@ -292,7 +293,7 @@ class _WalletScreenState extends State<WalletScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF5E6D8),
+                  color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
@@ -330,6 +331,7 @@ class _WalletScreenState extends State<WalletScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final successful = _checkouts.where((c) => (c as Map)['is_successful'] == true).toList();
     final pending = _checkouts.where((c) => (c as Map)['is_successful'] != true).toList();
 
@@ -476,7 +478,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF5E6D8),
+                      color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: TabBar(

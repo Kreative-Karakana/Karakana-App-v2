@@ -37,9 +37,9 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     return Consumer<CourseProvider>(
       builder: (context, provider, _) {
         if (provider.isLoadingDetail) {
-          return const Scaffold(
-            backgroundColor: Colors.white,
-            body: Center(
+          return Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            body: const Center(
               child: CircularProgressIndicator(
                 color: Color(0xFFE87722),
               ),
@@ -50,7 +50,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
         final course = provider.selectedCourse;
         if (course == null) {
           return Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             body: Center(
               child: Padding(
                 padding: const EdgeInsets.all(24),
@@ -100,8 +100,9 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
           );
         }
 
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: CustomScrollView(
             physics: const BouncingScrollPhysics(),
             slivers: [
@@ -155,10 +156,10 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           imageUrl: course.coverPhoto!,
                           fit: BoxFit.cover,
                           placeholder: (_, __) => Container(
-                            color: const Color(0xFFF5E6D8),
+                            color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                           ),
                           errorWidget: (_, __, ___) => Container(
-                            color: const Color(0xFFF5E6D8),
+                            color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                           ),
                         )
                       else
@@ -335,10 +336,10 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFFF8F4),
+                          color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: const Color(0xFFE8D5C8),
+                            color: isDark ? Colors.white12 : const Color(0xFFE8D5C8),
                           ),
                         ),
                         child: Column(
@@ -424,10 +425,10 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           padding: const EdgeInsets.all(16),
                           margin: const EdgeInsets.only(bottom: 12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFFF8F4),
+                            color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color(0xFFE8D5C8),
+                              color: isDark ? Colors.white12 : const Color(0xFFE8D5C8),
                             ),
                           ),
                           child: Row(
@@ -455,10 +456,10 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           padding: const EdgeInsets.all(16),
                           margin: const EdgeInsets.only(bottom: 12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFFF8F4),
+                            color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color(0xFFE8D5C8),
+                              color: isDark ? Colors.white12 : const Color(0xFFE8D5C8),
                             ),
                           ),
                           child: Column(
@@ -535,10 +536,10 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           padding: const EdgeInsets.all(16),
                           margin: const EdgeInsets.only(bottom: 12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFFF8F4),
+                            color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: const Color(0xFFE8D5C8),
+                              color: isDark ? Colors.white12 : const Color(0xFFE8D5C8),
                             ),
                           ),
                           child: Row(
@@ -752,7 +753,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                 decoration: BoxDecoration(
                   color: lesson.isRead
                       ? const Color(0xFFE87722).withValues(alpha: 0.1)
-                      : const Color(0xFFF5E6D8),
+                      : (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -787,11 +788,12 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   }
 
   Widget _buildReviewCard(ReviewModel review) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(14),
         boxShadow: const [
           BoxShadow(
@@ -868,7 +870,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFF8F4),
+                color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -899,10 +901,11 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   }
 
   Widget _trainerFallback() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: 36,
       height: 36,
-      color: const Color(0xFFF5E6D8),
+      color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
       child: const Icon(
         Icons.person,
         color: Color(0xFFE87722),
@@ -912,10 +915,11 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   }
 
   Widget _reviewFallback(ReviewModel review) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: 36,
       height: 36,
-      color: const Color(0xFFF5E6D8),
+      color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
       child: Center(
         child: Text(
           review.userName.isNotEmpty ? review.userName[0] : 'U',

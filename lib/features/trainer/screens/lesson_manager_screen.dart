@@ -52,7 +52,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (ctx) => StatefulBuilder(
@@ -85,7 +85,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                   labelText: 'Jina la Sehemu *',
                   hintText: 'Mfano: Utangulizi, Sehemu ya 1',
                   filled: true,
-                  fillColor: const Color(0xFFFFF8F4),
+                  fillColor: Theme.of(context).scaffoldBackgroundColor,
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: const BorderSide(color: Color(0xFFE8D5C8))),
@@ -151,7 +151,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (ctx) => Padding(
@@ -188,7 +188,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                   labelText: 'Jina la Somo *',
                   hintText: 'Mfano: Somo la 1 - Utangulizi',
                   filled: true,
-                  fillColor: const Color(0xFFFFF8F4),
+                  fillColor: Theme.of(context).scaffoldBackgroundColor,
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: const BorderSide(color: Color(0xFFE8D5C8))),
@@ -207,7 +207,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                   prefixIcon: const Icon(Icons.play_circle_outline,
                       color: Color(0xFFE87722)),
                   filled: true,
-                  fillColor: const Color(0xFFFFF8F4),
+                  fillColor: Theme.of(context).scaffoldBackgroundColor,
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: const BorderSide(color: Color(0xFFE8D5C8))),
@@ -227,7 +227,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                   prefixIcon: const Icon(Icons.timer_outlined,
                       color: Color(0xFFE87722)),
                   filled: true,
-                  fillColor: const Color(0xFFFFF8F4),
+                  fillColor: Theme.of(context).scaffoldBackgroundColor,
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: const BorderSide(color: Color(0xFFE8D5C8))),
@@ -444,6 +444,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
   }
 
   Widget _buildEmptyState() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -451,8 +452,8 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
           Container(
             width: 88,
             height: 88,
-            decoration: const BoxDecoration(
-                color: Color(0xFFF5E6D8), shape: BoxShape.circle),
+            decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8), shape: BoxShape.circle),
             child: const Icon(Icons.view_agenda_outlined,
                 size: 44, color: Color(0xFFE87722)),
           ),
@@ -471,6 +472,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
   }
 
   Widget _buildSectionCard(Map section, int idx) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = section['title'] as String? ?? 'Sehemu ${idx + 1}';
     final lessons = (section['lessons'] as List? ?? []);
 
@@ -511,7 +513,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                       style: GoogleFonts.montserrat(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF1A0A00)))),
+                          color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00)))),
               Text('${lessons.length} masomo',
                   style: GoogleFonts.montserrat(
                       fontSize: 11, color: const Color(0xFF9E8070))),
@@ -523,7 +525,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
             ]),
           ),
 
-          const Divider(height: 1, color: Color(0xFFF5E6D8)),
+          Divider(height: 1, color: isDark ? Colors.white10 : const Color(0xFFF5E6D8)),
 
           // Lessons list
           if (lessons.isEmpty)
@@ -562,6 +564,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
   }
 
   Widget _buildLessonRow(Map lesson, int idx) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = lesson['title'] as String? ?? 'Somo ${idx + 1}';
     final hasMux =
         (lesson['mux_playback_id'] as String? ?? '').isNotEmpty;
@@ -570,16 +573,16 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
     return Container(
       padding:
           const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: Color(0xFFF5E6D8)))),
+      decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: isDark ? Colors.white10 : const Color(0xFFF5E6D8)))),
       child: Row(children: [
         Container(
           width: 32,
           height: 32,
           decoration: BoxDecoration(
               color: hasMux
-                  ? const Color(0xFFF5E6D8)
-                  : const Color(0xFFF0EFEf),
+                  ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8))
+                  : (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF0EFEF)),
               borderRadius: BorderRadius.circular(8)),
           child: Icon(
               hasMux
@@ -599,7 +602,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                     style: GoogleFonts.montserrat(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xFF1A0A00))),
+                        color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00))),
                 if (duration != null)
                   Text('$duration dak',
                       style: GoogleFonts.montserrat(

@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../providers/theme_provider.dart';
 import '../../auth/providers/auth_provider.dart';
 
 class TrainerDashboardScreen extends StatefulWidget {
@@ -590,6 +591,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   }
 
   Widget _buildEmptyState(String message, IconData icon, Color surfaceColor) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
         child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 40),
@@ -598,8 +600,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               Container(
                   width: 88,
                   height: 88,
-                  decoration: const BoxDecoration(
-                      color: Color(0xFFF5E6D8), shape: BoxShape.circle),
+                  decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8), shape: BoxShape.circle),
                   child: Icon(icon, size: 44, color: const Color(0xFFE87722))),
               const SizedBox(height: 20),
               Text(message,
@@ -659,6 +661,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   Widget _buildCourseCard(Map course, Color surfaceColor, Color textPrimary,
       Color textSecondary) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isPublished = course['status'] == 'published';
     final title = course['title'] as String? ?? '';
     final thumbnail = course['cover_photo'] as String?;
@@ -693,19 +696,19 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         fit: BoxFit.cover,
                         placeholder: (_, __) => Container(
                             height: 130,
-                            color: const Color(0xFFF5E6D8),
+                            color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                             child: const Center(
                                 child: CircularProgressIndicator(
                                     strokeWidth: 2,
                                     color: Color(0xFFE87722)))),
                         errorWidget: (_, __, ___) => Container(
                             height: 130,
-                            color: const Color(0xFFF5E6D8),
+                            color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                             child: const Icon(Icons.school_outlined,
                                 color: Color(0xFFE87722), size: 44)))
                     : Container(
                         height: 130,
-                        color: const Color(0xFFF5E6D8),
+                        color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                         child: const Center(
                             child: Icon(Icons.school_outlined,
                                 color: Color(0xFFE87722), size: 44))),
@@ -806,7 +809,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     ],
 
                     const SizedBox(height: 12),
-                    const Divider(height: 1, color: Color(0xFFF5E6D8)),
+                    Divider(height: 1, color: isDark ? Colors.white10 : const Color(0xFFF5E6D8)),
                     const SizedBox(height: 10),
 
                     // ── ACTION BUTTONS ROW ──
@@ -870,12 +873,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   }
 
   Widget _buildSmallAction(String label, IconData icon, VoidCallback onTap) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
         onTap: onTap,
         child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-                color: const Color(0xFFF5E6D8),
+                color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                 borderRadius: BorderRadius.circular(10)),
             child: Row(mainAxisSize: MainAxisSize.min, children: [
               Icon(icon, size: 12, color: const Color(0xFF7B3A10)),
@@ -938,6 +942,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   Widget _buildStudentsTab(Color bgColor, Color surfaceColor,
       Color textPrimary, Color textSecondary) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final totalStudents = _stats['total_students'] as int? ?? 0;
 
     return RefreshIndicator(
@@ -1085,7 +1090,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                                   Container(
                                                       width: 56,
                                                       height: 56,
-                                                      color: const Color(0xFFF5E6D8),
+                                                      color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                                                       child: const Icon(
                                                           Icons.school_outlined,
                                                           color: Color(0xFFE87722),
@@ -1093,7 +1098,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                           : Container(
                                               width: 56,
                                               height: 56,
-                                              color: const Color(0xFFF5E6D8),
+                                              color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                                               child: const Icon(
                                                   Icons.school_outlined,
                                                   color: Color(0xFFE87722),
@@ -1151,7 +1156,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                 ]),
 
                             const SizedBox(height: 16),
-                            const Divider(height: 1, color: Color(0xFFF5E6D8)),
+                            Divider(height: 1, color: isDark ? Colors.white10 : const Color(0xFFF5E6D8)),
                             const SizedBox(height: 14),
 
                             SizedBox(
@@ -1207,6 +1212,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   Widget _buildCertificatesTab(Color bgColor, Color surfaceColor,
       Color textPrimary, Color textSecondary) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final pending = _certs.where((c) => (c as Map)['is_approved'] != true).length;
     final approved = _certs.where((c) => (c as Map)['is_approved'] == true).length;
 
@@ -1366,7 +1372,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           ClipRRect(borderRadius: BorderRadius.circular(6),
                               child: LinearProgressIndicator(
                                   value: progress / 100,
-                                  backgroundColor: const Color(0xFFF5E6D8),
+                                  backgroundColor: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                                   valueColor: const AlwaysStoppedAnimation(
                                       Color(0xFFE87722)),
                                   minHeight: 8)),
@@ -1547,6 +1553,17 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         color: Colors.white.withValues(alpha: 0.7),
                         size: 13)),
               ])),
+          Consumer<ThemeProvider>(
+              builder: (_, theme, __) => IconButton(
+                    icon: Icon(
+                        theme.isDark
+                            ? Icons.light_mode_outlined
+                            : Icons.dark_mode_outlined,
+                        color: Colors.white.withValues(alpha: 0.7),
+                        size: 20),
+                    tooltip: theme.isDark ? 'Mwanga' : 'Giza',
+                    onPressed: () => theme.toggleTheme(),
+                  )),
           IconButton(
               icon: Icon(Icons.logout,
                   color: Colors.white.withValues(alpha: 0.7), size: 20),

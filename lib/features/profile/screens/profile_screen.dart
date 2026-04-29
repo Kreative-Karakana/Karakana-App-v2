@@ -116,6 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final userEmail = auth.userEmail.isNotEmpty ? auth.userEmail : 'Hakuna barua pepe';
         final initial = userName.isNotEmpty ? userName[0].toUpperCase() : 'K';
 
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: CustomScrollView(
@@ -248,7 +249,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
@@ -296,7 +297,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF1A0A00),
+                                  color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -442,7 +443,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       : 'Hali ya Mwanga',
                                   style: GoogleFonts.montserrat(
                                     fontSize: 14,
-                                    color: const Color(0xFF3D1800),
+                                    color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
                                   ),
                                 ),
                                 trailing: Switch(
@@ -665,9 +666,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildMenuGroup(String title, List<Widget> items) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
@@ -699,9 +701,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 (entry) => Column(
                   children: [
                     if (entry.key > 0)
-                      const Divider(
+                      Divider(
                         height: 1,
-                        color: Color(0xFFF0E4DA),
+                        color: isDark ? Colors.white10 : const Color(0xFFF0E4DA),
                         indent: 56,
                       ),
                     entry.value,
@@ -735,7 +737,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         label,
         style: GoogleFonts.montserrat(
           fontSize: 14,
-          color: const Color(0xFF3D1800),
+          color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
         ),
       ),
       subtitle: subtitle != null

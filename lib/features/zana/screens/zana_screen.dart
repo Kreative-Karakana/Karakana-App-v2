@@ -23,6 +23,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
@@ -287,7 +288,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                 style: GoogleFonts.montserrat(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF1A0A00),
+                  color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
                 ),
               ),
             ),
@@ -319,9 +320,9 @@ class _ZanaScreenState extends State<ZanaScreen> {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFE8D5C8)),
+                  border: Border.all(color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
                 ),
                 child: Row(
                   children: [
@@ -329,7 +330,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF5E6D8),
+                        color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
@@ -348,7 +349,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                             style: GoogleFonts.montserrat(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: const Color(0xFF1A0A00),
+                              color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
                             ),
                           ),
                           const SizedBox(height: 4),

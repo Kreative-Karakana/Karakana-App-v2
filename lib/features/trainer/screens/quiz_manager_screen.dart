@@ -96,7 +96,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -235,6 +235,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -285,7 +286,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
       body: Column(
         children: [
           Container(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
@@ -350,7 +351,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
               ],
             ),
           ),
-          const Divider(height: 1, color: Color(0xFFF0E4DA)),
+          Divider(height: 1, color: isDark ? Colors.white10 : const Color(0xFFF0E4DA)),
           Expanded(
             child: _questions.isEmpty
                 ? Center(
@@ -368,7 +369,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                           style: GoogleFonts.montserrat(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF1A0A00),
+                            color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -391,7 +392,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: const [
                             BoxShadow(
@@ -462,7 +463,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                                             color: e.key ==
                                                     (q['correct'] as int? ?? 0)
                                                 ? const Color(0xFFE87722)
-                                                : const Color(0xFFF5E6D8),
+                                                : (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)),
                                             shape: BoxShape.circle,
                                           ),
                                           child: Center(

@@ -13,6 +13,7 @@ import '../../auth/providers/auth_provider.dart';
 import '../../courses/models/course_model.dart';
 import '../../courses/providers/course_provider.dart';
 import '../../../core/utils/profile_completeness.dart';
+import '../../../providers/theme_provider.dart';
 import '../widgets/ambassador_code_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -87,8 +88,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Consumer2<CourseProvider, AuthProvider>(
         builder: (context, courses, auth, _) {
           return RefreshIndicator(
@@ -144,6 +146,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                   actions: [
+                    Consumer<ThemeProvider>(
+                      builder: (_, theme, __) => Container(
+                        margin: const EdgeInsets.only(right: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconButton(
+                          icon: Icon(
+                            theme.isDark
+                                ? Icons.light_mode_outlined
+                                : Icons.dark_mode_outlined,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          onPressed: () => theme.toggleTheme(),
+                          padding: const EdgeInsets.all(7),
+                          constraints: const BoxConstraints(),
+                        ),
+                      ),
+                    ),
                     Container(
                       margin: const EdgeInsets.only(right: 4),
                       decoration: BoxDecoration(
@@ -466,9 +489,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(22),
-                          border: Border.all(color: AppColors.border),
+                          border: Border.all(color: isDark ? Colors.white12 : AppColors.border),
                           boxShadow: [
                             BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 14, offset: const Offset(0, 6)),
                           ],
@@ -505,7 +528,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Container(
                               width: 84,
                               height: 84,
-                              decoration: BoxDecoration(color: AppColors.primaryLight, borderRadius: BorderRadius.circular(22)),
+                              decoration: BoxDecoration(color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8), borderRadius: BorderRadius.circular(22)),
                               child: Icon(Icons.school_rounded, size: 42, color: AppColors.primary.withValues(alpha: 0.75)),
                             ),
                           ],
@@ -551,15 +574,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _empty(String text) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: isDark ? Colors.white12 : AppColors.border),
         ),
         child: Text(text, textAlign: TextAlign.center, style: GoogleFonts.montserrat(fontSize: 13, color: AppColors.textTertiary)),
       ),
@@ -604,7 +628,7 @@ class _SectionHeader extends StatelessWidget {
                 style: GoogleFonts.montserrat(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
                 ),
               ),
               if (subtitle != null)
@@ -692,11 +716,11 @@ class _BannerCarouselState extends State<_BannerCarousel> {
                             fit: BoxFit.cover,
                             width: double.infinity,
                             placeholder: (_, __) => Container(
-                              color: const Color(0xFFF5E6D8),
+                              color: Theme.of(context).cardColor,
                             ),
-                            errorWidget: (_, __, ___) => _bannerPlaceholder(title),
+                            errorWidget: (_, __, ___) => _bannerPlaceholder(context, title),
                           )
-                        : _bannerPlaceholder(title),
+                        : _bannerPlaceholder(context, title),
                   ),
                 ),
               );
@@ -729,9 +753,10 @@ class _BannerCarouselState extends State<_BannerCarousel> {
     );
   }
 
-  Widget _bannerPlaceholder(String? title) {
+  Widget _bannerPlaceholder(BuildContext context, String? title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      color: const Color(0xFFF5E6D8),
+      color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
       child: Center(
         child: title != null
             ? Text(

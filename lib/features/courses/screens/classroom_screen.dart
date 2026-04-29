@@ -32,10 +32,11 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
   Widget build(BuildContext context) {
     return Consumer<CourseProvider>(
       builder: (context, provider, _) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         if (provider.isLoadingDetail) {
-          return const Scaffold(
-            backgroundColor: Color(0xFFFFF8F4),
-            appBar: _ClassroomAppBarPlaceholder(),
+          return Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            appBar: const _ClassroomAppBarPlaceholder(),
             body: Center(
               child: CircularProgressIndicator(
                 color: Color(0xFFE87722),
@@ -147,7 +148,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           body: Column(
             children: [
               Container(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
@@ -240,9 +241,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                   ],
                 ),
               ),
-              const Divider(
+              Divider(
                 height: 1,
-                color: Color(0xFFF0E4DA),
+                color: isDark ? Colors.white10 : const Color(0xFFF0E4DA),
               ),
               Expanded(
                 child: sections.isEmpty
@@ -271,7 +272,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                   }
                                 }),
                                 child: Container(
-                                  color: const Color(0xFFF5E6D8),
+                                  color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 20,
                                     vertical: 14,
@@ -337,8 +338,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                   return Container(
                                     decoration: BoxDecoration(
                                       color: lesson.isRead
-                                          ? const Color(0xFFF5E6D8)
-                                          : Colors.white,
+                                          ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8))
+                                          : Theme.of(context).cardColor,
                                       border: const Border(
                                         bottom: BorderSide(
                                           color: Color(0xFFF0E4DA),
@@ -359,7 +360,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                           color: lesson.isRead
                                               ? const Color(0xFFE87722)
                                                   .withValues(alpha: 0.1)
-                                              : const Color(0xFFF5E6D8),
+                                              : (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)),
                                           borderRadius:
                                               BorderRadius.circular(10),
                                         ),
@@ -493,7 +494,7 @@ class _EmptyClassroomState extends StatelessWidget {
               style: GoogleFonts.montserrat(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF3D1800),
+                color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
               ),
             ),
             const SizedBox(height: 8),

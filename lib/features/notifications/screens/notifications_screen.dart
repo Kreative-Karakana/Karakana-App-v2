@@ -56,6 +56,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       ),
       body: Consumer<NotificationProvider>(
         builder: (_, provider, __) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
           if (provider.isLoading) {
             return const Center(
               child: CircularProgressIndicator(color: Color(0xFFE87722)),
@@ -72,7 +73,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               final isUnread = !notif.isRead;
               return Container(
                 color: isUnread
-                    ? const Color(0xFFF5E6D8).withValues(alpha: 0.5)
+                    ? (isDark ? const Color(0xFF2A1A0A).withValues(alpha: 0.5) : const Color(0xFFF5E6D8).withValues(alpha: 0.5))
                     : Colors.transparent,
                 child: ListTile(
                   contentPadding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
@@ -99,7 +100,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       fontSize: 14,
                       fontWeight:
                           isUnread ? FontWeight.w600 : FontWeight.w400,
-                      color: const Color(0xFF3D1800),
+                      color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
                     ),
                   ),
                   subtitle: Column(
@@ -177,6 +178,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   Widget _buildEmptyState() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -184,8 +186,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           Container(
             width: 96,
             height: 96,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF5E6D8),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -200,7 +202,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF1A0A00),
+              color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
             ),
           ),
           const SizedBox(height: 8),

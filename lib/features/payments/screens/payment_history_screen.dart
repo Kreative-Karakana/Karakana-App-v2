@@ -93,11 +93,12 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                       formattedDate = paidAt;
                     }
 
+                    final isDark = Theme.of(context).brightness == Brightness.dark;
                     return Container(
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: const [
                           BoxShadow(
@@ -114,7 +115,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                             height: 48,
                             decoration: BoxDecoration(
                               color: isSuccessful
-                                  ? const Color(0xFFF5E6D8)
+                                  ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8))
                                   : const Color(0xFFFFEBEE),
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -152,7 +153,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                         vertical: 2,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFF5E6D8),
+                                        color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: Text(
@@ -196,7 +197,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                 ),
                                 decoration: BoxDecoration(
                                   color: isSuccessful
-                                      ? const Color(0xFFF5E6D8)
+                                      ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8))
                                       : const Color(0xFFFFEBEE),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -237,7 +238,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFF1A0A00),
+              color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
             ),
           ),
           const SizedBox(height: 12),

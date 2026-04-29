@@ -241,7 +241,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (_) => StatefulBuilder(
@@ -295,7 +295,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                             shape: BoxShape.circle,
                             color: selectedCorrect == i
                                 ? const Color(0xFFE87722)
-                                : const Color(0xFFF5E6D8),
+                                : (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)),
                           ),
                           child: Center(
                             child: Text(labels[i],
@@ -364,7 +364,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         hintStyle: GoogleFonts.montserrat(
             fontSize: 14, color: const Color(0xFFBDA99C)),
         filled: true,
-        fillColor: const Color(0xFFFFF8F4),
+        fillColor: Theme.of(context).scaffoldBackgroundColor,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         border: OutlineInputBorder(
@@ -423,7 +423,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         children: [
           // ── Step indicator ─────────────────────────────────────────────
           Container(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             padding: const EdgeInsets.all(16),
             child: Row(
               children: List.generate(
@@ -503,7 +503,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
 
           // ── Navigation buttons ─────────────────────────────────────────
           Container(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
             child: Row(
               children: [
@@ -585,6 +585,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
 
   // ── Step 1: Details + Thumbnail ────────────────────────────────────────────
   Widget _buildStep1() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     const levels = [
       ('beginner', 'Mwanzo'),
       ('intermediate', 'Kati'),
@@ -605,7 +606,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
             child: Container(
               height: 150,
               decoration: BoxDecoration(
-                color: const Color(0xFFF5E6D8),
+                color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: _coverImage != null
@@ -780,6 +781,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
 
   // ── Step 3: Inline quiz builder ────────────────────────────────────────────
   Widget _buildStep3() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -868,9 +870,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFE8D5C8)),
+                  border: Border.all(color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -921,7 +923,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                               shape: BoxShape.circle,
                               color: isCorrect
                                   ? const Color(0xFFE87722)
-                                  : const Color(0xFFF5E6D8),
+                                  : (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)),
                             ),
                             child: Center(
                               child: Text(labels[opt.key],
@@ -957,6 +959,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
 
   // ── Step 4: Review & Publish ───────────────────────────────────────────────
   Widget _buildStep4() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final price = double.tryParse(_priceController.text.trim()) ?? 0;
     final levelLabels = {
       'beginner': 'Mwanzo',
@@ -996,9 +999,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE8D5C8)),
+            border: Border.all(color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1043,14 +1046,15 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     required List<DropdownMenuItem<T>> items,
     required ValueChanged<T?> onChanged,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final safeValue =
         items.any((item) => item.value == value) ? value : null;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE8D5C8)),
+        border: Border.all(color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
       ),
       child: DropdownButton<T>(
         value: safeValue,
@@ -1062,8 +1066,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         items: items,
         onChanged: onChanged,
         style: GoogleFonts.montserrat(
-            fontSize: 14, color: const Color(0xFF3D1800)),
-        dropdownColor: Colors.white,
+            fontSize: 14, color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF3D1800)),
+        dropdownColor: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(14),
       ),
     );
@@ -1112,10 +1116,11 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     required String title,
     required String subtitle,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
@@ -1128,7 +1133,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: const Color(0xFFF5E6D8),
+              color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: const Color(0xFFE87722), size: 20),
@@ -1196,13 +1201,14 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   }
 
   Widget _summaryTile(String label, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE8D5C8)),
+        border: Border.all(color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1216,7 +1222,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 style: GoogleFonts.montserrat(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF3D1800))),
+                    color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00))),
           ),
         ],
       ),
