@@ -23,7 +23,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   late TabController _tabController;
   List _courses = [];
   bool _isLoading = true;
-  bool _balanceVisible = true;
+  bool _balanceVisible = false;
   // ignore: unused_field
   Map _wallet = {};
   Map _stats = {
