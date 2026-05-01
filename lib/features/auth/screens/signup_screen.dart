@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../widgets/buttons/gradient_button.dart';
+import '../../../widgets/common/top_popup.dart';
 import '../providers/auth_provider.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -45,6 +46,11 @@ class _SignupScreenState extends State<SignupScreen>
     );
     if (email != null && mounted) {
       context.go('/verify-email?email=${Uri.encodeComponent(email)}');
+    } else if (mounted) {
+      showTopPopup(
+        context,
+        auth.errorMessage ?? 'Imeshindikana kujisajili. Tafadhali jaribu tena.',
+      );
     }
   }
 
@@ -532,28 +538,7 @@ class _SignupContent extends StatelessWidget {
                   validator: (v) =>
                       v != passwordController.text ? 'Maneno ya siri hayafanani' : null,
                 ),
-                if (authProvider.errorMessage != null) ...[
-                  const SizedBox(height: 10),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.errorLight.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: Colors.red.shade300.withValues(alpha: 0.22),
-                      ),
-                    ),
-                    child: Text(
-                      authProvider.errorMessage!,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 12.5,
-                        color: Colors.red.shade200,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                ],
+                const SizedBox(height: 10),
                 SizedBox(height: veryShort ? 2 : (dense ? 4 : 10)),
                 SizedBox(
                   width: double.infinity,

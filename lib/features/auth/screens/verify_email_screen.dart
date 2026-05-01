@@ -7,6 +7,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/buttons/gradient_button.dart';
 import '../../../widgets/common/terms_dialog.dart';
+import '../../../widgets/common/top_popup.dart';
 import '../providers/auth_provider.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
@@ -76,6 +77,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         await showTermsDialog(context);
       }
       if (mounted) context.go(auth.homeRoute);
+    } else if (mounted) {
+      showTopPopup(
+        context,
+        auth.errorMessage ?? 'Imeshindikana kuthibitisha msimbo. Jaribu tena.',
+      );
     }
   }
 
@@ -269,37 +275,6 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                 (i) => _buildOtpBox(i, compact),
                               ),
                             ),
-                            if (authProvider.errorMessage != null) ...[
-                              const SizedBox(height: 12),
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                decoration: BoxDecoration(
-                                  color: AppColors.errorLight
-                                      .withValues(alpha: 0.10),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: Colors.red.shade300
-                                        .withValues(alpha: 0.30),
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.error_outline_rounded, size: 15, color: Colors.red.shade300),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        authProvider.errorMessage!,
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: 12,
-                                          color: Colors.red.shade200,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
                             SizedBox(height: compact ? 18 : 20),
                             SizedBox(
                               width: double.infinity,

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../widgets/buttons/gradient_button.dart';
+import '../../../widgets/common/top_popup.dart';
 import '../providers/auth_provider.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -26,11 +27,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   Future<void> _handleSend() async {
     if (!_formKey.currentState!.validate()) return;
-    final success = await context
-        .read<AuthProvider>()
-        .forgotPassword(_emailController.text.trim());
+    final auth = context.read<AuthProvider>();
+    final success = await auth.forgotPassword(_emailController.text.trim());
     if (success && mounted) {
       setState(() => _emailSent = true);
+    } else if (mounted) {
+      showTopPopup(
+        context,
+        auth.errorMessage ?? 'Imeshindikana kutuma kiungo. Tafadhali jaribu tena.',
+      );
     }
   }
 
@@ -229,29 +234,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                                 ),
                                                 SizedBox(height: compact ? 12 : 14),
                                                 _buildEmailField(compact),
-                                                if (authProvider.errorMessage != null) ...[
-                                                  const SizedBox(height: 10),
-                                                  Container(
-                                                    width: double.infinity,
-                                                    padding: const EdgeInsets.all(12),
-                                                    decoration: BoxDecoration(
-                                                      color: AppColors.errorLight
-                                                          .withValues(alpha: 0.12),
-                                                      borderRadius: BorderRadius.circular(14),
-                                                      border: Border.all(
-                                                        color: Colors.red.shade300
-                                                            .withValues(alpha: 0.22),
-                                                      ),
-                                                    ),
-                                                    child: Text(
-                                                      authProvider.errorMessage!,
-                                                      style: GoogleFonts.montserrat(
-                                                        fontSize: 12.5,
-                                                        color: Colors.red.shade200,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
                                                 SizedBox(height: compact ? 14 : 18),
                                                 SizedBox(
                                                   width: double.infinity,
