@@ -159,30 +159,28 @@ class _SignupScreenState extends State<SignupScreen>
                     ),
                     child: Column(
                       children: [
-                        Expanded(
-                          child: _SignupContent(
-                            compact: compact,
-                            keyboardOpen: keyboardOpen,
-                            shortHeight: shortHeight,
-                            authProvider: authProvider,
-                            formKey: _formKey,
-                            firstNameController: _firstNameController,
-                            emailController: _emailController,
-                            passwordController: _passwordController,
-                            confirmController: _confirmController,
-                            obscurePassword: _obscurePassword,
-                            obscureConfirm: _obscureConfirm,
-                            onTogglePassword: () => setState(
-                              () => _obscurePassword = !_obscurePassword,
-                            ),
-                            onToggleConfirm: () => setState(
-                              () => _obscureConfirm = !_obscureConfirm,
-                            ),
-                            onHandleSignup: _handleSignup,
-                            onGoogleSignIn: _handleGoogleSignIn,
-                            onAppleSignIn: _handleAppleSignIn,
-                            buildField: _buildField,
+                        _SignupContent(
+                          compact: compact,
+                          keyboardOpen: keyboardOpen,
+                          shortHeight: shortHeight,
+                          authProvider: authProvider,
+                          formKey: _formKey,
+                          firstNameController: _firstNameController,
+                          emailController: _emailController,
+                          passwordController: _passwordController,
+                          confirmController: _confirmController,
+                          obscurePassword: _obscurePassword,
+                          obscureConfirm: _obscureConfirm,
+                          onTogglePassword: () => setState(
+                            () => _obscurePassword = !_obscurePassword,
                           ),
+                          onToggleConfirm: () => setState(
+                            () => _obscureConfirm = !_obscureConfirm,
+                          ),
+                          onHandleSignup: _handleSignup,
+                          onGoogleSignIn: _handleGoogleSignIn,
+                          onAppleSignIn: _handleAppleSignIn,
+                          buildField: _buildField,
                         ),
                         if (!keyboardOpen) ...[
                           SizedBox(height: socialCompact ? 6 : 12),
@@ -401,6 +399,7 @@ class _SignupContent extends StatelessWidget {
         final veryShort = constraints.maxHeight < 620;
 
         return Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _BrandRow(compact: dense || veryShort),
