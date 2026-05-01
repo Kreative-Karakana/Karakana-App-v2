@@ -290,11 +290,23 @@ class AuthProvider extends ChangeNotifier {
 
       final auth = await account.authentication;
       final idToken = auth.idToken;
-      if (idToken == null) throw Exception('No ID token from Google');
+      final accessToken = auth.accessToken;
+      if ((idToken == null || idToken.isEmpty) &&
+          (accessToken == null || accessToken.isEmpty)) {
+        throw Exception('No Google token returned');
+      }
+      final deviceToken = await FirebaseMessaging.instance.getToken();
+      final platform = Platform.isIOS ? 'ios' : 'android';
 
       final response = await ApiClient().dio.post(
         ApiEndpoints.googleAuth,
-        data: {'id_token': idToken},
+        data: {
+          if (idToken != null && idToken.isNotEmpty) 'id_token': idToken,
+          if (accessToken != null && accessToken.isNotEmpty)
+            'access_token': accessToken,
+          'platform': platform,
+          if (deviceToken != null) 'device_token': deviceToken,
+        },
       );
       return await _handleOAuthResponse(response.data);
     } catch (e) {
