@@ -396,44 +396,47 @@ class _SignupContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dense = compact || shortHeight;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final veryShort = constraints.maxHeight < 620;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        _BrandRow(compact: dense),
-        SizedBox(height: keyboardOpen ? (dense ? 6 : 10) : (dense ? 8 : 16)),
-        Container(
-          constraints: const BoxConstraints(maxWidth: 420),
-          padding: EdgeInsets.fromLTRB(
-            dense ? 14 : 18,
-            dense ? 14 : 18,
-            dense ? 14 : 18,
-            dense ? 18 : 28,
-          ),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.08),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.18),
-                blurRadius: 28,
-                offset: const Offset(0, 16),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _BrandRow(compact: dense || veryShort),
+            SizedBox(height: keyboardOpen ? (dense ? 4 : 8) : (veryShort ? 4 : (dense ? 8 : 16))),
+            Container(
+              constraints: const BoxConstraints(maxWidth: 420),
+              padding: EdgeInsets.fromLTRB(
+                veryShort ? 12 : (dense ? 14 : 18),
+                veryShort ? 12 : (dense ? 14 : 18),
+                veryShort ? 12 : (dense ? 14 : 18),
+                veryShort ? 12 : (dense ? 18 : 28),
               ),
-            ],
-          ),
-          child: Form(
-            key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.06),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.08),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.18),
+                    blurRadius: 28,
+                    offset: const Offset(0, 16),
+                  ),
+                ],
+              ),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                 Text(
                   'Fungua Akaunti',
                   style: GoogleFonts.montserrat(
-                    fontSize: dense ? 18 : 24,
+                    fontSize: veryShort ? 17 : (dense ? 18 : 24),
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
                     height: 1.02,
@@ -443,41 +446,41 @@ class _SignupContent extends StatelessWidget {
                 Text(
                   'Jenga akaunti yako na uanze safari yako ya kujifunza na kukuza biashara.',
                   style: GoogleFonts.montserrat(
-                    fontSize: dense ? 11.5 : 13.5,
+                    fontSize: veryShort ? 11 : (dense ? 11.5 : 13.5),
                     color: Colors.white.withValues(alpha: 0.72),
                     height: 1.35,
                   ),
                 ),
-                SizedBox(height: dense ? 8 : 16),
+                SizedBox(height: veryShort ? 6 : (dense ? 8 : 16)),
                 buildField(
                   label: 'Jina la Kwanza',
                   hint: 'Jina lako',
                   icon: Icons.person_outline,
                   controller: firstNameController,
-                  compact: dense,
+                  compact: dense || veryShort,
                   validator: (v) => v!.isEmpty ? 'Weka jina lako' : null,
                   onChanged: (_) => context.read<AuthProvider>().clearError(),
                 ),
-                SizedBox(height: dense ? 6 : 12),
+                SizedBox(height: veryShort ? 4 : (dense ? 6 : 12)),
                 buildField(
                   label: 'Barua Pepe',
                   hint: 'jina@mfano.com',
                   icon: Icons.email_outlined,
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  compact: dense,
+                  compact: dense || veryShort,
                   validator: (v) =>
                       v!.isEmpty || !v.contains('@') ? 'Barua pepe si sahihi' : null,
                   onChanged: (_) => context.read<AuthProvider>().clearError(),
                 ),
-                SizedBox(height: dense ? 6 : 12),
+                SizedBox(height: veryShort ? 4 : (dense ? 6 : 12)),
                 buildField(
                   label: 'Neno la Siri',
                   hint: 'Herufi 8 au zaidi',
                   icon: Icons.lock_outline,
                   controller: passwordController,
                   obscureText: obscurePassword,
-                  compact: dense,
+                  compact: dense || veryShort,
                   suffixIcon: IconButton(
                     icon: Icon(
                       obscurePassword
@@ -492,14 +495,14 @@ class _SignupContent extends StatelessWidget {
                       v!.length < 8 ? 'Neno la siri lazima liwe na herufi 8+' : null,
                   onChanged: (_) => context.read<AuthProvider>().clearError(),
                 ),
-                SizedBox(height: dense ? 6 : 12),
+                SizedBox(height: veryShort ? 4 : (dense ? 6 : 12)),
                 buildField(
                   label: 'Thibitisha Neno la Siri',
                   hint: 'Rudia neno la siri',
                   icon: Icons.lock_outline,
                   controller: confirmController,
                   obscureText: obscureConfirm,
-                  compact: dense,
+                  compact: dense || veryShort,
                   suffixIcon: IconButton(
                     icon: Icon(
                       obscureConfirm
@@ -535,21 +538,23 @@ class _SignupContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                 ],
-                SizedBox(height: dense ? 4 : 10),
+                SizedBox(height: veryShort ? 2 : (dense ? 4 : 10)),
                 SizedBox(
                   width: double.infinity,
                   child: GradientButton(
                     text: 'Jisajili',
-                    height: dense ? 42 : 52,
+                    height: veryShort ? 40 : (dense ? 42 : 52),
                     isLoading: authProvider.isLoading,
                     onTap: onHandleSignup,
                   ),
                 ),
-              ],
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }
@@ -566,8 +571,8 @@ class _BrandRow extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: compact ? 68 : 88,
-            height: compact ? 68 : 88,
+            width: compact ? 60 : 88,
+            height: compact ? 60 : 88,
             decoration: const BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
@@ -590,11 +595,11 @@ class _BrandRow extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: compact ? 8 : 12),
           Text(
             'Karakana',
             style: GoogleFonts.poppins(
-              fontSize: compact ? 24 : 32,
+              fontSize: compact ? 22 : 32,
               fontWeight: FontWeight.w700,
               color: Colors.white,
             ),
