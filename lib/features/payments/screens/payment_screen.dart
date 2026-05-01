@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
@@ -109,10 +110,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
       );
 
       final externalId = checkoutRes.data['external_id'] as String?;
+      final checkoutUrl = checkoutRes.data['checkout_url'] as String?;
       if (externalId == null || externalId.isEmpty) {
         if (mounted) Navigator.of(context, rootNavigator: true).pop();
         _showError('Hitilafu ya kuanzisha malipo. Jaribu tena.');
         return;
+      }
+
+      if (checkoutUrl != null && checkoutUrl.isNotEmpty) {
+        final uri = Uri.tryParse(checkoutUrl);
+        if (uri != null) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
       }
 
       // 2. Poll for payment status (max 10 × 3s = 30 seconds)
@@ -159,10 +168,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     const providers = [
-      {'id': 'mpesa', 'name': 'M-Pesa', 'color': Color(0xFFE87722)},
-      {'id': 'mix_by_yas', 'name': 'Mix by Yas', 'color': Color(0xFF3D1800)},
-      {'id': 'airtel', 'name': 'Airtel Money', 'color': Color(0xFF3D1800)},
-      {'id': 'halopesa', 'name': 'Halopesa', 'color': Color(0xFF3D1800)},
+      {'id': 'Mpesa', 'name': 'M-Pesa', 'color': Color(0xFFE87722)},
+      {'id': 'Tigo', 'name': 'Mix by Yas', 'color': Color(0xFF3D1800)},
+      {'id': 'Airtel', 'name': 'Airtel Money', 'color': Color(0xFF3D1800)},
+      {'id': 'Halopesa', 'name': 'Halopesa', 'color': Color(0xFF3D1800)},
     ];
 
     return Scaffold(
