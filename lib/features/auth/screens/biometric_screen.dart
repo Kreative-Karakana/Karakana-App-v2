@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/buttons/gradient_button.dart';
 import '../providers/auth_provider.dart';
 
@@ -18,11 +19,43 @@ class _BiometricScreenState extends State<BiometricScreen> {
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _isAuthenticating = false;
   bool _failed = false;
+  bool _hasFaceId = false;
+  bool _hasFingerprint = false;
+  String? _statusMessage;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _authenticate());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _prepareAndAuthenticate());
+  }
+
+  Future<void> _prepareAndAuthenticate() async {
+    final enabled = await SecureStorage().isBiometricEnabled();
+    final hasSession = await SecureStorage().hasToken();
+    final supported = await _localAuth.isDeviceSupported();
+    final enrolled = await _localAuth.canCheckBiometrics;
+    final biometrics = (supported && enrolled)
+        ? await _localAuth.getAvailableBiometrics()
+        : const <BiometricType>[];
+    final hasFace = biometrics.contains(BiometricType.face);
+    final hasFingerprint = biometrics.contains(BiometricType.fingerprint) ||
+        biometrics.contains(BiometricType.strong) ||
+        biometrics.contains(BiometricType.weak);
+
+    if (!mounted) return;
+    setState(() {
+      _hasFaceId = hasFace;
+      _hasFingerprint = hasFingerprint;
+    });
+
+    if (!enabled || !hasSession || (!hasFace && !hasFingerprint)) {
+      setState(() {
+        _failed = true;
+        _statusMessage = 'Biometric haijawashwa kwa akaunti hii.';
+      });
+      return;
+    }
+    await _authenticate();
   }
 
   Future<void> _authenticate() async {
@@ -30,23 +63,33 @@ class _BiometricScreenState extends State<BiometricScreen> {
     setState(() {
       _isAuthenticating = true;
       _failed = false;
+      _statusMessage = null;
     });
 
     try {
       final success = await _localAuth.authenticate(
-        localizedReason: 'Ingia kwa kutumia alama yako ya kibiolojia',
+        localizedReason: _hasFaceId
+            ? 'Thibitisha kwa Face ID ili kuingia'
+            : 'Thibitisha kwa alama ya kidole ili kuingia',
         options: const AuthenticationOptions(
           biometricOnly: true,
           stickyAuth: true,
+          useErrorDialogs: true,
+          sensitiveTransaction: true,
         ),
       );
       if (success && mounted) {
         final auth = context.read<AuthProvider>();
+        if (!auth.isAuthenticated) {
+          await auth.getCurrentUser();
+        }
+        if (!mounted) return;
         context.go(auth.homeRoute);
       } else if (mounted) {
         setState(() {
           _isAuthenticating = false;
           _failed = true;
+          _statusMessage = 'Uthibitishaji umeshindikana. Jaribu tena.';
         });
       }
     } catch (_) {
@@ -54,6 +97,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
         setState(() {
           _isAuthenticating = false;
           _failed = true;
+          _statusMessage = 'Biometric haikupatikana. Tumia nywila kuingia.';
         });
       }
     }
@@ -150,7 +194,9 @@ class _BiometricScreenState extends State<BiometricScreen> {
 
                   // Fingerprint icon
                   Icon(
-                    Icons.fingerprint,
+                    _hasFaceId
+                        ? Icons.face_retouching_natural_rounded
+                        : Icons.fingerprint,
                     size: 80,
                     color: _failed
                         ? Colors.red.shade400
@@ -172,7 +218,9 @@ class _BiometricScreenState extends State<BiometricScreen> {
                   const SizedBox(height: 12),
 
                   Text(
-                    'Tumia alama yako ya vidole au uso kuthibitisha utambulisho wako na kuingia salama',
+                    _hasFaceId
+                        ? 'Tumia Face ID kuthibitisha utambulisho wako na kuingia salama'
+                        : 'Tumia alama ya kidole kuthibitisha utambulisho wako na kuingia salama',
                     style: GoogleFonts.montserrat(
                       fontSize: 14,
                       color: AppColors.textTertiary,
@@ -191,7 +239,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
                     Column(
                       children: [
                         Text(
-                          'Uthibitishaji umeshindwa',
+                          _statusMessage ?? 'Uthibitishaji umeshindwa',
                           style: GoogleFonts.montserrat(
                             fontSize: 14,
                             color: Colors.red.shade300,

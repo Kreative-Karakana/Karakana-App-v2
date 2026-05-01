@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/buttons/gradient_button.dart';
 import '../providers/auth_provider.dart';
 
@@ -22,8 +23,7 @@ class _LoginScreenState extends State<LoginScreen>
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _obscurePassword = true;
   OverlayEntry? _errorOverlayEntry;
-  late final Future<List<BiometricType>> _biometricTypesFuture =
-      _getAvailableBiometrics();
+  late Future<_BiometricState> _biometricStateFuture = _getBiometricState();
 
   @override
   bool get wantKeepAlive => true;
@@ -36,25 +36,30 @@ class _LoginScreenState extends State<LoginScreen>
     super.dispose();
   }
 
-  Future<List<BiometricType>> _getAvailableBiometrics() async {
+  Future<_BiometricState> _getBiometricState() async {
     try {
       final supported = await _localAuth.isDeviceSupported();
       final enrolled = await _localAuth.canCheckBiometrics;
-      if (!supported || !enrolled) return const [];
-      return _localAuth.getAvailableBiometrics();
+      if (!supported || !enrolled) {
+        return const _BiometricState();
+      }
+      final biometrics = await _localAuth.getAvailableBiometrics();
+      final enabled = await SecureStorage().isBiometricEnabled();
+      final hasSession = await SecureStorage().hasToken();
+      final hasFaceId = biometrics.contains(BiometricType.face);
+      final hasFingerprint = biometrics.contains(BiometricType.fingerprint) ||
+          biometrics.contains(BiometricType.strong) ||
+          biometrics.contains(BiometricType.weak);
+
+      return _BiometricState(
+        hasFaceId: hasFaceId,
+        hasFingerprint: hasFingerprint,
+        enabled: enabled,
+        hasSession: hasSession,
+      );
     } catch (_) {
-      return const [];
+      return const _BiometricState();
     }
-  }
-
-  bool _hasFaceId(List<BiometricType> biometrics) {
-    return biometrics.contains(BiometricType.face);
-  }
-
-  bool _hasFingerprint(List<BiometricType> biometrics) {
-    return biometrics.contains(BiometricType.fingerprint) ||
-        biometrics.contains(BiometricType.strong) ||
-        biometrics.contains(BiometricType.weak);
   }
 
   Future<void> _handleLogin() async {
@@ -65,11 +70,62 @@ class _LoginScreenState extends State<LoginScreen>
       _passwordController.text,
     );
     if (success && mounted) {
+      await _maybeEnableBiometricsAfterLogin();
+      if (!mounted) return;
+      setState(() {
+        _biometricStateFuture = _getBiometricState();
+      });
       if (mounted) context.go(auth.homeRoute);
     } else if (mounted) {
       _showTopErrorPopup(
         auth.errorMessage ?? 'Imeshindikana kuingia. Tafadhali jaribu tena.',
       );
+    }
+  }
+
+  Future<void> _maybeEnableBiometricsAfterLogin() async {
+    final state = await _getBiometricState();
+    final available = state.hasFaceId || state.hasFingerprint;
+    if (!mounted || !available || state.enabled) return;
+
+    final typeText = state.hasFaceId ? 'Face ID' : 'alama ya kidole';
+    final enable = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF2A1208),
+        title: Text(
+          'Wezesha Biometric',
+          style: GoogleFonts.montserrat(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        content: Text(
+          'Ungependa kutumia $typeText kuingia haraka na salama?',
+          style: GoogleFonts.montserrat(color: Colors.white.withValues(alpha: 0.85)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(
+              'Baadaye',
+              style: GoogleFonts.montserrat(color: AppColors.textTertiary),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+            ),
+            child: Text('Wezesha', style: GoogleFonts.montserrat()),
+          ),
+        ],
+      ),
+    );
+
+    if (enable == true) {
+      await SecureStorage().setBiometricEnabled(true);
     }
   }
 
@@ -169,13 +225,27 @@ class _LoginScreenState extends State<LoginScreen>
   Future<void> _handleGoogleSignIn() async {
     final auth = context.read<AuthProvider>();
     final success = await auth.loginWithGoogle();
-    if (success && mounted) context.go(auth.homeRoute);
+    if (success && mounted) {
+      await _maybeEnableBiometricsAfterLogin();
+      if (!mounted) return;
+      setState(() {
+        _biometricStateFuture = _getBiometricState();
+      });
+      context.go(auth.homeRoute);
+    }
   }
 
   Future<void> _handleAppleSignIn() async {
     final auth = context.read<AuthProvider>();
     final success = await auth.loginWithApple();
-    if (success && mounted) context.go(auth.homeRoute);
+    if (success && mounted) {
+      await _maybeEnableBiometricsAfterLogin();
+      if (!mounted) return;
+      setState(() {
+        _biometricStateFuture = _getBiometricState();
+      });
+      context.go(auth.homeRoute);
+    }
   }
 
   void _handleBiometricUnavailable() {
@@ -184,6 +254,67 @@ class _LoginScreenState extends State<LoginScreen>
         content: Text('Biometric haijawezeshwa kwenye kifaa hiki bado.'),
       ),
     );
+  }
+
+  Future<void> _handleBiometricTap(_BiometricState state) async {
+    final available = state.hasFaceId || state.hasFingerprint;
+    if (!available) {
+      _handleBiometricUnavailable();
+      return;
+    }
+
+    if (!state.enabled) {
+      final enable = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: const Color(0xFF2A1208),
+          title: Text(
+            'Biometric Haijawashwa',
+            style: GoogleFonts.montserrat(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          content: Text(
+            'Ingia kwa nywila kwanza ili kuwezesha login ya biometric.',
+            style: GoogleFonts.montserrat(color: Colors.white.withValues(alpha: 0.85)),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(
+                'Sawa',
+                style: GoogleFonts.montserrat(color: AppColors.textTertiary),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Wezesha', style: GoogleFonts.montserrat()),
+            ),
+          ],
+        ),
+      );
+      if (enable == true) {
+        await SecureStorage().setBiometricEnabled(true);
+        if (mounted) {
+          setState(() {
+            _biometricStateFuture = _getBiometricState();
+          });
+        }
+      }
+      return;
+    }
+
+    if (!state.hasSession) {
+      _showTopErrorPopup('Ingia kwa nywila kwanza ili kutumia biometric.');
+      return;
+    }
+
+    if (mounted) context.go('/biometric');
   }
 
   Widget _buildField({
@@ -480,17 +611,12 @@ class _LoginScreenState extends State<LoginScreen>
                                     ],
                                   ),
                                   SizedBox(height: compact ? 14 : 16),
-                                  FutureBuilder<List<BiometricType>>(
-                                    future: _biometricTypesFuture,
+                                  FutureBuilder<_BiometricState>(
+                                    future: _biometricStateFuture,
                                     builder: (context, snapshot) {
-                                      final biometrics =
-                                          snapshot.data ?? const [];
-                                      final hasFaceId =
-                                          _hasFaceId(biometrics);
-                                      final hasFingerprint =
-                                          _hasFingerprint(biometrics);
-                                      final canUseBiometric =
-                                          hasFaceId || hasFingerprint;
+                                      final state = snapshot.data ?? const _BiometricState();
+                                      final hasFaceId = state.hasFaceId;
+                                      final hasFingerprint = state.hasFingerprint;
 
                                       return Row(
                                         children: [
@@ -550,19 +676,15 @@ class _LoginScreenState extends State<LoginScreen>
                                                   : hasFingerprint
                                                       ? 'Touch ID'
                                                       : 'Biometric',
-                                              enabled: canUseBiometric,
-                                              onTap: canUseBiometric
-                                                  ? () => context.go(
-                                                      '/biometric',
-                                                    )
-                                                  : _handleBiometricUnavailable,
+                                              enabled: hasFaceId || hasFingerprint,
+                                              onTap: () => _handleBiometricTap(state),
                                               icon: Icon(
                                                 hasFaceId
                                                     ? Icons
                                                         .face_retouching_natural_rounded
                                                     : Icons
                                                         .fingerprint_rounded,
-                                                color: canUseBiometric
+                                                color: (hasFaceId || hasFingerprint)
                                                     ? (hasFaceId
                                                         ? const Color(
                                                             0xFFDCE4FF,
@@ -606,6 +728,20 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
   }
+}
+
+class _BiometricState {
+  final bool hasFaceId;
+  final bool hasFingerprint;
+  final bool enabled;
+  final bool hasSession;
+
+  const _BiometricState({
+    this.hasFaceId = false,
+    this.hasFingerprint = false,
+    this.enabled = false,
+    this.hasSession = false,
+  });
 }
 
 class _SignupFooter extends StatelessWidget {
