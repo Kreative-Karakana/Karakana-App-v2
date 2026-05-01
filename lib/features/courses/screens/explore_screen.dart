@@ -48,8 +48,14 @@ class _ExploreScreenState extends State<ExploreScreen>
 
   void _onSearchChanged(String value) {
     _debounceTimer?.cancel();
+    final normalized = value.trim();
+    if (normalized.isEmpty) {
+      setState(() => _searchQuery = '');
+      context.read<CourseProvider>().searchCourses('');
+      return;
+    }
+    setState(() => _searchQuery = value);
     _debounceTimer = Timer(const Duration(milliseconds: 300), () {
-      setState(() => _searchQuery = value);
       context.read<CourseProvider>().searchCourses(value);
     });
   }

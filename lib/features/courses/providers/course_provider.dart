@@ -118,14 +118,18 @@ class CourseProvider extends ChangeNotifier {
 
     try {
       final result = await _service.getCourses(search: search);
-      _allCourses = result;
-      _courses = List.from(result);
+      final isSearchMode = (search ?? '').trim().isNotEmpty;
+      if (!isSearchMode) {
+        _allCourses = result;
+      }
+      var working = List<CourseModel>.from(isSearchMode ? result : _allCourses);
       if (categoryName != null) {
-        _courses = _allCourses
+        working = working
             .where((c) => c.categories
                 .any((cat) => cat.toLowerCase() == categoryName.toLowerCase()))
             .toList();
       }
+      _courses = working;
     } catch (e) {
       _errorMessage = e.toString();
     }
@@ -191,17 +195,29 @@ class CourseProvider extends ChangeNotifier {
   // ── Search & filter ────────────────────────────────────────────
 
   Future<void> searchCourses(String query) async {
-    _searchQuery = query;
-    if (query.isEmpty) {
-      _courses = List.from(_allCourses);
+    final normalized = query.trim();
+    _searchQuery = normalized;
+    if (normalized.isEmpty) {
+      if (_selectedCategoryName == null) {
+        _courses = List.from(_allCourses);
+      } else {
+        _courses = _allCourses
+            .where((c) => c.categories.any((cat) =>
+                cat.toLowerCase() == _selectedCategoryName!.toLowerCase()))
+            .toList();
+      }
       notifyListeners();
     } else {
-      await loadCourses(search: query);
+      await loadCourses(search: normalized, categoryName: _selectedCategoryName);
     }
   }
 
-  void filterByCategory(String? categoryName) {
+  Future<void> filterByCategory(String? categoryName) async {
     _selectedCategoryName = categoryName;
+    if (_searchQuery.isNotEmpty) {
+      await loadCourses(search: _searchQuery, categoryName: categoryName);
+      return;
+    }
     if (categoryName == null) {
       _courses = List.from(_allCourses);
     } else {
