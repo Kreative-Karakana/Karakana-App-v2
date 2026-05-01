@@ -160,28 +160,15 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
                 // Person image — bottom-aligned so it sits naturally on the edge
                 Positioned.fill(
-                  child: ShaderMask(
-                    shaderCallback: (bounds) => LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0.0, 0.70, 1.0],
-                      colors: [
-                        Colors.white.withValues(alpha: 0.98),
-                        Colors.white.withValues(alpha: 0.96),
-                        Colors.white.withValues(alpha: 0.0),
-                      ],
-                    ).createShader(bounds),
-                    blendMode: BlendMode.dstIn,
-                    child: Image.asset(
-                      slide.imagePath,
-                      fit: BoxFit.contain,
-                      alignment: Alignment.bottomCenter,
-                      errorBuilder: (_, __, ___) => Center(
-                        child: Icon(
-                          Icons.person_rounded,
-                          size: 140,
-                          color: Colors.white.withValues(alpha: 0.45),
-                        ),
+                  child: Image.asset(
+                    slide.imagePath,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.bottomCenter,
+                    errorBuilder: (_, __, ___) => Center(
+                      child: Icon(
+                        Icons.person_rounded,
+                        size: 140,
+                        color: Colors.white.withValues(alpha: 0.45),
                       ),
                     ),
                   ),
@@ -196,24 +183,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         end: Alignment.bottomCenter,
                         stops: [0.45, 0.75],
                         colors: [Colors.transparent, _panelDark],
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: imageHeight * 0.20,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          _panelDark.withValues(alpha: 0.0),
-                          _panelDark.withValues(alpha: 0.75),
-                        ],
                       ),
                     ),
                   ),
@@ -404,6 +373,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                     decoration: BoxDecoration(
                                       color: AppColors.primary,
                                       shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppColors.primary.withValues(alpha: 0.38),
+                                          blurRadius: 18,
+                                          offset: const Offset(0, 7),
+                                        ),
+                                      ],
                                     ),
                                     child: const Icon(
                                       Icons.arrow_forward_rounded,
