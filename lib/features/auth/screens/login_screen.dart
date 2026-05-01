@@ -345,30 +345,41 @@ class _LoginScreenState extends State<LoginScreen>
                                       ),
                                     ),
                                   ),
-                                  if (authProvider.errorMessage != null) ...[
-                                    const SizedBox(height: 10),
-                                    Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.all(12),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.errorLight
-                                            .withValues(alpha: 0.12),
-                                        borderRadius: BorderRadius.circular(14),
-                                        border: Border.all(
-                                          color: Colors.red.shade300
-                                              .withValues(alpha: 0.22),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        authProvider.errorMessage!,
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: 12.5,
-                                          color: Colors.red.shade200,
-                                        ),
-                                      ),
+                                  const SizedBox(height: 10),
+                                  SizedBox(
+                                    height: compact ? 76 : 82,
+                                    child: AnimatedSwitcher(
+                                      duration: const Duration(milliseconds: 180),
+                                      switchInCurve: Curves.easeOut,
+                                      switchOutCurve: Curves.easeIn,
+                                      child: authProvider.errorMessage != null
+                                          ? Container(
+                                              key: const ValueKey('login_error'),
+                                              width: double.infinity,
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.errorLight
+                                                    .withValues(alpha: 0.12),
+                                                borderRadius: BorderRadius.circular(14),
+                                                border: Border.all(
+                                                  color: Colors.red.shade300
+                                                      .withValues(alpha: 0.22),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                authProvider.errorMessage!,
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: 12.5,
+                                                  color: Colors.red.shade200,
+                                                ),
+                                              ),
+                                            )
+                                          : const SizedBox(
+                                              key: ValueKey('login_error_empty'),
+                                            ),
                                     ),
-                                    const SizedBox(height: 10),
-                                  ],
+                                  ),
+                                  const SizedBox(height: 10),
                                   SizedBox(
                                     width: double.infinity,
                                     child: GradientButton(
