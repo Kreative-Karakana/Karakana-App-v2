@@ -150,19 +150,22 @@ class _SignupScreenState extends State<SignupScreen>
                         ? MediaQuery.viewInsetsOf(context).bottom
                         : 0,
                   ),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          physics: const ClampingScrollPhysics(),
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(
-                              22,
-                              compact ? 16 : 22,
-                              22,
-                              compact ? 8 : 10,
-                            ),
-                            child: _SignupContent(
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      22,
+                      compact ? 16 : 22,
+                      22,
+                      compact ? 8 : 10,
+                    ),
+                    child: SingleChildScrollView(
+                      physics: const ClampingScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight - (compact ? 24 : 40),
+                        ),
+                        child: Column(
+                          children: [
+                            _SignupContent(
                               compact: compact,
                               keyboardOpen: keyboardOpen,
                               authProvider: authProvider,
@@ -184,133 +187,155 @@ class _SignupScreenState extends State<SignupScreen>
                               onAppleSignIn: _handleAppleSignIn,
                               buildField: _buildField,
                             ),
-                          ),
-                        ),
-                      ),
-                      if (!keyboardOpen) ...[
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            22,
-                            socialCompact ? 8 : 16,
-                            22,
-                            0,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.10))),
+                            if (!keyboardOpen) ...[
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 10),
-                                child: Text(
-                                  'Njia nyingine',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: socialCompact ? 11 : 12,
-                                    color: AppColors.textTertiary,
-                                  ),
-                                ),
-                              ),
-                              Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.10))),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            22,
-                            socialCompact ? 8 : 12,
-                            22,
-                            0,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: _MethodButton(
-                                  compact: socialCompact,
-                                  label: 'Google',
-                                  onTap: _handleGoogleSignIn,
-                                  icon: Container(
-                                    width: socialCompact ? 20 : 24,
-                                    height: socialCompact ? 20 : 24,
-                                    decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                                    child: Center(
-                                      child: Text('G', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w700, color: const Color(0xFF4285F4))),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: _MethodButton(
-                                  compact: socialCompact,
-                                  label: 'Apple',
-                                  onTap: _handleAppleSignIn,
-                                  icon: Icon(Icons.apple, color: Colors.white, size: socialCompact ? 20 : 24),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            22,
-                            socialCompact ? 10 : 16,
-                            22,
-                            socialCompact ? 14 : 28,
-                          ),
-                          child: Center(
-                            child: GestureDetector(
-                              onTap: () => context.go('/login'),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: socialCompact ? 18 : 24,
-                                  vertical: socialCompact ? 10 : 14,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.05),
-                                  borderRadius: BorderRadius.circular(50),
-                                  border: Border.all(
-                                    color: Colors.white.withValues(alpha: 0.10),
-                                  ),
+                                padding: EdgeInsets.fromLTRB(
+                                  0,
+                                  socialCompact ? 8 : 16,
+                                  0,
+                                  0,
                                 ),
                                 child: Row(
-                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Text(
-                                      'Una akaunti?',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: socialCompact ? 12.5 : 14,
-                                        color: Colors.white.withValues(alpha: 0.74),
+                                    Expanded(
+                                      child: Divider(
+                                        color: Colors.white.withValues(alpha: 0.10),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      child: Text(
+                                        'Njia nyingine',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: socialCompact ? 11 : 12,
+                                          color: AppColors.textTertiary,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Divider(
+                                        color: Colors.white.withValues(alpha: 0.10),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                  0,
+                                  socialCompact ? 8 : 12,
+                                  0,
+                                  0,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: _MethodButton(
+                                        compact: socialCompact,
+                                        label: 'Google',
+                                        onTap: _handleGoogleSignIn,
+                                        icon: Container(
+                                          width: socialCompact ? 20 : 24,
+                                          height: socialCompact ? 20 : 24,
+                                          decoration: const BoxDecoration(
+                                            color: Colors.white,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'G',
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w700,
+                                                color: const Color(0xFF4285F4),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                     const SizedBox(width: 10),
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: socialCompact ? 12 : 16,
-                                        vertical: socialCompact ? 4 : 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                          colors: [AppColors.primary, Color(0xFFE07A2F)],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ),
-                                        borderRadius: BorderRadius.circular(50),
-                                      ),
-                                      child: Text(
-                                        'Ingia',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: socialCompact ? 12 : 13.5,
-                                          fontWeight: FontWeight.w700,
+                                    Expanded(
+                                      child: _MethodButton(
+                                        compact: socialCompact,
+                                        label: 'Apple',
+                                        onTap: _handleAppleSignIn,
+                                        icon: Icon(
+                                          Icons.apple,
                                           color: Colors.white,
+                                          size: socialCompact ? 20 : 24,
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                          ),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                  0,
+                                  socialCompact ? 10 : 16,
+                                  0,
+                                  socialCompact ? 14 : 28,
+                                ),
+                                child: Center(
+                                  child: GestureDetector(
+                                    onTap: () => context.go('/login'),
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: socialCompact ? 18 : 24,
+                                        vertical: socialCompact ? 10 : 14,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(alpha: 0.05),
+                                        borderRadius: BorderRadius.circular(50),
+                                        border: Border.all(
+                                          color: Colors.white.withValues(alpha: 0.10),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'Una akaunti?',
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: socialCompact ? 12.5 : 14,
+                                              color: Colors.white.withValues(alpha: 0.74),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: socialCompact ? 12 : 16,
+                                              vertical: socialCompact ? 4 : 6,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              gradient: const LinearGradient(
+                                                colors: [AppColors.primary, Color(0xFFE07A2F)],
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                              ),
+                                              borderRadius: BorderRadius.circular(50),
+                                            ),
+                                            child: Text(
+                                              'Ingia',
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: socialCompact ? 12 : 13.5,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
-                    ],
-                    ],
+                      ),
+                    ),
                   ),
                 ),
               ),
