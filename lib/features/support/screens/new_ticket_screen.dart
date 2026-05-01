@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../widgets/common/top_popup.dart';
 
 class NewTicketScreen extends StatefulWidget {
   const NewTicketScreen({super.key});
@@ -205,9 +206,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
 
   Future<void> _submitTicket() async {
     if (_selectedType == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Chagua aina ya tatizo')),
-      );
+      showTopPopup(context, 'Chagua aina ya tatizo');
       return;
     }
     if (!_formKey.currentState!.validate()) return;
@@ -227,22 +226,12 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
         data: {'message': _messageController.text},
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Tiketi imesailiwa kikamilifu!'),
-          backgroundColor: Color(0xFFE87722),
-        ),
-      );
+      showTopPopup(context, 'Tiketi imesailiwa kikamilifu!', isError: false);
       // Go directly into the new ticket thread
       context.pushReplacement('/support/$ticketId');
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Hitilafu. Jaribu tena.'),
-          backgroundColor: Color(0xFFB71C1C),
-        ),
-      );
+      showTopPopup(context, 'Hitilafu. Jaribu tena.');
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }

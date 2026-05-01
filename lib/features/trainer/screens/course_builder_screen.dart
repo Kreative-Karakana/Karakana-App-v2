@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../widgets/common/top_popup.dart';
 
 class CourseBuilderScreen extends StatefulWidget {
   final int? courseId;
@@ -215,23 +216,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     }
   }
 
-  void _showError(String msg) => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(msg, style: GoogleFonts.montserrat(fontSize: 14)),
-          backgroundColor: const Color(0xFFB00020),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
+  void _showError(String msg) => showTopPopup(context, msg);
 
-  void _showSuccess(String msg) => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(msg, style: GoogleFonts.montserrat(fontSize: 14)),
-          backgroundColor: const Color(0xFFE87722),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
+  void _showSuccess(String msg) => showTopPopup(context, msg, isError: false);
 
   void _addQuestion() {
     final questionController = TextEditingController();
@@ -333,10 +320,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                       final opts =
                           optionControllers.map((c) => c.text.trim()).toList();
                       if (q.isEmpty || opts.any((o) => o.isEmpty)) {
-                        ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
-                          content: Text('Jaza swali na majibu yote manne.'),
-                          backgroundColor: Color(0xFFB00020),
-                        ));
+                        showTopPopup(context, 'Jaza swali na majibu yote manne.');
                         return;
                       }
                       setState(() => _questions.add({

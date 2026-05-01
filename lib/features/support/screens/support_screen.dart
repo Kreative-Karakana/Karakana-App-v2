@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../widgets/common/top_popup.dart';
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({super.key});
@@ -95,11 +96,7 @@ class _SupportScreenState extends State<SupportScreen> {
                       child: _buildQuickHelp(
                         Icons.help_outline,
                         'Maswali\nYaliyoulizwa',
-                        () => ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Inakuja hivi karibuni'),
-                          ),
-                        ),
+                        () => showTopPopup(context, 'Inakuja hivi karibuni', isError: false),
                         isDark: isDark,
                       ),
                     ),
@@ -108,11 +105,7 @@ class _SupportScreenState extends State<SupportScreen> {
                       child: _buildQuickHelp(
                         Icons.email_outlined,
                         'Tutumie\nBarua Pepe',
-                        () => ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('support@kreativekarakana.co.tz'),
-                          ),
-                        ),
+                        () => showTopPopup(context, 'support@kreativekarakana.co.tz', isError: false),
                         isDark: isDark,
                       ),
                     ),

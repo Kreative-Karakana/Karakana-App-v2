@@ -2,6 +2,7 @@
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../widgets/common/top_popup.dart';
 
 class QuizManagerScreen extends StatefulWidget {
   final int courseId;
@@ -26,17 +27,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
 
   Future<void> _saveQuiz() async {
     if (_questions.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Ongeza maswali angalau moja kwanza.',
-            style: GoogleFonts.montserrat(fontSize: 14),
-          ),
-          backgroundColor: const Color(0xFFB00020),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
+      showTopPopup(context, 'Ongeza maswali angalau moja kwanza.');
       return;
     }
 
@@ -58,30 +49,10 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
         },
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Maswali yamehifadhiwa!',
-            style: GoogleFonts.montserrat(fontSize: 14),
-          ),
-          backgroundColor: const Color(0xFFE87722),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
+      showTopPopup(context, 'Maswali yamehifadhiwa!', isError: false);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            ApiClient().parseError(e),
-            style: GoogleFonts.montserrat(fontSize: 14),
-          ),
-          backgroundColor: const Color(0xFFB00020),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
+      showTopPopup(context, ApiClient().parseError(e));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

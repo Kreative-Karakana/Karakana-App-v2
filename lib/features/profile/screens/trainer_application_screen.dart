@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../widgets/common/top_popup.dart';
 
 class TrainerApplicationScreen extends StatefulWidget {
   const TrainerApplicationScreen({super.key});
@@ -97,10 +98,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Hitilafu ya kuchagua faili. Jaribu tena.'),
-        backgroundColor: AppColors.error,
-      ));
+      showTopPopup(context, 'Hitilafu ya kuchagua faili. Jaribu tena.');
     } finally {
       if (mounted) setState(() => _isPickingFile = false);
     }
@@ -109,16 +107,8 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
   Future<void> _submitApplication() async {
     if (!_formKey.currentState!.validate()) return;
     if (_cvFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text(
-            'Inashauriwa kupakia CV yako ili ombi lako likubalike.'),
-        backgroundColor: AppColors.warning,
-        action: SnackBarAction(
-          label: 'Endelea',
-          textColor: Colors.white,
-          onPressed: _submitWithoutCV,
-        ),
-      ));
+      showTopPopup(context, 'Inashauriwa kupakia CV yako ili ombi lako likubalike.');
+      await _submitWithoutCV();
       return;
     }
     await _doSubmit();
@@ -142,21 +132,11 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
         },
       );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Ombi limetumwa! Tutakujibu hivi karibuni.'),
-          backgroundColor: Color(0xFFE87722),
-        ),
-      );
+      showTopPopup(context, 'Ombi limetumwa! Tutakujibu hivi karibuni.', isError: false);
       context.pop();
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Hitilafu. Jaribu tena.'),
-          backgroundColor: Color(0xFFB71C1C),
-        ),
-      );
+      showTopPopup(context, 'Hitilafu. Jaribu tena.');
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }

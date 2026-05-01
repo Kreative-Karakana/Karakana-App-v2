@@ -5,6 +5,7 @@ import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/secure_storage.dart';
+import '../../../widgets/common/top_popup.dart';
 
 /// Checks whether the ambassador code bottom sheet should be shown, then shows
 /// it if needed. Should be called once from the HomeScreen's initState via
@@ -97,15 +98,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
   Future<void> _submit() async {
     final code = _codeController.text.trim();
     if (code.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Tafadhali weka namba ya balozi',
-            style: GoogleFonts.montserrat(color: Colors.white),
-          ),
-          backgroundColor: AppColors.primary,
-        ),
-      );
+      showTopPopup(context, 'Tafadhali weka namba ya balozi');
       return;
     }
 
@@ -117,29 +110,13 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
       );
       await SecureStorage().setAmbassadorCodeState(false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Namba ya balozi imewasilishwa kwa mafanikio',
-              style: GoogleFonts.montserrat(color: Colors.white),
-            ),
-            backgroundColor: AppColors.primary,
-          ),
-        );
+        showTopPopup(context, 'Namba ya balozi imewasilishwa kwa mafanikio', isError: false);
         Navigator.of(context).pop();
       }
     } catch (_) {
       if (mounted) {
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Zoezi limeshindikana. Tafadhali jaribu tena.',
-              style: GoogleFonts.montserrat(color: Colors.white),
-            ),
-            backgroundColor: AppColors.primary,
-          ),
-        );
+        showTopPopup(context, 'Zoezi limeshindikana. Tafadhali jaribu tena.');
       }
     }
   }

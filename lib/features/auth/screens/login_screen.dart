@@ -192,11 +192,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _handleBiometricUnavailable() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Biometric haijawezeshwa kwenye kifaa hiki bado.'),
-      ),
-    );
+    _showTopErrorPopup('Biometric haijawezeshwa kwenye kifaa hiki bado.');
   }
 
   Future<void> _handleBiometricTap(_BiometricState state) async {

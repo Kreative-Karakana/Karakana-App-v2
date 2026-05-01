@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../providers/theme_provider.dart';
+import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 
 class TrainerDashboardScreen extends StatefulWidget {
@@ -114,25 +115,17 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       await ApiClient().dio.patch('/api/v1/courses/$id/',
           data: {'status': isPublished ? 'draft' : 'published'});
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-              isPublished
-                  ? 'Kozi imefichwa kutoka kwa wanafunzi'
-                  : 'Kozi imechapishwa kikamilifu!',
-              style: GoogleFonts.montserrat()),
-          backgroundColor: isPublished
-              ? const Color(0xFF7B3A10)
-              : const Color(0xFFE87722),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+      showTopPopup(
+        context,
+        isPublished
+            ? 'Kozi imefichwa kutoka kwa wanafunzi'
+            : 'Kozi imechapishwa kikamilifu!',
+        isError: false,
+      );
       _loadAll();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Hitilafu. Jaribu tena.', style: GoogleFonts.montserrat()),
-          backgroundColor: const Color(0xFF1A0A00),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+      showTopPopup(context, 'Hitilafu. Jaribu tena.');
     }
   }
 
@@ -187,19 +180,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     try {
       await ApiClient().dio.patch('/api/v1/certificates/$id/', data: {'is_approved': true});
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('✓ Cheti kimethibitishwa!', style: GoogleFonts.montserrat()),
-          backgroundColor: const Color(0xFFE87722),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+      showTopPopup(context, 'Cheti kimethibitishwa!', isError: false);
       _loadAll();
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Hitilafu. Jaribu tena.', style: GoogleFonts.montserrat()),
-          backgroundColor: const Color(0xFF1A0A00),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+      showTopPopup(context, 'Hitilafu. Jaribu tena.');
     }
   }
 
@@ -208,19 +193,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     try {
       await ApiClient().dio.patch('/api/v1/certificates/$id/', data: {'status': 'rejected'});
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Ombi limekataliwa.', style: GoogleFonts.montserrat()),
-          backgroundColor: const Color(0xFF3D1800),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+      showTopPopup(context, 'Ombi limekataliwa.', isError: false);
       _loadAll();
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Hitilafu. Jaribu tena.', style: GoogleFonts.montserrat()),
-          backgroundColor: const Color(0xFF1A0A00),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+      showTopPopup(context, 'Hitilafu. Jaribu tena.');
     }
   }
 

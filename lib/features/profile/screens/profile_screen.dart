@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../../../providers/theme_provider.dart';
+import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -75,14 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _toggleBiometric(bool next) async {
     if (_biometricBusy) return;
     if (!_biometricAvailable && next) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Biometric haijasanidiwa kwenye kifaa hiki.',
-            style: GoogleFonts.montserrat(color: Colors.white),
-          ),
-        ),
-      );
+      showTopPopup(context, 'Biometric haijasanidiwa kwenye kifaa hiki.');
       return;
     }
 
@@ -95,16 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ? await _localAuth.getAvailableBiometrics()
             : const <BiometricType>[];
         if (!supported || !enrolled || availableTypes.isEmpty) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Tafadhali sanidi Face ID/alama ya kidole kwenye kifaa kwanza.',
-                  style: GoogleFonts.montserrat(color: Colors.white),
-                ),
-              ),
-            );
-          }
+          if (mounted) showTopPopup(context, 'Tafadhali sanidi Face ID/alama ya kidole kwenye kifaa kwanza.');
           return;
         }
 
@@ -117,16 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         );
         if (!verified) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Uthibitishaji umeshindikana. Biometric haijawashwa.',
-                  style: GoogleFonts.montserrat(color: Colors.white),
-                ),
-              ),
-            );
-          }
+          if (mounted) showTopPopup(context, 'Uthibitishaji umeshindikana. Biometric haijawashwa.');
           return;
         }
       }
@@ -134,15 +110,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       await SecureStorage().setBiometricEnabled(next);
       if (!mounted) return;
       setState(() => _biometricEnabled = next);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            next
-                ? '$_biometricLabel imewashwa kwa akaunti hii.'
-                : '$_biometricLabel imezimwa kwa akaunti hii.',
-            style: GoogleFonts.montserrat(color: Colors.white),
-          ),
-        ),
+      showTopPopup(
+        context,
+        next
+            ? '$_biometricLabel imewashwa kwa akaunti hii.'
+            : '$_biometricLabel imezimwa kwa akaunti hii.',
+        isError: false,
       );
     } on PlatformException catch (e) {
       final code = e.code.toLowerCase();
@@ -159,25 +132,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         msg = 'Biometric haijapatikana kwa sasa kwenye kifaa hiki.';
       }
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              msg,
-              style: GoogleFonts.montserrat(color: Colors.white),
-            ),
-          ),
-        );
+        showTopPopup(context, msg);
       }
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Imeshindikana kubadili mipangilio ya biometric.',
-              style: GoogleFonts.montserrat(color: Colors.white),
-            ),
-          ),
-        );
+        showTopPopup(context, 'Imeshindikana kubadili mipangilio ya biometric.');
       }
     } finally {
       if (mounted) setState(() => _biometricBusy = false);
@@ -254,15 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context.go('/login');
     } catch (_) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Imeshindikana kufuta akaunti. Jaribu tena.',
-            style: GoogleFonts.montserrat(color: Colors.white),
-          ),
-          backgroundColor: const Color(0xFFB71C1C),
-        ),
-      );
+      showTopPopup(context, 'Imeshindikana kufuta akaunti. Jaribu tena.');
     }
   }
 

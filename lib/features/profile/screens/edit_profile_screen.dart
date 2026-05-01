@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -156,15 +157,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         DateTime.now().subtract(const Duration(days: 3 * 365 + 1));
     if (picked.isAfter(threeYearsAgo)) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Tarehe ya kuzaliwa lazima iwe zaidi ya miaka 3 iliyopita',
-            style: GoogleFonts.montserrat(color: Colors.white),
-          ),
-          backgroundColor: AppColors.primary,
-        ),
-      );
+      showTopPopup(context, 'Tarehe ya kuzaliwa lazima iwe zaidi ya miaka 3 iliyopita');
       return;
     }
     setState(() => _dateOfBirth = picked);
@@ -179,15 +172,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final auth = context.read<AuthProvider>();
     final existingDob = auth.user?['date_of_birth'] as String?;
     if ((existingDob == null || existingDob.isEmpty) && _dateOfBirth == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Tafadhali weka tarehe ya kuzaliwa',
-            style: GoogleFonts.montserrat(color: Colors.white),
-          ),
-          backgroundColor: AppColors.primary,
-        ),
-      );
+      showTopPopup(context, 'Tafadhali weka tarehe ya kuzaliwa');
       return;
     }
 
@@ -225,12 +210,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   parsed.toLowerCase().contains('phone_number')
               ? 'Namba ya simu tayari imeshasajiliwa na mtu mwingine'
               : 'Zoezi limeshindikana. Jaribu tena.';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(msg, style: GoogleFonts.montserrat(color: Colors.white)),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      showTopPopup(context, msg);
       setState(() => _isSaving = false);
       return;
     }
@@ -262,15 +242,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         );
       } catch (_) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Maelezo yamehifadhiwa lakini picha hazikupakiwa. Jaribu tena.',
-                style: GoogleFonts.montserrat(color: Colors.white),
-              ),
-              backgroundColor: AppColors.primary,
-            ),
-          );
+          showTopPopup(context, 'Maelezo yamehifadhiwa lakini picha hazikupakiwa. Jaribu tena.');
         }
       }
     }
@@ -280,15 +252,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (!mounted) return;
     setState(() => _isSaving = false);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Wasifu umesasishwa kikamilifu!',
-          style: GoogleFonts.montserrat(color: Colors.white),
-        ),
-        backgroundColor: const Color(0xFFE87722),
-      ),
-    );
+    showTopPopup(context, 'Wasifu umesasishwa kikamilifu!', isError: false);
     context.go('/account');
   }
 

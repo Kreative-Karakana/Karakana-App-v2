@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../widgets/common/top_popup.dart';
 
 class MastercardFormScreen extends StatefulWidget {
   /// When true, pops on success instead of continuing to trainer application.
@@ -155,13 +156,11 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
   }
 
   void _snack(String message, {bool success = false}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message,
-            style: GoogleFonts.montserrat(color: Colors.white)),
-        backgroundColor: success ? const Color(0xFFE87722) : AppColors.primary,
-        duration: const Duration(milliseconds: 4000),
-      ),
+    showTopPopup(
+      context,
+      message,
+      isError: !success,
+      duration: const Duration(milliseconds: 4000),
     );
   }
 

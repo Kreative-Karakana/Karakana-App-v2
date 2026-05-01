@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../widgets/common/top_popup.dart';
 
 class VideoLessonScreen extends StatefulWidget {
   final int lessonId;
@@ -48,12 +49,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
       await ApiClient().dio.post('/api/v1/lessons/${widget.lessonId}/progress/');
       if (!mounted) return;
       setState(() => _isCompleted = true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Somo limekamilika! ✓'),
-          backgroundColor: Color(0xFFE87722),
-        ),
-      );
+      showTopPopup(context, 'Somo limekamilika! ✓', isError: false);
     } catch (_) {}
   }
 

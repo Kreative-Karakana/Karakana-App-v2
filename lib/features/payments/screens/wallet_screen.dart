@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../widgets/common/top_popup.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -159,14 +160,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 onPressed: () async {
                   final amount = double.tryParse(_amountController.text.trim()) ?? 0;
                   if (amount < 500) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Kiasi cha chini ni TZS 500.',
-                          style: GoogleFonts.montserrat()),
-                      backgroundColor: const Color(0xFF3D1800),
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ));
+                    showTopPopup(context, 'Kiasi cha chini ni TZS 500.');
                     return;
                   }
                   try {
@@ -181,25 +175,11 @@ class _WalletScreenState extends State<WalletScreen> {
                     Navigator.pop(context);
                     _amountController.clear();
                     _remarkController.clear();
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Ombi limetumwa kikamilifu!',
-                          style: GoogleFonts.montserrat()),
-                      backgroundColor: const Color(0xFFE87722),
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ));
+                    showTopPopup(context, 'Ombi limetumwa kikamilifu!', isError: false);
                     _loadWallet();
                   } catch (_) {
                     if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text('Hitilafu. Jaribu tena.',
-                          style: GoogleFonts.montserrat()),
-                      backgroundColor: const Color(0xFF3D1800),
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ));
+                    showTopPopup(context, 'Hitilafu. Jaribu tena.');
                   }
                 },
                 child: Text(

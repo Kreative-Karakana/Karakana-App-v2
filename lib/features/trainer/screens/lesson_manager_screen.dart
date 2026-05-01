@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../widgets/common/top_popup.dart';
 
 class LessonManagerScreen extends StatefulWidget {
   final int courseId;
@@ -108,7 +109,6 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                   onPressed: () async {
                     if (ctrl.text.trim().isEmpty) return;
                     final nav = Navigator.of(ctx);
-                    final messenger = ScaffoldMessenger.of(context);
                     try {
                       await ApiClient().dio.post(
                           '/api/v1/courses/${widget.courseId}/sections/',
@@ -121,13 +121,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                       _loadSections();
                     } catch (e) {
                       if (!mounted) return;
-                      messenger.showSnackBar(SnackBar(
-                          content: Text(ApiClient().parseError(e),
-                              style: GoogleFonts.montserrat()),
-                          backgroundColor: const Color(0xFF1A0A00),
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12))));
+                      showTopPopup(context, ApiClient().parseError(e));
                     }
                   },
                   child: Text('Hifadhi Sehemu',
@@ -250,7 +244,6 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                   onPressed: () async {
                     if (titleCtrl.text.trim().isEmpty) return;
                     final nav = Navigator.of(ctx);
-                    final messenger = ScaffoldMessenger.of(context);
                     try {
                       final body = <String, dynamic>{
                         'title': titleCtrl.text.trim(),
@@ -266,13 +259,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                       _loadSections();
                     } catch (e) {
                       if (!mounted) return;
-                      messenger.showSnackBar(SnackBar(
-                          content: Text(ApiClient().parseError(e),
-                              style: GoogleFonts.montserrat()),
-                          backgroundColor: const Color(0xFF1A0A00),
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12))));
+                      showTopPopup(context, ApiClient().parseError(e));
                     }
                   },
                   child: Text('Hifadhi Somo',
@@ -329,13 +316,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
       _loadSections();
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Hitilafu. Jaribu tena.',
-              style: GoogleFonts.montserrat()),
-          backgroundColor: const Color(0xFF1A0A00),
-          behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+      showTopPopup(context, 'Hitilafu. Jaribu tena.');
     }
   }
 
@@ -380,13 +361,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
       _loadSections();
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Hitilafu. Jaribu tena.',
-              style: GoogleFonts.montserrat()),
-          backgroundColor: const Color(0xFF1A0A00),
-          behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
+      showTopPopup(context, 'Hitilafu. Jaribu tena.');
     }
   }
 

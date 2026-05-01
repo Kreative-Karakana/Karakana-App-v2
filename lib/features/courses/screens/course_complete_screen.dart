@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart' show Share;
 
 import '../../../core/network/api_client.dart';
+import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../utils/certificate_pdf_generator.dart';
 
@@ -78,12 +79,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Hitilafu ya kupakua cheti: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      showTopPopup(context, 'Hitilafu ya kupakua cheti: $e');
     } finally {
       if (mounted) setState(() => _isDownloading = false);
     }

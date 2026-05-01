@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../widgets/common/top_popup.dart';
 
 class PaymentScreen extends StatefulWidget {
   final int courseId;
@@ -50,14 +51,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   void _showError(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message, style: GoogleFonts.montserrat(fontSize: 14)),
-        backgroundColor: const Color(0xFFB00020),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
+    showTopPopup(context, message);
   }
 
   Future<void> _processPayment() async {

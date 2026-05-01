@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../providers/course_provider.dart';
 
@@ -149,22 +150,11 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                             Navigator.of(ctx).pop();
                             await _loadReviews();
                             if (!mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Jibu limetumwa kikamilifu!'),
-                                backgroundColor: Color(0xFFE87722),
-                              ),
-                            );
+                            showTopPopup(context, 'Jibu limetumwa kikamilifu!', isError: false);
                           } catch (_) {
                             setSheet(() => isSaving = false);
                             if (!ctx.mounted) return;
-                            ScaffoldMessenger.of(ctx).showSnackBar(
-                              SnackBar(
-                                content: Text('Zoezi limeshindikana. Jaribu tena.',
-                                    style: GoogleFonts.montserrat(color: Colors.white)),
-                                backgroundColor: AppColors.primary,
-                              ),
-                            );
+                            showTopPopup(context, 'Zoezi limeshindikana. Jaribu tena.');
                           }
                         },
                   child: isSaving
@@ -204,22 +194,11 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                               Navigator.of(ctx).pop();
                               await _loadReviews();
                               if (!mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Jibu limefutwa.'),
-                                  backgroundColor: Color(0xFFE87722),
-                                ),
-                              );
+                              showTopPopup(context, 'Jibu limefutwa.', isError: false);
                             } catch (_) {
                               setSheet(() => isSaving = false);
                               if (!ctx.mounted) return;
-                              ScaffoldMessenger.of(ctx).showSnackBar(
-                                SnackBar(
-                                  content: Text('Zoezi limeshindikana.',
-                                      style: GoogleFonts.montserrat(color: Colors.white)),
-                                  backgroundColor: AppColors.primary,
-                                ),
-                              );
+                              showTopPopup(context, 'Zoezi limeshindikana.');
                             }
                           },
                     child: Text('Futa Jibu',
@@ -241,16 +220,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
     final isEnrolled = course?.isEnrolled ?? false;
 
     if (!isEnrolled) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Unahitaji kujiandikisha kwenye kozi hii kwanza ili uweze kutoa tathmini.',
-            style: GoogleFonts.montserrat(color: Colors.white),
-          ),
-          backgroundColor: const Color(0xFF3D1800),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showTopPopup(context, 'Unahitaji kujiandikisha kwenye kozi hii kwanza ili uweze kutoa tathmini.');
       return;
     }
 
@@ -263,16 +233,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
     final progress = totalLessons > 0 ? completedLessons / totalLessons : 0.0;
 
     if (progress < 0.8) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Kamilisha kozi hii kwanza ili uweze kutoa tathmini ya uzoefu wako.',
-            style: GoogleFonts.montserrat(color: Colors.white),
-          ),
-          backgroundColor: const Color(0xFF3D1800),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      showTopPopup(context, 'Kamilisha kozi hii kwanza ili uweze kutoa tathmini ya uzoefu wako.');
       return;
     }
 
@@ -380,7 +341,6 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                       : () async {
                           if (_reviewController.text.isEmpty) return;
                           final navigator = Navigator.of(ctx);
-                          final messenger = ScaffoldMessenger.of(context);
                           setState(() => _isSubmitting = true);
                           try {
                             await ApiClient().dio.post(
@@ -399,12 +359,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                             });
                             await _loadReviews();
                             if (!mounted) return;
-                            messenger.showSnackBar(
-                              const SnackBar(
-                                content: Text('Asante! Tathmini yako imetumwa.'),
-                                backgroundColor: Color(0xFFE87722),
-                              ),
-                            );
+                            showTopPopup(context, 'Asante! Tathmini yako imetumwa.', isError: false);
                           } catch (_) {
                             if (mounted) {
                               setState(() => _isSubmitting = false);
