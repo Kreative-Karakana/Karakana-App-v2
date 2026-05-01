@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/utils/secure_storage.dart';
 import '../../../providers/theme_provider.dart';
 import '../../auth/providers/auth_provider.dart';
 
@@ -19,11 +21,125 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   static const double _expandedHeight = 210;
   final ScrollController _scroll = ScrollController();
+  final LocalAuthentication _localAuth = LocalAuthentication();
+  bool _biometricEnabled = false;
+  bool _biometricAvailable = false;
+  bool _biometricBusy = false;
+  String _biometricLabel = 'Biometric';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBiometricSettings();
+  }
 
   @override
   void dispose() {
     _scroll.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadBiometricSettings() async {
+    try {
+      final supported = await _localAuth.isDeviceSupported();
+      final enrolled = await _localAuth.canCheckBiometrics;
+      final types = (supported && enrolled)
+          ? await _localAuth.getAvailableBiometrics()
+          : const <BiometricType>[];
+      final hasFace = types.contains(BiometricType.face);
+      final hasFingerprint = types.contains(BiometricType.fingerprint) ||
+          types.contains(BiometricType.strong) ||
+          types.contains(BiometricType.weak);
+      final enabled = await SecureStorage().isBiometricEnabled();
+
+      if (!mounted) return;
+      setState(() {
+        _biometricAvailable = hasFace || hasFingerprint;
+        _biometricEnabled = enabled && _biometricAvailable;
+        _biometricLabel = hasFace
+            ? 'Face ID'
+            : hasFingerprint
+                ? 'Touch ID'
+                : 'Biometric';
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _biometricAvailable = false;
+        _biometricEnabled = false;
+        _biometricLabel = 'Biometric';
+      });
+    }
+  }
+
+  Future<void> _toggleBiometric(bool next) async {
+    if (_biometricBusy) return;
+    if (!_biometricAvailable && next) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Biometric haijasanidiwa kwenye kifaa hiki.',
+            style: GoogleFonts.montserrat(color: Colors.white),
+          ),
+        ),
+      );
+      return;
+    }
+
+    setState(() => _biometricBusy = true);
+    try {
+      if (next) {
+        final verified = await _localAuth.authenticate(
+          localizedReason: 'Thibitisha utambulisho kuwasha $_biometricLabel',
+          options: const AuthenticationOptions(
+            biometricOnly: true,
+            stickyAuth: true,
+            useErrorDialogs: true,
+            sensitiveTransaction: true,
+          ),
+        );
+        if (!verified) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Uthibitishaji umeshindikana. Biometric haijawashwa.',
+                  style: GoogleFonts.montserrat(color: Colors.white),
+                ),
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      await SecureStorage().setBiometricEnabled(next);
+      if (!mounted) return;
+      setState(() => _biometricEnabled = next);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            next
+                ? '$_biometricLabel imewashwa kwa akaunti hii.'
+                : '$_biometricLabel imezimwa kwa akaunti hii.',
+            style: GoogleFonts.montserrat(color: Colors.white),
+          ),
+        ),
+      );
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Imeshindikana kubadili mipangilio ya biometric.',
+              style: GoogleFonts.montserrat(color: Colors.white),
+            ),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _biometricBusy = false);
+    }
   }
 
   Future<void> _deleteAccount(BuildContext context, AuthProvider auth) async {
@@ -449,6 +565,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 trailing: Switch(
                                   value: themeProvider.isDark,
                                   onChanged: (_) => themeProvider.toggleTheme(),
+                                  activeColor: const Color(0xFFE87722),
+                                  activeTrackColor: const Color(0xFFE87722)
+                                      .withValues(alpha: 0.3),
+                                ),
+                              ),
+                              ListTile(
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 4,
+                                ),
+                                leading: Container(
+                                  width: 36,
+                                  height: 36,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFE87722).withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(
+                                    _biometricLabel == 'Face ID'
+                                        ? Icons.face_retouching_natural_rounded
+                                        : Icons.fingerprint_rounded,
+                                    color: const Color(0xFFE87722),
+                                    size: 18,
+                                  ),
+                                ),
+                                title: Text(
+                                  'Ingia kwa $_biometricLabel',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 14,
+                                    color: Theme.of(context).textTheme.bodyLarge?.color ??
+                                        const Color(0xFF1A0A00),
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  _biometricAvailable
+                                      ? 'Washa au zima biometric kwa akaunti hii'
+                                      : 'Haipatikani kwenye kifaa hiki',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 12,
+                                    color: const Color(0xFF9E8070),
+                                  ),
+                                ),
+                                trailing: Switch(
+                                  value: _biometricEnabled && _biometricAvailable,
+                                  onChanged: (_biometricAvailable && !_biometricBusy)
+                                      ? _toggleBiometric
+                                      : null,
                                   activeColor: const Color(0xFFE87722),
                                   activeTrackColor: const Color(0xFFE87722)
                                       .withValues(alpha: 0.3),

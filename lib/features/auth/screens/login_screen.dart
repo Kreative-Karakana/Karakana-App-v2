@@ -70,62 +70,11 @@ class _LoginScreenState extends State<LoginScreen>
       _passwordController.text,
     );
     if (success && mounted) {
-      await _maybeEnableBiometricsAfterLogin();
-      if (!mounted) return;
-      setState(() {
-        _biometricStateFuture = _getBiometricState();
-      });
       if (mounted) context.go(auth.homeRoute);
     } else if (mounted) {
       _showTopErrorPopup(
         auth.errorMessage ?? 'Imeshindikana kuingia. Tafadhali jaribu tena.',
       );
-    }
-  }
-
-  Future<void> _maybeEnableBiometricsAfterLogin() async {
-    final state = await _getBiometricState();
-    final available = state.hasFaceId || state.hasFingerprint;
-    if (!mounted || !available || state.enabled) return;
-
-    final typeText = state.hasFaceId ? 'Face ID' : 'alama ya kidole';
-    final enable = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF2A1208),
-        title: Text(
-          'Wezesha Biometric',
-          style: GoogleFonts.montserrat(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        content: Text(
-          'Ungependa kutumia $typeText kuingia haraka na salama?',
-          style: GoogleFonts.montserrat(color: Colors.white.withValues(alpha: 0.85)),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(
-              'Baadaye',
-              style: GoogleFonts.montserrat(color: AppColors.textTertiary),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-            ),
-            child: Text('Wezesha', style: GoogleFonts.montserrat()),
-          ),
-        ],
-      ),
-    );
-
-    if (enable == true) {
-      await SecureStorage().setBiometricEnabled(true);
     }
   }
 
@@ -226,11 +175,6 @@ class _LoginScreenState extends State<LoginScreen>
     final auth = context.read<AuthProvider>();
     final success = await auth.loginWithGoogle();
     if (success && mounted) {
-      await _maybeEnableBiometricsAfterLogin();
-      if (!mounted) return;
-      setState(() {
-        _biometricStateFuture = _getBiometricState();
-      });
       context.go(auth.homeRoute);
     }
   }
@@ -239,11 +183,6 @@ class _LoginScreenState extends State<LoginScreen>
     final auth = context.read<AuthProvider>();
     final success = await auth.loginWithApple();
     if (success && mounted) {
-      await _maybeEnableBiometricsAfterLogin();
-      if (!mounted) return;
-      setState(() {
-        _biometricStateFuture = _getBiometricState();
-      });
       context.go(auth.homeRoute);
     }
   }
@@ -264,48 +203,9 @@ class _LoginScreenState extends State<LoginScreen>
     }
 
     if (!state.enabled) {
-      final enable = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          backgroundColor: const Color(0xFF2A1208),
-          title: Text(
-            'Biometric Haijawashwa',
-            style: GoogleFonts.montserrat(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          content: Text(
-            'Ingia kwa nywila kwanza ili kuwezesha login ya biometric.',
-            style: GoogleFonts.montserrat(color: Colors.white.withValues(alpha: 0.85)),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: Text(
-                'Sawa',
-                style: GoogleFonts.montserrat(color: AppColors.textTertiary),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-              ),
-              child: Text('Wezesha', style: GoogleFonts.montserrat()),
-            ),
-          ],
-        ),
+      _showTopErrorPopup(
+        'Washa biometric kwenye sehemu ya Akaunti baada ya kuingia.',
       );
-      if (enable == true) {
-        await SecureStorage().setBiometricEnabled(true);
-        if (mounted) {
-          setState(() {
-            _biometricStateFuture = _getBiometricState();
-          });
-        }
-      }
       return;
     }
 
