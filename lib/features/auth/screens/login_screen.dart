@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen>
                     return Opacity(
                       opacity: value,
                       child: Transform.translate(
-                        offset: Offset(0, -16 * (1 - value)),
+                        offset: Offset(40 * (1 - value), -22 * (1 - value)),
                         child: child,
                       ),
                     );
