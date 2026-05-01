@@ -107,7 +107,7 @@ class AuthProvider extends ChangeNotifier {
         notifyListeners();
         return true;
       }
-      _errorMessage = 'Login failed. Please try again.';
+      _errorMessage = 'Imeshindikana kuingia. Tafadhali jaribu tena.';
       _isLoading = false;
       notifyListeners();
       return false;
@@ -183,7 +183,7 @@ class AuthProvider extends ChangeNotifier {
         notifyListeners();
         return true;
       }
-      _errorMessage = 'Verification failed. Please try again.';
+      _errorMessage = 'Imeshindikana kuthibitisha. Tafadhali jaribu tena.';
       _isLoading = false;
       notifyListeners();
       return false;

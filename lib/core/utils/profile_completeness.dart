@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,8 +23,8 @@ Future<void> checkAndPromptMastercard(BuildContext context) async {
     // 200 means mastercard exists — mark done and skip
     await SecureStorage().setMastercardDone();
   } catch (e) {
-    final parsed = ApiClient().parseError(e);
-    if (parsed.contains('404') || parsed.contains('not found')) {
+    final statusCode = e is DioException ? e.response?.statusCode : null;
+    if (statusCode == 404) {
       // No mastercard yet — prompt the user
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

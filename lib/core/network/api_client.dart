@@ -76,23 +76,23 @@ class ApiClient {
       }
       switch (error.response?.statusCode) {
         case 400:
-          return 'Invalid request. Please check your input.';
+          return 'Ombi si sahihi. Tafadhali hakiki taarifa zako.';
         case 401:
-          return 'Session expired. Please login again.';
+          return 'Muda wa kikao umeisha. Tafadhali ingia tena.';
         case 403:
-          return 'You do not have permission to do this.';
+          return 'Huna ruhusa ya kufanya hili.';
         case 404:
-          return 'The requested resource was not found.';
+          return 'Taarifa ulizoomba hazikupatikana.';
         case 500:
-          return 'Server error. Please try again later.';
+          return 'Hitilafu ya seva. Tafadhali jaribu tena baadaye.';
         default:
           if (error.type == DioExceptionType.connectionError ||
               error.type == DioExceptionType.unknown) {
-            return 'No internet connection. Please check your connection.';
+            return 'Hakuna muunganisho wa intaneti. Tafadhali angalia mtandao wako.';
           }
-          return 'Something went wrong. Please try again.';
+          return 'Kuna hitilafu imetokea. Tafadhali jaribu tena.';
       }
     }
-    return error.toString();
+    return 'Kuna hitilafu imetokea. Tafadhali jaribu tena.';
   }
 }

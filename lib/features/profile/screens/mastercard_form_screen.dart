@@ -1,6 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dio/dio.dart';
 
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
@@ -142,8 +143,8 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      final parsed = ApiClient().parseError(e);
-      if (parsed.contains('404') || parsed.contains('not found')) {
+      final statusCode = e is DioException ? e.response?.statusCode : null;
+      if (statusCode == 404) {
         _snack('Taarifa zako sio sahihi, tafadhali hakiki taarifa zako');
       } else {
         _snack('Kuna hitilafu imetokea. Jaribu tena.');
@@ -461,3 +462,4 @@ class _District {
   final String name;
   const _District({required this.code, required this.name});
 }
+
