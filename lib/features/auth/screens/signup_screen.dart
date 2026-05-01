@@ -153,41 +153,39 @@ class _SignupScreenState extends State<SignupScreen>
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(
                       22,
-                      compact ? 16 : 22,
+                      compact ? 12 : 18,
                       22,
                       compact ? 8 : 10,
                     ),
-                    child: SingleChildScrollView(
-                      physics: const ClampingScrollPhysics(),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight - (compact ? 24 : 40),
-                        ),
-                        child: Column(
-                          children: [
-                            _SignupContent(
-                              compact: compact,
-                              keyboardOpen: keyboardOpen,
-                              authProvider: authProvider,
-                              formKey: _formKey,
-                              firstNameController: _firstNameController,
-                              emailController: _emailController,
-                              passwordController: _passwordController,
-                              confirmController: _confirmController,
-                              obscurePassword: _obscurePassword,
-                              obscureConfirm: _obscureConfirm,
-                              onTogglePassword: () => setState(
-                                () => _obscurePassword = !_obscurePassword,
-                              ),
-                              onToggleConfirm: () => setState(
-                                () => _obscureConfirm = !_obscureConfirm,
-                              ),
-                              onHandleSignup: _handleSignup,
-                              onGoogleSignIn: _handleGoogleSignIn,
-                              onAppleSignIn: _handleAppleSignIn,
-                              buildField: _buildField,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: _SignupContent(
+                            compact: compact,
+                            keyboardOpen: keyboardOpen,
+                            shortHeight: shortHeight,
+                            authProvider: authProvider,
+                            formKey: _formKey,
+                            firstNameController: _firstNameController,
+                            emailController: _emailController,
+                            passwordController: _passwordController,
+                            confirmController: _confirmController,
+                            obscurePassword: _obscurePassword,
+                            obscureConfirm: _obscureConfirm,
+                            onTogglePassword: () => setState(
+                              () => _obscurePassword = !_obscurePassword,
                             ),
-                            if (!keyboardOpen) ...[
+                            onToggleConfirm: () => setState(
+                              () => _obscureConfirm = !_obscureConfirm,
+                            ),
+                            onHandleSignup: _handleSignup,
+                            onGoogleSignIn: _handleGoogleSignIn,
+                            onAppleSignIn: _handleAppleSignIn,
+                            buildField: _buildField,
+                          ),
+                        ),
+                        if (!keyboardOpen) ...[
+                          SizedBox(height: socialCompact ? 6 : 12),
                               Padding(
                                 padding: EdgeInsets.fromLTRB(
                                   0,
@@ -332,9 +330,8 @@ class _SignupScreenState extends State<SignupScreen>
                                 ),
                               ),
                             ],
-                          ],
-                        ),
-                      ),
+                        ],
+                      ],
                     ),
                   ),
                 ),
@@ -350,6 +347,7 @@ class _SignupScreenState extends State<SignupScreen>
 class _SignupContent extends StatelessWidget {
   final bool compact;
   final bool keyboardOpen;
+  final bool shortHeight;
   final AuthProvider authProvider;
   final GlobalKey<FormState> formKey;
   final TextEditingController firstNameController;
@@ -379,6 +377,7 @@ class _SignupContent extends StatelessWidget {
   const _SignupContent({
     required this.compact,
     required this.keyboardOpen,
+    required this.shortHeight,
     required this.authProvider,
     required this.formKey,
     required this.firstNameController,
@@ -397,18 +396,20 @@ class _SignupContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dense = compact || shortHeight;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const _BrandRow(),
-        SizedBox(height: keyboardOpen ? (compact ? 8 : 10) : (compact ? 12 : 16)),
+        _BrandRow(compact: dense),
+        SizedBox(height: keyboardOpen ? (dense ? 6 : 10) : (dense ? 8 : 16)),
         Container(
           constraints: const BoxConstraints(maxWidth: 420),
           padding: EdgeInsets.fromLTRB(
-            compact ? 16 : 18,
-            compact ? 16 : 18,
-            compact ? 16 : 18,
-            compact ? 24 : 28,
+            dense ? 14 : 18,
+            dense ? 14 : 18,
+            dense ? 14 : 18,
+            dense ? 18 : 28,
           ),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.06),
@@ -433,7 +434,7 @@ class _SignupContent extends StatelessWidget {
                 Text(
                   'Fungua Akaunti',
                   style: GoogleFonts.montserrat(
-                    fontSize: compact ? 22 : 24,
+                    fontSize: dense ? 20 : 24,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
                     height: 1.02,
@@ -443,41 +444,41 @@ class _SignupContent extends StatelessWidget {
                 Text(
                   'Jenga akaunti yako na uanze safari yako ya kujifunza na kukuza biashara.',
                   style: GoogleFonts.montserrat(
-                    fontSize: compact ? 12.5 : 13.5,
+                    fontSize: dense ? 12 : 13.5,
                     color: Colors.white.withValues(alpha: 0.72),
                     height: 1.35,
                   ),
                 ),
-                SizedBox(height: compact ? 12 : 16),
+                SizedBox(height: dense ? 10 : 16),
                 buildField(
                   label: 'Jina la Kwanza',
                   hint: 'Jina lako',
                   icon: Icons.person_outline,
                   controller: firstNameController,
-                  compact: compact,
+                  compact: dense,
                   validator: (v) => v!.isEmpty ? 'Weka jina lako' : null,
                   onChanged: (_) => context.read<AuthProvider>().clearError(),
                 ),
-                SizedBox(height: compact ? 10 : 12),
+                SizedBox(height: dense ? 8 : 12),
                 buildField(
                   label: 'Barua Pepe',
                   hint: 'jina@mfano.com',
                   icon: Icons.email_outlined,
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  compact: compact,
+                  compact: dense,
                   validator: (v) =>
                       v!.isEmpty || !v.contains('@') ? 'Barua pepe si sahihi' : null,
                   onChanged: (_) => context.read<AuthProvider>().clearError(),
                 ),
-                SizedBox(height: compact ? 10 : 12),
+                SizedBox(height: dense ? 8 : 12),
                 buildField(
                   label: 'Neno la Siri',
                   hint: 'Herufi 8 au zaidi',
                   icon: Icons.lock_outline,
                   controller: passwordController,
                   obscureText: obscurePassword,
-                  compact: compact,
+                  compact: dense,
                   suffixIcon: IconButton(
                     icon: Icon(
                       obscurePassword
@@ -492,14 +493,14 @@ class _SignupContent extends StatelessWidget {
                       v!.length < 8 ? 'Neno la siri lazima liwe na herufi 8+' : null,
                   onChanged: (_) => context.read<AuthProvider>().clearError(),
                 ),
-                SizedBox(height: compact ? 10 : 12),
+                SizedBox(height: dense ? 8 : 12),
                 buildField(
                   label: 'Thibitisha Neno la Siri',
                   hint: 'Rudia neno la siri',
                   icon: Icons.lock_outline,
                   controller: confirmController,
                   obscureText: obscureConfirm,
-                  compact: compact,
+                  compact: dense,
                   suffixIcon: IconButton(
                     icon: Icon(
                       obscureConfirm
@@ -535,12 +536,12 @@ class _SignupContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                 ],
-                SizedBox(height: compact ? 8 : 10),
+                SizedBox(height: dense ? 6 : 10),
                 SizedBox(
                   width: double.infinity,
                   child: GradientButton(
                     text: 'Jisajili',
-                    height: compact ? 48 : 52,
+                    height: dense ? 46 : 52,
                     isLoading: authProvider.isLoading,
                     onTap: onHandleSignup,
                   ),
@@ -555,7 +556,9 @@ class _SignupContent extends StatelessWidget {
 }
 
 class _BrandRow extends StatelessWidget {
-  const _BrandRow();
+  final bool compact;
+
+  const _BrandRow({required this.compact});
 
   @override
   Widget build(BuildContext context) {
@@ -564,8 +567,8 @@ class _BrandRow extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 88,
-            height: 88,
+            width: compact ? 76 : 88,
+            height: compact ? 76 : 88,
             decoration: const BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
@@ -592,7 +595,7 @@ class _BrandRow extends StatelessWidget {
           Text(
             'Karakana',
             style: GoogleFonts.poppins(
-              fontSize: 32,
+              fontSize: compact ? 28 : 32,
               fontWeight: FontWeight.w700,
               color: Colors.white,
             ),
