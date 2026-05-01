@@ -649,15 +649,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
-                                colors: [Color(0xFFE87722), Color(0xFFFFA726)],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
+                                colors: [Color(0xFF1A0A00), Color(0xFF3D1800), Color(0xFF7B3A10)],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                               ),
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(24),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFF3D1800).withValues(alpha: 0.18),
+                                  blurRadius: 18,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.school, color: Colors.white, size: 24),
+                                Container(
+                                  width: 56,
+                                  height: 56,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: const Icon(Icons.school, color: Colors.white, size: 28),
+                                ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
@@ -675,7 +690,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         'Fundisha na upate kipato',
                                         style: GoogleFonts.montserrat(
                                           fontSize: 12,
-                                          color: Colors.white.withValues(alpha: 0.8),
+                                          color: Colors.white.withValues(alpha: 0.82),
                                         ),
                                       ),
                                     ],

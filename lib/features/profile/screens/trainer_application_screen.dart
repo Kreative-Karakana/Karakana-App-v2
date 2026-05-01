@@ -1,9 +1,9 @@
-﻿import 'dart:io';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
@@ -88,12 +88,22 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
   Future<void> _pickCV() async {
     setState(() => _isPickingFile = true);
     try {
-      final picker = ImagePicker();
-      final result = await picker.pickImage(source: ImageSource.gallery);
-      if (result != null) {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: const ['pdf'],
+        allowMultiple: false,
+      );
+      final picked = result?.files.single;
+      if (picked != null && picked.path != null) {
+        final fileName = picked.name.toLowerCase();
+        if (!fileName.endsWith('.pdf')) {
+          if (!mounted) return;
+          showTopPopup(context, 'Tafadhali pakia faili la PDF pekee.');
+          return;
+        }
         setState(() {
-          _cvFile = File(result.path);
-          _cvFileName = result.name;
+          _cvFile = File(picked.path!);
+          _cvFileName = picked.name;
         });
       }
     } catch (e) {
@@ -282,7 +292,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Pakia CV yako au portfolio ili tuweze kukutathmini vizuri zaidi.',
+                            'Pakia CV yako kwa PDF ili tuweze kukutathmini vizuri zaidi.',
                             style: GoogleFonts.inter(
                               fontSize: 12,
                               color: AppColors.textTertiary,
@@ -362,7 +372,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                         Text(
                                           _cvFile != null
                                               ? 'Bonyeza kubadilisha faili'
-                                              : 'PDF, Word, au picha (max 5MB)',
+                                              : 'PDF pekee (max 5MB)',
                                           style: GoogleFonts.inter(
                                             fontSize: 11,
                                             color: AppColors.textTertiary,
@@ -594,3 +604,4 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
     );
   }
 }
+
