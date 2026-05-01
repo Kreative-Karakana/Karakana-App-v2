@@ -152,9 +152,7 @@ class _SignupScreenState extends State<SignupScreen>
                     children: [
                       Expanded(
                         child: SingleChildScrollView(
-                          physics: keyboardOpen
-                              ? const ClampingScrollPhysics()
-                              : const NeverScrollableScrollPhysics(),
+                          physics: const ClampingScrollPhysics(),
                           child: Padding(
                             padding: EdgeInsets.fromLTRB(
                               22,
