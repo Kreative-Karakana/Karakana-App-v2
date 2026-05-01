@@ -341,34 +341,41 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                             Expanded(
                                               child: Text(
                                                 'Hukupokea msimbo?',
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
+                                                softWrap: true,
                                                 style: GoogleFonts.montserrat(
                                                   fontSize: compact ? 13 : 14,
                                                   color: Colors.white.withValues(alpha: 0.74),
+                                                  height: 1.2,
                                                 ),
                                               ),
                                             ),
                                             const SizedBox(width: 10),
-                                            Container(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: compact ? 14 : 16,
-                                                vertical: compact ? 5 : 6,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                gradient: const LinearGradient(
-                                                  colors: [AppColors.primary, Color(0xFFE07A2F)],
-                                                  begin: Alignment.topLeft,
-                                                  end: Alignment.bottomRight,
-                                                ),
-                                                borderRadius: BorderRadius.circular(50),
-                                              ),
-                                              child: Text(
-                                                'Tuma tena',
-                                                style: GoogleFonts.montserrat(
-                                                  fontSize: compact ? 12.5 : 13.5,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Colors.white,
+                                            Flexible(
+                                              child: FittedBox(
+                                                fit: BoxFit.scaleDown,
+                                                alignment: Alignment.centerRight,
+                                                child: Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: compact ? 12 : 14,
+                                                    vertical: compact ? 5 : 6,
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    gradient: const LinearGradient(
+                                                      colors: [AppColors.primary, Color(0xFFE07A2F)],
+                                                      begin: Alignment.topLeft,
+                                                      end: Alignment.bottomRight,
+                                                    ),
+                                                    borderRadius: BorderRadius.circular(50),
+                                                  ),
+                                                  child: Text(
+                                                    'Tuma tena',
+                                                    style: GoogleFonts.montserrat(
+                                                      fontSize: compact ? 12 : 13,
+                                                      fontWeight: FontWeight.w700,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                             ),
