@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -72,7 +73,9 @@ class AuthProvider extends ChangeNotifier {
     final hasToken = await SecureStorage().hasToken();
     if (hasToken) {
       _roles = await SecureStorage().loadRoles();
-      await getCurrentUser();
+      // Trust local session immediately for fast startup; refresh profile in background.
+      _isAuthenticated = true;
+      unawaited(getCurrentUser());
     }
     notifyListeners();
   }

@@ -23,12 +23,6 @@ Future<void> main() async {
 
   FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
 
-  await FirebaseMessaging.instance.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-
   final authProvider = AuthProvider();
   await authProvider.initialize();
 
@@ -54,6 +48,12 @@ class _KarakanaAppState extends State<KarakanaApp> {
 
   Future<void> _initFCM() async {
     final messaging = FirebaseMessaging.instance;
+    // Request permission after first frame so app startup is not blocked.
+    await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
 
     final token = await messaging.getToken();
     if (token != null) {

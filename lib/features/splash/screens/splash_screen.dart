@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _animController.forward();
 
-    Future.delayed(const Duration(seconds: 2), _navigate);
+    Future.delayed(const Duration(milliseconds: 1200), _navigate);
   }
 
   void _navigate() {
