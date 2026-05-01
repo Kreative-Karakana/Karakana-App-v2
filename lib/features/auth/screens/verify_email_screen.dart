@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/buttons/gradient_button.dart';
-import '../../../widgets/common/app_logo.dart';
 import '../../../widgets/common/terms_dialog.dart';
 import '../providers/auth_provider.dart';
 
@@ -163,20 +162,44 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () => context.go('/signup'),
-                            icon: const Icon(
-                              Icons.arrow_back_ios_new_rounded,
-                              color: Colors.white,
+                      const SizedBox(height: 28),
+                      Center(
+                        child: Container(
+                          width: 88,
+                          height: 88,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Image.asset(
+                              'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, __, ___) => Center(
+                                child: Text(
+                                  'K',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                          const Spacer(),
-                        ],
+                        ),
                       ),
-                      const _BrandRow(),
-                      const Spacer(),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Karakana',
+                        style: GoogleFonts.poppins(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                       Container(
                         constraints: const BoxConstraints(maxWidth: 420),
                         padding: EdgeInsets.all(compact ? 18 : 22),
@@ -298,34 +321,86 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                         strokeWidth: 2,
                                       ),
                                     )
-                                  : Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          'Hukupokea msimbo? ',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: compact ? 12 : 12.5,
-                                            color: Colors.white.withValues(alpha: 0.45),
+                                  : GestureDetector(
+                                      onTap: _handleResend,
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: compact ? 20 : 24,
+                                          vertical: compact ? 12 : 14,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withValues(alpha: 0.05),
+                                          borderRadius: BorderRadius.circular(50),
+                                          border: Border.all(
+                                            color: Colors.white.withValues(alpha: 0.10),
                                           ),
                                         ),
-                                        GestureDetector(
-                                          onTap: _handleResend,
-                                          child: Text(
-                                            'Tuma tena',
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: compact ? 12 : 12.5,
-                                              fontWeight: FontWeight.w700,
-                                              color: AppColors.primaryMid,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              'Hukupokea msimbo?',
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: compact ? 13 : 14,
+                                                color: Colors.white.withValues(alpha: 0.74),
+                                              ),
                                             ),
-                                          ),
+                                            const SizedBox(width: 10),
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: compact ? 14 : 16,
+                                                vertical: compact ? 5 : 6,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                gradient: const LinearGradient(
+                                                  colors: [AppColors.primary, Color(0xFFE07A2F)],
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                ),
+                                                borderRadius: BorderRadius.circular(50),
+                                              ),
+                                              child: Text(
+                                                'Tuma tena',
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: compact ? 12.5 : 13.5,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
+                                      ),
                                     ),
+                            ),
+                            const SizedBox(height: 8),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: TextButton.icon(
+                                onPressed: () => context.go('/signup'),
+                                icon: const Icon(
+                                  Icons.arrow_back_ios_new_rounded,
+                                  size: 16,
+                                  color: AppColors.primaryMid,
+                                ),
+                                label: Text(
+                                  'Rudi kujisajili',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: compact ? 12 : 12.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.primaryMid,
+                                  ),
+                                ),
+                                style: TextButton.styleFrom(
+                                  visualDensity: VisualDensity.compact,
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      const Spacer(),
                     ],
                   ),
                 ),
@@ -333,31 +408,6 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
             ],
           );
         },
-      ),
-    );
-  }
-}
-
-class _BrandRow extends StatelessWidget {
-  const _BrandRow();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const AppLogo(size: 60, showBackground: false),
-          const SizedBox(width: 12),
-          Text(
-            'Karakana',
-            style: GoogleFonts.montserrat(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-        ],
       ),
     );
   }

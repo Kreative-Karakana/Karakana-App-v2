@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../widgets/buttons/gradient_button.dart';
-import '../../../widgets/common/app_logo.dart';
 import '../providers/auth_provider.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -93,221 +92,282 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.primaryDark,
+      resizeToAvoidBottomInset: false,
       body: LayoutBuilder(
         builder: (context, constraints) {
           final compact = constraints.maxHeight < 760;
+          final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
 
           return Stack(
             children: [
               const _AuthBackground(),
               SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    22,
-                    compact ? 14 : 24,
-                    22,
-                    compact ? 10 : 16,
+                child: AnimatedPadding(
+                  duration: const Duration(milliseconds: 180),
+                  curve: Curves.easeOut,
+                  padding: EdgeInsets.only(
+                    bottom: keyboardOpen ? MediaQuery.viewInsetsOf(context).bottom : 0,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () => context.go('/login'),
-                            icon: const Icon(
-                              Icons.arrow_back_ios_new_rounded,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const Spacer(),
-                        ],
-                      ),
-                      const _BrandRow(),
-                      const Spacer(),
-                      Container(
-                        constraints: const BoxConstraints(maxWidth: 420),
-                        padding: EdgeInsets.all(compact ? 18 : 22),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.06),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.08),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.18),
-                              blurRadius: 28,
-                              offset: const Offset(0, 16),
-                            ),
-                          ],
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      22,
+                      compact ? 14 : 24,
+                      22,
+                      compact ? 10 : 16,
+                    ),
+                    child: SingleChildScrollView(
+                      physics: keyboardOpen
+                          ? const ClampingScrollPhysics()
+                          : const NeverScrollableScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight - (compact ? 24 : 40),
                         ),
-                        child: !_emailSent
-                            ? Form(
-                                key: _formKey,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Badili Neno la Siri',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: compact ? 27 : 31,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.white,
-                                        height: 1.02,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'Weka barua pepe yako na tutakutumia kiungo cha kurejesha akaunti yako.',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: compact ? 12.5 : 13.5,
-                                        color: AppColors.primaryMid,
-                                        height: 1.35,
-                                      ),
-                                    ),
-                                    SizedBox(height: compact ? 18 : 22),
-                                    _buildEmailField(compact),
-                                    if (authProvider.errorMessage != null) ...[
-                                      const SizedBox(height: 10),
-                                      Container(
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.errorLight
-                                              .withValues(alpha: 0.12),
-                                          borderRadius:
-                                              BorderRadius.circular(14),
-                                          border: Border.all(
-                                            color: Colors.red.shade300
-                                                .withValues(alpha: 0.22),
-                                          ),
-                                        ),
-                                        child: Text(
-                                          authProvider.errorMessage!,
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 12.5,
-                                            color: Colors.red.shade200,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                    SizedBox(height: compact ? 14 : 18),
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: GradientButton(
-                                        text: 'Tuma Kiungo',
-                                        height: compact ? 50 : 56,
-                                        isLoading: authProvider.isLoading,
-                                        onTap: _handleSend,
-                                      ),
-                                    ),
-                                  ],
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(height: 28),
+                            Center(
+                              child: Container(
+                                width: 88,
+                                height: 88,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
                                 ),
-                              )
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Barua Pepe Imetumwa',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: compact ? 27 : 31,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                      height: 1.02,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Angalia kisanduku chako cha barua pepe na ufuate maelekezo ya kubadili neno la siri.',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: compact ? 12.5 : 13.5,
-                                      color: AppColors.primaryMid,
-                                      height: 1.35,
-                                    ),
-                                  ),
-                                  SizedBox(height: compact ? 18 : 22),
-                                  Container(
-                                    width: double.infinity,
-                                    padding: EdgeInsets.all(compact ? 16 : 18),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.success.withValues(
-                                        alpha: 0.14,
-                                      ),
-                                      borderRadius: BorderRadius.circular(22),
-                                      border: Border.all(
-                                        color: AppColors.success.withValues(
-                                          alpha: 0.24,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Image.asset(
+                                    'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (_, __, ___) => Center(
+                                      child: Text(
+                                        'K',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.primary,
                                         ),
                                       ),
                                     ),
-                                    child: Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.mark_email_read_rounded,
-                                          color: AppColors.success,
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Text(
-                                            'Kiungo cha kurejesha kimepelekwa kwenye barua pepe yako.',
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'Karakana',
+                              style: GoogleFonts.poppins(
+                                fontSize: 32,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            Container(
+                              constraints: const BoxConstraints(maxWidth: 420),
+                              padding: EdgeInsets.all(compact ? 18 : 22),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.06),
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.08),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.18),
+                                    blurRadius: 28,
+                                    offset: const Offset(0, 16),
+                                  ),
+                                ],
+                              ),
+                              child: !_emailSent
+                                  ? Form(
+                                      key: _formKey,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'Umesahau Neno la Siri?',
                                             style: GoogleFonts.montserrat(
-                                              fontSize: compact ? 12 : 13,
+                                              fontSize: compact ? 22 : 24,
+                                              fontWeight: FontWeight.w700,
                                               color: Colors.white,
+                                              height: 1.02,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            'Weka barua pepe yako ili upokee kiungo cha kurejesha akaunti yako.',
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: compact ? 12.5 : 13.5,
+                                              color: Colors.white.withValues(alpha: 0.72),
                                               height: 1.35,
                                             ),
+                                          ),
+                                          SizedBox(height: compact ? 18 : 22),
+                                          Container(
+                                            padding: EdgeInsets.all(compact ? 14 : 16),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withValues(alpha: 0.04),
+                                              borderRadius: BorderRadius.circular(20),
+                                              border: Border.all(
+                                                color: Colors.white.withValues(alpha: 0.08),
+                                              ),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'Badili neno la siri',
+                                                  style: GoogleFonts.montserrat(
+                                                    fontSize: compact ? 16 : 17,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                SizedBox(height: compact ? 12 : 14),
+                                                _buildEmailField(compact),
+                                                if (authProvider.errorMessage != null) ...[
+                                                  const SizedBox(height: 10),
+                                                  Container(
+                                                    width: double.infinity,
+                                                    padding: const EdgeInsets.all(12),
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors.errorLight
+                                                          .withValues(alpha: 0.12),
+                                                      borderRadius: BorderRadius.circular(14),
+                                                      border: Border.all(
+                                                        color: Colors.red.shade300
+                                                            .withValues(alpha: 0.22),
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      authProvider.errorMessage!,
+                                                      style: GoogleFonts.montserrat(
+                                                        fontSize: 12.5,
+                                                        color: Colors.red.shade200,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                                SizedBox(height: compact ? 14 : 18),
+                                                SizedBox(
+                                                  width: double.infinity,
+                                                  child: GradientButton(
+                                                    text: 'Tuma Kiungo',
+                                                    height: compact ? 50 : 56,
+                                                    isLoading: authProvider.isLoading,
+                                                    onTap: _handleSend,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: TextButton.icon(
+                                              onPressed: () => context.go('/login'),
+                                              icon: const Icon(
+                                                Icons.arrow_back_ios_new_rounded,
+                                                size: 16,
+                                                color: AppColors.primaryMid,
+                                              ),
+                                              label: Text(
+                                                'Rudi kuingia',
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: compact ? 12 : 12.5,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: AppColors.primaryMid,
+                                                ),
+                                              ),
+                                              style: TextButton.styleFrom(
+                                                visualDensity: VisualDensity.compact,
+                                                tapTargetSize:
+                                                    MaterialTapTargetSize.shrinkWrap,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          'Barua Pepe Imetumwa',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: compact ? 27 : 31,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white,
+                                            height: 1.02,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Angalia kisanduku chako cha barua pepe na ufuate maelekezo ya kubadili neno la siri.',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: compact ? 12.5 : 13.5,
+                                            color: AppColors.primaryMid,
+                                            height: 1.35,
+                                          ),
+                                        ),
+                                        SizedBox(height: compact ? 18 : 22),
+                                        Container(
+                                          width: double.infinity,
+                                          padding: EdgeInsets.all(compact ? 16 : 18),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.success.withValues(alpha: 0.14),
+                                            borderRadius: BorderRadius.circular(22),
+                                            border: Border.all(
+                                              color: AppColors.success.withValues(alpha: 0.24),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.mark_email_read_rounded,
+                                                color: AppColors.success,
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Text(
+                                                  'Kiungo cha kurejesha kimepelekwa kwenye barua pepe yako.',
+                                                  style: GoogleFonts.montserrat(
+                                                    fontSize: compact ? 12 : 13,
+                                                    color: Colors.white,
+                                                    height: 1.35,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: compact ? 16 : 18),
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: GradientButton(
+                                            text: 'Rudi Kuingia',
+                                            height: compact ? 50 : 56,
+                                            onTap: () => context.go('/login'),
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  SizedBox(height: compact ? 16 : 18),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: GradientButton(
-                                      text: 'Rudi Kuingia',
-                                      height: compact ? 50 : 56,
-                                      onTap: () => context.go('/login'),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const Spacer(),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ],
           );
         },
-      ),
-    );
-  }
-}
-
-class _BrandRow extends StatelessWidget {
-  const _BrandRow();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const AppLogo(size: 60, showBackground: false),
-          const SizedBox(width: 12),
-          Text(
-            'Karakana',
-            style: GoogleFonts.montserrat(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
-        ],
       ),
     );
   }
