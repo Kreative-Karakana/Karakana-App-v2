@@ -324,6 +324,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                   : GestureDetector(
                                       onTap: _handleResend,
                                       child: Container(
+                                        width: double.infinity,
                                         padding: EdgeInsets.symmetric(
                                           horizontal: compact ? 20 : 24,
                                           vertical: compact ? 12 : 14,
@@ -336,13 +337,16 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                           ),
                                         ),
                                         child: Row(
-                                          mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Text(
-                                              'Hukupokea msimbo?',
-                                              style: GoogleFonts.montserrat(
-                                                fontSize: compact ? 13 : 14,
-                                                color: Colors.white.withValues(alpha: 0.74),
+                                            Expanded(
+                                              child: Text(
+                                                'Hukupokea msimbo?',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: compact ? 13 : 14,
+                                                  color: Colors.white.withValues(alpha: 0.74),
+                                                ),
                                               ),
                                             ),
                                             const SizedBox(width: 10),
