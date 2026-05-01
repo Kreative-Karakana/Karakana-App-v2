@@ -4,6 +4,7 @@ import '../constants/app_constants.dart';
 
 class SecureStorage {
   static final SecureStorage _instance = SecureStorage._internal();
+  static const String _biometricTokenKey = 'biometric_token';
   factory SecureStorage() => _instance;
   SecureStorage._internal();
 
@@ -86,11 +87,39 @@ class SecureStorage {
   Future<void> setBiometricEnabled(bool enabled) async {
     final prefs = await _prefs;
     await prefs.setBool(AppConstants.biometricKey, enabled);
+    if (!enabled) {
+      await clearBiometricToken();
+    }
   }
 
   Future<bool> isBiometricEnabled() async {
     final prefs = await _prefs;
     return prefs.getBool(AppConstants.biometricKey) ?? false;
+  }
+
+  Future<void> saveBiometricToken(String token) async {
+    try {
+      await _storage.write(key: _biometricTokenKey, value: token);
+    } catch (_) {}
+  }
+
+  Future<String?> getBiometricToken() async {
+    try {
+      return await _storage.read(key: _biometricTokenKey);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<bool> hasBiometricToken() async {
+    final token = await getBiometricToken();
+    return token != null && token.isNotEmpty;
+  }
+
+  Future<void> clearBiometricToken() async {
+    try {
+      await _storage.delete(key: _biometricTokenKey);
+    } catch (_) {}
   }
 
   Future<bool?> getAmbassadorCodeState() async {
@@ -143,12 +172,12 @@ class SecureStorage {
   Future<void> clearAll() async {
     final prefs = await _prefs;
     try {
-      await _storage.deleteAll();
+      await _storage.delete(key: AppConstants.tokenKey);
+      await _storage.delete(key: 'terms_accepted');
     } catch (_) {
       await _recoverStorage();
     }
     await prefs.remove(AppConstants.onboardingKey);
-    await prefs.remove(AppConstants.biometricKey);
     await prefs.remove(AppConstants.userIdKey);
     await prefs.remove(AppConstants.ambassadorCodeKey);
     await prefs.remove(AppConstants.mastercardDoneKey);

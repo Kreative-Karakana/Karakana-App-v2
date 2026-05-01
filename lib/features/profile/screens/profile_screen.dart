@@ -108,6 +108,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
 
       await SecureStorage().setBiometricEnabled(next);
+      if (next) {
+        final token = await SecureStorage().getToken();
+        if (token != null && token.isNotEmpty) {
+          await SecureStorage().saveBiometricToken(token);
+        }
+      } else {
+        await SecureStorage().clearBiometricToken();
+      }
       if (!mounted) return;
       setState(() => _biometricEnabled = next);
       showTopPopup(

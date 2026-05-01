@@ -31,7 +31,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
 
   Future<void> _prepareAndAuthenticate() async {
     final enabled = await SecureStorage().isBiometricEnabled();
-    final hasSession = await SecureStorage().hasToken();
+    final hasSession = await SecureStorage().hasBiometricToken();
     final supported = await _localAuth.isDeviceSupported();
     final enrolled = await _localAuth.canCheckBiometrics;
     final biometrics = (supported && enrolled)
@@ -80,8 +80,14 @@ class _BiometricScreenState extends State<BiometricScreen> {
       );
       if (success && mounted) {
         final auth = context.read<AuthProvider>();
-        if (!auth.isAuthenticated) {
-          await auth.getCurrentUser();
+        final loggedIn = await auth.loginWithBiometricSession();
+        if (!loggedIn) {
+          setState(() {
+            _isAuthenticating = false;
+            _failed = true;
+            _statusMessage = 'Kikao cha biometric kimeisha. Ingia kwa nywila kisha washa tena biometric.';
+          });
+          return;
         }
         if (!mounted) return;
         context.go(auth.homeRoute);

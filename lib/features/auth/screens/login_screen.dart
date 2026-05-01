@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen>
       }
       final biometrics = await _localAuth.getAvailableBiometrics();
       final enabled = await SecureStorage().isBiometricEnabled();
-      final hasSession = await SecureStorage().hasToken();
+      final hasSession = await SecureStorage().hasBiometricToken();
       final hasFaceId = biometrics.contains(BiometricType.face);
       final hasFingerprint = biometrics.contains(BiometricType.fingerprint) ||
           biometrics.contains(BiometricType.strong) ||
@@ -210,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen>
     }
 
     if (!state.hasSession) {
-      _showTopErrorPopup('Ingia kwa nywila kwanza ili kutumia biometric.');
+      _showTopErrorPopup('Washa biometric kwanza ndani ya akaunti yako.');
       return;
     }
 

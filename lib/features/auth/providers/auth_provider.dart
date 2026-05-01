@@ -101,6 +101,9 @@ class AuthProvider extends ChangeNotifier {
       final token = response.data['token'] ?? response.data['key'];
       if (token != null) {
         await SecureStorage().saveToken(token.toString());
+        if (await SecureStorage().isBiometricEnabled()) {
+          await SecureStorage().saveBiometricToken(token.toString());
+        }
         _roles = _extractRoles(response.data);
         debugPrint('[AUTH] Signin roles: $_roles');
         if (_roles != null) await SecureStorage().saveRoles(_roles!);
@@ -178,6 +181,9 @@ class AuthProvider extends ChangeNotifier {
       final token = response.data['token'] ?? response.data['key'];
       if (token != null) {
         await SecureStorage().saveToken(token.toString());
+        if (await SecureStorage().isBiometricEnabled()) {
+          await SecureStorage().saveBiometricToken(token.toString());
+        }
         _roles = _extractRoles(response.data);
         if (_roles != null) await SecureStorage().saveRoles(_roles!);
         await getCurrentUser();
@@ -347,6 +353,9 @@ class AuthProvider extends ChangeNotifier {
     final token = data['token'] ?? data['key'];
     if (token != null) {
       await SecureStorage().saveToken(token.toString());
+      if (await SecureStorage().isBiometricEnabled()) {
+        await SecureStorage().saveBiometricToken(token.toString());
+      }
       _roles = _extractRoles(data);
       if (_roles != null) await SecureStorage().saveRoles(_roles!);
       await getCurrentUser();
@@ -375,6 +384,19 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       if (kDebugMode) debugPrint('[AuthProvider] getCurrentUser error: $e');
       _isAuthenticated = false;
+    }
+  }
+
+  Future<bool> loginWithBiometricSession() async {
+    try {
+      final token = await SecureStorage().getBiometricToken();
+      if (token == null || token.isEmpty) return false;
+      await SecureStorage().saveToken(token);
+      await getCurrentUser();
+      notifyListeners();
+      return _isAuthenticated;
+    } catch (_) {
+      return false;
     }
   }
 }
