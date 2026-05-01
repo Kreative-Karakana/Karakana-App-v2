@@ -23,7 +23,6 @@ class _LoginScreenState extends State<LoginScreen>
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _obscurePassword = true;
   OverlayEntry? _errorOverlayEntry;
-  late Future<_BiometricState> _biometricStateFuture = _getBiometricState();
 
   @override
   bool get wantKeepAlive => true;
@@ -517,7 +516,7 @@ class _LoginScreenState extends State<LoginScreen>
                                   ),
                                   SizedBox(height: compact ? 14 : 16),
                                   FutureBuilder<_BiometricState>(
-                                    future: _biometricStateFuture,
+                                    future: _getBiometricState(),
                                     builder: (context, snapshot) {
                                       final state = snapshot.data ?? const _BiometricState();
                                       final hasFaceId = state.hasFaceId;

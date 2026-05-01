@@ -107,6 +107,7 @@ class AppRouter {
           AppRoutes.signup,
           AppRoutes.verifyEmail,
           AppRoutes.forgotPassword,
+          AppRoutes.biometric,
         ];
         const publicRoutes = [
           AppRoutes.zana,
