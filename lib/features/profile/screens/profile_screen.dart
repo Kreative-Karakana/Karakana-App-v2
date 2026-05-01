@@ -144,30 +144,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       );
-    } on LocalAuthException catch (e) {
-      final msg = switch (e.code) {
-        LocalAuthExceptionCode.notEnrolled =>
-          'Hakuna Face ID/alama ya kidole iliyosajiliwa kwenye kifaa.',
-        LocalAuthExceptionCode.biometricLockout ||
-        LocalAuthExceptionCode.temporaryLockout =>
-          'Biometric imefungwa kwa muda. Tumia nywila ya kifaa kisha ujaribu tena.',
-        LocalAuthExceptionCode.noBiometricHardware =>
-          'Kifaa hiki hakina uwezo wa biometric.',
-        _ => 'Imeshindikana kuthibitisha biometric. Jaribu tena.',
-      };
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(msg, style: GoogleFonts.montserrat(color: Colors.white)),
-          ),
-        );
+    } on PlatformException catch (e) {
+      final code = e.code.toLowerCase();
+      String msg;
+      if (code.contains('notenrolled') ||
+          code.contains('passcodenotenrolled') ||
+          code.contains('not_available')) {
+        msg = 'Hakuna Face ID/alama ya kidole iliyosajiliwa kwenye kifaa.';
+      } else if (code.contains('lockedout') || code.contains('permanentlylockedout')) {
+        msg = 'Biometric imefungwa kwa muda. Tumia nywila ya kifaa kisha ujaribu tena.';
+      } else if (code.contains('no_biometric_hardware') || code.contains('notavailable')) {
+        msg = 'Kifaa hiki hakina uwezo wa biometric.';
+      } else {
+        msg = 'Biometric haijapatikana kwa sasa kwenye kifaa hiki.';
       }
-    } on PlatformException {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Biometric haijapatikana kwa sasa kwenye kifaa hiki.',
+              msg,
               style: GoogleFonts.montserrat(color: Colors.white),
             ),
           ),
