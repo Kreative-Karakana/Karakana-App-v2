@@ -10,14 +10,16 @@ import '../../zana/screens/zana_screen.dart';
 import 'home_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final int initialIndex;
+
+  const MainScreen({super.key, this.initialIndex = 0});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _currentIndex = 0;
+  late int _currentIndex;
 
   // MUST match navbar order exactly:
   // 0=Nyumbani  1=Tafuta  2=Zana  3=Fursa  4=Akaunti
@@ -28,6 +30,14 @@ class _MainScreenState extends State<MainScreen> {
     FursaScreen(),   // 3
     ProfileScreen(), // 4
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex < 0
+        ? 0
+        : (widget.initialIndex > 4 ? 4 : widget.initialIndex);
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -182,7 +182,7 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.explore,
-          builder: (context, state) => _placeholder('Explore'),
+          builder: (context, state) => const MainScreen(initialIndex: 1),
         ),
         GoRoute(
           path: AppRoutes.zana,
