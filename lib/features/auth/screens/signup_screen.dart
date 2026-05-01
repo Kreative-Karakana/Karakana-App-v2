@@ -117,7 +117,7 @@ class _SignupScreenState extends State<SignupScreen>
         ),
         contentPadding: EdgeInsets.symmetric(
           horizontal: 16,
-          vertical: compact ? 14 : 16,
+          vertical: compact ? 11 : 16,
         ),
       ),
     );
@@ -433,7 +433,7 @@ class _SignupContent extends StatelessWidget {
                 Text(
                   'Fungua Akaunti',
                   style: GoogleFonts.montserrat(
-                    fontSize: dense ? 20 : 24,
+                    fontSize: dense ? 18 : 24,
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
                     height: 1.02,
@@ -443,12 +443,12 @@ class _SignupContent extends StatelessWidget {
                 Text(
                   'Jenga akaunti yako na uanze safari yako ya kujifunza na kukuza biashara.',
                   style: GoogleFonts.montserrat(
-                    fontSize: dense ? 12 : 13.5,
+                    fontSize: dense ? 11.5 : 13.5,
                     color: Colors.white.withValues(alpha: 0.72),
                     height: 1.35,
                   ),
                 ),
-                SizedBox(height: dense ? 10 : 16),
+                SizedBox(height: dense ? 8 : 16),
                 buildField(
                   label: 'Jina la Kwanza',
                   hint: 'Jina lako',
@@ -458,7 +458,7 @@ class _SignupContent extends StatelessWidget {
                   validator: (v) => v!.isEmpty ? 'Weka jina lako' : null,
                   onChanged: (_) => context.read<AuthProvider>().clearError(),
                 ),
-                SizedBox(height: dense ? 8 : 12),
+                SizedBox(height: dense ? 6 : 12),
                 buildField(
                   label: 'Barua Pepe',
                   hint: 'jina@mfano.com',
@@ -470,7 +470,7 @@ class _SignupContent extends StatelessWidget {
                       v!.isEmpty || !v.contains('@') ? 'Barua pepe si sahihi' : null,
                   onChanged: (_) => context.read<AuthProvider>().clearError(),
                 ),
-                SizedBox(height: dense ? 8 : 12),
+                SizedBox(height: dense ? 6 : 12),
                 buildField(
                   label: 'Neno la Siri',
                   hint: 'Herufi 8 au zaidi',
@@ -492,7 +492,7 @@ class _SignupContent extends StatelessWidget {
                       v!.length < 8 ? 'Neno la siri lazima liwe na herufi 8+' : null,
                   onChanged: (_) => context.read<AuthProvider>().clearError(),
                 ),
-                SizedBox(height: dense ? 8 : 12),
+                SizedBox(height: dense ? 6 : 12),
                 buildField(
                   label: 'Thibitisha Neno la Siri',
                   hint: 'Rudia neno la siri',
@@ -535,12 +535,12 @@ class _SignupContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                 ],
-                SizedBox(height: dense ? 6 : 10),
+                SizedBox(height: dense ? 4 : 10),
                 SizedBox(
                   width: double.infinity,
                   child: GradientButton(
                     text: 'Jisajili',
-                    height: dense ? 46 : 52,
+                    height: dense ? 42 : 52,
                     isLoading: authProvider.isLoading,
                     onTap: onHandleSignup,
                   ),
@@ -566,8 +566,8 @@ class _BrandRow extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: compact ? 76 : 88,
-            height: compact ? 76 : 88,
+            width: compact ? 68 : 88,
+            height: compact ? 68 : 88,
             decoration: const BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
@@ -594,7 +594,7 @@ class _BrandRow extends StatelessWidget {
           Text(
             'Karakana',
             style: GoogleFonts.poppins(
-              fontSize: compact ? 28 : 32,
+              fontSize: compact ? 24 : 32,
               fontWeight: FontWeight.w700,
               color: Colors.white,
             ),
