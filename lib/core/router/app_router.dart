@@ -93,6 +93,34 @@ Widget _placeholder(String routeName) {
 }
 
 class AppRouter {
+  static CustomTransitionPage<void> _buildAuthTransitionPage({
+    required GoRouterState state,
+    required Widget child,
+  }) {
+    return CustomTransitionPage<void>(
+      key: state.pageKey,
+      transitionDuration: const Duration(milliseconds: 320),
+      reverseTransitionDuration: const Duration(milliseconds: 260),
+      child: child,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
+        );
+        final slide = Tween<Offset>(
+          begin: const Offset(0.06, 0),
+          end: Offset.zero,
+        ).animate(curved);
+
+        return FadeTransition(
+          opacity: curved,
+          child: SlideTransition(position: slide, child: child),
+        );
+      },
+    );
+  }
+
   static GoRouter createRouter(AuthProvider authProvider) {
     return GoRouter(
       initialLocation: AppRoutes.splash,
@@ -156,19 +184,31 @@ class AppRouter {
         // ── Auth ────────────────────────────────────────────────
         GoRoute(
           path: AppRoutes.login,
-          builder: (context, state) => const LoginScreen(),
+          pageBuilder: (context, state) => _buildAuthTransitionPage(
+            state: state,
+            child: const LoginScreen(),
+          ),
         ),
         GoRoute(
           path: AppRoutes.signup,
-          builder: (context, state) => const SignupScreen(),
+          pageBuilder: (context, state) => _buildAuthTransitionPage(
+            state: state,
+            child: const SignupScreen(),
+          ),
         ),
         GoRoute(
           path: AppRoutes.verifyEmail,
-          builder: (context, state) => const VerifyEmailScreen(),
+          pageBuilder: (context, state) => _buildAuthTransitionPage(
+            state: state,
+            child: const VerifyEmailScreen(),
+          ),
         ),
         GoRoute(
           path: AppRoutes.forgotPassword,
-          builder: (context, state) => const ForgotPasswordScreen(),
+          pageBuilder: (context, state) => _buildAuthTransitionPage(
+            state: state,
+            child: const ForgotPasswordScreen(),
+          ),
         ),
         GoRoute(
           path: AppRoutes.biometric,
