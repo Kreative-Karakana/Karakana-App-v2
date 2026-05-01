@@ -57,7 +57,15 @@ class _SignupScreenState extends State<SignupScreen>
   Future<void> _handleGoogleSignIn() async {
     final auth = context.read<AuthProvider>();
     final success = await auth.loginWithGoogle();
-    if (success && mounted) context.go('/home');
+    if (success && mounted) {
+      context.go(auth.homeRoute);
+    } else if (mounted) {
+      showTopPopup(
+        context,
+        auth.errorMessage ??
+            'Imeshindikana kuingia kwa Google. Tafadhali jaribu tena.',
+      );
+    }
   }
 
   Future<void> _handleAppleSignIn() async {

@@ -260,21 +260,17 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      String? clientId;
-      if (!kIsWeb) {
-        if (Platform.isIOS) {
-          clientId =
-              '466490006316-a26dq3aarir4jl9971u7j440hsegllv8.apps.googleusercontent.com';
-        } else if (Platform.isAndroid) {
-          clientId =
-              '466490006316-7rt3volsjbjhu76og8hr9kroeimqlpel.apps.googleusercontent.com';
-        }
-      }
+      const iosClientId =
+          '466490006316-a26dq3aarir4jl9971u7j440hsegllv8.apps.googleusercontent.com';
+      const webServerClientId =
+          '466490006316-0rl5eeqm70rsmg90eq2gc7n3725u4jjn.apps.googleusercontent.com';
 
       final googleSignIn = GoogleSignIn(
-        clientId: clientId,
-        scopes: ['email'],
+        clientId: (!kIsWeb && Platform.isIOS) ? iosClientId : null,
+        serverClientId: webServerClientId,
+        scopes: ['email', 'profile'],
       );
+      await googleSignIn.signOut();
       final account = await googleSignIn.signIn();
       if (account == null) {
         // User cancelled
@@ -294,7 +290,7 @@ class AuthProvider extends ChangeNotifier {
       return await _handleOAuthResponse(response.data);
     } catch (e) {
       if (kDebugMode) debugPrint('[AuthProvider] loginWithGoogle error: $e');
-      _errorMessage = 'Tatizo la kuingia kwa Google. Jaribu tena.';
+      _errorMessage = 'Imeshindikana kuingia kwa Google. Jaribu tena.';
       _isLoading = false;
       notifyListeners();
       return false;

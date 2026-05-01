@@ -176,6 +176,11 @@ class _LoginScreenState extends State<LoginScreen>
     final success = await auth.loginWithGoogle();
     if (success && mounted) {
       context.go(auth.homeRoute);
+    } else if (mounted) {
+      _showTopErrorPopup(
+        auth.errorMessage ??
+            'Imeshindikana kuingia kwa Google. Tafadhali jaribu tena.',
+      );
     }
   }
 
