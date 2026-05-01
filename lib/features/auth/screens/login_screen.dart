@@ -23,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen>
   final _formKey = GlobalKey<FormState>();
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _obscurePassword = true;
+  OverlayEntry? _errorOverlayEntry;
   late final Future<List<BiometricType>> _biometricTypesFuture =
       _getAvailableBiometrics();
 
@@ -31,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   void dispose() {
+    _removeErrorOverlay();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -71,14 +73,103 @@ class _LoginScreenState extends State<LoginScreen>
       }
       if (mounted) context.go(auth.homeRoute);
     } else if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            auth.errorMessage ?? 'Imeshindikana kuingia. Tafadhali jaribu tena.',
-          ),
-        ),
+      _showTopErrorPopup(
+        auth.errorMessage ?? 'Imeshindikana kuingia. Tafadhali jaribu tena.',
       );
     }
+  }
+
+  void _removeErrorOverlay() {
+    _errorOverlayEntry?.remove();
+    _errorOverlayEntry = null;
+  }
+
+  void _showTopErrorPopup(String message) {
+    _removeErrorOverlay();
+    final overlay = Overlay.of(context);
+    _errorOverlayEntry = OverlayEntry(
+      builder: (context) => IgnorePointer(
+        child: SafeArea(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
+              child: Material(
+                color: Colors.transparent,
+                child: TweenAnimationBuilder<double>(
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.easeOutCubic,
+                  tween: Tween(begin: 0, end: 1),
+                  builder: (context, value, child) {
+                    return Opacity(
+                      opacity: value,
+                      child: Transform.translate(
+                        offset: Offset(0, -16 * (1 - value)),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Container(
+                    constraints: const BoxConstraints(maxWidth: 520),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF5A2118), Color(0xFF7A2D1F)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.red.shade300.withValues(alpha: 0.35),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.28),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.warning_amber_rounded,
+                          size: 20,
+                          color: Colors.red.shade200,
+                        ),
+                        const SizedBox(width: 10),
+                        Flexible(
+                          child: Text(
+                            message,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              height: 1.3,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(_errorOverlayEntry!);
+    Future.delayed(const Duration(milliseconds: 2600), () {
+      if (!mounted) return;
+      _removeErrorOverlay();
+    });
   }
 
   Future<void> _handleGoogleSignIn() async {
