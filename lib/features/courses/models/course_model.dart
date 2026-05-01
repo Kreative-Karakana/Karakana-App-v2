@@ -37,6 +37,7 @@ class CourseModel {
   bool isEnrolled;
   bool isWishlisted;
   final List<String> categories;
+  final List<CourseFaqModel> faqs;
 
   CourseModel({
     required this.id,
@@ -57,6 +58,7 @@ class CourseModel {
     required this.isEnrolled,
     required this.isWishlisted,
     required this.categories,
+    required this.faqs,
   });
 
   factory CourseModel.fromJson(Map<String, dynamic> json) {
@@ -80,6 +82,16 @@ class CourseModel {
       }).where((s) => s.isNotEmpty).toList();
     }
 
+    final rawFaqs = json['faqs'];
+    List<CourseFaqModel> faqs = [];
+    if (rawFaqs is List) {
+      faqs = rawFaqs
+          .whereType<Map>()
+          .map((f) => CourseFaqModel.fromJson(Map<String, dynamic>.from(f)))
+          .where((f) => f.question.isNotEmpty || f.answer.isNotEmpty)
+          .toList();
+    }
+
     return CourseModel(
       id: json['id'] ?? 0,
       title: json['title'] ?? '',
@@ -99,6 +111,7 @@ class CourseModel {
       isEnrolled: json['is_enrolled'] ?? false,
       isWishlisted: json['is_in_wishlist'] ?? false,
       categories: categories,
+      faqs: faqs,
     );
   }
 
@@ -118,6 +131,7 @@ class CourseModel {
         'cover_photo': coverPhoto,
         'is_enrolled': isEnrolled,
         'is_in_wishlist': isWishlisted,
+        'faqs': faqs.map((f) => f.toJson()).toList(),
       };
 
   bool get isFree => price == 0;
@@ -143,6 +157,29 @@ class CourseModel {
         return level.isNotEmpty ? level : 'All Levels';
     }
   }
+}
+
+class CourseFaqModel {
+  final String question;
+  final String answer;
+
+  CourseFaqModel({required this.question, required this.answer});
+
+  factory CourseFaqModel.fromJson(Map<String, dynamic> json) {
+    final answerRaw = json['answer'];
+    final answer = answerRaw is Map
+        ? (answerRaw['delta']?.toString() ?? answerRaw.toString())
+        : (answerRaw?.toString() ?? '');
+    return CourseFaqModel(
+      question: json['question']?.toString() ?? '',
+      answer: answer,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'question': question,
+        'answer': answer,
+      };
 }
 
 class BannerModel {

@@ -262,6 +262,20 @@ class CourseProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool?> toggleWishlistSafe(int courseId) async {
+    try {
+      final isWishlisted = await _service.toggleWishlist(courseId);
+      _updateInAllLists(courseId, (c) => c.isWishlisted = isWishlisted);
+      if (_selectedCourse?.id == courseId) {
+        _selectedCourse!.isWishlisted = isWishlisted;
+      }
+      notifyListeners();
+      return isWishlisted;
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<bool> toggleLessonProgress(int lessonId) async {
     try {
       final isRead = await _service.toggleLessonProgress(lessonId);

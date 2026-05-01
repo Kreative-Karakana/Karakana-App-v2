@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../widgets/common/top_popup.dart';
 import '../models/course_model.dart';
 import '../providers/course_provider.dart';
 
@@ -23,6 +25,7 @@ class CourseDetailScreen extends StatefulWidget {
 
 class _CourseDetailScreenState extends State<CourseDetailScreen> {
   bool _isEnrolling = false;
+  bool _wishlistBusy = false;
 
   @override
   void initState() {
@@ -133,18 +136,44 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
-                      icon: Icon(
-                        course.isWishlisted
-                            ? Icons.bookmark
-                            : Icons.bookmark_border,
-                        color: course.isWishlisted
-                            ? const Color(0xFFE87722)
-                            : Colors.white,
-                        size: 22,
+                      icon: const Icon(
+                        Icons.share_outlined,
+                        color: Colors.white,
+                        size: 20,
                       ),
-                      onPressed: () =>
-                          context.read<CourseProvider>().toggleWishlist(course.id),
+                      onPressed: () => _shareCourse(course),
                     ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.3),
+                      shape: BoxShape.circle,
+                    ),
+                    child: _wishlistBusy
+                        ? const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        : IconButton(
+                            icon: Icon(
+                              course.isWishlisted
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_border,
+                              color: course.isWishlisted
+                                  ? const Color(0xFFE87722)
+                                  : Colors.white,
+                              size: 22,
+                            ),
+                            onPressed: () => _toggleWishlist(course, provider),
+                          ),
                   ),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
@@ -390,6 +419,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           height: 1.6,
                         ),
                       ),
+                      const SizedBox(height: 24),
+                      _buildFaqSection(course.faqs, isDark),
                     ],
                   ),
                 ),
@@ -938,5 +969,106 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     final parsed = DateTime.tryParse(raw);
     if (parsed == null) return raw;
     return DateFormat('dd MMM yyyy').format(parsed);
+  }
+
+  Future<void> _toggleWishlist(CourseModel course, CourseProvider provider) async {
+    if (_wishlistBusy) return;
+    final previous = course.isWishlisted;
+    setState(() {
+      _wishlistBusy = true;
+      course.isWishlisted = !previous;
+    });
+
+    final result = await provider.toggleWishlistSafe(course.id);
+    if (!mounted) return;
+    if (result == null) {
+      setState(() => course.isWishlisted = previous);
+      showTopPopup(context, 'Hitilafu. Jaribu tena.');
+    } else {
+      setState(() => course.isWishlisted = result);
+    }
+    setState(() => _wishlistBusy = false);
+  }
+
+  void _shareCourse(CourseModel course) {
+    Share.share(
+      'Angalia kozi hii kwenye Karakana:\n${course.title}\n${course.excerpt}',
+      subject: course.title,
+    );
+  }
+
+  Widget _buildFaqSection(List<CourseFaqModel> faqs, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Maswali Yanayoulizwa Mara kwa Mara (FAQ)',
+          style: GoogleFonts.montserrat(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF3D1800),
+          ),
+        ),
+        const SizedBox(height: 10),
+        if (faqs.isEmpty)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isDark ? Colors.white12 : const Color(0xFFE8D5C8),
+              ),
+            ),
+            child: Text(
+              'Hakuna maswali ya FAQ kwa sasa.',
+              style: GoogleFonts.montserrat(
+                fontSize: 13,
+                color: const Color(0xFF5C3D2E),
+              ),
+            ),
+          )
+        else
+          ...faqs.map(
+            (faq) => Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isDark ? Colors.white12 : const Color(0xFFE8D5C8),
+                ),
+              ),
+              child: ExpansionTile(
+                tilePadding: const EdgeInsets.symmetric(horizontal: 14),
+                iconColor: const Color(0xFFE87722),
+                collapsedIconColor: const Color(0xFF9E8070),
+                title: Text(
+                  faq.question,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF3D1800),
+                  ),
+                ),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+                    child: Text(
+                      faq.answer,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13,
+                        color: const Color(0xFF5C3D2E),
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
   }
 }
