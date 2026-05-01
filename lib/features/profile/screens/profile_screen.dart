@@ -89,13 +89,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() => _biometricBusy = true);
     try {
       if (next) {
+        final supported = await _localAuth.isDeviceSupported();
+        final enrolled = await _localAuth.canCheckBiometrics;
+        final availableTypes = (supported && enrolled)
+            ? await _localAuth.getAvailableBiometrics()
+            : const <BiometricType>[];
+        if (!supported || !enrolled || availableTypes.isEmpty) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Tafadhali sanidi Face ID/alama ya kidole kwenye kifaa kwanza.',
+                  style: GoogleFonts.montserrat(color: Colors.white),
+                ),
+              ),
+            );
+          }
+          return;
+        }
+
         final verified = await _localAuth.authenticate(
           localizedReason: 'Thibitisha utambulisho kuwasha $_biometricLabel',
           options: const AuthenticationOptions(
             biometricOnly: true,
             stickyAuth: true,
             useErrorDialogs: true,
-            sensitiveTransaction: true,
           ),
         );
         if (!verified) {
@@ -126,6 +144,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       );
+    } on LocalAuthException catch (e) {
+      final msg = switch (e.code) {
+        LocalAuthExceptionCode.notEnrolled =>
+          'Hakuna Face ID/alama ya kidole iliyosajiliwa kwenye kifaa.',
+        LocalAuthExceptionCode.biometricLockout ||
+        LocalAuthExceptionCode.temporaryLockout =>
+          'Biometric imefungwa kwa muda. Tumia nywila ya kifaa kisha ujaribu tena.',
+        LocalAuthExceptionCode.noBiometricHardware =>
+          'Kifaa hiki hakina uwezo wa biometric.',
+        _ => 'Imeshindikana kuthibitisha biometric. Jaribu tena.',
+      };
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(msg, style: GoogleFonts.montserrat(color: Colors.white)),
+          ),
+        );
+      }
+    } on PlatformException {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Biometric haijapatikana kwa sasa kwenye kifaa hiki.',
+              style: GoogleFonts.montserrat(color: Colors.white),
+            ),
+          ),
+        );
+      }
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
