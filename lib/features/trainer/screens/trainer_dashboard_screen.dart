@@ -27,7 +27,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   List _courses = [];
   bool _isLoading = true;
   bool _balanceVisible = false;
-  bool _isCourseGridView = false;
   bool _showCoursesBackToTop = false;
   // ignore: unused_field
   Map _wallet = {};
@@ -823,82 +822,84 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     children: [
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () => context.push('/trainer/course-builder'),
-                                icon: const Icon(Icons.add_circle_outline, size: 18),
-                                label: Text(
-                                  'Ongeza Kozi',
-                                  style: GoogleFonts.montserrat(
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFE87722),
-                                  foregroundColor: Colors.white,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14),
-                                  ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFE87722), Color(0xFFB85A16)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFFE87722).withValues(alpha: 0.28),
+                                blurRadius: 18,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(16),
+                              onTap: () => context.push('/trainer/course-builder'),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 34,
+                                      height: 34,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(alpha: 0.18),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: const Icon(Icons.add_rounded, color: Colors.white, size: 22),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Ongeza Kozi',
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w800,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Unda kozi mpya kwa wanafunzi wako',
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.white.withValues(alpha: 0.9),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Icon(Icons.arrow_forward_rounded, color: Colors.white, size: 20),
+                                  ],
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 10),
-                            SegmentedButton<bool>(
-                              segments: const [
-                                ButtonSegment<bool>(
-                                  value: false,
-                                  icon: Icon(Icons.view_stream_outlined, size: 18),
-                                  label: Text('Orodha'),
-                                ),
-                                ButtonSegment<bool>(
-                                  value: true,
-                                  icon: Icon(Icons.grid_view_rounded, size: 18),
-                                  label: Text('Gridi'),
-                                ),
-                              ],
-                              selected: {_isCourseGridView},
-                              onSelectionChanged: (selection) {
-                                setState(() => _isCourseGridView = selection.first);
-                              },
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                       Expanded(
-                        child: _isCourseGridView
-                            ? GridView.builder(
-                                controller: _coursesScrollController,
-                                padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  mainAxisSpacing: 12,
-                                  crossAxisSpacing: 12,
-                                  childAspectRatio: 0.78,
-                                ),
-                                itemCount: _courses.length,
-                                itemBuilder: (_, i) => _buildCourseCard(
-                                  _courses[i] as Map,
-                                  surfaceColor,
-                                  textPrimary,
-                                  textSecondary,
-                                  compact: true,
-                                ),
-                              )
-                            : ListView.builder(
-                                controller: _coursesScrollController,
-                                padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
-                                itemCount: _courses.length,
-                                itemBuilder: (_, i) => _buildCourseCard(
-                                  _courses[i] as Map,
-                                  surfaceColor,
-                                  textPrimary,
-                                  textSecondary,
-                                ),
-                              ),
+                        child: ListView.builder(
+                          controller: _coursesScrollController,
+                          padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
+                          itemCount: _courses.length,
+                          itemBuilder: (_, i) => _buildCourseCard(
+                            _courses[i] as Map,
+                            surfaceColor,
+                            textPrimary,
+                            textSecondary,
+                          ),
+                        ),
                       ),
                     ],
                   ),
