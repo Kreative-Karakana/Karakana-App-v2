@@ -277,8 +277,6 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         course.description.trim().isNotEmpty
                             ? course.description.trim()
                             : course.excerpt.trim(),
-                        maxLines: 4,
-                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.montserrat(
                           fontSize: 13,
                           height: 1.45,
