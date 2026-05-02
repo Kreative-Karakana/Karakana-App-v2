@@ -938,10 +938,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     const SizedBox(height: 10),
 
                     // ── ACTION BUTTONS ROW ──
-                    Row(children: [
-                      Flexible(
-                        fit: FlexFit.loose,
-                        child: GestureDetector(
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        GestureDetector(
                           onTap: () => _showPublishConfirm(course),
                           child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
@@ -967,35 +968,31 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                         : const Color(0xFFE87722)),
                                 const SizedBox(width: 5),
                                 Text(
-                                    isPublished ? 'Imechapishwa' : 'Chapisha',
-                                    style: GoogleFonts.montserrat(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                        color: isPublished
-                                            ? const Color(0xFF3D1800)
-                                            : const Color(0xFFE87722)),
-                                    overflow: TextOverflow.ellipsis),
-                              ]))),
-                      ),
-
-                      const Spacer(),
-
-                      _buildSmallAction('Masomo', Icons.video_library_outlined,
-                          () => context.push('/trainer/course/$courseId/sections',
-                              extra: {'title': title})),
-                      const SizedBox(width: 6),
-                      _buildSmallAction('Majaribio', Icons.quiz_outlined,
-                          () => context.push('/trainer/quiz/$courseId')),
-                      const SizedBox(width: 6),
-                      _buildSmallAction('Tathmini', Icons.rate_review_outlined,
-                          () => context.push('/course/$courseId/reviews')),
-                      const SizedBox(width: 6),
-                      _buildSmallAction(
-                          'Hariri',
-                          Icons.edit_outlined,
-                          () => context.push(
-                              '/trainer/course-builder?courseId=$courseId')),
-                    ]),
+                                  isPublished ? 'Imechapishwa' : 'Chapisha',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: isPublished
+                                        ? const Color(0xFF3D1800)
+                                        : const Color(0xFFE87722),
+                                  ),
+                                ),
+                              ])),
+                        ),
+                        _buildSmallAction('Masomo', Icons.video_library_outlined,
+                            () => context.push('/trainer/course/$courseId/sections',
+                                extra: {'title': title})),
+                        _buildSmallAction('Majaribio', Icons.quiz_outlined,
+                            () => context.push('/trainer/quiz/$courseId')),
+                        _buildSmallAction('Tathmini', Icons.rate_review_outlined,
+                            () => context.push('/course/$courseId/reviews')),
+                        _buildSmallAction(
+                            'Hariri',
+                            Icons.edit_outlined,
+                            () => context.push(
+                                '/trainer/course-builder?courseId=$courseId')),
+                      ],
+                    ),
                   ])),
         ]));
   }
