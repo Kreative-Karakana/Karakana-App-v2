@@ -63,7 +63,6 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
     final optionControllers =
         List.generate(4, (_) => TextEditingController());
     int selectedCorrect = 0;
-    bool disposed = false;
 
     showModalBottomSheet<void>(
       context: context,
@@ -73,16 +72,17 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (_) => StatefulBuilder(
-        builder: (ctx, setModalState) => Padding(
-          padding: EdgeInsets.fromLTRB(
-            20,
-            20,
-            20,
-            MediaQuery.of(context).viewInsets.bottom + 20,
+        builder: (ctx, setModalState) => AnimatedPadding(
+          duration: const Duration(milliseconds: 120),
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(ctx).viewInsets.bottom,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
               Container(
                 width: 40,
                 height: 4,
@@ -163,11 +163,17 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
+                    if (questionController.text.trim().isEmpty ||
+                        optionControllers.any((c) => c.text.trim().isEmpty)) {
+                      showTopPopup(context, 'Jaza swali na majibu yote manne.');
+                      return;
+                    }
                     setState(() {
                       _questions.add({
-                        'question': questionController.text,
-                        'options':
-                            optionControllers.map((controller) => controller.text).toList(),
+                        'question': questionController.text.trim(),
+                        'options': optionControllers
+                            .map((controller) => controller.text.trim())
+                            .toList(),
                         'correct': selectedCorrect,
                       });
                     });
@@ -187,19 +193,13 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                   ),
                 ),
               ),
-            ],
+                ],
+              ),
+            ),
           ),
         ),
       ),
-    ).whenComplete(() {
-      if (!disposed) {
-        questionController.dispose();
-        for (final controller in optionControllers) {
-          controller.dispose();
-        }
-        disposed = true;
-      }
-    });
+    );
   }
 
   @override
