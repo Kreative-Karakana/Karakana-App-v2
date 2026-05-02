@@ -20,7 +20,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  static const double _expandedHeight = 152;
+  static const double _expandedHeight = 120;
   final ScrollController _scroll = ScrollController();
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _biometricEnabled = false;
