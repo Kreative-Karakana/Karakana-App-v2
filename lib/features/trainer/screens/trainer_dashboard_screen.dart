@@ -23,9 +23,12 @@ class TrainerDashboardScreen extends StatefulWidget {
 class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
+  final ScrollController _coursesScrollController = ScrollController();
   List _courses = [];
   bool _isLoading = true;
   bool _balanceVisible = false;
+  bool _isCourseGridView = false;
+  bool _showCoursesBackToTop = false;
   // ignore: unused_field
   Map _wallet = {};
   Map _stats = {
@@ -46,11 +49,18 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     _tabController.addListener(() {
       if (mounted && !_tabController.indexIsChanging) setState(() {});
     });
+    _coursesScrollController.addListener(() {
+      final show = _coursesScrollController.offset > 420;
+      if (show != _showCoursesBackToTop && mounted) {
+        setState(() => _showCoursesBackToTop = show);
+      }
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadAll());
   }
 
   @override
   void dispose() {
+    _coursesScrollController.dispose();
     _tabController.dispose();
     super.dispose();
   }
@@ -234,11 +244,52 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   String _formatPrice(dynamic p) {
     try {
       final v = double.parse(p.toString());
-      if (v >= 1000000) return 'TZS ${(v / 1000000).toStringAsFixed(1)}M';
-      if (v >= 1000) return 'TZS ${(v / 1000).toStringAsFixed(0)}K';
-      return 'TZS ${v.toStringAsFixed(0)}';
+      return NumberFormat('#,###').format(v);
     } catch (_) {
       return 'TZS $p';
+    }
+  }
+
+  Future<void> _deleteCourse(Map course) async {
+    final id = course['id'];
+    final title = course['title']?.toString() ?? 'Kozi';
+    final shouldDelete = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Futa Kozi?',
+          style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
+        ),
+        content: Text(
+          'Una uhakika unataka kufuta "$title"? Hii haiwezi kurejeshwa.',
+          style: GoogleFonts.montserrat(fontSize: 13, height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Hapana', style: GoogleFonts.montserrat()),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFB71C1C),
+              foregroundColor: Colors.white,
+            ),
+            child: Text('Ndiyo, Futa', style: GoogleFonts.montserrat()),
+          ),
+        ],
+      ),
+    );
+    if (shouldDelete != true) return;
+    try {
+      await ApiClient().dio.delete('/api/v1/courses/$id/');
+      if (!mounted) return;
+      showTopPopup(context, 'Kozi imefutwa kikamilifu.', isError: false);
+      _loadAll();
+    } catch (_) {
+      if (!mounted) return;
+      showTopPopup(context, 'Imeshindikana kufuta kozi. Jaribu tena.');
     }
   }
 
@@ -766,11 +817,109 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 'Huna kozi bado.\nAnza kuunda kozi yako ya kwanza!',
                 Icons.school_outlined,
                 surfaceColor)
-            : ListView.builder(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
-                itemCount: _courses.length,
-                itemBuilder: (_, i) => _buildCourseCard(
-                    _courses[i] as Map, surfaceColor, textPrimary, textSecondary)));
+            : Stack(
+                children: [
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () => context.push('/trainer/course-builder'),
+                                icon: const Icon(Icons.add_circle_outline, size: 18),
+                                label: Text(
+                                  'Ongeza Kozi',
+                                  style: GoogleFonts.montserrat(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFE87722),
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            SegmentedButton<bool>(
+                              segments: const [
+                                ButtonSegment<bool>(
+                                  value: false,
+                                  icon: Icon(Icons.view_stream_outlined, size: 18),
+                                  label: Text('Orodha'),
+                                ),
+                                ButtonSegment<bool>(
+                                  value: true,
+                                  icon: Icon(Icons.grid_view_rounded, size: 18),
+                                  label: Text('Gridi'),
+                                ),
+                              ],
+                              selected: {_isCourseGridView},
+                              onSelectionChanged: (selection) {
+                                setState(() => _isCourseGridView = selection.first);
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: _isCourseGridView
+                            ? GridView.builder(
+                                controller: _coursesScrollController,
+                                padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 12,
+                                  crossAxisSpacing: 12,
+                                  childAspectRatio: 0.78,
+                                ),
+                                itemCount: _courses.length,
+                                itemBuilder: (_, i) => _buildCourseCard(
+                                  _courses[i] as Map,
+                                  surfaceColor,
+                                  textPrimary,
+                                  textSecondary,
+                                  compact: true,
+                                ),
+                              )
+                            : ListView.builder(
+                                controller: _coursesScrollController,
+                                padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
+                                itemCount: _courses.length,
+                                itemBuilder: (_, i) => _buildCourseCard(
+                                  _courses[i] as Map,
+                                  surfaceColor,
+                                  textPrimary,
+                                  textSecondary,
+                                ),
+                              ),
+                      ),
+                    ],
+                  ),
+                  if (_showCoursesBackToTop)
+                    Positioned(
+                      right: 20,
+                      bottom: 100,
+                      child: FloatingActionButton.small(
+                        heroTag: 'coursesBackToTop',
+                        backgroundColor: const Color(0xFFE87722),
+                        foregroundColor: Colors.white,
+                        onPressed: () => _coursesScrollController.animateTo(
+                          0,
+                          duration: const Duration(milliseconds: 350),
+                          curve: Curves.easeOutCubic,
+                        ),
+                        child: const Icon(Icons.keyboard_arrow_up_rounded),
+                      ),
+                    ),
+                ],
+              ));
   }
 
   String _computeRevenue(Map course) {
@@ -785,7 +934,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   }
 
   Widget _buildCourseCard(Map course, Color surfaceColor, Color textPrimary,
-      Color textSecondary) {
+      Color textSecondary, {bool compact = false}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isPublished = course['status'] == 'published';
     final title = course['title'] as String? ?? '';
@@ -795,7 +944,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final price = course['price'];
     final courseId = course['id'] as int? ?? 0;
 
-    return Container(
+    return GestureDetector(
+      onTap: () => context.push('/trainer/course/$courseId/sections', extra: {'title': title}),
+      child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
             color: surfaceColor,
@@ -816,23 +967,23 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 thumbnail != null && thumbnail.isNotEmpty
                     ? CachedNetworkImage(
                         imageUrl: thumbnail,
-                        height: 130,
+                        height: compact ? 110 : 130,
                         width: double.infinity,
                         fit: BoxFit.cover,
                         placeholder: (_, __) => Container(
-                            height: 130,
+                            height: compact ? 110 : 130,
                             color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                             child: const Center(
                                 child: CircularProgressIndicator(
                                     strokeWidth: 2,
                                     color: Color(0xFFE87722)))),
                         errorWidget: (_, __, ___) => Container(
-                            height: 130,
+                            height: compact ? 110 : 130,
                             color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                             child: const Icon(Icons.school_outlined,
                                 color: Color(0xFFE87722), size: 44)))
                     : Container(
-                        height: 130,
+                        height: compact ? 110 : 130,
                         color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                         child: const Center(
                             child: Icon(Icons.school_outlined,
@@ -871,7 +1022,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           const SizedBox(width: 5),
                           Text(isPublished ? 'Imechapishwa' : 'Rasimu',
                               style: GoogleFonts.montserrat(
-                                  fontSize: 9,
+                              fontSize: compact ? 8 : 9,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white)),
                         ]))),
@@ -912,7 +1063,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                               fontWeight: FontWeight.w500,
                               color: const Color(0xFF7B3A10))),
                       const Spacer(),
-                      Text(_formatPrice(price),
+                      Text('TZS ${_formatPrice(price)}',
                           style: GoogleFonts.montserrat(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
@@ -968,7 +1119,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                         : const Color(0xFFE87722)),
                                 const SizedBox(width: 5),
                                 Text(
-                                  isPublished ? 'Imechapishwa' : 'Chapisha',
+                                  isPublished ? 'Imechapishwa' : 'Chapisha Sasa',
                                   style: GoogleFonts.montserrat(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w700,
@@ -979,7 +1130,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                 ),
                               ])),
                         ),
-                        _buildSmallAction('Masomo', Icons.video_library_outlined,
+                        _buildSmallAction('Ongeza Somo', Icons.post_add_rounded,
                             () => context.push('/trainer/course/$courseId/sections',
                                 extra: {'title': title})),
                         _buildSmallAction('Majaribio', Icons.quiz_outlined,
@@ -991,29 +1142,44 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                             Icons.edit_outlined,
                             () => context.push(
                                 '/trainer/course-builder?courseId=$courseId')),
+                        _buildSmallAction(
+                            'Futa',
+                            Icons.delete_outline_rounded,
+                            () => _deleteCourse(course),
+                            isDanger: true),
                       ],
                     ),
                   ])),
-        ]));
+        ]),
+      ),
+    );
   }
 
-  Widget _buildSmallAction(String label, IconData icon, VoidCallback onTap) {
+  Widget _buildSmallAction(String label, IconData icon, VoidCallback onTap,
+      {bool isDanger = false}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
         onTap: onTap,
         child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
             decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
+                color: isDanger
+                    ? const Color(0xFFB71C1C).withValues(alpha: 0.08)
+                    : (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)),
+                border: Border.all(
+                  color: isDanger
+                      ? const Color(0xFFB71C1C).withValues(alpha: 0.25)
+                      : Colors.transparent,
+                ),
                 borderRadius: BorderRadius.circular(10)),
             child: Row(mainAxisSize: MainAxisSize.min, children: [
-              Icon(icon, size: 12, color: const Color(0xFF7B3A10)),
+              Icon(icon, size: 12, color: isDanger ? const Color(0xFFB71C1C) : const Color(0xFF7B3A10)),
               const SizedBox(width: 4),
               Text(label,
                   style: GoogleFonts.montserrat(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF7B3A10))),
+                      color: isDanger ? const Color(0xFFB71C1C) : const Color(0xFF7B3A10))),
             ])));
   }
 
@@ -1636,6 +1802,20 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   // ── HERO APP BAR ──────────────────────────────────────────────────────────
 
   Widget _buildHeroAppBar(bool innerBoxIsScrolled) {
+    String pageTitle;
+    switch (_tabController.index) {
+      case 1:
+        pageTitle = 'Kozi';
+        break;
+      case 2:
+        pageTitle = 'Wanafunzi';
+        break;
+      case 3:
+        pageTitle = 'Vyeti';
+        break;
+      default:
+        pageTitle = 'Muhtasari';
+    }
     return SliverAppBar(
         expandedHeight: 196,
         pinned: true,
@@ -1723,8 +1903,18 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     ),
                   )),
         ],
+        title: innerBoxIsScrolled
+            ? Text(
+                pageTitle,
+                style: GoogleFonts.montserrat(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              )
+            : null,
         flexibleSpace: FlexibleSpaceBar(
-            title: const SizedBox.shrink(),
+            title: null,
             background: Container(
                 decoration: const BoxDecoration(
                     gradient: LinearGradient(
