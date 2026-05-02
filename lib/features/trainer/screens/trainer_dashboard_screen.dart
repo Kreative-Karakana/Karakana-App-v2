@@ -129,6 +129,102 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     }
   }
 
+  Future<void> _openTrainerReviews() async {
+    if (_courses.isEmpty) {
+      showTopPopup(context, 'Bado huna kozi za kuonyesha tathmini.');
+      return;
+    }
+    if (_courses.length == 1) {
+      final courseId = (_courses.first as Map)['id'] as int? ?? 0;
+      if (courseId > 0) {
+        context.push('/course/$courseId/reviews');
+      }
+      return;
+    }
+
+    final selectedCourseId = await showModalBottomSheet<int>(
+      context: context,
+      backgroundColor: Theme.of(context).cardColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 10),
+            Container(
+              width: 42,
+              height: 4,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE8D5C8),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              'Chagua Kozi ya Tathmini',
+              style: GoogleFonts.montserrat(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF3D1800),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Flexible(
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: _courses.length,
+                separatorBuilder: (_, __) =>
+                    const Divider(height: 1, color: Color(0xFFF0E4DA)),
+                itemBuilder: (_, i) {
+                  final course = _courses[i] as Map;
+                  final courseId = course['id'] as int? ?? 0;
+                  final title = course['title'] as String? ?? 'Kozi';
+                  final reviews = course['review_count'] as int? ?? 0;
+                  final rating =
+                      (course['average_rating'] as num? ?? 0).toDouble();
+                  return ListTile(
+                    onTap: () => Navigator.pop(ctx, courseId),
+                    leading: const Icon(
+                      Icons.rate_review_outlined,
+                      color: Color(0xFFE87722),
+                    ),
+                    title: Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF3D1800),
+                      ),
+                    ),
+                    subtitle: Text(
+                      '$reviews tathmini • ${rating.toStringAsFixed(1)}★',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 11,
+                        color: const Color(0xFF7B3A10),
+                      ),
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: Color(0xFFE87722),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (!mounted || selectedCourseId == null || selectedCourseId <= 0) return;
+    context.push('/course/$selectedCourseId/reviews');
+  }
+
   String _formatNumber(dynamic n) {
     final num = int.tryParse(n.toString()) ?? 0;
     if (num >= 1000) return '${(num / 1000).toStringAsFixed(1)}K';
@@ -380,6 +476,58 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 _buildQuickAction(Icons.account_balance_wallet_outlined, 'Mkoba',
                     const Color(0xFF7B3A10), () => context.push('/wallet')),
               ]),
+              const SizedBox(height: 12),
+              GestureDetector(
+                onTap: _openTrainerReviews,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE87722).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(0xFFE87722).withValues(alpha: 0.25),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.rate_review_outlined,
+                        color: Color(0xFFE87722),
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Tathmini za Kozi',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF7B3A10),
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'Fungua',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFFE87722),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 12,
+                        color: Color(0xFFE87722),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
               const SizedBox(height: 28),
 

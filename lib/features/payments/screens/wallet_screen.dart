@@ -17,7 +17,7 @@ class _WalletScreenState extends State<WalletScreen> {
   Map<String, dynamic>? _wallet;
   List<dynamic> _checkouts = [];
   bool _isLoading = true;
-  bool _balanceVisible = true;
+  bool _balanceVisible = false;
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _remarkController = TextEditingController();
 
