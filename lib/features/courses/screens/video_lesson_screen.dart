@@ -53,6 +53,14 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
     } catch (_) {}
   }
 
+  String _lessonSummary() {
+    final content = (_lesson?['content'] as String? ?? '').trim();
+    if (content.isNotEmpty) {
+      return content.length > 220 ? '${content.substring(0, 220)}...' : content;
+    }
+    return 'Soma somo hili kwa makini, elewa dhana kuu, kisha kamilisha ili maendeleo ya kozi yako yasasishwe.';
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -234,6 +242,82 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                           ],
                         ),
                       ),
+                    const SizedBox(height: 16),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF8F4),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: const Color(0xFFF0E4DA)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.notes_rounded,
+                                color: Color(0xFFE87722),
+                                size: 18,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Muhtasari wa Somo',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF3D1800),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _lessonSummary(),
+                            style: GoogleFonts.montserrat(
+                              fontSize: 13,
+                              color: const Color(0xFF5C3D2E),
+                              height: 1.45,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF8F4),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: const Color(0xFFF0E4DA)),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Hatua Inayofuata',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF3D1800),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            _isCompleted
+                                ? 'Somo limekamilika. Rudi darasani uendelee na somo linalofuata.'
+                                : 'Baada ya kujifunza, bonyeza "Kamilisha Somo" ili kufungua maendeleo yako kwenye kozi.',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 13,
+                              color: const Color(0xFF5C3D2E),
+                              height: 1.45,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 32),
                   ],
                 ),
