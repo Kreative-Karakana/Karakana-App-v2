@@ -20,7 +20,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  static const double _expandedHeight = 188;
+  static const double _expandedHeight = 152;
   final ScrollController _scroll = ScrollController();
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _biometricEnabled = false;
@@ -355,7 +355,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         SafeArea(
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                            padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
