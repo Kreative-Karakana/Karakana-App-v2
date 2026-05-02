@@ -665,9 +665,10 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
             ),
             const SizedBox(height: 8),
             _dropdown<String>(
-              value: _selectedCategory,
+              value: _selectedCategory.isEmpty ? null : _selectedCategory,
               items: _categories
-                  .map((c) => DropdownMenuItem(
+                  .where((c) => c['id'] != null)
+                  .map((c) => DropdownMenuItem<String>(
                         value: c['id'].toString(),
                         child: Text(c['name'] as String? ?? '',
                             style: GoogleFonts.montserrat(fontSize: 14)),
@@ -703,9 +704,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                     ),
                     const SizedBox(height: 8),
                     _dropdown<String>(
-                      value: _selectedLevel,
+                      value: _selectedLevel.isEmpty ? null : _selectedLevel,
                       items: levels
-                          .map((l) => DropdownMenuItem(
+                          .map((l) => DropdownMenuItem<String>(
                                 value: l.$1,
                                 child: Text(l.$2,
                                     style:
@@ -1026,13 +1027,20 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   // ── Helpers ────────────────────────────────────────────────────────────────
 
   Widget _dropdown<T>({
-    required T value,
+    required T? value,
     required List<DropdownMenuItem<T>> items,
     required ValueChanged<T?> onChanged,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final dedupedItems = <DropdownMenuItem<T>>[];
+    final seenValues = <T?>{};
+    for (final item in items) {
+      if (seenValues.add(item.value)) {
+        dedupedItems.add(item);
+      }
+    }
     final safeValue =
-        items.any((item) => item.value == value) ? value : null;
+        dedupedItems.any((item) => item.value == value) ? value : null;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
@@ -1047,7 +1055,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 fontSize: 14, color: const Color(0xFF9E8070))),
         isExpanded: true,
         underline: const SizedBox(),
-        items: items,
+        items: dedupedItems,
         onChanged: onChanged,
         style: GoogleFonts.montserrat(
             fontSize: 14, color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF3D1800)),
