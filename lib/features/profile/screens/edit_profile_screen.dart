@@ -248,7 +248,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
 
     if (!mounted) return;
-    await auth.initialize();
+    await auth.getCurrentUser();
     if (!mounted) return;
     setState(() => _isSaving = false);
 
