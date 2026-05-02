@@ -20,7 +20,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  static const double _expandedHeight = 252;
+  static const double _expandedHeight = 228;
   final ScrollController _scroll = ScrollController();
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _biometricEnabled = false;
@@ -379,9 +379,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 14),
+                                const SizedBox(height: 10),
                                 Container(
-                                  padding: const EdgeInsets.all(12),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 10,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.white.withValues(alpha: 0.09),
                                     borderRadius: BorderRadius.circular(16),
@@ -393,8 +396,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: Row(
                                     children: [
                                       Container(
-                                        width: 42,
-                                        height: 42,
+                                        width: 36,
+                                        height: 36,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
                                           color:
@@ -404,41 +407,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           child: Text(
                                             initial,
                                             style: GoogleFonts.montserrat(
-                                              fontSize: 18,
+                                              fontSize: 15,
                                               fontWeight: FontWeight.w700,
                                               color: Colors.white,
                                             ),
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 10),
+                                      const SizedBox(width: 9),
                                       Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              userName,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.montserrat(
-                                                fontSize: 13.5,
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              userEmail,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.montserrat(
-                                                fontSize: 11.5,
-                                                color: Colors.white
-                                                    .withValues(alpha: 0.72),
-                                              ),
-                                            ),
-                                          ],
+                                        child: Text(
+                                          'Dhibiti wasifu, malipo, usalama na msaada',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 11.6,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white
+                                                .withValues(alpha: 0.84),
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(width: 8),
@@ -463,7 +448,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 12),
+                                const SizedBox(height: 10),
                                 Row(
                                   children: [
                                     _headerChip(Icons.person_outline, 'Wasifu'),
