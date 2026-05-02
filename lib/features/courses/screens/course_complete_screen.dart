@@ -242,7 +242,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'amekamilisha kwa mafanikio',
+                        'amekamilisha kwa mafanikio kozi ya',
                         style: GoogleFonts.montserrat(
                           fontSize: 13,
                           color: const Color(0xFF9E8070),
@@ -259,6 +259,16 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
+                      Text(
+                        'Cheti hiki kinatambua kujituma, uelewa wa kina, na uwezo wa kutumia maarifa ya kozi katika vitendo vya kazi na biashara.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 11.5,
+                          height: 1.45,
+                          color: const Color(0xFF9E8070),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
                       Text(
                         _certificate != null && _certificate!['issued_at'] != null
                             ? DateFormat('d MMMM yyyy').format(
@@ -291,7 +301,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Imeidhinishwa na Lameck Lawrence, CEO — Karakana',
+                        'Imetolewa na Kreative Karakana',
                         style: GoogleFonts.montserrat(
                           fontSize: 11,
                           color: const Color(0xFFBDA99C),

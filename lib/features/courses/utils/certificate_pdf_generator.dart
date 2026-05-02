@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class CertificatePdfGenerator {
   static Future<pw.Document> generate({
@@ -12,6 +13,9 @@ class CertificatePdfGenerator {
     required String certificateNumber,
   }) async {
     final doc = pw.Document();
+    final montserratRegular = await PdfGoogleFonts.montserratRegular();
+    final montserratBold = await PdfGoogleFonts.montserratBold();
+    final montserratItalic = await PdfGoogleFonts.montserratItalic();
 
     final logoData = await rootBundle.load(
       'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
@@ -93,15 +97,16 @@ class CertificatePdfGenerator {
                                     pw.Text(
                                       'KREATIVE KARAKANA',
                                       style: pw.TextStyle(
+                                        font: montserratBold,
                                         fontSize: 15,
-                                        fontWeight: pw.FontWeight.bold,
                                         color: darkBrown,
                                         letterSpacing: 2.5,
                                       ),
                                     ),
                                     pw.Text(
-                                      'Tanzanian Edutech Platform',
+                                      'Jukwaa la Elimu ya Ujasiriamali Tanzania',
                                       style: pw.TextStyle(
+                                        font: montserratRegular,
                                         fontSize: 9,
                                         color: orange,
                                         letterSpacing: 0.5,
@@ -112,10 +117,10 @@ class CertificatePdfGenerator {
                               ],
                             ),
                             pw.Text(
-                              'CERTIFICATE OF COMPLETION',
+                              'CHETI CHA UKAMILISHAJI',
                               style: pw.TextStyle(
+                                font: montserratBold,
                                 fontSize: 9,
-                                fontWeight: pw.FontWeight.bold,
                                 color: orange,
                                 letterSpacing: 2,
                               ),
@@ -130,26 +135,27 @@ class CertificatePdfGenerator {
                         pw.Column(
                           children: [
                             pw.Text(
-                              'This is to certify that',
+                              'Hii ni kuthibitisha kwamba',
                               style: pw.TextStyle(
+                                font: montserratItalic,
                                 fontSize: 12,
                                 color: lightGrey,
-                                fontStyle: pw.FontStyle.italic,
                               ),
                             ),
                             pw.SizedBox(height: 10),
                             pw.Text(
                               studentName,
                               style: pw.TextStyle(
+                                font: montserratBold,
                                 fontSize: 38,
-                                fontWeight: pw.FontWeight.bold,
                                 color: darkBrown,
                               ),
                             ),
                             pw.SizedBox(height: 10),
                             pw.Text(
-                              'has successfully completed the course',
+                              'amekamilisha kwa mafanikio kozi ya',
                               style: pw.TextStyle(
+                                font: montserratRegular,
                                 fontSize: 12,
                                 color: lightGrey,
                               ),
@@ -158,8 +164,8 @@ class CertificatePdfGenerator {
                             pw.Text(
                               courseTitle,
                               style: pw.TextStyle(
+                                font: montserratBold,
                                 fontSize: 22,
-                                fontWeight: pw.FontWeight.bold,
                                 color: orange,
                               ),
                               textAlign: pw.TextAlign.center,
@@ -167,8 +173,9 @@ class CertificatePdfGenerator {
                             if (excerpt.isNotEmpty) ...[
                               pw.SizedBox(height: 8),
                               pw.Text(
-                                excerpt,
+                                'Kwa cheti hiki, Karakana inatambua kujituma, uelewa wa kina, na matumizi ya maarifa haya katika mazingira halisi ya kazi na biashara.\n\n$excerpt',
                                 style: pw.TextStyle(
+                                  font: montserratRegular,
                                   fontSize: 9,
                                   color: lightGrey,
                                 ),
@@ -186,40 +193,6 @@ class CertificatePdfGenerator {
                         pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
                           children: [
-                            // CEO signature block
-                            pw.Column(
-                              crossAxisAlignment: pw.CrossAxisAlignment.center,
-                              children: [
-                                pw.Container(
-                                  width: 130,
-                                  height: 1.5,
-                                  color: darkBrown,
-                                ),
-                                pw.SizedBox(height: 5),
-                                pw.Text(
-                                  'Lameck Lawrence',
-                                  style: pw.TextStyle(
-                                    fontWeight: pw.FontWeight.bold,
-                                    fontSize: 12,
-                                    color: darkBrown,
-                                  ),
-                                ),
-                                pw.Text(
-                                  'Chief Executive Officer',
-                                  style: pw.TextStyle(
-                                    fontSize: 9,
-                                    color: lightGrey,
-                                  ),
-                                ),
-                                pw.Text(
-                                  'Kreative Karakana',
-                                  style: pw.TextStyle(
-                                    fontSize: 9,
-                                    color: orange,
-                                  ),
-                                ),
-                              ],
-                            ),
                             // Date block
                             pw.Column(
                               crossAxisAlignment: pw.CrossAxisAlignment.center,
@@ -227,15 +200,16 @@ class CertificatePdfGenerator {
                                 pw.Text(
                                   dateStr,
                                   style: pw.TextStyle(
-                                    fontWeight: pw.FontWeight.bold,
+                                    font: montserratBold,
                                     fontSize: 13,
                                     color: darkBrown,
                                   ),
                                 ),
                                 pw.SizedBox(height: 4),
                                 pw.Text(
-                                  'Date of Completion',
+                                  'Tarehe ya Ukamilishaji',
                                   style: pw.TextStyle(
+                                    font: montserratRegular,
                                     fontSize: 9,
                                     color: lightGrey,
                                   ),
@@ -249,7 +223,7 @@ class CertificatePdfGenerator {
                                 pw.Text(
                                   shortCertNum,
                                   style: pw.TextStyle(
-                                    fontWeight: pw.FontWeight.bold,
+                                    font: montserratBold,
                                     fontSize: 12,
                                     color: darkBrown,
                                     letterSpacing: 1.5,
@@ -257,8 +231,9 @@ class CertificatePdfGenerator {
                                 ),
                                 pw.SizedBox(height: 4),
                                 pw.Text(
-                                  'Certificate No.',
+                                  'Namba ya Cheti',
                                   style: pw.TextStyle(
+                                    font: montserratRegular,
                                     fontSize: 9,
                                     color: lightGrey,
                                   ),
