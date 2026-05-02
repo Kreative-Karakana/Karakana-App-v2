@@ -505,9 +505,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               // ── QUICK ACTIONS ──
               Row(children: [
-                _buildQuickAction(Icons.add_circle_outline_rounded, 'Unda Kozi',
-                    const Color(0xFFE87722),
-                    () => context.push('/trainer/course-builder')),
+                _buildQuickAction(Icons.school_outlined, 'Kozi',
+                    const Color(0xFFE87722), () => _tabController.animateTo(1)),
                 const SizedBox(width: 10),
                 _buildQuickAction(Icons.people_outline_rounded, 'Wanafunzi',
                     const Color(0xFF3D1800), () => _tabController.animateTo(2)),

@@ -64,11 +64,18 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           : (data as List? ?? const []);
       if (!mounted) return;
       setState(() {
-        _categories = rawList
+        final mapped = rawList
             .whereType<Map>()
             .map((e) => Map<String, dynamic>.from(e))
             .toList();
-        if (_categories.isNotEmpty && _selectedCategory.isEmpty) {
+        final seen = <String>{};
+        _categories = mapped.where((c) {
+          final id = c['id']?.toString();
+          if (id == null || id.isEmpty) return false;
+          return seen.add(id);
+        }).toList();
+        if (_categories.isNotEmpty &&
+            !_categories.any((c) => c['id'].toString() == _selectedCategory)) {
           _selectedCategory = _categories.first['id'].toString();
         }
       });

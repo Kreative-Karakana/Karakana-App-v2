@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dio/dio.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../widgets/common/top_popup.dart';
@@ -110,12 +111,25 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                     if (ctrl.text.trim().isEmpty) return;
                     final nav = Navigator.of(ctx);
                     try {
-                      await ApiClient().dio.post(
-                          '/api/v1/courses/${widget.courseId}/sections/',
-                          data: {
+                      try {
+                        await ApiClient().dio.post(
+                            '/api/v1/courses/${widget.courseId}/sections/',
+                            data: {
+                              'title': ctrl.text.trim(),
+                              'order': _sections.length + 1,
+                            });
+                      } on DioException catch (e) {
+                        // Some environments expose course-sections as read-only.
+                        if (e.response?.statusCode == 405) {
+                          await ApiClient().dio.post('/api/v1/sections/', data: {
+                            'course': widget.courseId,
                             'title': ctrl.text.trim(),
                             'order': _sections.length + 1,
                           });
+                        } else {
+                          rethrow;
+                        }
+                      }
                       if (!mounted) return;
                       nav.pop();
                       _loadSections();
