@@ -486,9 +486,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     if (source.trim().isEmpty) return '';
     final parsed = _tryParseDelta(source.trim());
     if (parsed != null && parsed.trim().isNotEmpty) {
-      return _normalizeText(parsed);
+      return _firstParagraph(_normalizeText(parsed));
     }
-    return _normalizeText(source.trim());
+    return _firstParagraph(_normalizeText(source.trim()));
   }
 
   String? _tryParseDelta(String value) {
@@ -524,6 +524,16 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         .where((line) => line.isNotEmpty)
         .toList();
     return lines.join('\n\n');
+  }
+
+  String _firstParagraph(String text) {
+    if (text.trim().isEmpty) return '';
+    final parts = text
+        .split(RegExp(r'\n\s*\n'))
+        .map((p) => p.trim())
+        .where((p) => p.isNotEmpty)
+        .toList();
+    return parts.isEmpty ? text.trim() : parts.first;
   }
 
 }
