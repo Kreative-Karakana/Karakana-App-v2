@@ -63,6 +63,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
     final optionControllers =
         List.generate(4, (_) => TextEditingController());
     int selectedCorrect = 0;
+    bool disposed = false;
 
     showModalBottomSheet<void>(
       context: context,
@@ -170,11 +171,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                         'correct': selectedCorrect,
                       });
                     });
-                    Navigator.pop(context);
-                    questionController.dispose();
-                    for (final controller in optionControllers) {
-                      controller.dispose();
-                    }
+                    Navigator.of(ctx).pop();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFE87722),
@@ -195,11 +192,12 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
         ),
       ),
     ).whenComplete(() {
-      if (questionController.text.isNotEmpty) {
+      if (!disposed) {
         questionController.dispose();
         for (final controller in optionControllers) {
           controller.dispose();
         }
+        disposed = true;
       }
     });
   }
