@@ -101,24 +101,25 @@ class _HomeScreenState extends State<HomeScreen> {
               slivers: [
                 SliverAppBar(
                   expandedHeight: 220,
+                  toolbarHeight: 62,
                   pinned: true,
                   automaticallyImplyLeading: false,
                   centerTitle: false,
-                  titleSpacing: 16,
+                  titleSpacing: 12,
                   backgroundColor: AppColors.primaryDark,
                   surfaceTintColor: Colors.transparent,
                   title: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        width: 40,
-                        height: 40,
+                        width: 34,
+                        height: 34,
                         decoration: const BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.all(5),
+                          padding: const EdgeInsets.all(4),
                           child: Image.asset(
                             'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
                             errorBuilder: (_, __, ___) => Center(
@@ -138,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text(
                         'Karakana',
                         style: GoogleFonts.montserrat(
-                          fontSize: 22,
+                          fontSize: 19,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
@@ -148,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   actions: [
                     Consumer<ThemeProvider>(
                       builder: (_, theme, __) => Container(
-                        margin: const EdgeInsets.only(right: 4),
+                        margin: const EdgeInsets.only(right: 3),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
@@ -159,16 +160,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ? Icons.light_mode_outlined
                                 : Icons.dark_mode_outlined,
                             color: Colors.white,
-                            size: 20,
+                            size: 19,
                           ),
                           onPressed: () => theme.toggleTheme(),
-                          padding: const EdgeInsets.all(7),
+                          padding: const EdgeInsets.all(5),
                           constraints: const BoxConstraints(),
                         ),
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(right: 4),
+                      margin: const EdgeInsets.only(right: 3),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.1),
                         shape: BoxShape.circle,
@@ -177,30 +178,30 @@ class _HomeScreenState extends State<HomeScreen> {
                         icon: const Icon(
                           Icons.notifications_outlined,
                           color: Colors.white,
-                          size: 20,
+                          size: 19,
                         ),
                         onPressed: () => context.push('/notifications'),
-                        padding: const EdgeInsets.all(7),
+                        padding: const EdgeInsets.all(5),
                         constraints: const BoxConstraints(),
                       ),
                     ),
                     GestureDetector(
                       onTap: () => context.push('/profile'),
                       child: Container(
-                        width: 36,
-                        height: 36,
-                        margin: const EdgeInsets.only(right: 16),
+                        width: 32,
+                        height: 32,
+                        margin: const EdgeInsets.only(right: 12),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.primary, width: 2),
+                          border: Border.all(color: AppColors.primary, width: 1.6),
                         ),
                         child: ClipOval(
                           child: auth.userAvatar != null
                               ? CachedNetworkImage(
                                   imageUrl: auth.userAvatar!,
                                   fit: BoxFit.cover,
-                                  width: 36,
-                                  height: 36,
+                                  width: 32,
+                                  height: 32,
                                 )
                               : Container(
                                   color: AppColors.primary,
@@ -210,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ? _getFirstName(auth)[0].toUpperCase()
                                           : 'K',
                                       style: GoogleFonts.montserrat(
-                                        fontSize: 14,
+                                        fontSize: 12.5,
                                         fontWeight: FontWeight.w700,
                                         color: Colors.white,
                                       ),

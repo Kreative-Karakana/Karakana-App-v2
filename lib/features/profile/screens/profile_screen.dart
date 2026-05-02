@@ -350,6 +350,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     _headerChip(Icons.headset_mic_outlined, 'Msaada'),
                                   ],
                                 ),
+                                const SizedBox(height: 14),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _headerQuickAction(
+                                        icon: Icons.edit_outlined,
+                                        label: 'Hariri',
+                                        onTap: () => context.push('/profile/edit'),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: _headerQuickAction(
+                                        icon: Icons.payment_outlined,
+                                        label: 'Malipo',
+                                        onTap: () => context.push('/payment/history'),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: _headerQuickAction(
+                                        icon: Icons.headset_mic_outlined,
+                                        label: 'Msaada',
+                                        onTap: () => context.push('/support'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),
@@ -822,6 +850,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _headerQuickAction({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Ink(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 13, color: Colors.white.withValues(alpha: 0.9)),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: GoogleFonts.montserrat(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: Colors.white.withValues(alpha: 0.9),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
