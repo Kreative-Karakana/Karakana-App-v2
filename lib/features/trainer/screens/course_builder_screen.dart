@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -84,7 +85,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
       final catId = data['category']?['id'] ?? data['category'];
       setState(() {
         _titleController.text = data['title'] as String? ?? '';
-        _descController.text = data['description'] as String? ?? '';
+        _descController.text =
+            _cleanRichTextDescription(data['description'] as String? ?? '');
         _priceController.text = (data['price'] ?? '0').toString();
         _selectedLevel = data['level'] as String? ?? 'beginner';
         if (catId != null) _selectedCategory = catId.toString();
@@ -93,6 +95,36 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     } catch (_) {
       if (mounted) setState(() => _isLoadingCourse = false);
     }
+  }
+
+  String _cleanRichTextDescription(String raw) {
+    final value = raw.trim();
+    if (value.isEmpty) return '';
+    try {
+      final decoded = jsonDecode(value);
+      List<dynamic>? ops;
+      if (decoded is Map && decoded['ops'] is List) {
+        ops = decoded['ops'] as List;
+      } else if (decoded is List) {
+        ops = decoded;
+      }
+      if (ops != null) {
+        final text = StringBuffer();
+        for (final op in ops) {
+          if (op is Map && op['insert'] is String) {
+            text.write(op['insert'] as String);
+          }
+        }
+        return text
+            .toString()
+            .replaceAll('\r\n', '\n')
+            .split('\n')
+            .map((e) => e.trim())
+            .where((e) => e.isNotEmpty)
+            .join('\n\n');
+      }
+    } catch (_) {}
+    return value;
   }
 
   bool get _step1Valid =>
@@ -590,8 +622,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
             child: Container(
               height: 150,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
-                borderRadius: BorderRadius.circular(14),
+                color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
+                borderRadius: BorderRadius.circular(18),
                 border: Border.all(
                   color: _coverImage != null
                       ? const Color(0xFFE87722)
@@ -622,12 +654,20 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.add_photo_alternate_outlined,
-                            color: Color(0xFFE87722), size: 36),
+                        Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE87722).withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: const Icon(Icons.add_photo_alternate_outlined,
+                              color: Color(0xFFE87722), size: 28),
+                        ),
                         const SizedBox(height: 8),
                         Text('Pakia Picha ya Kozi',
                             style: GoogleFonts.montserrat(
-                                fontSize: 13,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFF7B3A10))),
                         const SizedBox(height: 4),
@@ -1089,8 +1129,20 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
+        floatingLabelStyle: GoogleFonts.montserrat(
+          color: const Color(0xFFE87722),
+          fontWeight: FontWeight.w600,
+        ),
+        labelStyle: GoogleFonts.montserrat(
+          color: const Color(0xFF9E8070),
+          fontSize: 13,
+        ),
         filled: true,
         fillColor: Theme.of(context).cardColor,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
