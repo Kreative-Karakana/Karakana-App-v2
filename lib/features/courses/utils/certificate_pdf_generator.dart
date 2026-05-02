@@ -32,8 +32,8 @@ class CertificatePdfGenerator {
         .toUpperCase()
         .replaceAll('-', '')
         .substring(0, 10);
-    final excerpt = courseExcerpt.length > 220
-        ? '${courseExcerpt.substring(0, 220)}...'
+    final excerpt = courseExcerpt.length > 190
+        ? '${courseExcerpt.substring(0, 190)}...'
         : courseExcerpt;
 
     // A4 landscape
@@ -51,16 +51,16 @@ class CertificatePdfGenerator {
             color: cream,
             child: pw.Stack(
               children: [
-                // Outer orange border
+                // Outer border
                 pw.Positioned.fill(
                   child: pw.Container(
-                    margin: const pw.EdgeInsets.all(20),
+                    margin: const pw.EdgeInsets.all(18),
                     decoration: pw.BoxDecoration(
-                      border: pw.Border.all(color: orange, width: 3),
+                      border: pw.Border.all(color: darkBrown, width: 2.4),
                     ),
                   ),
                 ),
-                // Inner thin border
+                // Inner accent border
                 pw.Positioned.fill(
                   child: pw.Container(
                     margin: const pw.EdgeInsets.all(27),
@@ -69,19 +69,34 @@ class CertificatePdfGenerator {
                     ),
                   ),
                 ),
-                // Corner accents
-                _cornerSquare(pw.Alignment.topLeft, orange),
-                _cornerSquare(pw.Alignment.topRight, orange),
-                _cornerSquare(pw.Alignment.bottomLeft, orange),
-                _cornerSquare(pw.Alignment.bottomRight, orange),
+                // Premium header strip
+                pw.Positioned(
+                  top: 28,
+                  left: 28,
+                  right: 28,
+                  child: pw.Container(
+                    height: 26,
+                    color: darkBrown,
+                    alignment: pw.Alignment.center,
+                    child: pw.Text(
+                      'CHETI RASMI CHA UKAMILISHAJI',
+                      style: pw.TextStyle(
+                        font: montserratBold,
+                        fontSize: 10,
+                        color: cream,
+                        letterSpacing: 2.2,
+                      ),
+                    ),
+                  ),
+                ),
                 // Content
                 pw.Positioned.fill(
                   child: pw.Padding(
-                    padding: const pw.EdgeInsets.fromLTRB(56, 40, 56, 40),
+                    padding: const pw.EdgeInsets.fromLTRB(56, 66, 56, 40),
                     child: pw.Column(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
-                        // ── Header ───────────────────────────────────────
+                        // Header
                         pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: pw.CrossAxisAlignment.center,
@@ -104,7 +119,7 @@ class CertificatePdfGenerator {
                                       ),
                                     ),
                                     pw.Text(
-                                      'Jukwaa la Elimu ya Ujasiriamali Tanzania',
+                                      'Jukwaa la Elimu, Ujuzi na Biashara',
                                       style: pw.TextStyle(
                                         font: montserratRegular,
                                         fontSize: 9,
@@ -116,28 +131,36 @@ class CertificatePdfGenerator {
                                 ),
                               ],
                             ),
-                            pw.Text(
-                              'CHETI CHA UKAMILISHAJI',
-                              style: pw.TextStyle(
-                                font: montserratBold,
-                                fontSize: 9,
-                                color: orange,
-                                letterSpacing: 2,
+                            pw.Container(
+                              padding: const pw.EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: pw.BoxDecoration(
+                                border: pw.Border.all(color: orange, width: 1),
+                                borderRadius: pw.BorderRadius.circular(6),
+                              ),
+                              child: pw.Text(
+                                'TOLEO LA KIDIGITALI',
+                                style: pw.TextStyle(
+                                  font: montserratBold,
+                                  fontSize: 8,
+                                  color: orange,
+                                  letterSpacing: 1.2,
+                                ),
                               ),
                             ),
                           ],
                         ),
 
-                        // ── Divider ──────────────────────────────────────
                         pw.Divider(color: orange, thickness: 1.2),
 
-                        // ── Main body ─────────────────────────────────────
                         pw.Column(
                           children: [
                             pw.Text(
-                              'Hii ni kuthibitisha kwamba',
+                              'Cheti hiki kinathibitisha kuwa',
                               style: pw.TextStyle(
-                                font: montserratItalic,
+                                font: montserratRegular,
                                 fontSize: 12,
                                 color: lightGrey,
                               ),
@@ -171,29 +194,27 @@ class CertificatePdfGenerator {
                               textAlign: pw.TextAlign.center,
                             ),
                             if (excerpt.isNotEmpty) ...[
-                              pw.SizedBox(height: 8),
+                              pw.SizedBox(height: 10),
                               pw.Text(
-                                'Kwa cheti hiki, Karakana inatambua kujituma, uelewa wa kina, na matumizi ya maarifa haya katika mazingira halisi ya kazi na biashara.\n\n$excerpt',
+                                'Kupitia tathmini na ufuatiliaji wa maendeleo, mshiriki ameonesha uelewa wa kina, nidhamu ya kujifunza, na uwezo wa kutumia maarifa ya kozi hii katika mazingira halisi ya kazi, biashara na maendeleo binafsi.\n\nMuhtasari wa kozi: $excerpt',
                                 style: pw.TextStyle(
                                   font: montserratRegular,
-                                  fontSize: 9,
+                                  fontSize: 9.5,
                                   color: lightGrey,
+                                  lineSpacing: 2,
                                 ),
                                 textAlign: pw.TextAlign.center,
-                                maxLines: 3,
+                                maxLines: 4,
                               ),
                             ],
                           ],
                         ),
 
-                        // ── Divider ──────────────────────────────────────
                         pw.Divider(color: orange, thickness: 1.2),
 
-                        // ── Footer ────────────────────────────────────────
                         pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
                           children: [
-                            // Date block
                             pw.Column(
                               crossAxisAlignment: pw.CrossAxisAlignment.center,
                               children: [
@@ -216,7 +237,6 @@ class CertificatePdfGenerator {
                                 ),
                               ],
                             ),
-                            // Certificate number block
                             pw.Column(
                               crossAxisAlignment: pw.CrossAxisAlignment.center,
                               children: [
@@ -240,6 +260,47 @@ class CertificatePdfGenerator {
                                 ),
                               ],
                             ),
+                            pw.Container(
+                              width: 72,
+                              height: 72,
+                              decoration: pw.BoxDecoration(
+                                shape: pw.BoxShape.circle,
+                                border: pw.Border.all(color: darkBrown, width: 1.4),
+                              ),
+                              child: pw.Center(
+                                child: pw.Column(
+                                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                                  children: [
+                                    pw.Text(
+                                      'IME',
+                                      style: pw.TextStyle(
+                                        font: montserratBold,
+                                        fontSize: 8,
+                                        color: darkBrown,
+                                        letterSpacing: 1,
+                                      ),
+                                    ),
+                                    pw.Text(
+                                      'THIBITISHWA',
+                                      style: pw.TextStyle(
+                                        font: montserratBold,
+                                        fontSize: 7,
+                                        color: orange,
+                                        letterSpacing: 0.8,
+                                      ),
+                                    ),
+                                    pw.Text(
+                                      'KARAKANA',
+                                      style: pw.TextStyle(
+                                        font: montserratRegular,
+                                        fontSize: 6.5,
+                                        color: lightGrey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -256,35 +317,4 @@ class CertificatePdfGenerator {
     return doc;
   }
 
-  static pw.Widget _cornerSquare(pw.Alignment alignment, PdfColor color) {
-    const size = 10.0;
-    const margin = 16.5;
-
-    double? top, bottom, left, right;
-    if (alignment == pw.Alignment.topLeft) {
-      top = margin;
-      left = margin;
-    } else if (alignment == pw.Alignment.topRight) {
-      top = margin;
-      right = margin;
-    } else if (alignment == pw.Alignment.bottomLeft) {
-      bottom = margin;
-      left = margin;
-    } else {
-      bottom = margin;
-      right = margin;
-    }
-
-    return pw.Positioned(
-      top: top,
-      bottom: bottom,
-      left: left,
-      right: right,
-      child: pw.Container(
-        width: size,
-        height: size,
-        color: color,
-      ),
-    );
-  }
 }
