@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -55,6 +56,10 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         );
         final progress =
             totalLessons > 0 ? completedLessons / totalLessons : 0.0;
+        final summaryText = _buildCourseSummaryText(
+          course?.description ?? '',
+          course?.excerpt ?? '',
+        );
 
         if (course == null) {
           return Scaffold(
@@ -245,8 +250,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                 height: 1,
                 color: isDark ? Colors.white10 : const Color(0xFFF0E4DA),
               ),
-              if (course.description.trim().isNotEmpty ||
-                  course.excerpt.trim().isNotEmpty)
+              if (summaryText.isNotEmpty)
                 Container(
                   width: double.infinity,
                   color: Theme.of(context).cardColor,
@@ -273,21 +277,24 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Text(
-                        course.description.trim().isNotEmpty
-                            ? course.description.trim()
-                            : course.excerpt.trim(),
-                        style: GoogleFonts.montserrat(
-                          fontSize: 13,
-                          height: 1.45,
-                          color: const Color(0xFF5C3D2E),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxHeight: 210),
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Text(
+                            summaryText,
+                            style: GoogleFonts.montserrat(
+                              fontSize: 13,
+                              height: 1.45,
+                              color: const Color(0xFF5C3D2E),
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-              if (course.description.trim().isNotEmpty ||
-                  course.excerpt.trim().isNotEmpty)
+              if (summaryText.isNotEmpty)
                 Divider(
                   height: 1,
                   color: isDark ? Colors.white10 : const Color(0xFFF0E4DA),
@@ -472,8 +479,54 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
       },
     );
   }
-}
 
+
+  String _buildCourseSummaryText(String description, String excerpt) {
+    final source = description.trim().isNotEmpty ? description : excerpt;
+    if (source.trim().isEmpty) return '';
+    final parsed = _tryParseDelta(source.trim());
+    if (parsed != null && parsed.trim().isNotEmpty) {
+      return _normalizeText(parsed);
+    }
+    return _normalizeText(source.trim());
+  }
+
+  String? _tryParseDelta(String value) {
+    try {
+      final decoded = jsonDecode(value);
+      if (decoded is Map && decoded['ops'] is List) {
+        return _extractDeltaOpsText(decoded['ops'] as List);
+      }
+      if (decoded is List) {
+        return _extractDeltaOpsText(decoded);
+      }
+    } catch (_) {
+      return null;
+    }
+    return null;
+  }
+
+  String _extractDeltaOpsText(List ops) {
+    final buffer = StringBuffer();
+    for (final op in ops) {
+      if (op is Map && op['insert'] is String) {
+        buffer.write(op['insert'] as String);
+      }
+    }
+    return buffer.toString();
+  }
+
+  String _normalizeText(String text) {
+    final lines = text
+        .replaceAll('\r\n', '\n')
+        .split('\n')
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty)
+        .toList();
+    return lines.join('\n\n');
+  }
+
+}
 class _ClassroomAppBarPlaceholder extends StatelessWidget
     implements PreferredSizeWidget {
   const _ClassroomAppBarPlaceholder();
@@ -581,3 +634,10 @@ class _EmptyClassroomState extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+
+
