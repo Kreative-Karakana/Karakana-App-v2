@@ -26,71 +26,14 @@ void showTopPopup(
           alignment: Alignment.topRight,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
-            child: Material(
-              color: Colors.transparent,
-              child: TweenAnimationBuilder<double>(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOutCubic,
-                tween: Tween(begin: 0, end: 1),
-                builder: (context, value, child) {
-                  return Opacity(
-                    opacity: value,
-                    child: Transform.translate(
-                      offset: Offset(56 * (1 - value), -24 * (1 - value)),
-                      child: child,
-                    ),
-                  );
-                },
-                child: Container(
-                  constraints: const BoxConstraints(maxWidth: 560),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: style.gradientColors,
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: style.accentColor.withValues(alpha: 0.35)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.28),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 26,
-                        height: 26,
-                        decoration: BoxDecoration(
-                          color: style.accentColor.withValues(alpha: 0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(style.icon,
-                            size: 16,
-                            color: style.accentColor.withValues(alpha: 0.95)),
-                      ),
-                      const SizedBox(width: 10),
-                      Flexible(
-                        child: Text(
-                          message,
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.montserrat(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            height: 1.3,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            child: _TopPopupAnimatedBanner(
+              message: message,
+              style: style,
+              duration: duration,
+              onFinished: () {
+                _activeTopPopup?.remove();
+                _activeTopPopup = null;
+              },
             ),
           ),
         ),
@@ -99,10 +42,145 @@ void showTopPopup(
   );
 
   overlay.insert(_activeTopPopup!);
-  Future.delayed(duration, () {
-    _activeTopPopup?.remove();
-    _activeTopPopup = null;
+}
+
+class _TopPopupAnimatedBanner extends StatefulWidget {
+  final String message;
+  final _PopupStyle style;
+  final Duration duration;
+  final VoidCallback onFinished;
+
+  const _TopPopupAnimatedBanner({
+    required this.message,
+    required this.style,
+    required this.duration,
+    required this.onFinished,
   });
+
+  @override
+  State<_TopPopupAnimatedBanner> createState() => _TopPopupAnimatedBannerState();
+}
+
+class _TopPopupAnimatedBannerState extends State<_TopPopupAnimatedBanner>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 300),
+    reverseDuration: const Duration(milliseconds: 240),
+  );
+  late final Animation<double> _fade = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeOutCubic,
+    reverseCurve: Curves.easeInCubic,
+  );
+  late final Animation<Offset> _slide = Tween<Offset>(
+    begin: const Offset(0.24, -0.22),
+    end: Offset.zero,
+  ).animate(CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeOutCubic,
+    reverseCurve: Curves.easeInCubic,
+  ));
+  late final Animation<double> _scale = Tween<double>(
+    begin: 0.97,
+    end: 1.0,
+  ).animate(CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeOutBack,
+    reverseCurve: Curves.easeInCubic,
+  ));
+
+  @override
+  void initState() {
+    super.initState();
+    _runAnimation();
+  }
+
+  Future<void> _runAnimation() async {
+    await _controller.forward();
+    final hold = widget.duration - const Duration(milliseconds: 540);
+    if (hold > Duration.zero) {
+      await Future.delayed(hold);
+    }
+    if (mounted) {
+      await _controller.reverse();
+    }
+    if (mounted) {
+      widget.onFinished();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fade,
+      child: SlideTransition(
+        position: _slide,
+        child: ScaleTransition(
+          scale: _scale,
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 560),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: widget.style.gradientColors,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                    color: widget.style.accentColor.withValues(alpha: 0.35)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.28),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 26,
+                    height: 26,
+                    decoration: BoxDecoration(
+                      color: widget.style.accentColor.withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(widget.style.icon,
+                        size: 16,
+                        color: widget.style.accentColor.withValues(alpha: 0.95)),
+                  ),
+                  const SizedBox(width: 10),
+                  Flexible(
+                    child: Text(
+                      widget.message,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        height: 1.3,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _PopupStyle {
