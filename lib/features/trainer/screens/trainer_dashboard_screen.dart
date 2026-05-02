@@ -839,6 +839,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       _buildSmallAction('Majaribio', Icons.quiz_outlined,
                           () => context.push('/trainer/quiz/$courseId')),
                       const SizedBox(width: 6),
+                      _buildSmallAction('Tathmini', Icons.rate_review_outlined,
+                          () => context.push('/course/$courseId/reviews')),
+                      const SizedBox(width: 6),
                       _buildSmallAction(
                           'Hariri',
                           Icons.edit_outlined,

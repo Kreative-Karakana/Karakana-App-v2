@@ -76,6 +76,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                         ? '${trainer['first_name'] ?? ''} ${trainer['last_name'] ?? ''}'
                             .trim()
                         : '';
+                    final progress = _extractProgress(course);
 
                     final isDark = Theme.of(context).brightness == Brightness.dark;
                     return GestureDetector(
@@ -134,6 +135,35 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                                         fontSize: 12,
                                         color: const Color(0xFF9E8070),
                                       ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(4),
+                                            child: LinearProgressIndicator(
+                                              value: progress / 100,
+                                              minHeight: 7,
+                                              backgroundColor: isDark
+                                                  ? const Color(0xFF2A1A0A)
+                                                  : const Color(0xFFF5E6D8),
+                                              valueColor: const AlwaysStoppedAnimation(
+                                                Color(0xFFE87722),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          '$progress%',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w700,
+                                            color: const Color(0xFFE87722),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     const SizedBox(height: 8),
                                     Row(
@@ -249,5 +279,51 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
         size: 32,
       ),
     );
+  }
+
+  int _extractProgress(Map course) {
+    final directPercentKeys = [
+      'progress_percent',
+      'progress_percentage',
+      'completion_percentage',
+      'course_progress',
+      'progress',
+    ];
+    for (final key in directPercentKeys) {
+      final value = _toDouble(course[key]);
+      if (value != null) {
+        return value.clamp(0, 100).round();
+      }
+    }
+
+    final completed = _toDouble(course['completed_lessons']);
+    final total = _toDouble(course['total_lessons']);
+    if (completed != null && total != null && total > 0) {
+      return ((completed / total) * 100).clamp(0, 100).round();
+    }
+
+    final enrollment = course['enrollment'];
+    if (enrollment is Map) {
+      for (final key in directPercentKeys) {
+        final value = _toDouble(enrollment[key]);
+        if (value != null) {
+          return value.clamp(0, 100).round();
+        }
+      }
+      final enrolledCompleted = _toDouble(enrollment['completed_lessons']);
+      final enrolledTotal = _toDouble(enrollment['total_lessons']);
+      if (enrolledCompleted != null && enrolledTotal != null && enrolledTotal > 0) {
+        return ((enrolledCompleted / enrolledTotal) * 100).clamp(0, 100).round();
+      }
+    }
+
+    return 0;
+  }
+
+  double? _toDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value);
+    return null;
   }
 }

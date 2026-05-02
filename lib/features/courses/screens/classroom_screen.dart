@@ -245,6 +245,55 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                 height: 1,
                 color: isDark ? Colors.white10 : const Color(0xFFF0E4DA),
               ),
+              if (course.description.trim().isNotEmpty ||
+                  course.excerpt.trim().isNotEmpty)
+                Container(
+                  width: double.infinity,
+                  color: Theme.of(context).cardColor,
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.info_outline,
+                            size: 16,
+                            color: Color(0xFFE87722),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Muhtasari wa Kozi',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF3D1800),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        course.description.trim().isNotEmpty
+                            ? course.description.trim()
+                            : course.excerpt.trim(),
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 13,
+                          height: 1.45,
+                          color: const Color(0xFF5C3D2E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              if (course.description.trim().isNotEmpty ||
+                  course.excerpt.trim().isNotEmpty)
+                Divider(
+                  height: 1,
+                  color: isDark ? Colors.white10 : const Color(0xFFF0E4DA),
+                ),
               Expanded(
                 child: sections.isEmpty
                     ? _EmptyClassroomState(
