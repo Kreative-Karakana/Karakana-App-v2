@@ -27,8 +27,14 @@ class _SupportScreenState extends State<SupportScreen> {
       final response =
           await ApiClient().dio.get('/api/v1/communications/tickets/');
       final data = response.data;
-      final rawList =
-          data is Map ? (data['results'] as List? ?? const []) : const [];
+      final List<dynamic> rawList;
+      if (data is List) {
+        rawList = data;
+      } else if (data is Map && data['results'] is List) {
+        rawList = data['results'] as List;
+      } else {
+        rawList = const [];
+      }
       if (!mounted) return;
       setState(() {
         _tickets = rawList
@@ -62,7 +68,11 @@ class _SupportScreenState extends State<SupportScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push('/support/new'),
+        onPressed: () async {
+          await context.push('/support/new');
+          if (!mounted) return;
+          await _loadTickets();
+        },
         backgroundColor: const Color(0xFFE87722),
         icon: const Icon(Icons.add, color: Colors.white),
         label: Text(
@@ -114,7 +124,11 @@ class _SupportScreenState extends State<SupportScreen> {
                       child: _buildQuickHelp(
                         Icons.add_comment_outlined,
                         'Tiketi\nMpya',
-                        () => context.push('/support/new'),
+                        () async {
+                          await context.push('/support/new');
+                          if (!mounted) return;
+                          await _loadTickets();
+                        },
                         isDark: isDark,
                       ),
                     ),

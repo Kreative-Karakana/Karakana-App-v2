@@ -220,13 +220,22 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
           'type': _selectedType,
         },
       );
-      final ticketId = ticketRes.data['id'];
+      final dynamic ticketData = ticketRes.data;
+      final int? ticketId = ticketData is Map
+          ? (ticketData['id'] as int? ??
+              (ticketData['ticket'] is Map
+                  ? (ticketData['ticket']['id'] as int?)
+                  : null))
+          : null;
+      if (ticketId == null) {
+        throw Exception('Ticket ID missing from response');
+      }
       await ApiClient().dio.post(
         '/api/v1/communications/tickets/$ticketId/messages/',
         data: {'message': _messageController.text},
       );
       if (!mounted) return;
-      showTopPopup(context, 'Tiketi imesailiwa kikamilifu!', isError: false);
+      showTopPopup(context, 'Tiketi imesajiliwa kikamilifu!', isError: false);
       // Go directly into the new ticket thread
       context.pushReplacement('/support/$ticketId');
     } catch (_) {
