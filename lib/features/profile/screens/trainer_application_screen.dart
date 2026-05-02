@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
@@ -88,13 +88,13 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
   Future<void> _pickCV() async {
     setState(() => _isPickingFile = true);
     try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: const ['pdf'],
-        allowMultiple: false,
+      const typeGroup = XTypeGroup(
+        label: 'PDF',
+        extensions: ['pdf'],
+        mimeTypes: ['application/pdf'],
       );
-      final picked = result?.files.single;
-      if (picked != null && picked.path != null) {
+      final picked = await openFile(acceptedTypeGroups: [typeGroup]);
+      if (picked.path.isNotEmpty) {
         final fileName = picked.name.toLowerCase();
         if (!fileName.endsWith('.pdf')) {
           if (!mounted) return;
@@ -102,7 +102,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
           return;
         }
         setState(() {
-          _cvFile = File(picked.path!);
+          _cvFile = File(picked.path);
           _cvFileName = picked.name;
         });
       }
