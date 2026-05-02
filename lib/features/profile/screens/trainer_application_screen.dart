@@ -94,7 +94,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
         mimeTypes: ['application/pdf'],
       );
       final picked = await openFile(acceptedTypeGroups: [typeGroup]);
-      if (picked.path.isNotEmpty) {
+      if (picked != null && picked.path.isNotEmpty) {
         final fileName = picked.name.toLowerCase();
         if (!fileName.endsWith('.pdf')) {
           if (!mounted) return;
