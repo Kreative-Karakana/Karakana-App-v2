@@ -50,6 +50,18 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     }
   }
 
+  String _statusLabel(String? status) {
+    switch (status) {
+      case 'resolved':
+      case 'closed':
+        return 'Imemalizwa';
+      case 'in_progress':
+        return 'Inaendelea';
+      default:
+        return 'Wazi';
+    }
+  }
+
   Future<void> _loadData() async {
     try {
       final ticketRes = await ApiClient()
@@ -264,6 +276,25 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     }
   }
 
+  Widget _metaChip(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF3EA),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: const Color(0xFFF0D5C3)),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.montserrat(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: const Color(0xFF8C5D3D),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -296,6 +327,9 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
 
     final isResolved = _ticket!['status'] == 'resolved' ||
         _ticket!['status'] == 'closed';
+    final createdAt = _formatTs(_ticket!['created_at'] as String?);
+    final statusLabel = _statusLabel(_ticket!['status'] as String?);
+    final description = (_ticket!['description'] as String? ?? '').trim();
     final subject = _ticket!['subject'] as String? ?? 'Tiketi';
 
     return Scaffold(
@@ -434,9 +468,80 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
             ),
           ),
           const Divider(height: 1, color: Color(0xFFF0E4DA)),
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFF0E4DA)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.info_outline_rounded,
+                      color: Color(0xFFE87722),
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Muhtasari wa Tiketi',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF3D1800),
+                      ),
+                    ),
+                  ],
+                ),
+                if (description.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
+                      height: 1.35,
+                      color: const Color(0xFF6F5445),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  children: [
+                    _metaChip('Hali: $statusLabel'),
+                    if (createdAt.isNotEmpty) _metaChip('Imefunguliwa: $createdAt'),
+                    _metaChip('Ujumbe: ${_messages.length}'),
+                  ],
+                ),
+              ],
+            ),
+          ),
           Expanded(
-            child: _messages.isEmpty
-                ? Center(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xFFFFFBF8), Color(0xFFF7F1EC)],
+                ),
+              ),
+              child: _messages.isEmpty
+                  ? Center(
                     child: Text(
                       'Hakuna ujumbe bado.',
                       style: GoogleFonts.montserrat(
@@ -445,7 +550,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       ),
                     ),
                   )
-                : ListView.builder(
+                  : ListView.builder(
                     controller: _scrollController,
                     padding: const EdgeInsets.all(16),
                     itemCount: _messages.length,
@@ -574,6 +679,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       );
                     },
                   ),
+            ),
           ),
           if (!isResolved)
             Container(
