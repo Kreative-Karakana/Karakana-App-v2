@@ -1,4 +1,6 @@
 ﻿
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +14,7 @@ import '../../../widgets/cards/shimmer_card.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../courses/models/course_model.dart';
 import '../../courses/providers/course_provider.dart';
+import '../../notifications/providers/notification_provider.dart';
 import '../../../core/utils/profile_completeness.dart';
 import '../../../providers/theme_provider.dart';
 import '../widgets/ambassador_code_sheet.dart';
@@ -25,16 +28,33 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> _banners = [];
+  Timer? _notificationsPollingTimer;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CourseProvider>().loadHomeData();
+      context.read<NotificationProvider>().loadNotifications();
       checkAndShowAmbassadorCode(context);
       checkAndPromptMastercard(context);
       _loadBanners();
+      _notificationsPollingTimer?.cancel();
+      _notificationsPollingTimer = Timer.periodic(
+        const Duration(seconds: 20),
+        (_) {
+          if (mounted) {
+            context.read<NotificationProvider>().loadNotifications();
+          }
+        },
+      );
     });
+  }
+
+  @override
+  void dispose() {
+    _notificationsPollingTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadBanners() async {
@@ -91,8 +111,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Consumer2<CourseProvider, AuthProvider>(
-        builder: (context, courses, auth, _) {
+      body: Consumer3<CourseProvider, AuthProvider, NotificationProvider>(
+        builder: (context, courses, auth, notifications, _) {
           return RefreshIndicator(
             color: AppColors.primary,
             onRefresh: () => context.read<CourseProvider>().loadHomeData(),
@@ -168,7 +188,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-                    Container(
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
                       margin: const EdgeInsets.only(right: 3),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.1),
@@ -180,10 +203,45 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.white,
                           size: 19,
                         ),
-                        onPressed: () => context.push('/notifications'),
+                        onPressed: () async {
+                          await context
+                              .read<NotificationProvider>()
+                              .loadNotifications();
+                          if (!mounted) return;
+                          context.push('/notifications');
+                        },
                         padding: const EdgeInsets.all(5),
                         constraints: const BoxConstraints(),
                       ),
+                    ),
+                        if (notifications.unreadCount > 0)
+                          Positioned(
+                            right: 1,
+                            top: -1,
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE53935),
+                                borderRadius: BorderRadius.circular(999),
+                                border: Border.all(color: Colors.white, width: 1.2),
+                              ),
+                              constraints: const BoxConstraints(minWidth: 16),
+                              child: Text(
+                                notifications.unreadCount > 99
+                                    ? '99+'
+                                    : '${notifications.unreadCount}',
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.white,
+                                  height: 1.1,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                     GestureDetector(
                       onTap: () => context.push('/profile'),

@@ -64,4 +64,23 @@ class NotificationProvider extends ChangeNotifier {
         .toList();
     notifyListeners();
   }
+
+  void markRead(int id) {
+    _notifications = _notifications
+        .map(
+          (n) => n.id == id
+              ? NotificationModel(
+                  id: n.id,
+                  title: n.title,
+                  message: n.message,
+                  type: n.type,
+                  isRead: true,
+                  createdAt: n.createdAt,
+                  route: n.route,
+                )
+              : n,
+        )
+        .toList();
+    notifyListeners();
+  }
 }

@@ -78,20 +78,25 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 child: ListTile(
                   contentPadding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
                   leading: Container(
-                    width: 48,
-                    height: 48,
+                    width: 50,
+                    height: 50,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: isUnread
-                            ? const [Color(0xFFE87722), Color(0xFFFFA726)]
-                            : const [Color(0xFFBDA99C), Color(0xFF9E8070)],
+                      color: isUnread
+                          ? const Color(0xFFE87722).withValues(alpha: 0.14)
+                          : const Color(0xFF9E8070).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: isUnread
+                            ? const Color(0xFFE87722).withValues(alpha: 0.3)
+                            : const Color(0xFFBDA99C).withValues(alpha: 0.3),
                       ),
-                      shape: BoxShape.circle,
                     ),
                     child: Icon(
                       _getNotificationIcon(notif.type),
-                      color: Colors.white,
-                      size: 22,
+                      color: isUnread
+                          ? const Color(0xFFE87722)
+                          : const Color(0xFF9E8070),
+                      size: 24,
                     ),
                   ),
                   title: Text(
@@ -138,8 +143,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         )
                       : null,
                   onTap: () {
-                    if (notif.route != null && notif.route!.isNotEmpty) {
-                      context.push(notif.route!);
+                    context.read<NotificationProvider>().markRead(notif.id);
+                    final route = _resolveRoute(notif);
+                    if (route != null && route.isNotEmpty) {
+                      context.push(route);
                     }
                   },
                 ),
@@ -159,8 +166,29 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         return Icons.payment_outlined;
       case 'trainer':
         return Icons.person_outlined;
+      case 'support':
+        return Icons.support_agent_outlined;
+      case 'certificate':
+        return Icons.workspace_premium_outlined;
       default:
         return Icons.notifications_outlined;
+    }
+  }
+
+  String? _resolveRoute(dynamic notif) {
+    final route = notif.route as String?;
+    if (route != null && route.isNotEmpty) return route;
+    switch (notif.type as String) {
+      case 'course':
+        return '/my-courses';
+      case 'payment':
+        return '/payment/history';
+      case 'trainer':
+        return '/trainer/dashboard';
+      case 'support':
+        return '/support';
+      default:
+        return null;
     }
   }
 
