@@ -1637,7 +1637,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   Widget _buildHeroAppBar(bool innerBoxIsScrolled) {
     return SliverAppBar(
-        expandedHeight: 220,
+        expandedHeight: 196,
         pinned: true,
         forceElevated: innerBoxIsScrolled,
         automaticallyImplyLeading: false,
@@ -1758,7 +1758,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   SafeArea(
                       child: Padding(
                           padding:
-                              const EdgeInsets.fromLTRB(20, 16, 20, 16),
+                              const EdgeInsets.fromLTRB(20, 16, 20, 10),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -1789,7 +1789,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                                               .withValues(
                                                                   alpha: 0.7))),
                                             ])),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 14),
                                 Row(children: [
                                   _buildHeroStat('${_stats['total_courses']}',
                                       'Kozi', Icons.school_outlined),
