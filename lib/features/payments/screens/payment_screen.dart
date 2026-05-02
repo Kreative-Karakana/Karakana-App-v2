@@ -168,10 +168,30 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     const providers = [
-      {'id': 'Mpesa', 'name': 'M-Pesa', 'color': Color(0xFFE87722)},
-      {'id': 'Tigo', 'name': 'Mix by Yas', 'color': Color(0xFF3D1800)},
-      {'id': 'Airtel', 'name': 'Airtel Money', 'color': Color(0xFF3D1800)},
-      {'id': 'Halopesa', 'name': 'Halopesa', 'color': Color(0xFF3D1800)},
+      {
+        'id': 'Mpesa',
+        'name': 'Vodacom',
+        'color': Color(0xFFE87722),
+        'logo': 'mno_logos/mpesa.png'
+      },
+      {
+        'id': 'Tigo',
+        'name': 'Mix by Yas',
+        'color': Color(0xFF3D1800),
+        'logo': 'mno_logos/mix_by_yas.png'
+      },
+      {
+        'id': 'Airtel',
+        'name': 'Airtel',
+        'color': Color(0xFF3D1800),
+        'logo': 'mno_logos/airtel.png'
+      },
+      {
+        'id': 'Halopesa',
+        'name': 'HaloPesa',
+        'color': Color(0xFF3D1800),
+        'logo': 'mno_logos/halopesa.png'
+      },
     ];
 
     return Scaffold(
@@ -307,10 +327,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           color: color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Icon(
-                          Icons.phone_android,
-                          color: color,
-                          size: 24,
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: Image.asset(
+                            provider['logo']! as String,
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => Icon(
+                              Icons.phone_android,
+                              color: color,
+                              size: 22,
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 14),
