@@ -1,8 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../widgets/common/top_popup.dart';
 
 class TicketDetailScreen extends StatefulWidget {
   final int ticketId;
@@ -23,6 +25,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
   final TextEditingController _messageController = TextEditingController();
   bool _isSending = false;
   final ScrollController _scrollController = ScrollController();
+  bool _isUpdatingTicket = false;
 
   @override
   void initState() {
@@ -105,6 +108,159 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     } catch (_) {
       if (!mounted) return;
       setState(() => _isSending = false);
+    }
+  }
+
+  Future<void> _editTicket() async {
+    if (_ticket == null || _isUpdatingTicket) return;
+    final subjectController = TextEditingController(
+      text: _ticket!['subject'] as String? ?? '',
+    );
+    final descriptionController = TextEditingController(
+      text: _ticket!['description'] as String? ?? '',
+    );
+    final shouldSave = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Hariri Tiketi',
+          style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF3D1800),
+          ),
+        ),
+        content: SizedBox(
+          width: 420,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: subjectController,
+                decoration: const InputDecoration(labelText: 'Kichwa cha Tiketi'),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: descriptionController,
+                minLines: 2,
+                maxLines: 4,
+                decoration: const InputDecoration(labelText: 'Maelezo'),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(
+              'Ghairi',
+              style: GoogleFonts.montserrat(color: const Color(0xFF9E8070)),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFE87722),
+              foregroundColor: Colors.white,
+            ),
+            child: Text(
+              'Hifadhi',
+              style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    final subject = subjectController.text.trim();
+    final description = descriptionController.text.trim();
+    subjectController.dispose();
+    descriptionController.dispose();
+
+    if (shouldSave != true) return;
+    if (subject.isEmpty) {
+      showTopPopup(context, 'Kichwa cha tiketi kinahitajika.');
+      return;
+    }
+
+    setState(() => _isUpdatingTicket = true);
+    try {
+      final payload = <String, dynamic>{'subject': subject};
+      if (description.isNotEmpty) {
+        payload['description'] = description;
+      }
+      await ApiClient().dio.patch(
+            '/api/v1/communications/tickets/${widget.ticketId}/',
+            data: payload,
+          );
+      await _loadData();
+      if (!mounted) return;
+      showTopPopup(context, 'Tiketi imehaririwa kikamilifu.', isError: false);
+    } catch (_) {
+      if (!mounted) return;
+      showTopPopup(context, 'Imeshindikana kuhariri tiketi. Jaribu tena.');
+    } finally {
+      if (mounted) setState(() => _isUpdatingTicket = false);
+    }
+  }
+
+  Future<void> _deleteTicket() async {
+    if (_ticket == null || _isUpdatingTicket) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Futa Tiketi',
+          style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF3D1800),
+          ),
+        ),
+        content: Text(
+          'Una uhakika unataka kufuta tiketi hii? Hutaweza kuirejesha.',
+          style: GoogleFonts.montserrat(
+            fontSize: 13,
+            color: const Color(0xFF5C3D2E),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(
+              'Ghairi',
+              style: GoogleFonts.montserrat(color: const Color(0xFF9E8070)),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFC62828),
+              foregroundColor: Colors.white,
+            ),
+            child: Text(
+              'Futa',
+              style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    setState(() => _isUpdatingTicket = true);
+    try {
+      await ApiClient().dio.delete(
+        '/api/v1/communications/tickets/${widget.ticketId}/',
+      );
+      if (!mounted) return;
+      showTopPopup(context, 'Tiketi imefutwa kikamilifu.', isError: false);
+      context.pop(true);
+    } catch (_) {
+      if (!mounted) return;
+      showTopPopup(context, 'Imeshindikana kufuta tiketi. Jaribu tena.');
+    } finally {
+      if (mounted) setState(() => _isUpdatingTicket = false);
     }
   }
 
@@ -217,6 +373,60 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       color: isResolved
                           ? const Color(0xFFE87722)
                           : const Color(0xFFE87722),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            color: Colors.white,
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _isUpdatingTicket ? null : _editTicket,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFFE87722),
+                      side: const BorderSide(color: Color(0xFFE87722)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: _isUpdatingTicket
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.edit_outlined, size: 18),
+                    label: Text(
+                      'Hariri Tiketi',
+                      style: GoogleFonts.montserrat(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _isUpdatingTicket ? null : _deleteTicket,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFFC62828),
+                      side: const BorderSide(color: Color(0xFFC62828)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: const Icon(Icons.delete_outline, size: 18),
+                    label: Text(
+                      'Futa Tiketi',
+                      style: GoogleFonts.montserrat(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -450,3 +660,4 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     );
   }
 }
+

@@ -189,7 +189,13 @@ class _SupportScreenState extends State<SupportScreen> {
                           final subject =
                               ticket['subject'] as String? ?? 'Tiketi';
                           return GestureDetector(
-                            onTap: () => context.push('/support/$ticketId'),
+                            onTap: () async {
+                              final result = await context.push('/support/$ticketId');
+                              if (!mounted) return;
+                              if (result == true) {
+                                await _loadTickets();
+                              }
+                            },
                             child: Container(
                               margin: const EdgeInsets.only(bottom: 10),
                               padding: const EdgeInsets.all(14),
