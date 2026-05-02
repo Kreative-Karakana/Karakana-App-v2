@@ -20,7 +20,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  static const double _expandedHeight = 228;
+  static const double _expandedHeight = 188;
   final ScrollController _scroll = ScrollController();
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _biometricEnabled = false;
@@ -268,8 +268,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 actions: [
                   IconButton(
-                    icon: const Icon(Icons.edit_outlined, color: Colors.white),
-                    onPressed: () => context.push('/profile/edit'),
+                    icon: const Icon(Icons.logout, color: Colors.white),
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text(
+                            'Toka',
+                            style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
+                          ),
+                          content: Text(
+                            'Una uhakika unataka kutoka?',
+                            style: GoogleFonts.montserrat(),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(
+                                'Hapana',
+                                style: GoogleFonts.montserrat(color: const Color(0xFF9E8070)),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                context.read<AuthProvider>().logout();
+                                context.go('/login');
+                              },
+                              child: Text(
+                                'Ndiyo, Toka',
+                                style: GoogleFonts.montserrat(
+                                  color: const Color(0xFFB71C1C),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ],
                 flexibleSpace: FlexibleSpaceBar(
@@ -322,169 +359,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Akaunti',
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: 38,
-                                              fontWeight: FontWeight.w800,
-                                              color: Colors.white,
-                                              height: 1.0,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Text(
-                                            'Wasifu, usalama, na mipangilio yako',
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: 13,
-                                              color: Colors.white
-                                                  .withValues(alpha: 0.60),
-                                              height: 1.35,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 6,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color:
-                                            Colors.white.withValues(alpha: 0.12),
-                                        borderRadius: BorderRadius.circular(999),
-                                        border: Border.all(
-                                          color: Colors.white
-                                              .withValues(alpha: 0.18),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        auth.isTrainer
-                                            ? 'Mwalimu'
-                                            : 'Mwanafunzi',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 10,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.09),
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.14),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 36,
-                                        height: 36,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color:
-                                              Colors.white.withValues(alpha: 0.18),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            initial,
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 9),
-                                      Expanded(
-                                        child: Text(
-                                          'Dhibiti wasifu, malipo, usalama na msaada',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 11.6,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white
-                                                .withValues(alpha: 0.84),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      InkWell(
-                                        borderRadius: BorderRadius.circular(10),
-                                        onTap: () => context.push('/profile/edit'),
-                                        child: Ink(
-                                          padding: const EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white
-                                                .withValues(alpha: 0.12),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: const Icon(
-                                            Icons.edit_outlined,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                Text(
+                                  'Akaunti',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 38,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                    height: 1.0,
                                   ),
                                 ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    _headerChip(Icons.person_outline, 'Wasifu'),
-                                    const SizedBox(width: 8),
-                                    _headerChip(Icons.school_outlined, 'Kozi Zangu'),
-                                    const SizedBox(width: 8),
-                                    _headerChip(Icons.headset_mic_outlined, 'Msaada'),
-                                  ],
-                                ),
-                                const SizedBox(height: 14),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: _headerQuickAction(
-                                        icon: Icons.edit_outlined,
-                                        label: 'Hariri',
-                                        onTap: () => context.push('/profile/edit'),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: _headerQuickAction(
-                                        icon: Icons.payment_outlined,
-                                        label: 'Malipo',
-                                        onTap: () => context.push('/payment/history'),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: _headerQuickAction(
-                                        icon: Icons.headset_mic_outlined,
-                                        label: 'Msaada',
-                                        onTap: () => context.push('/support'),
-                                      ),
-                                    ),
-                                  ],
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Wasifu na Mipangilio Yako',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 13,
+                                    color: Colors.white.withValues(alpha: 0.60),
+                                    height: 1.35,
+                                  ),
                                 ),
                               ],
                             ),
