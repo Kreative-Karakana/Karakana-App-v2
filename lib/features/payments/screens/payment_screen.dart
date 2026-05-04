@@ -120,8 +120,23 @@ class _PaymentScreenState extends State<PaymentScreen> {
       if (checkoutUrl != null && checkoutUrl.isNotEmpty) {
         final uri = Uri.tryParse(checkoutUrl);
         if (uri != null) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
+          var opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+          if (!opened) {
+            opened = await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+          }
+          if (!opened) {
+            opened = await launchUrl(uri, mode: LaunchMode.platformDefault);
+          }
+          if (!opened) {
+            if (mounted) Navigator.of(context, rootNavigator: true).pop();
+            _showError('Imeshindikana kufungua ukurasa wa malipo. Jaribu tena.');
+            return;
+          }
         }
+      } else {
+        if (mounted) Navigator.of(context, rootNavigator: true).pop();
+        _showError('Kiungo cha malipo hakikupatikana. Jaribu tena.');
+        return;
       }
 
       // 2. Poll for payment status (max 10 × 3s = 30 seconds)
