@@ -177,7 +177,8 @@ class SecureStorage {
     } catch (_) {
       await _recoverStorage();
     }
-    await prefs.remove(AppConstants.onboardingKey);
+    // Keep onboarding completion sticky across sessions/logouts so returning
+    // users are not sent back to welcome slides.
     await prefs.remove(AppConstants.userIdKey);
     await prefs.remove(AppConstants.ambassadorCodeKey);
     await prefs.remove(AppConstants.mastercardDoneKey);

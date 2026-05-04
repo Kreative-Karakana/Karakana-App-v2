@@ -167,13 +167,6 @@ class _BiometricScreenState extends State<BiometricScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.95),
                       shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.4),
-                          blurRadius: 32,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
                     ),
                     child: ClipOval(
                       child: Padding(
