@@ -65,8 +65,8 @@ class _TopPopupAnimatedBannerState extends State<_TopPopupAnimatedBanner>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 300),
-    reverseDuration: const Duration(milliseconds: 240),
+    duration: const Duration(milliseconds: 420),
+    reverseDuration: const Duration(milliseconds: 300),
   );
   late final Animation<double> _fade = CurvedAnimation(
     parent: _controller,
@@ -74,19 +74,19 @@ class _TopPopupAnimatedBannerState extends State<_TopPopupAnimatedBanner>
     reverseCurve: Curves.easeInCubic,
   );
   late final Animation<Offset> _slide = Tween<Offset>(
-    begin: const Offset(0.24, -0.22),
+    begin: const Offset(0.14, -0.08),
     end: Offset.zero,
   ).animate(CurvedAnimation(
     parent: _controller,
-    curve: Curves.easeOutCubic,
-    reverseCurve: Curves.easeInCubic,
+    curve: Curves.easeOutQuart,
+    reverseCurve: Curves.easeInQuart,
   ));
   late final Animation<double> _scale = Tween<double>(
-    begin: 0.97,
+    begin: 0.985,
     end: 1.0,
   ).animate(CurvedAnimation(
     parent: _controller,
-    curve: Curves.easeOutBack,
+    curve: Curves.easeOutCubic,
     reverseCurve: Curves.easeInCubic,
   ));
 
@@ -98,7 +98,7 @@ class _TopPopupAnimatedBannerState extends State<_TopPopupAnimatedBanner>
 
   Future<void> _runAnimation() async {
     await _controller.forward();
-    final hold = widget.duration - const Duration(milliseconds: 540);
+    final hold = widget.duration - const Duration(milliseconds: 720);
     if (hold > Duration.zero) {
       await Future.delayed(hold);
     }
