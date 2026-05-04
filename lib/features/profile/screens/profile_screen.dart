@@ -242,6 +242,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SliverAppBar(
                 expandedHeight: _expandedHeight,
                 pinned: true,
+                automaticallyImplyLeading: false,
                 backgroundColor: const Color(0xFF3D1800),
                 title: AnimatedBuilder(
                   animation: _scroll,

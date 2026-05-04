@@ -30,7 +30,7 @@ Future<void> checkAndPromptMastercard(BuildContext context) async {
       if (!context.mounted) return;
       showTopPopup(
         context,
-        '⚠ Tafadhali jaza taarifa za fomu ifuatayo.',
+        'Tafadhali jaza taarifa za fomu ifuatayo.',
         type: TopPopupType.warning,
         duration: const Duration(milliseconds: 3500),
       );

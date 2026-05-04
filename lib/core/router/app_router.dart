@@ -254,7 +254,7 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.account,
-          builder: (context, state) => const ProfileScreen(),
+          builder: (context, state) => const MainScreen(initialIndex: 4),
         ),
 
         // ── Courses ─────────────────────────────────────────────

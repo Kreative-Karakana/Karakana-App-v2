@@ -710,7 +710,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  'Malipo Salama na AzamPay',
+                  'Malipo Salama na Karakana',
                   style: GoogleFonts.montserrat(
                     fontSize: 12,
                     color: const Color(0xFF9E8070),

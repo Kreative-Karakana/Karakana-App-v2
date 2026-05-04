@@ -244,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     GestureDetector(
-                      onTap: () => context.push('/profile'),
+                      onTap: () => context.go('/account'),
                       child: Container(
                         width: 32,
                         height: 32,
