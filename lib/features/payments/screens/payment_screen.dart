@@ -73,7 +73,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const CircularProgressIndicator(color: Color(0xFFE87722)),
+            const _KarakanaWaveLoader(),
             const SizedBox(height: 18),
             Text(
               'Inashughulikia Malipo...',
@@ -115,7 +115,62 @@ class _PaymentScreenState extends State<PaymentScreen> {
         if (mounted) Navigator.of(context, rootNavigator: true).pop();
         _showError('Hitilafu ya kuanzisha malipo. Jaribu tena.');
         return;
-      }
+}
+
+class _KarakanaWaveLoader extends StatefulWidget {
+  const _KarakanaWaveLoader();
+
+  @override
+  State<_KarakanaWaveLoader> createState() => _KarakanaWaveLoaderState();
+}
+
+class _KarakanaWaveLoaderState extends State<_KarakanaWaveLoader>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1100),
+  )..repeat();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const bars = 5;
+    return SizedBox(
+      width: 54,
+      height: 34,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (_, __) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: List.generate(bars, (i) {
+              final phase = (_controller.value + (i * 0.13)) % 1.0;
+              final wave = (0.5 - (phase - 0.5).abs()) * 2; // 0..1..0
+              final h = 10.0 + (wave * 20.0);
+              return Container(
+                width: 7,
+                height: h,
+                decoration: BoxDecoration(
+                  color: Color.lerp(
+                    const Color(0xFF3D1800),
+                    const Color(0xFFE87722),
+                    wave,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              );
+            }),
+          );
+        },
+      ),
+    );
+  }
+}
 
       if (checkoutUrl != null && checkoutUrl.isNotEmpty) {
         final uri = Uri.tryParse(checkoutUrl);
