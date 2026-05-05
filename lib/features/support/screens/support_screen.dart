@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -165,7 +166,7 @@ class _SupportScreenState extends State<SupportScreen> {
             child: _isLoading
                 ? const Center(
                     child:
-                        CircularProgressIndicator(color: Color(0xFFE87722)),
+                        KarakanaWaveLoader(color: Color(0xFFE87722)),
                   )
                 : _tickets.isEmpty
                     ? _buildEmptyState()
@@ -368,3 +369,5 @@ class _SupportScreenState extends State<SupportScreen> {
     );
   }
 }
+
+

@@ -1,5 +1,6 @@
-﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -43,7 +44,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             body: const Center(
-              child: CircularProgressIndicator(
+              child: KarakanaWaveLoader(
                 color: Color(0xFFE87722),
               ),
             ),
@@ -156,7 +157,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                             child: SizedBox(
                               width: 18,
                               height: 18,
-                              child: CircularProgressIndicator(
+                              child: KarakanaWaveLoader(
                                 strokeWidth: 2,
                                 color: Colors.white,
                               ),
@@ -707,7 +708,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
               ? const SizedBox(
                   width: 18,
                   height: 18,
-                  child: CircularProgressIndicator(
+                  child: KarakanaWaveLoader(
                     color: Colors.white,
                     strokeWidth: 2,
                   ),
@@ -1072,3 +1073,5 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     );
   }
 }
+
+

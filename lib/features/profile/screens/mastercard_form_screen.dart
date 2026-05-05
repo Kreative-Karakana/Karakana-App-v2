@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
@@ -254,7 +255,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
             const SizedBox(height: 8),
             if (_loadingRegions)
               const Center(
-                  child: CircularProgressIndicator(color: AppColors.primary))
+                  child: KarakanaWaveLoader(color: AppColors.primary))
             else
               DropdownButtonFormField<int>(
                 value: _selectedRegionCode,
@@ -287,7 +288,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
               )
             else if (_loadingDistricts)
               const Center(
-                  child: CircularProgressIndicator(color: AppColors.primary))
+                  child: KarakanaWaveLoader(color: AppColors.primary))
             else
               DropdownButtonFormField<int>(
                 value: _selectedDistrictCode,
@@ -365,7 +366,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(
+                        child: KarakanaWaveLoader(
                             color: Colors.white, strokeWidth: 2),
                       )
                     : Text(
@@ -461,4 +462,6 @@ class _District {
   final String name;
   const _District({required this.code, required this.name});
 }
+
+
 

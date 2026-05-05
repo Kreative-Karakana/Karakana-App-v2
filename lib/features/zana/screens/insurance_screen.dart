@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class InsuranceScreen extends StatefulWidget {
@@ -454,7 +455,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                   ? const SizedBox(
                                       width: 20,
                                       height: 20,
-                                      child: CircularProgressIndicator(
+                                      child: KarakanaWaveLoader(
                                         color: Colors.white,
                                         strokeWidth: 2,
                                       ),
@@ -529,3 +530,5 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
     );
   }
 }
+
+

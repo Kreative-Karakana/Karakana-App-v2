@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +40,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: const _ClassroomAppBarPlaceholder(),
             body: Center(
-              child: CircularProgressIndicator(
+              child: KarakanaWaveLoader(
                 color: Color(0xFFE87722),
               ),
             ),
@@ -163,7 +164,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          CircularProgressIndicator(
+                          KarakanaWaveLoader(
                             value: progress,
                             strokeWidth: 5,
                             backgroundColor: const Color(0xFFF5E6D8),
@@ -644,6 +645,8 @@ class _EmptyClassroomState extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

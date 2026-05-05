@@ -1,8 +1,9 @@
-﻿import 'dart:io';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -284,7 +285,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ? const SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(
+                    child: KarakanaWaveLoader(
                         color: Colors.white, strokeWidth: 2),
                   )
                 : Text(
@@ -442,7 +443,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ? const SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(
+                                child: KarakanaWaveLoader(
                                     color: Colors.white, strokeWidth: 2),
                               )
                             : Text(
@@ -659,3 +660,5 @@ class _CoverAvatarHeader extends StatelessWidget {
     );
   }
 }
+
+

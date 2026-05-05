@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -287,7 +288,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                   ? const SizedBox(
                                       width: 18,
                                       height: 18,
-                                      child: CircularProgressIndicator(
+                                      child: KarakanaWaveLoader(
                                         color: AppColors.primaryMid,
                                         strokeWidth: 2,
                                       ),
@@ -439,3 +440,5 @@ class _AuthBackground extends StatelessWidget {
     );
   }
 }
+
+

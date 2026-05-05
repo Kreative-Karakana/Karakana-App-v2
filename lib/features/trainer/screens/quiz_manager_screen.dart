@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/network/api_client.dart';
@@ -227,7 +228,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                 child: SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(
+                  child: KarakanaWaveLoader(
                     color: Colors.white,
                     strokeWidth: 2,
                   ),
@@ -501,3 +502,5 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
     );
   }
 }
+
+

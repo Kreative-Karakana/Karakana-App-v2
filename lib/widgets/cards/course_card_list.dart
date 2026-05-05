@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 import '../../features/courses/models/course_model.dart';
@@ -59,7 +60,7 @@ class CourseListCard extends StatelessWidget {
                               placeholder: (_, __) => Container(
                                 color: AppColors.primaryLight,
                                 child: const Center(
-                                  child: CircularProgressIndicator(
+                                  child: KarakanaWaveLoader(
                                     strokeWidth: 2,
                                     color: AppColors.primary,
                                   ),
@@ -175,3 +176,5 @@ class CourseListCard extends StatelessWidget {
   }
 
 }
+
+

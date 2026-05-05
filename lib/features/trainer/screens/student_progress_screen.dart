@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/network/api_client.dart';
@@ -149,7 +150,7 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
           Expanded(
             child: _isLoading
                 ? const Center(
-                    child: CircularProgressIndicator(color: Color(0xFFE87722)),
+                    child: KarakanaWaveLoader(color: Color(0xFFE87722)),
                   )
                 : _error != null
                     ? _ErrorState(
@@ -503,3 +504,5 @@ class _ErrorState extends StatelessWidget {
     );
   }
 }
+
+

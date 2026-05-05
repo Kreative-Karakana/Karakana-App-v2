@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -301,7 +302,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
       return const Scaffold(
         backgroundColor: Color(0xFFFFF8F4),
         body: Center(
-          child: CircularProgressIndicator(color: Color(0xFFE87722)),
+          child: KarakanaWaveLoader(color: Color(0xFFE87722)),
         ),
       );
     }
@@ -433,7 +434,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                         ? const SizedBox(
                             width: 16,
                             height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                            child: KarakanaWaveLoader(strokeWidth: 2),
                           )
                         : const Icon(Icons.edit_outlined, size: 18),
                     label: Text(
@@ -733,7 +734,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       child: _isSending
                           ? const Padding(
                               padding: EdgeInsets.all(12),
-                              child: CircularProgressIndicator(
+                              child: KarakanaWaveLoader(
                                 color: Colors.white,
                                 strokeWidth: 2,
                               ),
@@ -766,4 +767,6 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     );
   }
 }
+
+
 

@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -358,7 +359,7 @@ class _WalletScreenState extends State<WalletScreen> {
           centerTitle: true,
         ),
         body: _isLoading
-            ? const Center(child: CircularProgressIndicator(color: Color(0xFFE87722)))
+            ? const Center(child: KarakanaWaveLoader(color: Color(0xFFE87722)))
             : Column(children: [
                 // ── BALANCE CARD ──
                 Padding(
@@ -494,3 +495,5 @@ class _WalletScreenState extends State<WalletScreen> {
     );
   }
 }
+
+

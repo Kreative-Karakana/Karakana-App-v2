@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:file_selector/file_selector.dart';
@@ -170,7 +171,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFFE87722)),
+              child: KarakanaWaveLoader(color: Color(0xFFE87722)),
             )
           : SingleChildScrollView(
               padding: const EdgeInsets.all(20),
@@ -332,7 +333,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                             child: SizedBox(
                                               width: 20,
                                               height: 20,
-                                              child: CircularProgressIndicator(
+                                              child: KarakanaWaveLoader(
                                                 strokeWidth: 2,
                                                 color: AppColors.primary,
                                               ),
@@ -414,7 +415,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                   ? const SizedBox(
                                       width: 20,
                                       height: 20,
-                                      child: CircularProgressIndicator(
+                                      child: KarakanaWaveLoader(
                                         color: Colors.white,
                                         strokeWidth: 2,
                                       ),
@@ -603,4 +604,6 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
     );
   }
 }
+
+
 

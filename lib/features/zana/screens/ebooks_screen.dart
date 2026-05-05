@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -97,7 +98,7 @@ class _EBooksScreenState extends State<EBooksScreen> {
       return const Scaffold(
         backgroundColor: Color(0xFFFFF8F4),
         body: Center(
-          child: CircularProgressIndicator(color: Color(0xFF7B2D9E)),
+          child: KarakanaWaveLoader(color: Color(0xFF7B2D9E)),
         ),
       );
     }
@@ -555,3 +556,5 @@ class _EBooksScreenState extends State<EBooksScreen> {
     );
   }
 }
+
+

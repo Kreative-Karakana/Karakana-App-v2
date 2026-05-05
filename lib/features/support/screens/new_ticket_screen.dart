@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -182,7 +183,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(
+                          child: KarakanaWaveLoader(
                             color: Colors.white,
                             strokeWidth: 2,
                           ),
@@ -246,3 +247,5 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
     }
   }
 }
+
+

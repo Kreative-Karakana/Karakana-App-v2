@@ -1,5 +1,6 @@
-﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -59,7 +60,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFFE87722)),
+              child: KarakanaWaveLoader(color: Color(0xFFE87722)),
             )
           : _courses.isEmpty
               ? _buildEmptyState(context)
@@ -327,3 +328,5 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
     return null;
   }
 }
+
+

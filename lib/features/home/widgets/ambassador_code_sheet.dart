@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/constants/api_endpoints.dart';
@@ -251,7 +252,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
                     ? SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(
+                        child: KarakanaWaveLoader(
                           strokeWidth: 2,
                           color: AppColors.primary,
                         ),
@@ -361,7 +362,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(
+                        child: KarakanaWaveLoader(
                           strokeWidth: 2,
                           color: Colors.white,
                         ),
@@ -408,3 +409,5 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
     );
   }
 }
+
+

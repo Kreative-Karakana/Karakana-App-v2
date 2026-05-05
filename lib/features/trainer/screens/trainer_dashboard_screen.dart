@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -357,7 +358,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 ],
             body: _isLoading
                 ? const Center(
-                    child: CircularProgressIndicator(color: Color(0xFFE87722)))
+                    child: KarakanaWaveLoader(color: Color(0xFFE87722)))
                 : TabBarView(
                     controller: _tabController,
                     children: [
@@ -977,7 +978,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                             height: compact ? 110 : 130,
                             color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                             child: const Center(
-                                child: CircularProgressIndicator(
+                                child: KarakanaWaveLoader(
                                     strokeWidth: 2,
                                     color: Color(0xFFE87722)))),
                         errorWidget: (_, __, ___) => Container(
@@ -2026,3 +2027,5 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     ]));
   }
 }
+
+

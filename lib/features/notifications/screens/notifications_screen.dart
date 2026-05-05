@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -59,7 +60,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           final isDark = Theme.of(context).brightness == Brightness.dark;
           if (provider.isLoading) {
             return const Center(
-              child: CircularProgressIndicator(color: Color(0xFFE87722)),
+              child: KarakanaWaveLoader(color: Color(0xFFE87722)),
             );
           }
           if (provider.notifications.isEmpty) {
@@ -246,3 +247,5 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 }
+
+

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:dio/dio.dart';
 
@@ -415,7 +416,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFFE87722)))
+              child: KarakanaWaveLoader(color: Color(0xFFE87722)))
           : RefreshIndicator(
               color: const Color(0xFFE87722),
               onRefresh: _loadSections,
@@ -607,3 +608,5 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
     );
   }
 }
+
+

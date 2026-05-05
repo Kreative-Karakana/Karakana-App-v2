@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
@@ -231,7 +232,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
                   const SizedBox(height: 48),
 
                   if (_isAuthenticating)
-                    const CircularProgressIndicator(
+                    const KarakanaWaveLoader(
                       color: AppColors.primaryMid,
                     )
                   else if (_failed)
@@ -287,3 +288,5 @@ class _BiometricScreenState extends State<BiometricScreen> {
     );
   }
 }
+
+

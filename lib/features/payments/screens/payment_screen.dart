@@ -1,5 +1,6 @@
-﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -73,7 +74,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const _KarakanaWaveLoader(),
+            const KarakanaWaveLoader(size: 30),
             const SizedBox(height: 18),
             Text(
               'Inashughulikia Malipo...',
@@ -685,7 +686,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(
+                        child: KarakanaWaveLoader(
                           color: Colors.white,
                           strokeWidth: 2,
                         ),
@@ -741,57 +742,4 @@ class _PaymentScreenState extends State<PaymentScreen> {
   }
 }
 
-class _KarakanaWaveLoader extends StatefulWidget {
-  const _KarakanaWaveLoader();
 
-  @override
-  State<_KarakanaWaveLoader> createState() => _KarakanaWaveLoaderState();
-}
-
-class _KarakanaWaveLoaderState extends State<_KarakanaWaveLoader>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1100),
-  )..repeat();
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    const bars = 5;
-    return SizedBox(
-      width: 54,
-      height: 34,
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (_, __) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(bars, (i) {
-              final phase = (_controller.value + (i * 0.13)) % 1.0;
-              final wave = (0.5 - (phase - 0.5).abs()) * 2; // 0..1..0
-              final h = 10.0 + (wave * 20.0);
-              return Container(
-                width: 7,
-                height: h,
-                decoration: BoxDecoration(
-                  color: Color.lerp(
-                    const Color(0xFF3D1800),
-                    const Color(0xFFE87722),
-                    wave,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              );
-            }),
-          );
-        },
-      ),
-    );
-  }
-}

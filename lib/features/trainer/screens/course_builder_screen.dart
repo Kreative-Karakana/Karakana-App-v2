@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -423,7 +424,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                   color: Colors.white)),
         ),
         body: const Center(
-            child: CircularProgressIndicator(color: Color(0xFFE87722))),
+            child: KarakanaWaveLoader(color: Color(0xFFE87722))),
       );
     }
 
@@ -580,7 +581,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                         ? const SizedBox(
                             width: 20,
                             height: 20,
-                            child: CircularProgressIndicator(
+                            child: KarakanaWaveLoader(
                               color: Colors.white,
                               strokeWidth: 2,
                             ),
@@ -1280,3 +1281,5 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     );
   }
 }
+
+

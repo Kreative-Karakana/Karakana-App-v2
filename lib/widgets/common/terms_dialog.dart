@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -215,7 +216,7 @@ class _TermsDialogState extends State<_TermsDialog> {
                           }
                         : null,
                     child: _isAccepting
-                        ? const CircularProgressIndicator(
+                        ? const KarakanaWaveLoader(
                             color: Colors.white, strokeWidth: 2)
                         : Text(
                             'Nakubali Masharti',
@@ -249,3 +250,5 @@ class _TermsDialogState extends State<_TermsDialog> {
     );
   }
 }
+
+
