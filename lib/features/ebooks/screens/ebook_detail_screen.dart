@@ -161,7 +161,10 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
           FilledButton(
             onPressed: _processing ? null : () {
               if (isPurchased) {
-                context.push('/zana/ebooks/library');
+                context.push(
+                  '/zana/ebooks/read/${widget.ebookId}',
+                  extra: {'ebookTitle': (d['title'] ?? 'eBook').toString()},
+                );
               } else {
                 _purchase();
               }

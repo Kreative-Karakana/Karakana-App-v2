@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import '../../../core/network/api_client.dart';
 import '../models/ebook.dart';
@@ -107,5 +109,21 @@ class EbookService {
 
   Future<void> deleteEbook(int id) async {
     await _dio.delete('/api/v1/ebooks/manage/$id/');
+  }
+
+  Future<Map<String, dynamic>> fetchPage({
+    required int ebookId,
+    required int pageNumber,
+  }) async {
+    final res = await _dio.get('/api/v1/ebooks/$ebookId/pages/$pageNumber/');
+    final data = (res.data as Map).cast<String, dynamic>();
+    final base64Data = (data['page_data'] ?? '').toString();
+    final bytes = base64Decode(base64Data);
+    return {
+      'bytes': bytes,
+      'total_pages': (data['total_pages'] as num?)?.toInt() ?? 1,
+      'watermark_text': (data['watermark_text'] ?? '').toString(),
+      'page': (data['page'] as num?)?.toInt() ?? pageNumber,
+    };
   }
 }

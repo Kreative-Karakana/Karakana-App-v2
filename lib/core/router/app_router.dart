@@ -44,6 +44,7 @@ import '../../features/zana/screens/zana_screen.dart';
 import '../../features/ebooks/screens/ebook_store_screen.dart';
 import '../../features/ebooks/screens/ebook_detail_screen.dart';
 import '../../features/ebooks/screens/ebook_library_screen.dart';
+import '../../features/ebooks/screens/secure_ebook_reader_screen.dart';
 import '../../features/ebooks/trainer/trainer_ebooks_screen.dart';
 import '../../features/ebooks/trainer/add_edit_ebook_screen.dart';
 
@@ -264,6 +265,13 @@ class AppRouter {
           path: '/zana/ebooks/:ebookId',
           builder: (context, state) => EbookDetailScreen(
             ebookId: int.tryParse(state.pathParameters['ebookId'] ?? '') ?? 0,
+          ),
+        ),
+        GoRoute(
+          path: '/zana/ebooks/read/:ebookId',
+          builder: (context, state) => SecureEbookReaderScreen(
+            ebookId: int.tryParse(state.pathParameters['ebookId'] ?? '') ?? 0,
+            ebookTitle: (state.extra as Map?)?['ebookTitle']?.toString() ?? 'eBook',
           ),
         ),
         GoRoute(

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'dart:typed_data';
 
 import '../models/ebook.dart';
 import '../services/ebook_service.dart';
@@ -19,6 +20,10 @@ class EbookProvider extends ChangeNotifier {
   List<Ebook> store = [];
   List<EbookPurchase> library = [];
   List<Ebook> myEbooks = [];
+  final Map<int, Uint8List> pageCache = {};
+  int currentEbookPage = 1;
+  int totalPages = 1;
+  String? watermarkText;
 
   Future<void> fetchStore() async {
     isLoadingStore = true;
@@ -96,5 +101,40 @@ class EbookProvider extends ChangeNotifier {
   bool isOwned(int ebookId) {
     return library.any((p) => p.ebook.id == ebookId && p.isSuccessful) ||
         store.any((e) => e.id == ebookId && e.isPurchased);
+  }
+
+  Future<Uint8List?> fetchReaderPage({
+    required int ebookId,
+    required int pageNumber,
+  }) async {
+    if (pageCache.containsKey(pageNumber)) {
+      return pageCache[pageNumber];
+    }
+    try {
+      final payload = await _service.fetchPage(ebookId: ebookId, pageNumber: pageNumber);
+      final bytes = payload['bytes'] as Uint8List;
+      totalPages = payload['total_pages'] as int? ?? totalPages;
+      watermarkText = payload['watermark_text'] as String?;
+      currentEbookPage = payload['page'] as int? ?? pageNumber;
+
+      pageCache[pageNumber] = bytes;
+      // Keep a tiny LRU-like cap (max 5 pages in memory).
+      if (pageCache.length > 5) {
+        final keys = pageCache.keys.toList()..sort();
+        pageCache.remove(keys.first);
+      }
+      notifyListeners();
+      return bytes;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  void clearReaderCache() {
+    pageCache.clear();
+    currentEbookPage = 1;
+    totalPages = 1;
+    watermarkText = null;
+    notifyListeners();
   }
 }

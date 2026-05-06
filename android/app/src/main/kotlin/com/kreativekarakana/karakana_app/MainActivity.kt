@@ -21,6 +21,11 @@ class MainActivity : FlutterFragmentActivity() {
                         window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
                         result.success(null)
                     }
+                    "isScreenCaptured" -> {
+                        // Android screen capture detection is device/vendor specific;
+                        // FLAG_SECURE is primary protection.
+                        result.success(false)
+                    }
                     else -> result.notImplemented()
                 }
             }

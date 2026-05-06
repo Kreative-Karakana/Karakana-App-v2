@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../widgets/common/karakana_wave_loader.dart';
@@ -40,6 +41,10 @@ class _EbookLibraryScreenState extends State<EbookLibraryScreen> {
               final p = provider.library[i];
               return Card(
                 child: ListTile(
+                  onTap: () => context.push(
+                    '/zana/ebooks/read/${p.ebook.id}',
+                    extra: {'ebookTitle': p.ebook.title},
+                  ),
                   leading: p.ebook.coverImageUrl != null
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(8),

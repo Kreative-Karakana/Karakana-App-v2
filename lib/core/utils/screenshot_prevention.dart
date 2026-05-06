@@ -14,4 +14,13 @@ class ScreenshotPrevention {
       await _channel.invokeMethod('disableScreenshotPrevention');
     } catch (_) {}
   }
+
+  static Future<bool> isScreenCaptured() async {
+    try {
+      final val = await _channel.invokeMethod<bool>('isScreenCaptured');
+      return val ?? false;
+    } catch (_) {
+      return false;
+    }
+  }
 }
