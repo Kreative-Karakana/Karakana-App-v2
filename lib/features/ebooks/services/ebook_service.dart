@@ -1,0 +1,111 @@
+import 'package:dio/dio.dart';
+
+import '../../../core/network/api_client.dart';
+import '../models/ebook.dart';
+
+class EbookService {
+  final _dio = ApiClient().dio;
+
+  Future<List<Ebook>> fetchStore() async {
+    final res = await _dio.get('/api/v1/ebooks/store/');
+    final data = res.data;
+    final List results;
+    if (data is Map && data['results'] is List) {
+      results = data['results'] as List;
+    } else if (data is List) {
+      results = data;
+    } else {
+      results = const [];
+    }
+    return results
+        .whereType<Map>()
+        .map((e) => Ebook.fromJson(e.cast<String, dynamic>()))
+        .toList();
+  }
+
+  Future<Ebook> fetchDetail(int id) async {
+    final res = await _dio.get('/api/v1/ebooks/$id/');
+    return Ebook.fromJson((res.data as Map).cast<String, dynamic>());
+  }
+
+  Future<List<EbookPurchase>> fetchLibrary() async {
+    final res = await _dio.get('/api/v1/ebooks/library/');
+    final data = res.data;
+    final List results;
+    if (data is Map && data['results'] is List) {
+      results = data['results'] as List;
+    } else if (data is List) {
+      results = data;
+    } else {
+      results = const [];
+    }
+
+    return results
+        .whereType<Map>()
+        .map((e) => EbookPurchase.fromJson(e.cast<String, dynamic>()))
+        .toList();
+  }
+
+  Future<List<Ebook>> fetchMyEbooks() async {
+    final res = await _dio.get('/api/v1/ebooks/my/');
+    final data = res.data;
+    final List results;
+    if (data is Map && data['results'] is List) {
+      results = data['results'] as List;
+    } else if (data is List) {
+      results = data;
+    } else {
+      results = const [];
+    }
+    return results
+        .whereType<Map>()
+        .map((e) => Ebook.fromJson(e.cast<String, dynamic>()))
+        .toList();
+  }
+
+  Future<Map<String, dynamic>> purchaseEbook({
+    required int ebookId,
+    required String accountNumber,
+    required String provider,
+  }) async {
+    final res = await _dio.post(
+      '/api/v1/ebooks/$ebookId/purchase/',
+      data: {
+        'accountNumber': accountNumber,
+        'provider': provider,
+      },
+    );
+    return (res.data as Map).cast<String, dynamic>();
+  }
+
+  Future<Map<String, dynamic>> createEbook({
+    required String title,
+    required String description,
+    required String price,
+    required String coverImagePath,
+    required String epubFilePath,
+  }) async {
+    final form = FormData.fromMap({
+      'title': title,
+      'description': description,
+      'price': price,
+      'cover_image': await MultipartFile.fromFile(coverImagePath),
+      'epub_file': await MultipartFile.fromFile(epubFilePath),
+      'status': 'published',
+    });
+    final res = await _dio.post('/api/v1/ebooks/', data: form);
+    return (res.data as Map).cast<String, dynamic>();
+  }
+
+  Future<Map<String, dynamic>> updateEbook({
+    required int id,
+    required Map<String, dynamic> data,
+  }) async {
+    final res = await _dio.patch('/api/v1/ebooks/manage/$id/', data: data);
+    return (res.data as Map).cast<String, dynamic>();
+  }
+
+  Future<void> deleteEbook(int id) async {
+    await _dio.delete('/api/v1/ebooks/manage/$id/');
+  }
+}

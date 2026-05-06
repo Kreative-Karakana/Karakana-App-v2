@@ -8,6 +8,7 @@ import 'core/router/app_router.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/notifications/providers/notification_provider.dart';
 import 'features/courses/providers/course_provider.dart';
+import 'features/ebooks/providers/ebook_provider.dart';
 import 'providers/theme_provider.dart';
 
 /// Must be a top-level function — called by FCM for background messages.
@@ -79,6 +80,7 @@ class _KarakanaAppState extends State<KarakanaApp> {
         ChangeNotifierProvider.value(value: widget.authProvider),
         ChangeNotifierProvider(create: (_) => CourseProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => EbookProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: Consumer<ThemeProvider>(

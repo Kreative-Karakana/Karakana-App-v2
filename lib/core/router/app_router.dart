@@ -39,9 +39,13 @@ import '../../features/fursa/screens/fursa_screen.dart';
 import '../../features/zana/screens/biz_manager_screen.dart';
 import '../../features/zana/screens/insurance_screen.dart';
 import '../../features/zana/screens/pos_screen.dart';
-import '../../features/zana/screens/ebooks_screen.dart';
 import '../../features/zana/screens/kikoba_screen.dart';
 import '../../features/zana/screens/zana_screen.dart';
+import '../../features/ebooks/screens/ebook_store_screen.dart';
+import '../../features/ebooks/screens/ebook_detail_screen.dart';
+import '../../features/ebooks/screens/ebook_library_screen.dart';
+import '../../features/ebooks/trainer/trainer_ebooks_screen.dart';
+import '../../features/ebooks/trainer/add_edit_ebook_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -250,7 +254,31 @@ class AppRouter {
         ),
         GoRoute(
           path: '/zana/ebooks',
-          builder: (context, state) => const EBooksScreen(),
+          builder: (context, state) => const EbookStoreScreen(),
+        ),
+        GoRoute(
+          path: '/zana/ebooks/library',
+          builder: (context, state) => const EbookLibraryScreen(),
+        ),
+        GoRoute(
+          path: '/zana/ebooks/:ebookId',
+          builder: (context, state) => EbookDetailScreen(
+            ebookId: int.tryParse(state.pathParameters['ebookId'] ?? '') ?? 0,
+          ),
+        ),
+        GoRoute(
+          path: '/trainer/ebooks',
+          builder: (context, state) => const TrainerEbooksScreen(),
+        ),
+        GoRoute(
+          path: '/trainer/ebooks/add',
+          builder: (context, state) => const AddEditEbookScreen(),
+        ),
+        GoRoute(
+          path: '/trainer/ebooks/:id/edit',
+          builder: (context, state) => AddEditEbookScreen(
+            ebookId: int.tryParse(state.pathParameters['id'] ?? ''),
+          ),
         ),
         GoRoute(
           path: AppRoutes.account,

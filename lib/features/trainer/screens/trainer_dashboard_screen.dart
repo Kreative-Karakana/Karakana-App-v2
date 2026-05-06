@@ -1874,6 +1874,12 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     onPressed: () => theme.toggleTheme(),
                   )),
           IconButton(
+            icon: Icon(Icons.menu_book_outlined,
+                color: Colors.white.withValues(alpha: 0.7), size: 20),
+            tooltip: 'Vitabu',
+            onPressed: () => context.push('/trainer/ebooks'),
+          ),
+          IconButton(
               icon: Icon(Icons.logout,
                   color: Colors.white.withValues(alpha: 0.7), size: 20),
               tooltip: 'Toka',
