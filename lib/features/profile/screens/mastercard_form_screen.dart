@@ -60,23 +60,26 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
         'https://api.locations.co.tz/v1/regions/?limit=30',
         options: null,
       );
-      final data = response.data['data'] as List? ?? [];
+      final data = _extractList(response.data);
+      if (!mounted) return;
       setState(() {
         _regions = data
             .map((e) => _Region(
-                  code: e['region_code'] as int? ?? 0,
-                  name: e['region_name'] as String? ?? '',
+                  code: _asInt(_mapValue(e, const ['region_code', 'code', 'id'])),
+                  name: _asString(_mapValue(e, const ['region_name', 'name'])),
                 ))
             .where((r) => r.code != 0 && r.name.isNotEmpty)
             .toList();
         _loadingRegions = false;
       });
     } catch (_) {
+      if (!mounted) return;
       setState(() => _loadingRegions = false);
     }
   }
 
   Future<void> _loadDistricts(int regionCode) async {
+    if (!mounted) return;
     setState(() {
       _loadingDistricts = true;
       _districts = [];
@@ -86,18 +89,20 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
       final response = await ApiClient().dio.get(
         'https://api.locations.co.tz/v1/regions/$regionCode/districts/?limit=50',
       );
-      final data = response.data['data'] as List? ?? [];
+      final data = _extractList(response.data);
+      if (!mounted) return;
       setState(() {
         _districts = data
             .map((e) => _District(
-                  code: e['district_code'] as int? ?? 0,
-                  name: e['district_name'] as String? ?? '',
+                  code: _asInt(_mapValue(e, const ['district_code', 'code', 'id'])),
+                  name: _asString(_mapValue(e, const ['district_name', 'name'])),
                 ))
             .where((d) => d.code != 0 && d.name.isNotEmpty)
             .toList();
         _loadingDistricts = false;
       });
     } catch (_) {
+      if (!mounted) return;
       setState(() => _loadingDistricts = false);
     }
   }
@@ -442,6 +447,38 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
         ],
       ),
     );
+  }
+
+  int _asInt(dynamic value) {
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value) ?? 0;
+    return 0;
+  }
+
+  String _asString(dynamic value) {
+    if (value == null) return '';
+    return value.toString().trim();
+  }
+
+  List<dynamic> _extractList(dynamic source) {
+    if (source is List) return source;
+    if (source is Map<String, dynamic>) {
+      final directData = source['data'];
+      if (directData is List) return directData;
+      final results = source['results'];
+      if (results is List) return results;
+      final items = source['items'];
+      if (items is List) return items;
+    }
+    return const [];
+  }
+
+  dynamic _mapValue(dynamic source, List<String> keys) {
+    if (source is! Map) return null;
+    for (final key in keys) {
+      if (source.containsKey(key)) return source[key];
+    }
+    return null;
   }
 }
 
