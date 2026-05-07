@@ -67,10 +67,9 @@ class _KarakanaAppState extends State<KarakanaApp> {
   }
 
   void _registerToken(String token) {
-    ApiClient().dio.post(
-      '/api/v1/accounts/fcm-token/',
-      data: {'token': token},
-    ).then((_) {}).catchError((_) {});
+    // Token registration is handled by auth endpoints in current backend.
+    // Skip standalone registration call to avoid noisy 404s on boot.
+    debugPrint('[FCM] Token captured (length=${token.length})');
   }
 
   @override

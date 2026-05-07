@@ -20,13 +20,18 @@ Future<void> checkAndPromptMastercard(BuildContext context) async {
   if (isDone) return;
 
   try {
-    await ApiClient().dio.get(ApiEndpoints.masterCard);
-    // 200 means mastercard exists — mark done and skip
-    await SecureStorage().setMastercardDone();
-  } catch (e) {
-    final statusCode = e is DioException ? e.response?.statusCode : null;
+    final response = await ApiClient().dio.get(
+      ApiEndpoints.masterCard,
+      options: Options(validateStatus: (code) => code != null && code < 500),
+    );
+    final statusCode = response.statusCode ?? 0;
+
+    if (statusCode == 200) {
+      await SecureStorage().setMastercardDone();
+      return;
+    }
+
     if (statusCode == 404) {
-      // No mastercard yet — prompt the user
       if (!context.mounted) return;
       showTopPopup(
         context,
@@ -37,6 +42,7 @@ Future<void> checkAndPromptMastercard(BuildContext context) async {
       if (!context.mounted) return;
       context.push('/mastercard-form');
     }
-    // Any other error (network, auth) — skip silently, retry next launch
+  } catch (_) {
+    // Any network/transport error — skip silently, retry next launch.
   }
 }
