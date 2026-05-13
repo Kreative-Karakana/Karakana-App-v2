@@ -112,12 +112,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
       final externalId = checkoutRes.data['external_id'] as String?;
       final checkoutUrl = checkoutRes.data['checkout_url'] as String?;
+      final gateway = checkoutRes.data['gateway'] as String?;
+      final success = checkoutRes.data['success'] == true;
       if (externalId == null || externalId.isEmpty) {
         if (mounted) Navigator.of(context, rootNavigator: true).pop();
         _showError('Hitilafu ya kuanzisha malipo. Jaribu tena.');
         return;
       }
 
+      // EVMAK MNO flow may not return a checkout URL. In that case we proceed
+      // directly to status polling after successful initiation.
+      if (gateway == 'evmak_mno' && success) {
+        // Keep dialog open and continue to polling loop below.
+      } else
       if (checkoutUrl != null && checkoutUrl.isNotEmpty) {
         final uri = Uri.tryParse(checkoutUrl);
         if (uri != null) {
