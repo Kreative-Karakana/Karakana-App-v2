@@ -66,29 +66,38 @@ class _KarakanaWaveLoaderState extends State<KarakanaWaveLoader>
       width: containerWidth,
       height: containerHeight,
       child: ClipRect(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (_, __) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: List.generate(bars, (i) {
-                final phase = (_controller.value + (i * 0.13)) % 1.0;
-                final wave = (0.5 - (phase - 0.5).abs()) * 2;
-                final h = minBarHeight + (wave * maxExtraHeight);
-                return Padding(
-                  padding: EdgeInsets.only(right: i == bars - 1 ? 0 : constrainedGap),
-                  child: Container(
-                    width: barWidth,
-                    height: h,
-                    decoration: BoxDecoration(
-                      color: Color.lerp(base, accent, wave),
-                      borderRadius: BorderRadius.circular(barWidth),
-                    ),
-                  ),
-                );
-              }),
-            );
-          },
+        child: FittedBox(
+          fit: BoxFit.contain,
+          alignment: Alignment.centerLeft,
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (_, __) {
+              return SizedBox(
+                width: containerWidth,
+                height: containerHeight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: List.generate(bars, (i) {
+                    final phase = (_controller.value + (i * 0.13)) % 1.0;
+                    final wave = (0.5 - (phase - 0.5).abs()) * 2;
+                    final h = minBarHeight + (wave * maxExtraHeight);
+                    return Padding(
+                      padding:
+                          EdgeInsets.only(right: i == bars - 1 ? 0 : constrainedGap),
+                      child: Container(
+                        width: barWidth,
+                        height: h,
+                        decoration: BoxDecoration(
+                          color: Color.lerp(base, accent, wave),
+                          borderRadius: BorderRadius.circular(barWidth),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
