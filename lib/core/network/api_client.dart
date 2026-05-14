@@ -69,12 +69,18 @@ class ApiClient {
     if (error is DioException) {
       final data = error.response?.data;
       if (data is Map) {
-        if (data.containsKey('detail')) return data['detail'].toString();
-        if (data.containsKey('message')) return data['message'].toString();
+        if (data.containsKey('detail')) {
+          return _localizeErrorMessage(data['detail'].toString());
+        }
+        if (data.containsKey('message')) {
+          return _localizeErrorMessage(data['message'].toString());
+        }
         final firstKey = data.keys.first;
         final firstValue = data[firstKey];
-        if (firstValue is List) return firstValue.first.toString();
-        return firstValue.toString();
+        if (firstValue is List) {
+          return _localizeErrorMessage(firstValue.first.toString());
+        }
+        return _localizeErrorMessage(firstValue.toString());
       }
       switch (error.response?.statusCode) {
         case 400:
@@ -111,5 +117,34 @@ class ApiClient {
       }
     }
     return 'Kuna hitilafu imetokea. Tafadhali jaribu tena.';
+  }
+
+  String localizeErrorMessage(String message) => _localizeErrorMessage(message);
+
+  String _localizeErrorMessage(String message) {
+    final normalized = message.trim();
+    if (normalized.isEmpty) return 'Kuna hitilafu imetokea. Tafadhali jaribu tena.';
+    final lower = normalized.toLowerCase();
+
+    if (lower.contains('invalid reference')) {
+      return 'Rejea ya malipo si sahihi. Tafadhali jaribu tena.';
+    }
+    if (lower.contains('not registered')) {
+      return 'Akaunti ya malipo haijasajiliwa kwa sasa. Tafadhali wasiliana na msaada.';
+    }
+    if (lower.contains('request send to the user')) {
+      return 'Ombi la malipo limetumwa kwa mtumiaji.';
+    }
+    if (lower.contains('you do not have permission')) {
+      return 'Huna ruhusa ya kufanya hili.';
+    }
+    if (lower.contains('not found')) {
+      return 'Taarifa ulizoomba hazikupatikana.';
+    }
+    if (lower.contains('failed to load')) {
+      return 'Imeshindikana kupakia. Tafadhali jaribu tena.';
+    }
+
+    return normalized;
   }
 }

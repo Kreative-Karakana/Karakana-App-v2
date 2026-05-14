@@ -130,7 +130,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         if (mounted) Navigator.of(context, rootNavigator: true).pop();
         _showError(
           responseDesc?.isNotEmpty == true
-              ? responseDesc!
+              ? ApiClient().localizeErrorMessage(responseDesc!)
               : 'Malipo hayakuanzishwa. Jaribu tena.',
         );
         return;

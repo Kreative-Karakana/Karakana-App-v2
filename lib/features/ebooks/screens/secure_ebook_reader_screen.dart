@@ -74,7 +74,7 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
     if (bytes == null) {
       setState(() {
         _loading = false;
-        _error = 'Failed to load page. Please retry.';
+        _error = 'Imeshindikana kupakia ukurasa. Tafadhali jaribu tena.';
       });
       return;
     }
@@ -161,7 +161,11 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
           children: [
             Text(_error!, style: const TextStyle(color: Colors.white)),
             const SizedBox(height: 10),
-            OutlinedButton(onPressed: () => _loadPage(context.read<EbookProvider>().currentEbookPage), child: const Text('Retry')),
+            OutlinedButton(
+              onPressed: () =>
+                  _loadPage(context.read<EbookProvider>().currentEbookPage),
+              child: const Text('Jaribu Tena'),
+            ),
           ],
         ),
       );

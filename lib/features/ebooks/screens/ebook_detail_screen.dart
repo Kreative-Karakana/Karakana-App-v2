@@ -90,7 +90,10 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
           );
 
       if (result == null) {
-        throw Exception(context.read<EbookProvider>().purchaseError ?? 'Purchase failed');
+        throw Exception(
+          context.read<EbookProvider>().purchaseError ??
+              'Ununuzi umeshindikana. Tafadhali jaribu tena.',
+        );
       }
 
       final payment = (result['payment'] as Map?)?.cast<String, dynamic>();
