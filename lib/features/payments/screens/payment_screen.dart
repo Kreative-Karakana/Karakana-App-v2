@@ -109,11 +109,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
           'course_id': widget.courseId,
         },
       );
+      debugPrint('[PAYMENT] checkout response: ${checkoutRes.data}');
 
       final externalId = checkoutRes.data['external_id'] as String?;
       final checkoutUrl = checkoutRes.data['checkout_url'] as String?;
       final gateway = checkoutRes.data['gateway'] as String?;
       final initiationSuccess = checkoutRes.data['success'] == true;
+      final responseDesc = checkoutRes.data['response_desc']?.toString();
       if (externalId == null || externalId.isEmpty) {
         if (mounted) Navigator.of(context, rootNavigator: true).pop();
         _showError('Hitilafu ya kuanzisha malipo. Jaribu tena.');
@@ -124,6 +126,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
       // directly to status polling after successful initiation.
       if (gateway == 'evmak_mno' && initiationSuccess) {
         // Keep dialog open and continue to polling loop below.
+      } else if (gateway == 'evmak_mno' && !initiationSuccess) {
+        if (mounted) Navigator.of(context, rootNavigator: true).pop();
+        _showError(
+          responseDesc?.isNotEmpty == true
+              ? responseDesc!
+              : 'Malipo hayakuanzishwa. Jaribu tena.',
+        );
+        return;
       } else
       if (checkoutUrl != null && checkoutUrl.isNotEmpty) {
         final uri = Uri.tryParse(checkoutUrl);
@@ -147,15 +157,20 @@ class _PaymentScreenState extends State<PaymentScreen> {
         return;
       }
 
-      // 2. Poll for payment status (max 10 × 3s = 30 seconds)
+      // 2. Poll for payment status.
+      // EVMAK MNO can take longer before callback confirmation.
+      final maxPollAttempts = gateway == 'evmak_mno' ? 20 : 10;
       bool success = false;
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < maxPollAttempts; i++) {
         await Future.delayed(const Duration(seconds: 3));
         if (!mounted) return;
 
         try {
           final statusRes =
               await ApiClient().dio.get('/api/v1/payments/$externalId/');
+          debugPrint(
+            '[PAYMENT] poll $i/$maxPollAttempts external_id=$externalId status=${statusRes.data}',
+          );
           if (statusRes.data['is_successful'] == true) {
             success = true;
             break;
