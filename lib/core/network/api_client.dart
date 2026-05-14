@@ -52,6 +52,8 @@ class ApiClient {
           debugPrint(
               '[API] ERROR ${error.response?.statusCode} ${error.requestOptions.uri}');
           debugPrint('[API] ERROR BODY: ${error.response?.data}');
+          debugPrint('[API] ERROR TYPE: ${error.type}');
+          debugPrint('[API] ERROR MESSAGE: ${error.message}');
         }
         if (error.response?.statusCode == 401) {
           await SecureStorage().clearAll();
@@ -86,6 +88,21 @@ class ApiClient {
         case 500:
           return 'Hitilafu ya seva. Tafadhali jaribu tena baadaye.';
         default:
+          if (error.type == DioExceptionType.connectionTimeout) {
+            return 'Muunganisho umechelewa (connection timeout). Jaribu tena.';
+          }
+          if (error.type == DioExceptionType.receiveTimeout) {
+            return 'Seva imechelewa kujibu (receive timeout). Jaribu tena.';
+          }
+          if (error.type == DioExceptionType.sendTimeout) {
+            return 'Kutuma ombi kumechelewa (send timeout). Jaribu tena.';
+          }
+          if (error.type == DioExceptionType.badCertificate) {
+            return 'Hitilafu ya usalama wa cheti cha seva. Wasiliana na msaada.';
+          }
+          if (error.type == DioExceptionType.cancel) {
+            return 'Ombi limeghairiwa kabla ya kukamilika. Jaribu tena.';
+          }
           if (error.type == DioExceptionType.connectionError ||
               error.type == DioExceptionType.unknown) {
             return 'Hakuna muunganisho wa intaneti. Tafadhali angalia mtandao wako.';
