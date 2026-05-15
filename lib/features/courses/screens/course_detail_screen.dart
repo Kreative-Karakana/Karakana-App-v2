@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../../payments/providers/iap_provider.dart';
 import '../models/course_model.dart';
 import '../providers/course_provider.dart';
 
@@ -34,6 +36,56 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CourseProvider>().loadCourseDetail(widget.courseId);
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!Platform.isIOS) return;
+      final course = context.read<CourseProvider>().selectedCourse;
+      if (course == null) return;
+      if (course.isFree) return;
+      final productId = course.appleIapProductId ?? '';
+      if (productId.isEmpty) return;
+      await context.read<IAPProvider>().initializeForCourse(productId);
+    });
+
+    context.read<IAPProvider>().addListener(_onIAPStateChange);
+  }
+
+  @override
+  void dispose() {
+    context.read<IAPProvider>().removeListener(_onIAPStateChange);
+    super.dispose();
+  }
+
+  void _onIAPStateChange() {
+    final iap = context.read<IAPProvider>();
+    if (!mounted) return;
+
+    if (iap.purchaseSuccess) {
+      iap.reset();
+      context.read<CourseProvider>().loadCourseDetail(widget.courseId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Umesajiliwa kwa mafanikio!',
+            style: GoogleFonts.montserrat(color: Colors.white),
+          ),
+          backgroundColor: const Color(0xFFE87722),
+        ),
+      );
+    }
+
+    if (iap.errorMessage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            iap.errorMessage!,
+            style: GoogleFonts.montserrat(color: Colors.white),
+          ),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
+      iap.reset();
+    }
   }
 
   @override
@@ -398,7 +450,12 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                               ],
                             ),
                             const SizedBox(height: 12),
-                            _buildEnrollButton(context, course, provider),
+                            _buildEnrollButton(
+                              context,
+                              course,
+                              provider,
+                              context.read<IAPProvider>(),
+                            ),
                           ],
                         ),
                       ),
@@ -657,6 +714,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     BuildContext context,
     CourseModel course,
     CourseProvider provider,
+    IAPProvider iapProvider,
   ) {
     if (course.isEnrolled) {
       return SizedBox(
@@ -724,6 +782,68 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       );
     }
 
+    // iOS: Apple IAP
+    if (Platform.isIOS) {
+      final productId = course.appleIapProductId ?? '';
+      if (productId.isEmpty) {
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey.shade400,
+              foregroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 52),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(28),
+              ),
+            ),
+            onPressed: null,
+            child: Text(
+              'Haipatikani kwenye iOS',
+              style: GoogleFonts.montserrat(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        );
+      }
+
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFE87722),
+            foregroundColor: Colors.white,
+            minimumSize: const Size(double.infinity, 52),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
+          ),
+          onPressed: iapProvider.isLoading
+              ? null
+              : () => iapProvider.purchase(productId),
+          child: iapProvider.isLoading
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: KarakanaWaveLoader(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                )
+              : Text(
+                  'Nunua Kozi • ${course.formattedPrice}',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+        ),
+      );
+    }
+
+    // Android: existing EVPay flow — keep exactly as is
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
