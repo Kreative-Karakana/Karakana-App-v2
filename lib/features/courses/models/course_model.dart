@@ -28,6 +28,7 @@ class CourseModel {
   final String level;
   final String? coverPhoto;
   final String? playbackUrl;
+  final String? appleIapProductId;
   final String trainerName;
   final String? trainerAvatar;
   final int trainerId;
@@ -49,6 +50,7 @@ class CourseModel {
     required this.level,
     this.coverPhoto,
     this.playbackUrl,
+    this.appleIapProductId,
     required this.trainerName,
     this.trainerAvatar,
     required this.trainerId,
@@ -102,6 +104,7 @@ class CourseModel {
       level: json['level'] ?? '',
       coverPhoto: json['cover_photo']?.toString(),
       playbackUrl: json['playback_url']?.toString(),
+      appleIapProductId: json['apple_iap_product_id']?.toString(),
       trainerName: trainerName,
       trainerAvatar: trainerAvatar,
       trainerId: trainerId,
@@ -129,6 +132,7 @@ class CourseModel {
         'price': price,
         'level': level,
         'cover_photo': coverPhoto,
+        'apple_iap_product_id': appleIapProductId,
         'is_enrolled': isEnrolled,
         'is_in_wishlist': isWishlisted,
         'faqs': faqs.map((f) => f.toJson()).toList(),
