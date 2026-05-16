@@ -5,7 +5,7 @@ on:
 
 jobs:
   build-ios:
-    runs-on: macos-latest
+    runs-on: macos-15
 
     steps:
       - name: Checkout code
@@ -16,6 +16,12 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+
+      - name: Select Xcode version
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.0.app/Contents/Developer || \
+          sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+          xcodebuild -version
 
       - name: Print Flutter version
         run: flutter --version
