@@ -110,6 +110,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     }
   }
 
+  Future<void> _refreshCurrentTab() async {
+    await _loadAll();
+  }
+
   Future<void> _togglePublish(Map course) async {
     final id = course['id'];
     final isPublished = course['status'] == 'published';
