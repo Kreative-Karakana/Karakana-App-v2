@@ -62,7 +62,7 @@ class _BizManagerScreenState extends State<BizManagerScreen> {
         backgroundColor: _color,
         leading: const BackButton(color: Colors.white),
         title: Text(
-          'Msimamizi wa Biashara',
+          'Usimamizi wa Biashara',
           style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
@@ -137,7 +137,7 @@ class _BizManagerScreenState extends State<BizManagerScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Msimamizi wa Biashara',
+                          'Usimamizi wa Biashara',
                           style: GoogleFonts.montserrat(
                             fontSize: 24,
                             fontWeight: FontWeight.w700,
@@ -189,7 +189,7 @@ class _BizManagerScreenState extends State<BizManagerScreen> {
                 children: [
                   // ── Description ───────────────────────────────────────
                   Text(
-                    'Msimamizi wa Biashara ni Nini?',
+                    'Usimamizi wa Biashara ni Nini?',
                     style: GoogleFonts.montserrat(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -198,7 +198,7 @@ class _BizManagerScreenState extends State<BizManagerScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Msimamizi wa Biashara ni zana kamili ya kusimamia fedha za biashara yako. Fuatilia mapato, matumizi, tengeneza ankara, na pata ripoti za kina — yote kwenye simu yako moja kwa moja.',
+                    'Usimamizi wa Biashara ni zana kamili ya kusimamia operesheni za biashara yako. Fuatilia mapato, matumizi, tengeneza ankara, na pata ripoti za kina — yote kwenye simu yako moja kwa moja.',
                     style: GoogleFonts.montserrat(
                       fontSize: 14,
                       color: const Color(0xFF5C3D2E),
@@ -291,7 +291,7 @@ class _BizManagerScreenState extends State<BizManagerScreen> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'Jisajili kupata arifa wakati Msimamizi wa Biashara unapopatikana.',
+                      'Jisajili kupata arifa wakati Usimamizi wa Biashara unapopatikana.',
                       style: GoogleFonts.montserrat(
                         fontSize: 14,
                         color: const Color(0xFF9E8070),
@@ -443,7 +443,7 @@ class _BizManagerScreenState extends State<BizManagerScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Asante! Tutakuarifiwa mara Msimamizi wa Biashara unapopatikana.',
+                            'Asante! Tutakuarifiwa mara Usimamizi wa Biashara unapopatikana.',
                             style: GoogleFonts.montserrat(
                               fontSize: 14,
                               color: const Color(0xFF5C3D2E),
