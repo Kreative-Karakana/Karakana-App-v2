@@ -309,9 +309,43 @@ class AuthProvider extends ChangeNotifier {
         },
       );
       return await _handleOAuthResponse(response.data);
-    } catch (e) {
-      if (kDebugMode) debugPrint('[AuthProvider] loginWithGoogle error: $e');
-      _errorMessage = 'Imeshindikana kuingia kwa Google. Jaribu tena.';
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        debugPrint('[Google Sign-In] FAILED');
+        debugPrint('[Error type]: ${e.runtimeType}');
+        debugPrint('[Error]: $e');
+        debugPrint('[Stack trace]: $stackTrace');
+        debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      }
+
+      // Surface the real error in debug mode so we can diagnose it
+      String debugMessage = '';
+      if (kDebugMode) {
+        debugMessage = '\n\nDEBUG: ${e.runtimeType}: $e';
+      }
+
+      // Check for specific Google Sign-In error types
+      final errorStr = e.toString().toLowerCase();
+      if (errorStr.contains('network_error') ||
+          errorStr.contains('network error')) {
+        _errorMessage = 'Hitilafu ya mtandao. Angalia muunganiko wako.$debugMessage';
+      } else if (errorStr.contains('sign_in_cancelled') ||
+          errorStr.contains('cancelled')) {
+        _errorMessage = 'Umeghairi kuingia kwa Google.$debugMessage';
+      } else if (errorStr.contains('sign_in_failed') ||
+          errorStr.contains('failed')) {
+        _errorMessage = 'Kuingia kwa Google kumeshindwa.$debugMessage';
+      } else if (errorStr.contains('popup_closed') ||
+          errorStr.contains('popup')) {
+        _errorMessage = 'Dirisha la Google lilifungwa.$debugMessage';
+      } else if (errorStr.contains('10:') ||
+          errorStr.contains('error code: 10')) {
+        _errorMessage = 'Hitilafu ya usanidi wa Google (Code 10). SHA-1 haijasajiliwa.$debugMessage';
+      } else {
+        _errorMessage = 'Imeshindikana kuingia kwa Google.$debugMessage';
+      }
+
       _isLoading = false;
       notifyListeners();
       return false;
