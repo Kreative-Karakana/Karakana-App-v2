@@ -56,19 +56,6 @@ jobs:
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           cp "$PP_PATH" ~/Library/MobileDevice/Provisioning\ Profiles/
 
-      - name: Debug - Verify installed profile
-        run: |
-          echo "=== Installed Provisioning Profiles ==="
-          ls -la ~/Library/MobileDevice/Provisioning\ Profiles/
-          echo "=== Profile UUID ==="
-          security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision | grep -A1 UUID | grep string || true
-          echo "=== Profile Name ==="
-          security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision | grep -A1 "<key>Name</key>" | grep string || true
-          echo "=== Certificate in Profile ==="
-          security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision | grep -A1 "TeamIdentifier" | grep string || true
-          echo "=== Keychain Certificates ==="
-          security find-identity -v -p codesigning || true
-
       - name: Build Flutter iOS (no codesign)
         run: flutter build ios --release --no-codesign
 

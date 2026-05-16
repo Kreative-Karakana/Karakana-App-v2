@@ -2,11 +2,6 @@ name: iOS Release Build
 
 on:
   workflow_dispatch:
-    inputs:
-      version_name:
-        description: 'Version name (e.g. 1.0.0)'
-        required: true
-        default: '1.0.0'
 
 jobs:
   build-ios:
@@ -24,13 +19,6 @@ jobs:
 
       - name: Print Flutter version
         run: flutter --version
-
-      - name: Bump version in pubspec.yaml
-        run: |
-          VERSION_NAME="${{ github.event.inputs.version_name }}"
-          BUILD_NUMBER="${{ github.run_number }}"
-          sed -i '' "s/^version: .*/version: ${VERSION_NAME}+${BUILD_NUMBER}/" pubspec.yaml
-          echo "Building version: ${VERSION_NAME}+${BUILD_NUMBER}"
 
       - name: Install dependencies
         run: flutter pub get
@@ -92,6 +80,17 @@ jobs:
             -exportOptionsPlist ios/ExportOptions.plist \
             -exportPath build/ios/ipa
 
+      - name: Confirm IPA exists
+        run: |
+          IPA_PATH=$(find build/ios/ipa -name "*.ipa" | head -1)
+          if [ -z "$IPA_PATH" ]; then
+            echo "❌ IPA not found — build failed"
+            exit 1
+          else
+            echo "✅ IPA built successfully: $IPA_PATH"
+            ls -lh "$IPA_PATH"
+          fi
+
       - name: Upload to App Store Connect
         env:
           APP_STORE_CONNECT_USERNAME: ${{ secrets.APP_STORE_CONNECT_USERNAME }}
@@ -108,6 +107,5 @@ jobs:
       - name: Summary
         run: |
           echo "### ✅ iOS Release Complete" >> $GITHUB_STEP_SUMMARY
-          echo "- Version: ${{ github.event.inputs.version_name }}+${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
           echo "- Branch: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- Uploaded to App Store Connect ✅" >> $GITHUB_STEP_SUMMARY
