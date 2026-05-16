@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.kreativekarkana.karakana"
+    namespace = "com.kreativekarakana.karakana"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
