@@ -341,7 +341,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const SizedBox(height: 12),
                     _buildField('Nambari ya Simu', _phoneController,
                         Icons.phone_outlined,
-                        keyboardType: TextInputType.phone),
+                        keyboardType: TextInputType.phone,
+                        hint: 'Mfano: +255712345678',
+                        validator: (v) {
+                          if (v == null || v.isEmpty) return null; // optional field
+                          final cleaned = v.replaceAll(RegExp(r'\s+'), '');
+                          final valid = RegExp(
+                            r'^(\+?255|0)[67]\d{8}$',
+                          ).hasMatch(cleaned);
+                          return valid
+                              ? null
+                              : 'Weka namba sahihi ya Tanzania (mfano: +255712345678)';
+                        }),
                     const SizedBox(height: 12),
 
                     // Gender dropdown

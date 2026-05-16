@@ -58,7 +58,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
     final hasLastName = (p['last_name'] as String? ?? '').isNotEmpty;
     final hasGender = (p['gender'] as String? ?? '').isNotEmpty;
     final hasAvatar = (p['avatar'] as String? ?? '').isNotEmpty;
-    final hasPhone = (p['phone'] as String? ?? '').isNotEmpty;
+    final hasPhone = (p['phone_number'] as String? ?? '').isNotEmpty;
     final hasDob = (p['date_of_birth'] as String? ?? '').isNotEmpty;
     return hasFirstName && hasLastName && hasGender && hasAvatar && hasPhone && hasDob;
   }
@@ -445,7 +445,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
       ('Jina la kwanza na la familia', (p['first_name'] as String? ?? '').isNotEmpty && (p['last_name'] as String? ?? '').isNotEmpty),
       ('Jinsia', (p['gender'] as String? ?? '').isNotEmpty),
       ('Picha ya wasifu', (p['avatar'] as String? ?? '').isNotEmpty),
-      ('Namba ya simu', (p['phone'] as String? ?? '').isNotEmpty),
+      ('Namba ya simu', (p['phone_number'] as String? ?? '').isNotEmpty),
       ('Tarehe ya kuzaliwa', (p['date_of_birth'] as String? ?? '').isNotEmpty),
     ];
     return Container(
