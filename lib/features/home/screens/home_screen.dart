@@ -37,7 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
       context.read<CourseProvider>().loadHomeData();
       context.read<NotificationProvider>().loadNotifications();
       checkAndShowAmbassadorCode(context);
-      checkAndPromptMastercard(context);
+      // Temporarily hidden per request: "Fomu ya Taarifa" auto-popup on login.
+      // Re-enable later by restoring this call.
+      // checkAndPromptMastercard(context);
       _loadBanners();
       _notificationsPollingTimer?.cancel();
       _notificationsPollingTimer = Timer.periodic(
