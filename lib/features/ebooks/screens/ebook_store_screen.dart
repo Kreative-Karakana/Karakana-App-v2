@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../widgets/common/karakana_wave_loader.dart';
@@ -25,11 +26,39 @@ class _EbookStoreScreenState extends State<EbookStoreScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('Duka la Vitabu'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF3D1800), Color(0xFF7B3A10), Color(0xFFE87722)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        leading: const BackButton(color: Colors.white),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.menu_book_outlined, color: Colors.white, size: 18),
+            const SizedBox(width: 8),
+            Text(
+              'Duka la Vitabu',
+              style: GoogleFonts.montserrat(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
+        centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.bookmark_outline),
+            icon: const Icon(Icons.bookmark_outline, color: Colors.white),
             onPressed: () => context.push('/zana/ebooks/library'),
           ),
         ],
