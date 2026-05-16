@@ -179,7 +179,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFE87722), Color(0xFFFFA726)],
+                      colors: [Color(0xFF1A0A00), Color(0xFF3D1800), Color(0xFF7B3A10)],
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                     ),
