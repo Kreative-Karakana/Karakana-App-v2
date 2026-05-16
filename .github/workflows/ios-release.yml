@@ -2,6 +2,11 @@ name: iOS Release Build
 
 on:
   workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'Version name (e.g. 1.0.0)'
+        required: true
+        default: '1.0.0'
 
 jobs:
   build-ios:
@@ -25,6 +30,22 @@ jobs:
 
       - name: Print Flutter version
         run: flutter --version
+
+      - name: Bump version in pubspec.yaml
+        run: |
+          VERSION_NAME="${{ github.event.inputs.version_name }}"
+          BUILD_NUMBER="${{ github.run_number }}"
+          sed -i '' "s/^version: .*/version: ${VERSION_NAME}+${BUILD_NUMBER}/" pubspec.yaml
+          echo "Building version: ${VERSION_NAME}+${BUILD_NUMBER}"
+          cat pubspec.yaml | grep "^version:"
+
+      - name: Set iOS build number
+        run: |
+          BUILD_NUMBER="${{ github.run_number }}"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" ios/Runner/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${{ github.event.inputs.version_name }}" ios/Runner/Info.plist
+          echo "iOS build number set to: $BUILD_NUMBER"
+          /usr/libexec/PlistBuddy -c "Print :CFBundleVersion" ios/Runner/Info.plist
 
       - name: Install dependencies
         run: flutter pub get
