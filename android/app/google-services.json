@@ -7,9 +7,45 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:466490006316:android:27a3dc2638200c30656a89",
+        "android_client_info": {
+          "package_name": "com.kreativekarakana.karakana"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "466490006316-0rl5eeqm70rsmg90eq2gc7n3725u4jjn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD42Y-P5tq07AnBLhDyE1XlPoz7O-Mfark"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "466490006316-0rl5eeqm70rsmg90eq2gc7n3725u4jjn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "466490006316-a26dq3aarir4jl9971u7j440hsegllv8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kreativekarakana.karakana"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:466490006316:android:2926e547b4512bc4656a89",
         "android_client_info": {
-          "package_name": "com.kreativekarkana.karakana"
+          "package_name": "com.kreativekarakana.karakana"
         }
       },
       "oauth_client": [
@@ -17,7 +53,7 @@
           "client_id": "466490006316-7rt3volsjbjhu76og8hr9kroeimqlpel.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.kreativekarkana.karakana",
+            "package_name": "com.kreativekarakana.karakana",
             "certificate_hash": "56f2027ae080ef1c65ebda4ca700f3a409a553fb"
           }
         },
@@ -25,7 +61,7 @@
           "client_id": "466490006316-avmr02t57185aefoge0jr84n11e873df.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.kreativekarkana.karakana",
+            "package_name": "com.kreativekarakana.karakana",
             "certificate_hash": "9bbcd5722e5f55fc60173a61ef5bffdf142ba177"
           }
         },
@@ -33,8 +69,16 @@
           "client_id": "466490006316-l5hrjtoqcqbvdq4k1o05lc811atud99n.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.kreativekarkana.karakana",
+            "package_name": "com.kreativekarakana.karakana",
             "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "466490006316-sg46ls9knniocvej1ql3fjoc5cm0lvm2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kreativekarakana.karakana",
+            "certificate_hash": "e39bae685d58200c15eb7008e14664db11ae4cdb"
           }
         },
         {
@@ -58,7 +102,7 @@
               "client_id": "466490006316-a26dq3aarir4jl9971u7j440hsegllv8.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.kreativekarkana.karakana"
+                "bundle_id": "com.kreativekarakana.karakana"
               }
             }
           ]
