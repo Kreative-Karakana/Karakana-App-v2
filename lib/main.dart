@@ -21,12 +21,20 @@ Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint('Firebase already initialized: $e');
+  }
 
   FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
 
   final authProvider = AuthProvider();
-  await authProvider.initialize();
+  try {
+    await authProvider.initialize();
+  } catch (e) {
+    debugPrint('AuthProvider init error: $e');
+  }
 
   runApp(KarakanaApp(authProvider: authProvider));
 }
