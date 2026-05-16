@@ -118,6 +118,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                             data: {
                               'title': ctrl.text.trim(),
                               'order': _sections.length + 1,
+                              'status': 'pending_review',
                             });
                       } on DioException catch (e) {
                         // Some environments expose course-sections as read-only.
@@ -126,6 +127,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                             'course': widget.courseId,
                             'title': ctrl.text.trim(),
                             'order': _sections.length + 1,
+                            'status': 'pending_review',
                           });
                         } else {
                           rethrow;
@@ -133,6 +135,11 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                       }
                       if (!mounted) return;
                       nav.pop();
+                      showTopPopup(
+                        context,
+                        'Sehemu imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Karakana.',
+                        isError: false,
+                      );
                       _loadSections();
                     } catch (e) {
                       if (!mounted) return;
@@ -262,6 +269,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                     try {
                       final body = <String, dynamic>{
                         'title': titleCtrl.text.trim(),
+                        'status': 'pending_review',
                         if (muxCtrl.text.trim().isNotEmpty)
                           'mux_playback_id': muxCtrl.text.trim(),
                         if (durationCtrl.text.trim().isNotEmpty)
@@ -271,6 +279,11 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                           '/api/v1/sections/$sectionId/lessons/', data: body);
                       if (!mounted) return;
                       nav.pop();
+                      showTopPopup(
+                        context,
+                        'Somo limetumwa kwa ukaguzi. Litachapishwa baada ya kupitishwa na timu ya Karakana.',
+                        isError: false,
+                      );
                       _loadSections();
                     } catch (e) {
                       if (!mounted) return;

@@ -188,6 +188,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           'description': _descController.text.trim(),
           'price': price.toString(),
           'level': _selectedLevel,
+          'status': 'pending_review',
           if (_selectedCategory.isNotEmpty)
             'category': int.tryParse(_selectedCategory),
           'cover_photo': await MultipartFile.fromFile(_coverImage!.path,
@@ -199,7 +200,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               .dio
               .patch('/api/v1/courses/${widget.courseId}/', data: formData);
           if (!mounted) return;
-          _showSuccess('Mabadiliko yamehifadhiwa!');
+          _showSuccess(
+            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Karakana.',
+          );
           context.pop();
         } else {
           final res = await ApiClient()
@@ -208,7 +211,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           final createdId = (res.data as Map?)?['id'] as int?;
           if (createdId != null) await _saveQuiz(createdId);
           if (!mounted) return;
-          _showSuccess('Kozi imehifadhiwa! Ongeza sehemu na masomo sasa.');
+          _showSuccess(
+            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Karakana.',
+          );
           if (createdId != null) {
             context.pushReplacement('/trainer/course/$createdId/sections',
                 extra: {'title': _titleController.text.trim()});
@@ -222,6 +227,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           'description': _descController.text.trim(),
           'price': price,
           'level': _selectedLevel,
+          'status': 'pending_review',
           if (_selectedCategory.isNotEmpty)
             'category': int.tryParse(_selectedCategory),
         };
@@ -231,7 +237,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               .dio
               .patch('/api/v1/courses/${widget.courseId}/', data: body);
           if (!mounted) return;
-          _showSuccess('Mabadiliko yamehifadhiwa!');
+          _showSuccess(
+            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Karakana.',
+          );
           context.pop();
         } else {
           final res =
@@ -239,7 +247,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           final createdId = (res.data as Map?)?['id'] as int?;
           if (createdId != null) await _saveQuiz(createdId);
           if (!mounted) return;
-          _showSuccess('Kozi imehifadhiwa! Ongeza sehemu na masomo sasa.');
+          _showSuccess(
+            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Karakana.',
+          );
           if (createdId != null) {
             context.pushReplacement('/trainer/course/$createdId/sections',
                 extra: {'title': _titleController.text.trim()});
@@ -445,6 +455,37 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
       ),
       body: Column(
         children: [
+          Container(
+            margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF8F4),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: const Color(0xFFE87722).withValues(alpha: 0.4),
+              ),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.info_outline,
+                  color: Color(0xFFE87722),
+                  size: 18,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Kozi, sehemu, na masomo yote lazima yapitishwe na timu ya Karakana kabla ya kuchapishwa.',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
+                      color: const Color(0xFF7B3A10),
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           // ── Step indicator ─────────────────────────────────────────────
           Container(
             color: Theme.of(context).cardColor,
