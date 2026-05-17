@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -105,32 +106,32 @@ class _SignupScreenState extends State<SignupScreen>
           fontSize: compact ? 12.5 : 13,
           color: AppColors.textTertiary.withValues(alpha: 0.55),
         ),
-        prefixIcon: Icon(icon, color: AppColors.primaryMid, size: 18),
+        prefixIcon: Icon(icon, color: AppColors.primaryMid, size: 18.r),
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: const Color(0xFF5A3525),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
           borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
           borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
           borderSide: const BorderSide(color: AppColors.primaryMid, width: 1.2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
           borderSide: const BorderSide(color: AppColors.error, width: 1.2),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
           borderSide: const BorderSide(color: AppColors.error, width: 1.2),
         ),
         contentPadding: EdgeInsets.symmetric(
-          horizontal: 16,
+          horizontal: 16.w,
           vertical: compact ? 11 : 16,
         ),
       ),
@@ -226,7 +227,7 @@ class _SignupScreenState extends State<SignupScreen>
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                                              padding: EdgeInsets.symmetric(horizontal: 10.w),
                                               child: Text(
                                                 'Njia nyingine',
                                                 style: GoogleFonts.montserrat(
@@ -268,7 +269,7 @@ class _SignupScreenState extends State<SignupScreen>
                                                     child: Text(
                                                       'G',
                                                       style: GoogleFonts.montserrat(
-                                                        fontSize: 12,
+                                                        fontSize: 12.sp,
                                                         fontWeight: FontWeight.w700,
                                                         color: const Color(0xFF4285F4),
                                                       ),
@@ -277,7 +278,7 @@ class _SignupScreenState extends State<SignupScreen>
                                                 ),
                                               ),
                                             ),
-                                            const SizedBox(width: 10),
+                                            SizedBox(width: 10.w),
                                             Expanded(
                                               child: _MethodButton(
                                                 compact: socialCompact,
@@ -310,7 +311,7 @@ class _SignupScreenState extends State<SignupScreen>
                                               ),
                                               decoration: BoxDecoration(
                                                 color: Colors.white.withValues(alpha: 0.05),
-                                                borderRadius: BorderRadius.circular(50),
+                                                borderRadius: BorderRadius.circular(50.r),
                                                 border: Border.all(
                                                   color: Colors.white.withValues(alpha: 0.10),
                                                 ),
@@ -325,7 +326,7 @@ class _SignupScreenState extends State<SignupScreen>
                                                       color: Colors.white.withValues(alpha: 0.74),
                                                     ),
                                                   ),
-                                                  const SizedBox(width: 10),
+                                                  SizedBox(width: 10.w),
                                                   Container(
                                                     padding: EdgeInsets.symmetric(
                                                       horizontal: socialCompact ? 12 : 16,
@@ -337,7 +338,7 @@ class _SignupScreenState extends State<SignupScreen>
                                                         begin: Alignment.topLeft,
                                                         end: Alignment.bottomRight,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(50),
+                                                      borderRadius: BorderRadius.circular(50.r),
                                                     ),
                                                     child: Text(
                                                       'Ingia',
@@ -447,7 +448,7 @@ class _SignupContent extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.06),
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(30.r),
                 border: Border.all(
                   color: Colors.white.withValues(alpha: 0.08),
                 ),
@@ -474,7 +475,7 @@ class _SignupContent extends StatelessWidget {
                     height: 1.02,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 Text(
                   'Jenga akaunti yako na uanze safari yako ya kujifunza na kukuza biashara.',
                   style: GoogleFonts.montserrat(
@@ -519,7 +520,7 @@ class _SignupContent extends StatelessWidget {
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
                       color: AppColors.textTertiary,
-                      size: 18,
+                      size: 18.r,
                     ),
                     onPressed: onTogglePassword,
                   ),
@@ -541,14 +542,14 @@ class _SignupContent extends StatelessWidget {
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
                       color: AppColors.textTertiary,
-                      size: 18,
+                      size: 18.r,
                     ),
                     onPressed: onToggleConfirm,
                   ),
                   validator: (v) =>
                       v != passwordController.text ? 'Maneno ya siri hayafanani' : null,
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10.h),
                 SizedBox(height: veryShort ? 2 : (dense ? 4 : 10)),
                 SizedBox(
                   width: double.infinity,
@@ -589,7 +590,7 @@ class _BrandRow extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.r),
               child: Image.asset(
                 'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
                 fit: BoxFit.contain,
@@ -597,7 +598,7 @@ class _BrandRow extends StatelessWidget {
                   child: Text(
                     'K',
                     style: GoogleFonts.poppins(
-                      fontSize: 32,
+                      fontSize: 32.sp,
                       fontWeight: FontWeight.w700,
                       color: AppColors.primary,
                     ),
@@ -697,12 +698,12 @@ class _MethodButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: 8,
+          horizontal: 8.w,
           vertical: compact ? 12 : 14,
         ),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.035),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
           border: Border.all(
             color: Colors.white.withValues(alpha: 0.14),
           ),
@@ -727,3 +728,5 @@ class _MethodButton extends StatelessWidget {
     );
   }
 }
+
+

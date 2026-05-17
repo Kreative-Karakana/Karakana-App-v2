@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
@@ -110,9 +111,9 @@ class _LoginScreenState extends State<LoginScreen>
                   },
                   child: Container(
                     constraints: const BoxConstraints(maxWidth: 520),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 14.w,
+                      vertical: 12.h,
                     ),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
@@ -120,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen>
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(16.r),
                       border: Border.all(
                         color: Colors.red.shade300.withValues(alpha: 0.35),
                       ),
@@ -137,16 +138,16 @@ class _LoginScreenState extends State<LoginScreen>
                       children: [
                         Icon(
                           Icons.warning_amber_rounded,
-                          size: 20,
+                          size: 20.r,
                           color: Colors.red.shade200,
                         ),
-                        const SizedBox(width: 10),
+                        SizedBox(width: 10.w),
                         Flexible(
                           child: Text(
                             message,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.montserrat(
-                              fontSize: 12.5,
+                              fontSize: 12.5.sp,
                               fontWeight: FontWeight.w600,
                               color: Colors.white,
                               height: 1.3,
@@ -254,32 +255,32 @@ class _LoginScreenState extends State<LoginScreen>
           fontSize: compact ? 12.5 : 13,
           color: AppColors.textTertiary.withValues(alpha: 0.55),
         ),
-        prefixIcon: Icon(icon, color: AppColors.primaryMid, size: 18),
+        prefixIcon: Icon(icon, color: AppColors.primaryMid, size: 18.r),
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: const Color(0xFF5A3525),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
           borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
           borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
           borderSide: const BorderSide(color: AppColors.primaryMid, width: 1.2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
           borderSide: const BorderSide(color: AppColors.error, width: 1.2),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(18.r),
           borderSide: const BorderSide(color: AppColors.error, width: 1.2),
         ),
         contentPadding: EdgeInsets.symmetric(
-          horizontal: 16,
+          horizontal: 16.w,
           vertical: compact ? 14 : 16,
         ),
       ),
@@ -319,9 +320,7 @@ class _LoginScreenState extends State<LoginScreen>
                     compact ? 10 : 16,
                   ),
                   child: SingleChildScrollView(
-                    physics: keyboardOpen
-                        ? const ClampingScrollPhysics()
-                        : const NeverScrollableScrollPhysics(),
+                    physics: const ClampingScrollPhysics(),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
                         minHeight: constraints.maxHeight - (compact ? 24 : 40),
@@ -329,7 +328,7 @@ class _LoginScreenState extends State<LoginScreen>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                      const SizedBox(height: 28),
+                      SizedBox(height: 28.h),
                       Center(
                         child: Container(
                           width: 88,
@@ -339,7 +338,7 @@ class _LoginScreenState extends State<LoginScreen>
                             shape: BoxShape.circle,
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(16),
+                            padding: EdgeInsets.all(16.r),
                             child: Image.asset(
                               'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
                               fit: BoxFit.contain,
@@ -347,7 +346,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 child: Text(
                                   'K',
                                   style: GoogleFonts.poppins(
-                                    fontSize: 32,
+                                    fontSize: 32.sp,
                                     fontWeight: FontWeight.w700,
                                     color: AppColors.primary,
                                   ),
@@ -357,16 +356,16 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: 12.h),
                       Text(
                         'Karakana',
                         style: GoogleFonts.poppins(
-                          fontSize: 32,
+                          fontSize: 32.sp,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 20.h),
                       Align(
                         alignment: Alignment.center,
                         child: Container(
@@ -375,7 +374,7 @@ class _LoginScreenState extends State<LoginScreen>
                             padding: EdgeInsets.all(compact ? 18 : 22),
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.06),
-                              borderRadius: BorderRadius.circular(30),
+                              borderRadius: BorderRadius.circular(30.r),
                               border: Border.all(
                                 color: Colors.white.withValues(alpha: 0.08),
                               ),
@@ -402,7 +401,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       height: 1.02,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  SizedBox(height: 8.h),
                                   Text(
                                     'Ingia kwa akaunti yako na uendelee na masomo yako bila usumbufu.',
                                     style: GoogleFonts.montserrat(
@@ -441,7 +440,7 @@ class _LoginScreenState extends State<LoginScreen>
                                             ? Icons.visibility_outlined
                                             : Icons.visibility_off_outlined,
                                         color: AppColors.textTertiary,
-                                        size: 18,
+                                        size: 18.r,
                                       ),
                                       onPressed: () => setState(
                                         () => _obscurePassword =
@@ -475,7 +474,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  SizedBox(height: 8.h),
                                   SizedBox(
                                     width: double.infinity,
                                     child: GradientButton(
@@ -496,8 +495,8 @@ class _LoginScreenState extends State<LoginScreen>
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 10.w,
                                         ),
                                         child: Text(
                                           'Njia nyingine',
@@ -546,7 +545,7 @@ class _LoginScreenState extends State<LoginScreen>
                                                     'G',
                                                     style:
                                                         GoogleFonts.montserrat(
-                                                      fontSize: 12,
+                                                      fontSize: 12.sp,
                                                       fontWeight:
                                                           FontWeight.w700,
                                                       color: const Color(
@@ -558,7 +557,7 @@ class _LoginScreenState extends State<LoginScreen>
                                               ),
                                             ),
                                           ),
-                                          const SizedBox(width: 10),
+                                          SizedBox(width: 10.w),
                                           Expanded(
                                             child: _MethodButton(
                                               compact: compact,
@@ -573,7 +572,7 @@ class _LoginScreenState extends State<LoginScreen>
                                               ),
                                             ),
                                           ),
-                                          const SizedBox(width: 10),
+                                          SizedBox(width: 10.w),
                                           Expanded(
                                             child: _MethodButton(
                                               compact: compact,
@@ -666,7 +665,7 @@ class _SignupFooter extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(50),
+          borderRadius: BorderRadius.circular(50.r),
           border: Border.all(
             color: Colors.white.withValues(alpha: 0.10),
           ),
@@ -681,7 +680,7 @@ class _SignupFooter extends StatelessWidget {
                 color: Colors.white.withValues(alpha: 0.74),
               ),
             ),
-            const SizedBox(width: 10),
+            SizedBox(width: 10.w),
             Container(
               padding: EdgeInsets.symmetric(
                 horizontal: compact ? 14 : 16,
@@ -693,7 +692,7 @@ class _SignupFooter extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(50),
+                borderRadius: BorderRadius.circular(50.r),
               ),
               child: Text(
                 'Jisajili Sasa',
@@ -795,14 +794,14 @@ class _MethodButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: 8,
+          horizontal: 8.w,
           vertical: compact ? 12 : 14,
         ),
         decoration: BoxDecoration(
           color: enabled
               ? Colors.white.withValues(alpha: 0.035)
               : Colors.white.withValues(alpha: 0.025),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
           border: Border.all(color: borderColor),
         ),
         child: Column(
@@ -827,3 +826,5 @@ class _MethodButton extends StatelessWidget {
     );
   }
 }
+
+
