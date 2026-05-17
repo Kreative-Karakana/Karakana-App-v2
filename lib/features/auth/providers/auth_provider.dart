@@ -126,9 +126,19 @@ class AuthProvider extends ChangeNotifier {
       return false;
     } catch (e) {
       final parsed = ApiClient().parseError(e);
-      _errorMessage = parsed.toLowerCase().contains('token')
-          ? 'Barua pepe au nenosiri si sahihi.'
-          : parsed;
+      debugPrint('[LOGIN] Raw error: $e');
+      debugPrint('[LOGIN] Parsed error: $parsed');
+      debugPrint('[LOGIN] Error type: ${e.runtimeType}');
+      if (e is DioException) {
+        debugPrint('[LOGIN] DioException type: ${e.type}');
+        debugPrint('[LOGIN] DioException response: ${e.response?.data}');
+        debugPrint('[LOGIN] DioException status: ${e.response?.statusCode}');
+        _errorMessage = 'DEBUG: ${e.type} - ${e.response?.statusCode} - $parsed';
+      } else {
+        _errorMessage = parsed.toLowerCase().contains('token')
+            ? 'Barua pepe au nenosiri si sahihi.'
+            : 'DEBUG: ${e.runtimeType} - $parsed';
+      }
       _isLoading = false;
       notifyListeners();
       return false;
