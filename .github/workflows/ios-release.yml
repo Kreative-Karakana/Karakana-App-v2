@@ -105,18 +105,17 @@ jobs:
         env:
           PROVISIONING_PROFILE_UUID: ${{ secrets.IOS_PROVISIONING_PROFILE_UUID }}
         run: |
-            xcodebuild -workspace ios/Runner.xcworkspace \
+            xcodebuild \
+              -workspace ios/Runner.xcworkspace \
               -scheme Runner \
               -configuration Release \
               -archivePath build/Runner.xcarchive \
               -destination generic/platform=iOS \
-              COMPILER_INDEX_STORE_ENABLE=NO \
               CODE_SIGN_STYLE=Manual \
               CODE_SIGN_IDENTITY="Apple Distribution" \
+              PROVISIONING_PROFILE_SPECIFIER="${PROVISIONING_PROFILE_UUID}" \
               DEVELOPMENT_TEAM=J3M8G9NBLH \
-              CODE_SIGNING_REQUIRED=YES \
-              CODE_SIGNING_ALLOWED=YES \
-              "PROVISIONING_PROFILE[sdk=iphoneos*]=$PROVISIONING_PROFILE_UUID" \
+              COMPILER_INDEX_STORE_ENABLE=NO \
               archive
 
       - name: Export IPA
