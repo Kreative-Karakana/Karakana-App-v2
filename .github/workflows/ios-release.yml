@@ -53,6 +53,15 @@ jobs:
       - name: Install CocoaPods dependencies
         run: cd ios && pod install && cd ..
 
+      - name: Verify Pods signing overrides
+        run: |
+          PBXPROJ="ios/Pods/Pods.xcodeproj/project.pbxproj"
+          test -f "$PBXPROJ"
+          grep -q "CODE_SIGNING_ALLOWED = NO;" "$PBXPROJ"
+          grep -q "CODE_SIGNING_REQUIRED = NO;" "$PBXPROJ"
+          grep -q 'PROVISIONING_PROFILE_SPECIFIER = "";' "$PBXPROJ"
+          echo "✅ Pods signing overrides verified in $PBXPROJ"
+
       - name: Import signing certificate
         env:
           CERTIFICATE_BASE64: ${{ secrets.IOS_CERTIFICATE_BASE64 }}
