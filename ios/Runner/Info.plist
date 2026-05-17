@@ -84,5 +84,11 @@
 			</array>
 		</dict>
 	</array>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Karakana inatumia Face ID kukuruhusu kuingia kwa usalama bila kutumia nywila.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Karakana inahitaji kamera kupiga picha ya wasifu wako.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Karakana inahitaji ufikiaji wa picha za simu yako kupakia picha ya wasifu.</string>
 </dict>
 </plist>
