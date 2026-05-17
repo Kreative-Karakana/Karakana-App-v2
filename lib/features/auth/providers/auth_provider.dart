@@ -87,7 +87,14 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       await SecureStorage().deleteToken();
-      final deviceToken = await FirebaseMessaging.instance.getToken();
+      String? deviceToken;
+      try {
+        deviceToken = await FirebaseMessaging.instance.getToken()
+            .timeout(const Duration(seconds: 5));
+      } catch (e) {
+        debugPrint('[AUTH] FCM token fetch failed (non-fatal): $e');
+        deviceToken = null;
+      }
       final platform = Platform.isIOS ? 'ios' : 'android';
       final response = await ApiClient().dio.post(
         ApiEndpoints.login,
@@ -295,7 +302,14 @@ class AuthProvider extends ChangeNotifier {
           (accessToken == null || accessToken.isEmpty)) {
         throw Exception('No Google token returned');
       }
-      final deviceToken = await FirebaseMessaging.instance.getToken();
+      String? deviceToken;
+      try {
+        deviceToken = await FirebaseMessaging.instance.getToken()
+            .timeout(const Duration(seconds: 5));
+      } catch (e) {
+        debugPrint('[AUTH] FCM token fetch failed (non-fatal): $e');
+        deviceToken = null;
+      }
       final platform = Platform.isIOS ? 'ios' : 'android';
 
       final response = await ApiClient().dio.post(
@@ -446,3 +460,4 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 }
+
