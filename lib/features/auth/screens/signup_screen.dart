@@ -156,23 +156,26 @@ class _SignupScreenState extends State<SignupScreen>
             children: [
               const _AuthBackground(),
               SafeArea(
-                child: AnimatedPadding(
-                  duration: const Duration(milliseconds: 180),
-                  curve: Curves.easeOut,
-                  padding: EdgeInsets.only(
-                    bottom: keyboardOpen
-                        ? MediaQuery.viewInsetsOf(context).bottom
-                        : 0,
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      22,
-                      compact ? 12 : 18,
-                      22,
-                      compact ? 8 : 10,
+                child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  child: AnimatedPadding(
+                    duration: const Duration(milliseconds: 180),
+                    curve: Curves.easeOut,
+                    padding: EdgeInsets.only(
+                      bottom: keyboardOpen
+                          ? MediaQuery.viewInsetsOf(context).bottom
+                          : 0,
                     ),
-                    child: Column(
-                      children: [
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        22,
+                        compact ? 12 : 18,
+                        22,
+                        compact ? 8 : 10,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
                         _SignupContent(
                           compact: compact,
                           keyboardOpen: keyboardOpen,
@@ -198,17 +201,16 @@ class _SignupScreenState extends State<SignupScreen>
                         ),
                         if (!keyboardOpen) ...[
                           SizedBox(height: socialCompact ? 6 : 12),
-                          Flexible(
-                            child: Align(
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
                               alignment: Alignment.topCenter,
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                alignment: Alignment.topCenter,
-                                child: SizedBox(
-                                  width: constraints.maxWidth - 44,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
+                              child: SizedBox(
+                                width: constraints.maxWidth - 44,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
                                       Padding(
                                         padding: EdgeInsets.fromLTRB(
                                           0,
@@ -352,8 +354,7 @@ class _SignupScreenState extends State<SignupScreen>
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                  ],
                                 ),
                               ),
                             ),
