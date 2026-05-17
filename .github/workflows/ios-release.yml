@@ -86,13 +86,11 @@ jobs:
       - name: Build Flutter iOS (no codesign)
         run: |
           flutter build ios --release --no-codesign \
-            --dart-define=FLUTTER_TARGET=lib/main.dart \
-            --no-tree-shake-icons
+            --no-tree-shake-icons \
+            --build-number=${{ github.run_number }} \
+            --build-name=${{ github.event.inputs.version_name }}
         env:
           FLUTTER_SUPPRESS_ANALYTICS: true
-          XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY: ""
-          XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED: "NO"
-          XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED: "NO"
 
       - name: Archive with xcodebuild
         env:
@@ -107,6 +105,8 @@ jobs:
               PROVISIONING_PROFILE_SPECIFIER="$PROVISIONING_PROFILE_UUID" \
               DEVELOPMENT_TEAM=J3M8G9NBLH \
               COMPILER_INDEX_STORE_ENABLE=NO \
+              CODE_SIGNING_REQUIRED=YES \
+              CODE_SIGNING_ALLOWED=YES \
               archive
 
       - name: Export IPA
