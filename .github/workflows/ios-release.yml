@@ -102,18 +102,21 @@ jobs:
           FLUTTER_SUPPRESS_ANALYTICS: true
 
       - name: Archive with xcodebuild
+        env:
+          PROVISIONING_PROFILE_UUID: ${{ secrets.IOS_PROVISIONING_PROFILE_UUID }}
         run: |
             xcodebuild -workspace ios/Runner.xcworkspace \
               -scheme Runner \
               -configuration Release \
               -archivePath build/Runner.xcarchive \
+              -destination generic/platform=iOS \
+              COMPILER_INDEX_STORE_ENABLE=NO \
               CODE_SIGN_STYLE=Manual \
               CODE_SIGN_IDENTITY="Apple Distribution" \
               DEVELOPMENT_TEAM=J3M8G9NBLH \
-              COMPILER_INDEX_STORE_ENABLE=NO \
               CODE_SIGNING_REQUIRED=YES \
               CODE_SIGNING_ALLOWED=YES \
-              -destination generic/platform=iOS \
+              "PROVISIONING_PROFILE[sdk=iphoneos*]=$PROVISIONING_PROFILE_UUID" \
               archive
 
       - name: Export IPA
