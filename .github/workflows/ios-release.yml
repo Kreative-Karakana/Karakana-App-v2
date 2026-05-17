@@ -107,6 +107,7 @@ jobs:
               COMPILER_INDEX_STORE_ENABLE=NO \
               CODE_SIGNING_REQUIRED=YES \
               CODE_SIGNING_ALLOWED=YES \
+              -destination generic/platform=iOS \
               archive
 
       - name: Export IPA
