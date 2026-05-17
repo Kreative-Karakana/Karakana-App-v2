@@ -31,32 +31,42 @@ class _BiometricScreenState extends State<BiometricScreen> {
   }
 
   Future<void> _prepareAndAuthenticate() async {
-    final enabled = await SecureStorage().isBiometricEnabled();
-    final hasSession = await SecureStorage().hasBiometricToken();
-    final supported = await _localAuth.isDeviceSupported();
-    final enrolled = await _localAuth.canCheckBiometrics;
-    final biometrics = (supported && enrolled)
-        ? await _localAuth.getAvailableBiometrics()
-        : const <BiometricType>[];
-    final hasFace = biometrics.contains(BiometricType.face);
-    final hasFingerprint = biometrics.contains(BiometricType.fingerprint) ||
-        biometrics.contains(BiometricType.strong) ||
-        biometrics.contains(BiometricType.weak);
+    try {
+      final enabled = await SecureStorage().isBiometricEnabled();
+      final hasSession = await SecureStorage().hasBiometricToken();
+      final supported = await _localAuth.isDeviceSupported();
+      final enrolled = await _localAuth.canCheckBiometrics;
+      final biometrics = (supported && enrolled)
+          ? await _localAuth.getAvailableBiometrics()
+          : const <BiometricType>[];
+      final hasFace = biometrics.contains(BiometricType.face);
+      final hasFingerprint = biometrics.contains(BiometricType.fingerprint) ||
+          biometrics.contains(BiometricType.strong) ||
+          biometrics.contains(BiometricType.weak);
 
-    if (!mounted) return;
-    setState(() {
-      _hasFaceId = hasFace;
-      _hasFingerprint = hasFingerprint;
-    });
+      if (!mounted) return;
+      setState(() {
+        _hasFaceId = hasFace;
+        _hasFingerprint = hasFingerprint;
+      });
 
-    if (!enabled || !hasSession || (!hasFace && !hasFingerprint)) {
+      if (!enabled || !hasSession || (!hasFace && !hasFingerprint)) {
+        if (!mounted) return;
+        setState(() {
+          _failed = true;
+          _statusMessage = 'Biometric haijawashwa kwa akaunti hii.';
+        });
+        return;
+      }
+      await _authenticate();
+    } catch (e) {
+      debugPrint('[Biometric] Error: $e');
+      if (!mounted) return;
       setState(() {
         _failed = true;
-        _statusMessage = 'Biometric haijawashwa kwa akaunti hii.';
+        _statusMessage = 'Hitilafu ya utambuzi wa kibayolojia. Jaribu tena.';
       });
-      return;
     }
-    await _authenticate();
   }
 
   Future<void> _authenticate() async {

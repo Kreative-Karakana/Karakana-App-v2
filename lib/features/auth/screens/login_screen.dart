@@ -64,6 +64,7 @@ class _LoginScreenState extends State<LoginScreen>
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
     final auth = context.read<AuthProvider>();
+    if (auth.isLoading) return;
     final success = await auth.login(
       _emailController.text.trim(),
       _passwordController.text,
@@ -188,6 +189,11 @@ class _LoginScreenState extends State<LoginScreen>
     final success = await auth.loginWithApple();
     if (success && mounted) {
       context.go(auth.homeRoute);
+    } else if (!success && mounted) {
+      final msg = auth.errorMessage;
+      if (msg != null && msg.isNotEmpty) {
+        _showTopErrorPopup(msg);
+      }
     }
   }
 
