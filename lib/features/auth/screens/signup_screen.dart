@@ -132,8 +132,9 @@ class _SignupScreenState extends State<SignupScreen>
         ),
         contentPadding: EdgeInsets.symmetric(
           horizontal: 16.w,
-          vertical: compact ? 11 : 16,
+          vertical: 16.h,
         ),
+        constraints: BoxConstraints(minHeight: 56.h),
       ),
     );
   }
@@ -201,7 +202,7 @@ class _SignupScreenState extends State<SignupScreen>
                           buildField: _buildField,
                         ),
                         if (!keyboardOpen) ...[
-                          SizedBox(height: socialCompact ? 6 : 12),
+                          SizedBox(height: 24.h),
                           Align(
                             alignment: Alignment.topCenter,
                             child: FittedBox(
@@ -245,12 +246,7 @@ class _SignupScreenState extends State<SignupScreen>
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.fromLTRB(
-                                          0,
-                                          socialCompact ? 8 : 12,
-                                          0,
-                                          0,
-                                        ),
+                                        padding: EdgeInsets.fromLTRB(0, 12.h, 0, 0),
                                         child: Row(
                                           children: [
                                             Expanded(
@@ -295,12 +291,7 @@ class _SignupScreenState extends State<SignupScreen>
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.fromLTRB(
-                                          0,
-                                          socialCompact ? 10 : 16,
-                                          0,
-                                          socialCompact ? 14 : 28,
-                                        ),
+                                        padding: EdgeInsets.fromLTRB(0, 16.h, 0, 16.h),
                                         child: Center(
                                           child: GestureDetector(
                                             onTap: () => context.go('/login'),
@@ -440,12 +431,7 @@ class _SignupContent extends StatelessWidget {
             SizedBox(height: keyboardOpen ? (dense ? 4 : 8) : (veryShort ? 4 : (dense ? 8 : 16))),
             Container(
               constraints: const BoxConstraints(maxWidth: 420),
-              padding: EdgeInsets.fromLTRB(
-                veryShort ? 12 : (dense ? 14 : 18),
-                veryShort ? 12 : (dense ? 14 : 18),
-                veryShort ? 12 : (dense ? 14 : 18),
-                veryShort ? 12 : (dense ? 18 : 28),
-              ),
+              padding: EdgeInsets.all(24.r),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(30.r),
@@ -475,7 +461,7 @@ class _SignupContent extends StatelessWidget {
                     height: 1.02,
                   ),
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: 24.h),
                 Text(
                   'Jenga akaunti yako na uanze safari yako ya kujifunza na kukuza biashara.',
                   style: GoogleFonts.montserrat(
@@ -484,7 +470,7 @@ class _SignupContent extends StatelessWidget {
                     height: 1.35,
                   ),
                 ),
-                SizedBox(height: veryShort ? 6 : (dense ? 8 : 16)),
+                SizedBox(height: 24.h),
                 buildField(
                   label: 'Jina la Kwanza',
                   hint: 'Jina lako',
@@ -494,7 +480,7 @@ class _SignupContent extends StatelessWidget {
                   validator: (v) => v!.isEmpty ? 'Weka jina lako' : null,
                   onChanged: (_) => context.read<AuthProvider>().clearError(),
                 ),
-                SizedBox(height: veryShort ? 4 : (dense ? 6 : 12)),
+                SizedBox(height: 16.h),
                 buildField(
                   label: 'Barua Pepe',
                   hint: 'jina@mfano.com',
@@ -506,7 +492,7 @@ class _SignupContent extends StatelessWidget {
                       v!.isEmpty || !v.contains('@') ? 'Barua pepe si sahihi' : null,
                   onChanged: (_) => context.read<AuthProvider>().clearError(),
                 ),
-                SizedBox(height: veryShort ? 4 : (dense ? 6 : 12)),
+                SizedBox(height: 16.h),
                 buildField(
                   label: 'Neno la Siri',
                   hint: 'Herufi 8 au zaidi',
@@ -528,7 +514,7 @@ class _SignupContent extends StatelessWidget {
                       v!.length < 8 ? 'Neno la siri lazima liwe na herufi 8+' : null,
                   onChanged: (_) => context.read<AuthProvider>().clearError(),
                 ),
-                SizedBox(height: veryShort ? 4 : (dense ? 6 : 12)),
+                SizedBox(height: 16.h),
                 buildField(
                   label: 'Thibitisha Neno la Siri',
                   hint: 'Rudia neno la siri',
@@ -549,13 +535,12 @@ class _SignupContent extends StatelessWidget {
                   validator: (v) =>
                       v != passwordController.text ? 'Maneno ya siri hayafanani' : null,
                 ),
-                SizedBox(height: 10.h),
-                SizedBox(height: veryShort ? 2 : (dense ? 4 : 10)),
+                SizedBox(height: 28.h),
                 SizedBox(
                   width: double.infinity,
                   child: GradientButton(
                     text: 'Jisajili',
-                    height: veryShort ? 40 : (dense ? 42 : 52),
+                    height: 56.h,
                     isLoading: authProvider.isLoading,
                     onTap: onHandleSignup,
                   ),

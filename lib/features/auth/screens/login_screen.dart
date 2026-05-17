@@ -627,7 +627,7 @@ class _LoginScreenState extends State<LoginScreen>
                     SafeArea(
                       top: false,
                       child: Padding(
-                        padding: EdgeInsets.only(bottom: 16.h),
+                        padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 16.h),
                         child: const Center(
                           child: _SignupFooter(),
                         ),
