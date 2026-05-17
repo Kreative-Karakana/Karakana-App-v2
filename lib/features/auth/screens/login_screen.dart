@@ -304,30 +304,33 @@ class _LoginScreenState extends State<LoginScreen>
             children: [
               const _AuthBackground(),
               SafeArea(
-                child: AnimatedPadding(
-                  duration: const Duration(milliseconds: 180),
-                  curve: Curves.easeOut,
-                  padding: EdgeInsets.only(
-                    bottom: keyboardOpen
-                        ? MediaQuery.viewInsetsOf(context).bottom
-                        : 0,
-                  ),
-                  child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    22,
-                    compact ? 14 : 24,
-                    22,
-                    compact ? 10 : 16,
-                  ),
-                  child: SingleChildScrollView(
-                    physics: const ClampingScrollPhysics(),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: constraints.maxHeight - (compact ? 24 : 40),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: AnimatedPadding(
+                        duration: const Duration(milliseconds: 180),
+                        curve: Curves.easeOut,
+                        padding: EdgeInsets.only(
+                          bottom: keyboardOpen
+                              ? MediaQuery.viewInsetsOf(context).bottom
+                              : 0,
+                        ),
+                        child: Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          22,
+                          compact ? 14 : 24,
+                          22,
+                          compact ? 10 : 16,
+                        ),
+                        child: SingleChildScrollView(
+                          physics: const ClampingScrollPhysics(),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: constraints.maxHeight - (compact ? 24 : 40),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
                       SizedBox(height: 28.h),
                       Center(
                         child: Container(
@@ -613,18 +616,24 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                         ),
                       ),
-                      if (!keyboardOpen) ...[
-                        SizedBox(height: compact ? 24 : 32),
-                        const Center(
-                          child: _SignupFooter(),
-                        ),
-                        SizedBox(height: compact ? 20 : 28),
-                      ],
                         ],
                       ),
                     ),
+                        ),
+                      ),
                     ),
                   ),
+                ),
+                    SafeArea(
+                      top: false,
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 16.h),
+                        child: const Center(
+                          child: _SignupFooter(),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
