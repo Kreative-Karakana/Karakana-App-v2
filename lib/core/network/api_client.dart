@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../constants/app_constants.dart';
@@ -68,7 +66,7 @@ class ApiClient {
   }
 
   String parseError(dynamic error) {
-    if (error is DioError) {
+    if (error is DioException) {
       final data = error.response?.data;
       if (data is Map) {
         if (data.containsKey('detail')) {
@@ -96,24 +94,23 @@ class ApiClient {
         case 500:
           return 'Hitilafu ya seva. Tafadhali jaribu tena baadaye.';
         default:
-          if (error.type == DioErrorType.connectTimeout) {
+          if (error.type == DioExceptionType.connectionTimeout) {
             return 'Muunganisho umechelewa (connection timeout). Jaribu tena.';
           }
-          if (error.type == DioErrorType.receiveTimeout) {
+          if (error.type == DioExceptionType.receiveTimeout) {
             return 'Seva imechelewa kujibu (receive timeout). Jaribu tena.';
           }
-          if (error.type == DioErrorType.sendTimeout) {
+          if (error.type == DioExceptionType.sendTimeout) {
             return 'Kutuma ombi kumechelewa (send timeout). Jaribu tena.';
           }
-          if (error.type == DioErrorType.other &&
-              (error.error is HandshakeException ||
-                  error.message.toLowerCase().contains('certificate'))) {
+          if (error.type == DioExceptionType.badCertificate) {
             return 'Hitilafu ya usalama wa cheti cha seva. Wasiliana na msaada.';
           }
-          if (error.type == DioErrorType.cancel) {
+          if (error.type == DioExceptionType.cancel) {
             return 'Ombi limeghairiwa kabla ya kukamilika. Jaribu tena.';
           }
-          if (error.type == DioErrorType.other) {
+          if (error.type == DioExceptionType.connectionError ||
+              error.type == DioExceptionType.unknown) {
             return 'Hakuna muunganisho wa intaneti. Tafadhali angalia mtandao wako.';
           }
           return 'Kuna hitilafu imetokea. Tafadhali jaribu tena.';
