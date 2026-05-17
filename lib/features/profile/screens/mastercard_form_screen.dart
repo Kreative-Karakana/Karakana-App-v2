@@ -150,7 +150,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      final statusCode = e is DioException ? e.response?.statusCode : null;
+      final statusCode = e is DioError ? e.response?.statusCode : null;
       if (statusCode == 404) {
         _snack('Taarifa zako sio sahihi, tafadhali hakiki taarifa zako');
       } else {

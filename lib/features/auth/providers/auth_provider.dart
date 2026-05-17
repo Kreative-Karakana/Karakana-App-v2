@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:dio/dio.dart';
 
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
@@ -129,10 +130,10 @@ class AuthProvider extends ChangeNotifier {
       debugPrint('[LOGIN] Raw error: $e');
       debugPrint('[LOGIN] Parsed error: $parsed');
       debugPrint('[LOGIN] Error type: ${e.runtimeType}');
-      if (e is DioException) {
-        debugPrint('[LOGIN] DioException type: ${e.type}');
-        debugPrint('[LOGIN] DioException response: ${e.response?.data}');
-        debugPrint('[LOGIN] DioException status: ${e.response?.statusCode}');
+      if (e is DioError) {
+        debugPrint('[LOGIN] DioError type: ${e.type}');
+        debugPrint('[LOGIN] DioError response: ${e.response?.data}');
+        debugPrint('[LOGIN] DioError status: ${e.response?.statusCode}');
         _errorMessage = 'DEBUG: ${e.type} - ${e.response?.statusCode} - $parsed';
       } else {
         _errorMessage = parsed.toLowerCase().contains('token')

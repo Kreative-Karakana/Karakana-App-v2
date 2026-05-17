@@ -120,7 +120,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                               'order': _sections.length + 1,
                               'status': 'pending_review',
                             });
-                      } on DioException catch (e) {
+                      } on DioError catch (e) {
                         // Some environments expose course-sections as read-only.
                         if (e.response?.statusCode == 405) {
                           await ApiClient().dio.post('/api/v1/sections/', data: {
