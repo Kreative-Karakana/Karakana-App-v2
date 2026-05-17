@@ -127,8 +127,6 @@ class AuthProvider extends ChangeNotifier {
       return false;
     } catch (e) {
       final parsed = ApiClient().parseError(e);
-      debugPrint('[LOGIN] Raw error: $e');
-      debugPrint('[LOGIN] Parsed error: $parsed');
       _errorMessage = parsed.toLowerCase().contains('token')
           ? 'Barua pepe au nenosiri si sahihi.'
           : parsed;
