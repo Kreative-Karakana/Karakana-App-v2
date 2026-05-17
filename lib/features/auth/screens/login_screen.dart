@@ -616,14 +616,7 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                         ),
                       ),
-                        ],
-                      ),
                     ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
                     SafeArea(
                       top: false,
                       child: Padding(
