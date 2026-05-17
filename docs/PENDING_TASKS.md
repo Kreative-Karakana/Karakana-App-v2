@@ -1,106 +1,104 @@
 # Karakana App V2 — Pending Tasks & Blockers
 
-##  BLOCKER — iOS Provisioning Profile Regeneration
-**Status:** Waiting for Lameck
-**Date identified:** 2026-05-16
+##  No Current Blockers
 
-**What needs to be done:**
-Lameck needs to log into developer.apple.com and regenerate the
-App Store Distribution provisioning profile to include the new
-Apple Distribution certificate created on his Mac today.
-
-**Steps for Lameck:**
-1. Go to developer.apple.com → Certificates, Identifiers & Profiles → Profiles
-2. Find "App store connect distribution profile"
-3. Click Edit
-4. Under Distribution Certificate → select the new certificate (created today, May 16 2026)
-5. Click Save → Download
-6. Send the new .mobileprovision file to Kweka
-
-**After receiving the file, Kweka must:**
-1. Run in PowerShell:
-   [Convert]::ToBase64String(
-     [IO.File]::ReadAllBytes("PATH_TO_NEW_FILE.mobileprovision")
-   ) | Out-File -FilePath "profile_base64_new.txt" -NoNewline
-2. Extract UUID:
-   $content = Get-Content -Path "PATH_TO_NEW_FILE.mobileprovision" -Raw
-   $match = [regex]::Match($content, '<key>UUID</key>\s*<string>(.*?)</string>')
-   Write-Output "UUID: $($match.Groups[1].Value)"
-3. Update IOS_PROVISIONING_PROFILE_BASE64 secret in GitHub V2 repo
-4. Update IOS_PROVISIONING_PROFILE_UUID secret in GitHub V2 repo
-5. Re-run ios-build-check workflow
-6. If dry-run passes → run ios-release workflow
-
-**Impact:** GitHub Actions dry-run and App Store upload blocked until resolved.
+Both platforms are now deployed and being tested.
 
 ---
 
-##  Post-Launch Tasks (safe to do after App Store approval)
+##  Active — TestFlight Testing (iOS)
 
-### #1 — Fursa Page Placeholder Content
-Populate fursa_screen.dart with placeholder content from these posts:
-- https://www.instagram.com/p/DYUvXbhiuez/
-- https://www.instagram.com/p/DXmaQciAC2k/
-- https://www.instagram.com/p/DX_4b0IiMUh/
-- https://www.instagram.com/p/DX9KewwCEyQ/
-- https://instagram.com/p/DYUY3cMDI7s/
-- https://www.instagram.com/p/DYMUdfOjJKt/
+Testing Karakana V2 on iPhone via TestFlight (Build 4+).
+White screen bug fixed — app now launches and runs on iPhone.
 
-### #3 — Mkoba Wangu Card Gradient
-Trainer's mkoba wangu card gradient should match the Zana card
-gradient on the student home screen.
+**Test checklist:**
+- Authentication (email, Google, biometric)
+- Course browsing and enrollment
+- IAP purchase flow (Vicoba na Maendeleo)
+- Video playback
+- Zana tab features
+- Profile and edit profile
+- Push notifications
+- Dark mode
+- Trainer dashboard
 
-### #4 — Trainer Video Upload to Mux
-Allow trainers to upload video directly from the app and have it
-go straight to Mux for processing.
-
-### #7 — Drop Shadow on Kozi Tab
-Add a drop shadow after the next card in the kozi tab of trainer UI.
-
-### #8 — Trainer Requests Course Deletion
-Trainer should be able to request course deletion from within the
-app — request goes to Kreative Karakana team for approval.
+**After testing passes:**
+1. Go to App Store Connect → Distribution
+2. Create new version submission
+3. Select the passing TestFlight build
+4. Attach IAP product (com.kreativekarakana.karakana.course.vicoba)
+5. Add review notes with test account credentials
+6. Submit for Apple Review
 
 ---
 
-##  Completed Today (2026-05-16)
+##  Post-TestFlight — App Store Submission
 
-### Code Fixes
-- Fixed phone number key mismatch in trainer application screen
-- Added Tanzania phone number validation in edit profile screen
-- Added pass indicator at 80% completion in classroom screen
-- Confirmed certificate logic correct at 100% completion
-- Trainer content now routed through pending_review before publishing
-- Added content type chooser popup for Ongeza Kozi/Kitabu button
-- Merged POS into Usimamizi wa Biashara
-- Rearranged Zana cards: Usimamizi wa Biashara, Akiba ya Kikundi,
-  Maktaba ya Kidijitali, Bima ya Biashara
+When TestFlight testing passes:
+1. App Store Connect → Distribution → Create new version
+2. Select build → attach IAP → add review notes → submit
 
-### Apple IAP Implementation
-- in_app_purchase: ^3.2.0 added to pubspec.yaml
-- IAPService created at lib/features/payments/services/iap_service.dart
-- IAPProvider created at lib/features/payments/providers/iap_provider.dart
-- IAPProvider registered in main.dart
-- Platform branching wired into course_detail_screen.dart
-- appleIapProductId field added to CourseModel
-- Runner.entitlements created with IAP, push notifications,
-  and Sign in with Apple capabilities
-- CODE_SIGN_ENTITLEMENTS set in Debug and Release build settings
+Review notes to include:
+- Test account email and password
+- "To test IAP, find Vicoba na Maendeleo course and tap Nunua Kozi"
+- "Use sandbox Apple ID for IAP testing"
 
-### iOS Deployment Setup
-- Bundle ID fixed to com.kreativekarakana.karakana
-- ios/ExportOptions.plist created
-- .github/workflows/ios-build-check.yml created
-- .github/workflows/ios-release.yml created
-- All 7 GitHub Secrets added to V2 repo
+---
+
+##  Post-Launch Tasks
+
+### Courses
+- Add remaining 18 courses with apple_iap_product_id values
+- Format: com.kreativekarakana.karakana.course.{slug}
+
+### Features
+- Fursa page placeholder content (Instagram links in old task list)
+- Mkoba wangu card gradient — match Zana card dark gradient
+- Trainer video upload directly to Mux from app
+- Drop shadow after next card in trainer kozi tab
+- Trainer requests course deletion flow
+- Sign in with Apple (required — app has Google Sign-In)
+
+### UI Fixes (Trainer Dashboard)
+- Fix missing trainer name in "Habari, !" greeting
+- Fix "Rasimu" badge — should say "Inasubiri Ukaguzi" for pending_review courses
+- Remove "Chapisha Sasa" button from pending_review courses
+- Fix Ongeza Kozi subtitle text
+
+---
+
+##  Key Credentials & Files
+
+### HoneyPot Location
+C:\Users\victo\OneDrive\Documentos\Kreative Karakana\System Documentations\Tech Dept\HoneyPot\
+
+### iOS Signing
+- Certificate: ios_distribution_v2.p12 (password: Lawrence17)
+- Profile: App_store_connect_distribution_profile_new.mobileprovision
+- Profile UUID: 5f2b04b1-a388-46ca-8d3d-92f196819293
+- Team ID: J3M8G9NBLH
+- Bundle ID: com.kreativekarakana.karakana
+
+### Android Signing
+- Keystore: karakana-release.jks (password: Karakana@2026!)
+- Key alias: karakana
+- SHA-1: F0:CD:AF:2F:85:54:17:90:97:8B:28:7C:9C:DD:83:87:3A:07:B9:EC
 
 ### App Store Connect
-- IAP Product ID registered:
-  com.kreativekarakana.karakana.course.vicoba
-- Status: Ready to Submit
-- Django Admin: apple_iap_product_id set on Vicoba na Maendeleo
+- App ID: 6755680070
+- IAP Product: com.kreativekarakana.karakana.course.vicoba
+- IAP Status: Ready to Submit
+
+### GitHub Secrets (V2 Repo)
+- IOS_CERTIFICATE_BASE64: from certificate_base64_new.txt
+- IOS_CERTIFICATE_PASSWORD: Lawrence17
+- KEYCHAIN_PASSWORD: set
+- IOS_PROVISIONING_PROFILE_BASE64: from profile_base64_new.txt
+- IOS_PROVISIONING_PROFILE_UUID: 5f2b04b1-a388-46ca-8d3d-92f196819293
+- APP_STORE_CONNECT_USERNAME: set
+- APP_STORE_CONNECT_APP_PASSWORD: set
 
 ### Play Store
-- Pending — no blockers, can be done independently
-
----
+- Package: com.kreativekarakana.karakana
+- Status: In Review
+- Version: 2.0.1 (build 2)

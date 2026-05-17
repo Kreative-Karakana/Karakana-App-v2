@@ -1,47 +1,51 @@
 # Karakana App V2 — Progress Summary
-**Last updated:** 2026-05-16
+**Last updated:** 2026-05-17
 
 ## App Overview
 Flutter rebuild of Karakana mobile app targeting both
 Google Play Store and Apple App Store.
 
-## Screens Complete (47 total)
-- Auth: login, signup, verify email, forgot password, biometric
-- Courses: explore, course detail, classroom, video lesson,
-  course complete, course reviews, my courses, wishlist, course list
-- eBooks: ebook store, ebook library, ebook detail,
-  secure reader, trainer ebooks, add/edit ebook
-- Fursa: fursa screen (placeholder content pending)
-- Home: home screen, main screen
-- Notifications: notifications screen
-- Onboarding: onboarding screen
-- Payments: payment screen, payment history,
-  payment success, wallet
-- Profile: account, edit profile, mastercard form,
-  profile screen, terms, trainer application
-- Splash: splash screen
-- Support: support, new ticket, ticket detail
-- Trainer: course builder, lesson manager, quiz manager,
-  student progress, trainer dashboard
-- Zana: zana screen, biz manager, ebooks, insurance, kikoba, pos
+## Current State
+- Android build submitted to Play Store and currently in review.
+- iOS build uploaded to TestFlight and active testing is in progress.
+- iPhone white screen launch issue has been fixed.
 
-## Key Integrations
-- AzamPay/EVPay: Android payment flow (tested and working)
-- Apple IAP: iOS payment flow (implemented, pending TestFlight test)
-- Firebase FCM: Push notifications
-- Google Sign-In: Authentication
-- Sign in with Apple: Authentication
-- Mux: Video streaming
-- GoRouter: Navigation
+## iOS Release Readiness
+- Bundle ID: `com.kreativekarakana.karakana`
+- Team ID: `J3M8G9NBLH`
+- Provisioning Profile UUID: `5f2b04b1-a388-46ca-8d3d-92f196819293`
+- Runner entitlements aligned for push notifications + Sign in with Apple.
+- Apple Pay entitlement removed (StoreKit IAP does not require it).
+- `Info.plist` includes `ITSAppUsesNonExemptEncryption=false`.
+- GitHub Actions workflows updated for Xcode selection and iOS 26 SDK requirement.
+- iOS release workflow sets build number from GitHub run number.
 
-## Deployment Status
-| Platform | Status | Blocker |
-|---|---|---|
-| App Store (iOS) | Waiting for dry-run | Provisioning profile (Lameck) |
-| Play Store (Android) | Ready to submit | None |
+## Payments & IAP
+- Apple IAP integrated in V2 with `in_app_purchase`.
+- IAP service/provider wired into course purchase flow on iOS.
+- Product currently configured:
+  - `com.kreativekarakana.karakana.course.vicoba`
 
-## GitHub Actions Workflows
-| Workflow | Trigger | Purpose |
-|---|---|---|
-| ios-build-check.yml | Manual | Dry-run build validation |
-| ios-release.yml | Manual | Build + upload to App Store Connect |
+## Active QA Scope (TestFlight)
+- Authentication (email, Google, biometric)
+- Course browse/enroll flow
+- Apple IAP purchase flow
+- Video playback
+- Zana features
+- Profile/edit profile
+- Push notifications
+- Dark mode
+- Trainer dashboard
+
+## Next Milestone
+Once TestFlight passes:
+1. Create App Store version in App Store Connect.
+2. Select approved build.
+3. Attach IAP product.
+4. Add review notes with test credentials.
+5. Submit for Apple Review.
+
+## Play Store Status
+- Package: `com.kreativekarakana.karakana`
+- Status: In Review
+- Version: `2.0.1+2`
