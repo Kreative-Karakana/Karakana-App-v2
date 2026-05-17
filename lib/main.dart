@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'core/network/api_client.dart';
@@ -83,55 +84,62 @@ class _KarakanaAppState extends State<KarakanaApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: widget.authProvider),
-        ChangeNotifierProvider(create: (_) => CourseProvider()),
-        ChangeNotifierProvider(create: (_) => NotificationProvider()),
-        ChangeNotifierProvider(create: (_) => EbookProvider()),
-        ChangeNotifierProvider(create: (_) => IAPProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
-      ],
-      child: Consumer<ThemeProvider>(
-        builder: (context, themeProvider, _) {
-          return MaterialApp.router(
-            title: 'Karakana',
-            debugShowCheckedModeBanner: false,
-            themeMode: themeProvider.themeMode,
-            theme: ThemeData(
-              brightness: Brightness.light,
-              primaryColor: const Color(0xFFE87722),
-              scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-              colorScheme: const ColorScheme.light(
-                primary: Color(0xFFE87722),
-                secondary: Color(0xFF3D1800),
-                surface: Colors.white,
-              ),
-              textTheme: GoogleFonts.montserratTextTheme(
-                ThemeData.light().textTheme,
-              ),
-              cardColor: Colors.white,
-              iconTheme: const IconThemeData(color: Color(0xFF1A1A1A)),
-            ),
-            darkTheme: ThemeData(
-              brightness: Brightness.dark,
-              primaryColor: const Color(0xFFE87722),
-              scaffoldBackgroundColor: const Color(0xFF121212),
-              colorScheme: const ColorScheme.dark(
-                primary: Color(0xFFE87722),
-                secondary: Color(0xFFFFA726),
-                surface: Color(0xFF1E1E1E),
-              ),
-              textTheme: GoogleFonts.montserratTextTheme(
-                ThemeData.dark().textTheme,
-              ),
-              cardColor: const Color(0xFF1E1E1E),
-              iconTheme: const IconThemeData(color: Colors.white),
-            ),
-            routerConfig: router,
-          );
-        },
-      ),
+    return ScreenUtilInit(
+      designSize: const Size(390, 844),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: widget.authProvider),
+            ChangeNotifierProvider(create: (_) => CourseProvider()),
+            ChangeNotifierProvider(create: (_) => NotificationProvider()),
+            ChangeNotifierProvider(create: (_) => EbookProvider()),
+            ChangeNotifierProvider(create: (_) => IAPProvider()),
+            ChangeNotifierProvider(create: (_) => ThemeProvider()),
+          ],
+          child: Consumer<ThemeProvider>(
+            builder: (context, themeProvider, _) {
+              return MaterialApp.router(
+                title: 'Karakana',
+                debugShowCheckedModeBanner: false,
+                themeMode: themeProvider.themeMode,
+                theme: ThemeData(
+                  brightness: Brightness.light,
+                  primaryColor: const Color(0xFFE87722),
+                  scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+                  colorScheme: const ColorScheme.light(
+                    primary: Color(0xFFE87722),
+                    secondary: Color(0xFF3D1800),
+                    surface: Colors.white,
+                  ),
+                  textTheme: GoogleFonts.montserratTextTheme(
+                    ThemeData.light().textTheme,
+                  ),
+                  cardColor: Colors.white,
+                  iconTheme: const IconThemeData(color: Color(0xFF1A1A1A)),
+                ),
+                darkTheme: ThemeData(
+                  brightness: Brightness.dark,
+                  primaryColor: const Color(0xFFE87722),
+                  scaffoldBackgroundColor: const Color(0xFF121212),
+                  colorScheme: const ColorScheme.dark(
+                    primary: Color(0xFFE87722),
+                    secondary: Color(0xFFFFA726),
+                    surface: Color(0xFF1E1E1E),
+                  ),
+                  textTheme: GoogleFonts.montserratTextTheme(
+                    ThemeData.dark().textTheme,
+                  ),
+                  cardColor: const Color(0xFF1E1E1E),
+                  iconTheme: const IconThemeData(color: Colors.white),
+                ),
+                routerConfig: router,
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
