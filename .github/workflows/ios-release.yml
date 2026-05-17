@@ -86,9 +86,13 @@ jobs:
       - name: Build Flutter iOS (no codesign)
         run: |
           flutter build ios --release --no-codesign \
-            --dart-define=FLUTTER_TARGET=lib/main.dart
+            --dart-define=FLUTTER_TARGET=lib/main.dart \
+            --no-tree-shake-icons
         env:
           FLUTTER_SUPPRESS_ANALYTICS: true
+          XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY: ""
+          XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED: "NO"
+          XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED: "NO"
 
       - name: Archive with xcodebuild
         env:
