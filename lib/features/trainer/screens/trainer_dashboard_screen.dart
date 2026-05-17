@@ -1133,7 +1133,29 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   Widget _buildCourseCard(Map course, Color surfaceColor, Color textPrimary,
       Color textSecondary, {bool compact = false}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isPublished = course['status'] == 'published';
+    final courseStatus = (course['status'] as String? ?? 'draft');
+    final isPublished = courseStatus == 'published';
+    final isPendingReview = courseStatus == 'pending_review';
+    final statusLabel = isPublished
+        ? 'Imechapishwa'
+        : isPendingReview
+            ? 'Inasubiri Ukaguzi'
+            : 'Rasimu';
+    final statusBgColor = isPublished
+        ? const Color(0xFF2E7D32)
+        : isPendingReview
+            ? const Color(0xFFE87722)
+            : const Color(0xFF6B7280);
+    final statusTextColor = isPublished
+        ? const Color(0xFF2E7D32)
+        : isPendingReview
+            ? const Color(0xFFE87722)
+            : const Color(0xFF6B7280);
+    final publishButtonText = isPublished
+        ? 'Imechapishwa'
+        : isPendingReview
+            ? 'Inasubiri Ukaguzi'
+            : 'Chapisha Sasa';
     final title = course['title'] as String? ?? '';
     final thumbnail = course['cover_photo'] as String?;
     final students = course['student_count'] as int? ?? 0;
@@ -1205,9 +1227,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
-                            color: isPublished
-                                ? const Color(0xFF3D1800)
-                                : const Color(0xFF7B3A10),
+                            color: statusBgColor,
                             borderRadius: BorderRadius.circular(20)),
                         child: Row(mainAxisSize: MainAxisSize.min, children: [
                           Container(
@@ -1217,10 +1237,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                   shape: BoxShape.circle,
                                   color: Color(0xFFFFA726))),
                           const SizedBox(width: 5),
-                          Text(isPublished ? 'Imechapishwa' : 'Rasimu',
+                          Text(statusLabel,
                               style: GoogleFonts.montserrat(
                               fontSize: compact ? 8 : 9,
-                                  fontWeight: FontWeight.w700,
+                                   fontWeight: FontWeight.w700,
                                   color: Colors.white)),
                         ]))),
               ])),
@@ -1291,38 +1311,34 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       runSpacing: 6,
                       children: [
                         GestureDetector(
-                          onTap: () => _showPublishConfirm(course),
+                          onTap: isPendingReview
+                              ? null
+                              : () => _showPublishConfirm(course),
                           child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 7),
                               decoration: BoxDecoration(
-                                  color: isPublished
-                                      ? const Color(0xFF3D1800).withValues(alpha: 0.08)
-                                      : const Color(0xFFE87722).withValues(alpha: 0.08),
+                                  color: statusTextColor.withValues(alpha: 0.08),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                      color: isPublished
-                                          ? const Color(0xFF3D1800).withValues(alpha: 0.35)
-                                          : const Color(0xFFE87722).withValues(alpha: 0.35))),
+                                      color: statusTextColor.withValues(alpha: 0.35))),
                               child: Row(mainAxisSize: MainAxisSize.min, children: [
                                 Icon(
                                     isPublished
                                         ? Icons.visibility_outlined
-                                        : Icons.visibility_off_outlined,
+                                        : isPendingReview
+                                            ? Icons.hourglass_top_rounded
+                                            : Icons.visibility_off_outlined,
                                     size: 13,
-                                    color: isPublished
-                                        ? const Color(0xFF3D1800)
-                                        : const Color(0xFFE87722)),
+                                    color: statusTextColor),
                                 const SizedBox(width: 5),
                                 Text(
-                                  isPublished ? 'Imechapishwa' : 'Chapisha Sasa',
+                                  publishButtonText,
                                   style: GoogleFonts.montserrat(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w700,
-                                    color: isPublished
-                                        ? const Color(0xFF3D1800)
-                                        : const Color(0xFFE87722),
+                                    color: statusTextColor,
                                   ),
                                 ),
                               ])),
@@ -1544,7 +1560,19 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   final thumbnail = course['cover_photo'] as String?;
                   final rating =
                       (course['average_rating'] as num? ?? 0).toDouble();
-                  final isPublished = course['status'] == 'published';
+                  final courseStatus = (course['status'] as String? ?? 'draft');
+                  final isPublished = courseStatus == 'published';
+                  final isPendingReview = courseStatus == 'pending_review';
+                  final statusLabel = isPublished
+                      ? 'Imechapishwa'
+                      : isPendingReview
+                          ? 'Inasubiri Ukaguzi'
+                          : 'Rasimu';
+                  final statusColor = isPublished
+                      ? const Color(0xFF2E7D32)
+                      : isPendingReview
+                          ? const Color(0xFFE87722)
+                          : const Color(0xFF6B7280);
                   final courseId = course['id'] as int? ?? 0;
                   return Container(
                       margin: const EdgeInsets.only(bottom: 14),
@@ -1629,18 +1657,14 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                          color: isPublished
-                                              ? const Color(0xFFE87722).withValues(alpha: 0.1)
-                                              : const Color(0xFF7B3A10).withValues(alpha: 0.1),
+                                          color: statusColor.withValues(alpha: 0.1),
                                           borderRadius: BorderRadius.circular(8)),
                                       child: Text(
-                                          isPublished ? 'Hai' : 'Rasimu',
+                                          statusLabel,
                                           style: GoogleFonts.montserrat(
                                               fontSize: 10,
                                               fontWeight: FontWeight.w700,
-                                              color: isPublished
-                                                  ? const Color(0xFFE87722)
-                                                  : const Color(0xFF7B3A10)))),
+                                              color: statusColor))),
                                 ]),
 
                             const SizedBox(height: 16),
@@ -2157,12 +2181,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Consumer<AuthProvider>(
-                                    builder: (_, auth, __) => Column(
+                                    builder: (_, auth, __) {
+                                      final firstName = auth.userFullName.isNotEmpty
+                                          ? auth.userFullName.split(' ').first
+                                          : 'Mwalimu';
+                                      return Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                  'Habari, ${auth.userFullName.split(' ').first}!',
+                                                  'Habari, $firstName!',
                                                   style:
                                                       GoogleFonts.montserrat(
                                                           fontSize: 22,
@@ -2181,7 +2209,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                                           color: Colors.white
                                                               .withValues(
                                                                   alpha: 0.7))),
-                                            ])),
+                                            ]);
+                                    }),
                                 const SizedBox(height: 14),
                                 Row(children: [
                                   _buildHeroStat('${_stats['total_courses']}',

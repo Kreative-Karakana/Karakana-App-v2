@@ -13,11 +13,17 @@ class _SlideData {
   final String title;
   final String subtitle;
   final String imagePath;
+  final Color backgroundColor;
+  final Color titleColor;
+  final Color subtitleColor;
 
   const _SlideData({
     required this.title,
     required this.subtitle,
     required this.imagePath,
+    required this.backgroundColor,
+    required this.titleColor,
+    required this.subtitleColor,
   });
 }
 
@@ -35,6 +41,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     with AutomaticKeepAliveClientMixin {
   late final PageController _pageController;
   int _currentPage = 0;
+  double _pagePosition = 0;
 
   static const _panelDark = Color(0xFF200903);
 
@@ -44,18 +51,27 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       subtitle:
           'Mafunzo ya vitendo kwa mbinu za kisasa yatakayokusaidia kukuza biashara yako kutoka kwa wataalamu waliobobea.',
       imagePath: 'assets/onboarding/slide_1.png',
+      backgroundColor: Color(0xFF3D1800),
+      titleColor: Colors.white,
+      subtitleColor: Color(0xFFD4A574),
     ),
     _SlideData(
       title: 'Zana Bora na Miongozo ya\nKukuza Biashara',
       subtitle:
           'Huduma za usajili, nembo na mitandao ya kijamii zinazokuokoa muda na kukuwezesha kuzingatia ukuaji wa biashara yako.',
       imagePath: 'assets/onboarding/slide_2.png',
+      backgroundColor: Color(0xFF1A0A00),
+      titleColor: Color(0xFFE87722),
+      subtitleColor: Colors.white70,
     ),
     _SlideData(
       title: 'Huduma Muhimu kwa\nKukuza Biashara Yako',
       subtitle:
           'Simamia biashara yako kwa ufanisi wa zana na mipango bora, pamoja na ushauri wa kitaalamu kupitia warsha na mikutano ya moja kwa moja.',
       imagePath: 'assets/onboarding/slide_3.png',
+      backgroundColor: Color(0xFF2A0F04),
+      titleColor: Colors.white,
+      subtitleColor: Color(0xFFD4A574),
     ),
   ];
 
@@ -66,6 +82,12 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   void initState() {
     super.initState();
     _pageController = PageController(viewportFraction: 1.0);
+    _pageController.addListener(() {
+      final page = _pageController.page ?? _currentPage.toDouble();
+      if ((page - _pagePosition).abs() > 0.001 && mounted) {
+        setState(() => _pagePosition = page);
+      }
+    });
   }
 
   @override
@@ -85,6 +107,19 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeInOut,
     );
+  }
+
+  Color _interpolatedBackgroundColor() {
+    final safe = _pagePosition.clamp(0.0, (_slides.length - 1).toDouble());
+    final left = safe.floor();
+    final right = (left + 1).clamp(0, _slides.length - 1);
+    final t = safe - left;
+    return Color.lerp(
+          _slides[left].backgroundColor,
+          _slides[right].backgroundColor,
+          t,
+        ) ??
+        _slides[left].backgroundColor;
   }
 
   // ---------------------------------------------------------------------------
@@ -132,9 +167,15 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               children: [
                 // Unified brand background
                 Container(
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFF3D1800), Color(0xFF2A0F04)],
+                      colors: [
+                        slide.backgroundColor,
+                        Color.alphaBlend(
+                          Colors.black.withValues(alpha: 0.25),
+                          slide.backgroundColor,
+                        ),
+                      ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
@@ -195,7 +236,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         stops: [0.45, 0.75],
-                        colors: [Colors.transparent, _panelDark],
+                        colors: [Colors.transparent, slide.backgroundColor],
                       ),
                     ),
                   ),
@@ -211,8 +252,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          _panelDark.withValues(alpha: 0.0),
-                          _panelDark.withValues(alpha: 0.75),
+                          slide.backgroundColor.withValues(alpha: 0.0),
+                          slide.backgroundColor.withValues(alpha: 0.75),
                         ],
                       ),
                     ),
@@ -225,7 +266,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           // ── White text area ───────────────────────────────────────────────
           Expanded(
             child: Container(
-              color: _panelDark,
+              color: slide.backgroundColor,
               padding: const EdgeInsets.fromLTRB(32, 24, 32, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -235,7 +276,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     style: GoogleFonts.montserrat(
                       fontSize: 26,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: slide.titleColor,
                       height: 1.3,
                     ),
                     textAlign: TextAlign.center,
@@ -245,7 +286,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     slide.subtitle,
                     style: GoogleFonts.montserrat(
                       fontSize: 15,
-                      color: AppColors.textTertiary,
+                      color: slide.subtitleColor,
                       height: 1.6,
                     ),
                     textAlign: TextAlign.center,
@@ -293,6 +334,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   Widget build(BuildContext context) {
     super.build(context);
     final isLast = _currentPage == 2;
+    final blendedBackground = _interpolatedBackgroundColor();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -301,7 +343,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         statusBarBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: _panelDark,
+        backgroundColor: blendedBackground,
         body: Stack(
           children: [
             // ── PageView ──────────────────────────────────────────────────────
@@ -352,7 +394,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               right: 0,
               child: SafeArea(
                 child: Container(
-                  color: _panelDark,
+                  color: blendedBackground,
                   padding: const EdgeInsets.fromLTRB(32, 12, 32, 28),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
