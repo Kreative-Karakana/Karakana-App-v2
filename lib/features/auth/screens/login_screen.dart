@@ -240,7 +240,8 @@ class _LoginScreenState extends State<LoginScreen>
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText,
-      style: GoogleFonts.montserrat(fontSize: compact ? 13 : 14, color: Colors.white),
+      style: GoogleFonts.montserrat(
+          fontSize: compact ? 13 : 14, color: Colors.white),
       cursorColor: AppColors.primaryMid,
       validator: validator,
       onChanged: onChanged,
@@ -316,299 +317,360 @@ class _LoginScreenState extends State<LoginScreen>
                               : 0,
                         ),
                         child: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                          22,
-                          compact ? 14 : 24,
-                          22,
-                          compact ? 10 : 16,
-                        ),
-                        child: SingleChildScrollView(
-                          physics: const ClampingScrollPhysics(),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minHeight: constraints.maxHeight - (compact ? 24 : 40),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                      SizedBox(height: 28.h),
-                      Center(
-                        child: Container(
-                          width: 88,
-                          height: 88,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
+                          padding: EdgeInsets.fromLTRB(
+                            22,
+                            compact ? 14 : 24,
+                            22,
+                            compact ? 10 : 16,
                           ),
-                          child: Padding(
-                            padding: EdgeInsets.all(16.r),
-                            child: Image.asset(
-                              'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) => Center(
-                                child: Text(
-                                  'K',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 32.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
+                          child: SingleChildScrollView(
+                            physics: const ClampingScrollPhysics(),
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight:
+                                    constraints.maxHeight - (compact ? 24 : 40),
                               ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 12.h),
-                      Text(
-                        'Karakana',
-                        style: GoogleFonts.poppins(
-                          fontSize: 32.sp,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(height: 20.h),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          constraints: const BoxConstraints(maxWidth: 420),
-                          child: Container(
-                            padding: EdgeInsets.all(compact ? 18 : 22),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.06),
-                              borderRadius: BorderRadius.circular(30.r),
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.08),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.18),
-                                  blurRadius: 28,
-                                  offset: const Offset(0, 16),
-                                ),
-                              ],
-                            ),
-                            child: Form(
-                              key: _formKey,
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
+                                  SizedBox(height: 28.h),
+                                  Center(
+                                    child: Container(
+                                      width: 88,
+                                      height: 88,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(16.r),
+                                        child: Image.asset(
+                                          'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                                          fit: BoxFit.contain,
+                                          errorBuilder: (_, __, ___) => Center(
+                                            child: Text(
+                                              'K',
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 32.sp,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.primary,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 12.h),
                                   Text(
-                                    'Karibu Tena',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: compact ? 22 : 24,
+                                    'Karakana',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 32.sp,
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white,
-                                      height: 1.02,
                                     ),
                                   ),
-                                  SizedBox(height: 8.h),
-                                  Text(
-                                    'Ingia kwa akaunti yako na uendelee na masomo yako bila usumbufu.',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: compact ? 12.5 : 13.5,
-                                      color: Colors.white.withValues(alpha: 0.72),
-                                      height: 1.35,
-                                    ),
-                                  ),
-                                  SizedBox(height: compact ? 18 : 22),
-                                  _buildField(
-                                    label: 'Barua Pepe',
-                                    hint: 'jina@mfano.com',
-                                    icon: Icons.email_outlined,
-                                    controller: _emailController,
-                                    keyboardType: TextInputType.emailAddress,
-                                    compact: compact,
-                                    validator: (v) =>
-                                        v!.isEmpty || !v.contains('@')
-                                            ? 'Barua pepe si sahihi'
-                                            : null,
-                                    onChanged: (_) => context
-                                        .read<AuthProvider>()
-                                        .clearError(),
-                                  ),
-                                  SizedBox(height: compact ? 10 : 12),
-                                  _buildField(
-                                    label: 'Neno la Siri',
-                                    hint: 'Weka neno la siri',
-                                    icon: Icons.lock_outline,
-                                    controller: _passwordController,
-                                    obscureText: _obscurePassword,
-                                    compact: compact,
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        _obscurePassword
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off_outlined,
-                                        color: AppColors.textTertiary,
-                                        size: 18.r,
-                                      ),
-                                      onPressed: () => setState(
-                                        () => _obscurePassword =
-                                            !_obscurePassword,
-                                      ),
-                                    ),
-                                    validator: (v) =>
-                                        v!.isEmpty ? 'Weka neno la siri' : null,
-                                    onChanged: (_) => context
-                                        .read<AuthProvider>()
-                                        .clearError(),
-                                  ),
-                                  SizedBox(height: compact ? 4 : 8),
+                                  SizedBox(height: 20.h),
                                   Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: TextButton(
-                                      onPressed: () =>
-                                          context.push('/forgot-password'),
-                                      style: TextButton.styleFrom(
-                                        foregroundColor: AppColors.primaryMid,
-                                        visualDensity: VisualDensity.compact,
-                                        tapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap,
-                                      ),
-                                      child: Text(
-                                        'Umesahau neno la siri?',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: compact ? 12 : 12.5,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: GradientButton(
-                                      text: 'Ingia',
-                                      height: compact ? 50 : 56,
-                                      isLoading: authProvider.isLoading,
-                                      onTap: _handleLogin,
-                                    ),
-                                  ),
-                                  SizedBox(height: compact ? 16 : 18),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Divider(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.10,
+                                    alignment: Alignment.center,
+                                    child: ConstrainedBox(
+                                      constraints:
+                                          const BoxConstraints(maxWidth: 420),
+                                      child: Container(
+                                        padding:
+                                            EdgeInsets.all(compact ? 18 : 22),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white
+                                              .withValues(alpha: 0.06),
+                                          borderRadius:
+                                              BorderRadius.circular(30.r),
+                                          border: Border.all(
+                                            color: Colors.white
+                                                .withValues(alpha: 0.08),
                                           ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black
+                                                  .withValues(alpha: 0.18),
+                                              blurRadius: 28,
+                                              offset: const Offset(0, 16),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 10.w,
-                                        ),
-                                        child: Text(
-                                          'Njia nyingine',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: compact ? 11 : 12,
-                                            color: AppColors.textTertiary,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Divider(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.10,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: compact ? 14 : 16),
-                                  FutureBuilder<_BiometricState>(
-                                    future: _getBiometricState(),
-                                    builder: (context, snapshot) {
-                                      final state = snapshot.data ?? const _BiometricState();
-                                      final hasFaceId = state.hasFaceId;
-                                      final hasFingerprint = state.hasFingerprint;
-
-                                      return Row(
-                                        children: [
-                                          Expanded(
-                                            child: _MethodButton(
-                                              compact: compact,
-                                              label: 'Google',
-                                              onTap: authProvider.isLoading
-                                                  ? () {}
-                                                  : _handleGoogleSignIn,
-                                              icon: Container(
-                                                width: compact ? 22 : 24,
-                                                height: compact ? 22 : 24,
-                                                decoration:
-                                                    const BoxDecoration(
+                                        child: Form(
+                                          key: _formKey,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                'Karibu Tena',
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: compact ? 22 : 24,
+                                                  fontWeight: FontWeight.w700,
                                                   color: Colors.white,
-                                                  shape: BoxShape.circle,
+                                                  height: 1.02,
                                                 ),
-                                                child: Center(
+                                              ),
+                                              SizedBox(height: 8.h),
+                                              Text(
+                                                'Ingia kwa akaunti yako na uendelee na masomo yako bila usumbufu.',
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize:
+                                                      compact ? 12.5 : 13.5,
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.72),
+                                                  height: 1.35,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  height: compact ? 18 : 22),
+                                              _buildField(
+                                                label: 'Barua Pepe',
+                                                hint: 'jina@mfano.com',
+                                                icon: Icons.email_outlined,
+                                                controller: _emailController,
+                                                keyboardType:
+                                                    TextInputType.emailAddress,
+                                                compact: compact,
+                                                validator: (v) => v!.isEmpty ||
+                                                        !v.contains('@')
+                                                    ? 'Barua pepe si sahihi'
+                                                    : null,
+                                                onChanged: (_) => context
+                                                    .read<AuthProvider>()
+                                                    .clearError(),
+                                              ),
+                                              SizedBox(
+                                                  height: compact ? 10 : 12),
+                                              _buildField(
+                                                label: 'Neno la Siri',
+                                                hint: 'Weka neno la siri',
+                                                icon: Icons.lock_outline,
+                                                controller: _passwordController,
+                                                obscureText: _obscurePassword,
+                                                compact: compact,
+                                                suffixIcon: IconButton(
+                                                  icon: Icon(
+                                                    _obscurePassword
+                                                        ? Icons
+                                                            .visibility_outlined
+                                                        : Icons
+                                                            .visibility_off_outlined,
+                                                    color:
+                                                        AppColors.textTertiary,
+                                                    size: 18.r,
+                                                  ),
+                                                  onPressed: () => setState(
+                                                    () => _obscurePassword =
+                                                        !_obscurePassword,
+                                                  ),
+                                                ),
+                                                validator: (v) => v!.isEmpty
+                                                    ? 'Weka neno la siri'
+                                                    : null,
+                                                onChanged: (_) => context
+                                                    .read<AuthProvider>()
+                                                    .clearError(),
+                                              ),
+                                              SizedBox(height: compact ? 4 : 8),
+                                              Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: TextButton(
+                                                  onPressed: () => context
+                                                      .push('/forgot-password'),
+                                                  style: TextButton.styleFrom(
+                                                    foregroundColor:
+                                                        AppColors.primaryMid,
+                                                    visualDensity:
+                                                        VisualDensity.compact,
+                                                    tapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap,
+                                                  ),
                                                   child: Text(
-                                                    'G',
+                                                    'Umesahau neno la siri?',
                                                     style:
                                                         GoogleFonts.montserrat(
-                                                      fontSize: 12.sp,
+                                                      fontSize:
+                                                          compact ? 12 : 12.5,
                                                       fontWeight:
-                                                          FontWeight.w700,
-                                                      color: const Color(
-                                                        0xFF4285F4,
-                                                      ),
+                                                          FontWeight.w600,
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                          SizedBox(width: 10.w),
-                                          Expanded(
-                                            child: _MethodButton(
-                                              compact: compact,
-                                              label: 'Apple',
-                                              onTap: authProvider.isLoading
-                                                  ? () {}
-                                                  : _handleAppleSignIn,
-                                              icon: Icon(
-                                                Icons.apple,
-                                                color: Colors.white,
-                                                size: compact ? 22 : 24,
+                                              SizedBox(height: 8.h),
+                                              SizedBox(
+                                                width: double.infinity,
+                                                child: GradientButton(
+                                                  text: 'Ingia',
+                                                  height: compact ? 50 : 56,
+                                                  isLoading:
+                                                      authProvider.isLoading,
+                                                  onTap: _handleLogin,
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                          SizedBox(width: 10.w),
-                                          Expanded(
-                                            child: _MethodButton(
-                                              compact: compact,
-                                              label: hasFaceId
-                                                  ? 'Face ID'
-                                                  : hasFingerprint
-                                                      ? 'Touch ID'
-                                                      : 'Biometric',
-                                              enabled: hasFaceId || hasFingerprint,
-                                              onTap: () => _handleBiometricTap(state),
-                                              icon: Icon(
-                                                hasFaceId
-                                                    ? Icons
-                                                        .face_retouching_natural_rounded
-                                                    : Icons
-                                                        .fingerprint_rounded,
-                                                color: (hasFaceId || hasFingerprint)
-                                                    ? (hasFaceId
-                                                        ? const Color(
-                                                            0xFFDCE4FF,
-                                                          )
-                                                        : AppColors.primaryMid)
-                                                    : AppColors.textTertiary,
-                                                size: compact ? 22 : 24,
+                                              SizedBox(
+                                                  height: compact ? 16 : 18),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Divider(
+                                                      color: Colors.white
+                                                          .withValues(
+                                                              alpha: 0.10),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10.w),
+                                                    child: Text(
+                                                      'Njia nyingine',
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        fontSize:
+                                                            compact ? 11 : 12,
+                                                        color: AppColors
+                                                            .textTertiary,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Divider(
+                                                      color: Colors.white
+                                                          .withValues(
+                                                              alpha: 0.10),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              accentColor: hasFaceId
-                                                  ? const Color(0xFF627AF4)
-                                                  : AppColors.primary,
-                                            ),
+                                              SizedBox(
+                                                  height: compact ? 14 : 16),
+                                              FutureBuilder<_BiometricState>(
+                                                future: _getBiometricState(),
+                                                builder: (context, snapshot) {
+                                                  final state = snapshot.data ??
+                                                      const _BiometricState();
+                                                  final hasFaceId =
+                                                      state.hasFaceId;
+                                                  final hasFingerprint =
+                                                      state.hasFingerprint;
+
+                                                  return Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: _MethodButton(
+                                                          compact: compact,
+                                                          label: 'Google',
+                                                          onTap: authProvider
+                                                                  .isLoading
+                                                              ? () {}
+                                                              : _handleGoogleSignIn,
+                                                          icon: Container(
+                                                            width: compact
+                                                                ? 22
+                                                                : 24,
+                                                            height: compact
+                                                                ? 22
+                                                                : 24,
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                              color:
+                                                                  Colors.white,
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                            ),
+                                                            child: Center(
+                                                              child: Text(
+                                                                'G',
+                                                                style: GoogleFonts
+                                                                    .montserrat(
+                                                                  fontSize:
+                                                                      12.sp,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                  color:
+                                                                      const Color(
+                                                                    0xFF4285F4,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 10.w),
+                                                      Expanded(
+                                                        child: _MethodButton(
+                                                          compact: compact,
+                                                          label: 'Apple',
+                                                          onTap: authProvider
+                                                                  .isLoading
+                                                              ? () {}
+                                                              : _handleAppleSignIn,
+                                                          icon: Icon(
+                                                            Icons.apple,
+                                                            color: Colors.white,
+                                                            size: compact
+                                                                ? 22
+                                                                : 24,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 10.w),
+                                                      Expanded(
+                                                        child: _MethodButton(
+                                                          compact: compact,
+                                                          label: hasFaceId
+                                                              ? 'Face ID'
+                                                              : hasFingerprint
+                                                                  ? 'Touch ID'
+                                                                  : 'Biometric',
+                                                          enabled: hasFaceId ||
+                                                              hasFingerprint,
+                                                          onTap: () =>
+                                                              _handleBiometricTap(
+                                                                  state),
+                                                          icon: Icon(
+                                                            hasFaceId
+                                                                ? Icons
+                                                                    .face_retouching_natural_rounded
+                                                                : Icons
+                                                                    .fingerprint_rounded,
+                                                            color: (hasFaceId ||
+                                                                    hasFingerprint)
+                                                                ? (hasFaceId
+                                                                    ? const Color(
+                                                                        0xFFDCE4FF,
+                                                                      )
+                                                                    : AppColors
+                                                                        .primaryMid)
+                                                                : AppColors
+                                                                    .textTertiary,
+                                                            size: compact
+                                                                ? 22
+                                                                : 24,
+                                                          ),
+                                                          accentColor: hasFaceId
+                                                              ? const Color(
+                                                                  0xFF627AF4)
+                                                              : AppColors
+                                                                  .primary,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      );
-                                    },
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -828,5 +890,3 @@ class _MethodButton extends StatelessWidget {
     );
   }
 }
-
-
