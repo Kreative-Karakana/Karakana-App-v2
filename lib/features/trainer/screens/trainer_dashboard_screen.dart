@@ -2084,6 +2084,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       case 3:
         pageTitle = 'Vyeti';
         break;
+      case 4:
+        pageTitle = 'Akaunti';
+        break;
       default:
         pageTitle = 'Muhtasari';
     }

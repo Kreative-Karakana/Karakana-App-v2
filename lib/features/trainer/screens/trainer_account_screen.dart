@@ -150,11 +150,9 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
         final initial = userName.isNotEmpty ? userName[0].toUpperCase() : 'M';
         final isDark = Theme.of(context).brightness == Brightness.dark;
 
-        return Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          body: CustomScrollView(
-            controller: _scroll,
-            slivers: [
+        return CustomScrollView(
+          controller: _scroll,
+          slivers: [
               SliverAppBar(
                 expandedHeight: _expandedHeight,
                 pinned: true,
@@ -523,8 +521,7 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                   ),
                 ),
               ),
-            ],
-          ),
+          ],
         );
       },
     );
@@ -618,4 +615,3 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
     );
   }
 }
-
