@@ -27,7 +27,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   late TabController _tabController;
   List _courses = [];
   bool _isLoading = true;
-  bool _balanceVisible = false;
+  bool _balanceVisible = true;
   bool _showCoursesBackToTop = false;
   // ignore: unused_field
   Map _wallet = {};
@@ -2226,44 +2226,69 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                 Builder(builder: (context) {
                                   final balance =
                                       (_stats['balance'] as num?) ?? 0;
-                                  return Container(
-                                    width: double.infinity,
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 16.w, vertical: 8.h),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.12),
-                                      borderRadius:
-                                          BorderRadius.circular(12.r),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Icon(
-                                                Icons
-                                                    .account_balance_wallet_outlined,
-                                                color: AppColors.primary,
-                                                size: 18.r),
-                                            SizedBox(width: 8.w),
-                                            Text('Mapato wa Mwezi',
-                                                style: GoogleFonts.montserrat(
-                                                  fontSize: 12.sp,
-                                                  color: Colors.white70,
-                                                )),
-                                          ],
-                                        ),
-                                        Text(
-                                          'TSh ${balance.toStringAsFixed(0)}',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 15.sp,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white,
+                                  return GestureDetector(
+                                    onTap: () => context.push('/wallet'),
+                                    child: Container(
+                                      width: double.infinity,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16.w, vertical: 8.h),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            Colors.white.withValues(alpha: 0.12),
+                                        borderRadius:
+                                            BorderRadius.circular(12.r),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                  Icons
+                                                      .account_balance_wallet_outlined,
+                                                  color: AppColors.primary,
+                                                  size: 18.r),
+                                              SizedBox(width: 8.w),
+                                              Text('Mapato wa Mwezi',
+                                                  style: GoogleFonts.montserrat(
+                                                    fontSize: 12.sp,
+                                                    color: Colors.white70,
+                                                  )),
+                                            ],
                                           ),
-                                        ),
-                                      ],
+                                          Row(
+                                            children: [
+                                              Text(
+                                                _balanceVisible
+                                                    ? 'TSh ${balance.toStringAsFixed(0)}'
+                                                    : 'TSh ••••••',
+                                                style:
+                                                    GoogleFonts.montserrat(
+                                                  fontSize: 15.sp,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              SizedBox(width: 8.w),
+                                              GestureDetector(
+                                                onTap: () => setState(() =>
+                                                    _balanceVisible =
+                                                        !_balanceVisible),
+                                                child: Icon(
+                                                  _balanceVisible
+                                                      ? Icons
+                                                          .visibility_outlined
+                                                      : Icons
+                                                          .visibility_off_outlined,
+                                                  color: Colors.white70,
+                                                  size: 18.r,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   );
                                 }),
