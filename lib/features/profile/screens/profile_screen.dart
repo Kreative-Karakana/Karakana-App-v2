@@ -731,92 +731,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: 16),
                       ],
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            showDialog<void>(
-                              context: context,
-                              builder: (_) => AlertDialog(
-                                title: Text(
-                                  'Toka',
-                                  style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-                                ),
-                                content: Text(
-                                  'Una uhakika unataka kutoka?',
-                                  style: GoogleFonts.montserrat(),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Text(
-                                      'Hapana',
-                                      style: GoogleFonts.montserrat(color: const Color(0xFF9E8070)),
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      context.read<AuthProvider>().logout();
-                                      context.go('/login');
-                                    },
-                                    child: Text(
-                                      'Ndiyo, Toka',
-                                      style: GoogleFonts.montserrat(
-                                        color: const Color(0xFFB71C1C),
-                                        fontWeight: FontWeight.w600,
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () {
+                                showDialog<void>(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text('Toka', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
+                                    content: Text('Una uhakika unataka kutoka?', style: GoogleFonts.montserrat()),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text('Hapana', style: GoogleFonts.montserrat(color: const Color(0xFF9E8070))),
                                       ),
-                                    ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          context.read<AuthProvider>().logout();
+                                          context.go('/login');
+                                        },
+                                        child: Text('Ndiyo, Toka', style: GoogleFonts.montserrat(color: const Color(0xFFB71C1C), fontWeight: FontWeight.w600)),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                );
+                              },
+                              icon: const Icon(Icons.logout, color: Color(0xFF1A0A00), size: 18),
+                              label: Text('Toka', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFF1A0A00))),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: Color(0xFFE8D5C8), width: 1.5),
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                                padding: const EdgeInsets.symmetric(vertical: 14),
                               ),
-                            );
-                          },
-                          icon: const Icon(Icons.logout, color: Color(0xFFB71C1C), size: 20),
-                          label: Text(
-                            'Toka',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFFB71C1C),
                             ),
                           ),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Color(0xFFFFEBEE), width: 1.5),
-                            backgroundColor: const Color(0xFFFFEBEE),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: TextButton.icon(
-                          onPressed: () => _deleteAccount(context, auth),
-                          icon: const Icon(
-                            Icons.delete_outline,
-                            color: Color(0xFF9E8070),
-                            size: 18,
-                          ),
-                          label: Text(
-                            'Futa Akaunti',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: const Color(0xFF9E8070),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () => _deleteAccount(context, auth),
+                              icon: const Icon(Icons.delete_forever_outlined, color: Colors.white, size: 18),
+                              label: Text('Futa Akaunti', style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: Color(0xFFB71C1C), width: 1.5),
+                                backgroundColor: const Color(0xFFB71C1C),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                              ),
                             ),
                           ),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                          ),
-                        ),
+                        ],
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).padding.bottom + 16,
-                      ),
+                      SizedBox(height: MediaQuery.of(context).padding.bottom + 24),
                     ],
                   ),
                 ),
