@@ -242,6 +242,15 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> deleteAccount() async {
+    try {
+      await ApiClient().dio.delete('/api/v1/auth/user/delete/');
+      await logout();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> completeOnboarding() async {
     await SecureStorage().setOnboardingComplete();
     _isOnboardingComplete = true;
