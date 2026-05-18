@@ -484,11 +484,11 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                                   ),
                                 );
                               },
-                              icon: const Icon(Icons.logout, color: Color(0xFFB71C1C), size: 18),
-                              label: Text('Toka', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFFB71C1C))),
+                              icon: const Icon(Icons.logout, color: Color(0xFF1A0A00), size: 18),
+                              label: Text('Toka', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFF1A0A00))),
                               style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Color(0xFFFFEBEE), width: 1.5),
-                                backgroundColor: const Color(0xFFFFEBEE),
+                                side: const BorderSide(color: Color(0xFFE8D5C8), width: 1.5),
+                                backgroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                               ),
@@ -534,11 +534,11 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                                   ),
                                 );
                               },
-                              icon: const Icon(Icons.delete_forever_outlined, color: Color(0xFF7B0000), size: 18),
-                              label: Text('Futa Akaunti', style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFF7B0000))),
+                              icon: const Icon(Icons.delete_forever_outlined, color: Colors.white, size: 18),
+                              label: Text('Futa Akaunti', style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
                               style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Color(0xFFFFCDD2), width: 1.5),
-                                backgroundColor: const Color(0xFFFFF0F0),
+                                side: const BorderSide(color: Color(0xFFB71C1C), width: 1.5),
+                                backgroundColor: const Color(0xFFB71C1C),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                               ),
