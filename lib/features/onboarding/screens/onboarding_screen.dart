@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,17 +13,11 @@ class _SlideData {
   final String title;
   final String subtitle;
   final String imagePath;
-  final Color backgroundColor;
-  final Color titleColor;
-  final Color subtitleColor;
 
   const _SlideData({
     required this.title,
     required this.subtitle,
     required this.imagePath,
-    required this.backgroundColor,
-    required this.titleColor,
-    required this.subtitleColor,
   });
 }
 
@@ -41,9 +35,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     with AutomaticKeepAliveClientMixin {
   late final PageController _pageController;
   int _currentPage = 0;
-  double _pagePosition = 0;
-
-  static const _panelDark = Color(0xFF200903);
 
   final List<_SlideData> _slides = const [
     _SlideData(
@@ -51,27 +42,18 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       subtitle:
           'Mafunzo ya vitendo kwa mbinu za kisasa yatakayokusaidia kukuza biashara yako kutoka kwa wataalamu waliobobea.',
       imagePath: 'assets/onboarding/slide_1.png',
-      backgroundColor: Color(0xFF3D1800),
-      titleColor: Colors.white,
-      subtitleColor: Color(0xFFD4A574),
     ),
     _SlideData(
       title: 'Zana Bora na Miongozo ya\nKukuza Biashara',
       subtitle:
           'Huduma za usajili, nembo na mitandao ya kijamii zinazokuokoa muda na kukuwezesha kuzingatia ukuaji wa biashara yako.',
       imagePath: 'assets/onboarding/slide_2.png',
-      backgroundColor: Color(0xFF1A0A00),
-      titleColor: Color(0xFFE87722),
-      subtitleColor: Colors.white70,
     ),
     _SlideData(
       title: 'Huduma Muhimu kwa\nKukuza Biashara Yako',
       subtitle:
           'Simamia biashara yako kwa ufanisi wa zana na mipango bora, pamoja na ushauri wa kitaalamu kupitia warsha na mikutano ya moja kwa moja.',
       imagePath: 'assets/onboarding/slide_3.png',
-      backgroundColor: Color(0xFF2A0F04),
-      titleColor: Colors.white,
-      subtitleColor: Color(0xFFD4A574),
     ),
   ];
 
@@ -82,12 +64,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   void initState() {
     super.initState();
     _pageController = PageController(viewportFraction: 1.0);
-    _pageController.addListener(() {
-      final page = _pageController.page ?? _currentPage.toDouble();
-      if ((page - _pagePosition).abs() > 0.001 && mounted) {
-        setState(() => _pagePosition = page);
-      }
-    });
   }
 
   @override
@@ -107,19 +83,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeInOut,
     );
-  }
-
-  Color _interpolatedBackgroundColor() {
-    final safe = _pagePosition.clamp(0.0, (_slides.length - 1).toDouble());
-    final left = safe.floor();
-    final right = (left + 1).clamp(0, _slides.length - 1);
-    final t = safe - left;
-    return Color.lerp(
-          _slides[left].backgroundColor,
-          _slides[right].backgroundColor,
-          t,
-        ) ??
-        _slides[left].backgroundColor;
   }
 
   // ---------------------------------------------------------------------------
@@ -155,41 +118,25 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   Widget _buildSlide(_SlideData slide) {
     return LayoutBuilder(builder: (context, constraints) {
       final h = constraints.maxHeight;
-      final imageHeight = h * 0.58;
+      final imageHeight = h * 0.60;
 
       return Column(
         children: [
-          // ── Amber image area ──────────────────────────────────────────────
+          // TOP: Orange image area
           SizedBox(
             height: imageHeight,
             child: Stack(
               fit: StackFit.expand,
               children: [
-                // Unified brand background
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        slide.backgroundColor,
-                        Color.alphaBlend(
-                          Colors.black.withValues(alpha: 0.25),
-                          slide.backgroundColor,
-                        ),
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                  ),
-                ),
+                // Solid orange background
+                Container(color: const Color(0xFFE8920A)),
 
-                // Decorative rings — top-right
+                // Decorative concentric rings
                 Positioned(
                   top: -imageHeight * 0.28,
                   right: -imageHeight * 0.28,
                   child: _decorativeRings(size: imageHeight * 0.85),
                 ),
-
-                // Decorative rings — bottom-left (smaller)
                 Positioned(
                   bottom: -imageHeight * 0.2,
                   left: -imageHeight * 0.2,
@@ -199,62 +146,17 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   ),
                 ),
 
-                // Person image — bottom-aligned so it sits naturally on the edge
+                // Person image - no shader mask, show cleanly
                 Positioned.fill(
-                  child: ShaderMask(
-                    shaderCallback: (bounds) => LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0.0, 0.70, 1.0],
-                      colors: [
-                        Colors.white.withValues(alpha: 0.98),
-                        Colors.white.withValues(alpha: 0.96),
-                        Colors.white.withValues(alpha: 0.0),
-                      ],
-                    ).createShader(bounds),
-                    blendMode: BlendMode.dstIn,
-                    child: Image.asset(
-                      slide.imagePath,
-                      fit: BoxFit.contain,
-                      alignment: Alignment.bottomCenter,
-                      errorBuilder: (_, __, ___) => Center(
-                        child: Icon(
-                          Icons.person_rounded,
-                          size: 140,
-                          color: Colors.white.withValues(alpha: 0.45),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-                // Gradient overlay — softens the hard cut into the white text area
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        stops: [0.45, 0.75],
-                        colors: [Colors.transparent, slide.backgroundColor],
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    height: imageHeight * 0.20,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          slide.backgroundColor.withValues(alpha: 0.0),
-                          slide.backgroundColor.withValues(alpha: 0.75),
-                        ],
+                  child: Image.asset(
+                    slide.imagePath,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.bottomCenter,
+                    errorBuilder: (_, __, ___) => Center(
+                      child: Icon(
+                        Icons.person_rounded,
+                        size: 140,
+                        color: Colors.white.withValues(alpha: 0.45),
                       ),
                     ),
                   ),
@@ -263,38 +165,38 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             ),
           ),
 
-          // ── White text area ───────────────────────────────────────────────
+          // BOTTOM: White text panel
           Expanded(
             child: Container(
-              color: slide.backgroundColor,
-              padding: const EdgeInsets.fromLTRB(32, 24, 32, 0),
+              color: Colors.white,
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(28, 20, 28, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     slide.title,
                     style: GoogleFonts.montserrat(
-                      fontSize: 26,
+                      fontSize: 22,
                       fontWeight: FontWeight.w700,
-                      color: slide.titleColor,
+                      color: const Color(0xFF1A0A00),
                       height: 1.3,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   Text(
                     slide.subtitle,
                     style: GoogleFonts.montserrat(
-                      fontSize: 15,
-                      color: slide.subtitleColor,
+                      fontSize: 14,
+                      color: const Color(0xFF6B5040),
                       height: 1.6,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 4,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  // Spacer so the bottom controls (overlaid) don't cover text
-                  const SizedBox(height: 160),
+                  const SizedBox(height: 120),
                 ],
               ),
             ),
@@ -319,7 +221,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           width: isActive ? 24 : 8,
           height: 8,
           decoration: BoxDecoration(
-            color: isActive ? AppColors.primary : AppColors.primary.withValues(alpha: 0.3),
+            color: isActive
+                ? const Color(0xFFE87722)
+                : const Color(0xFFE87722).withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(4),
           ),
         );
@@ -334,16 +238,15 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   Widget build(BuildContext context) {
     super.build(context);
     final isLast = _currentPage == 2;
-    final blendedBackground = _interpolatedBackgroundColor();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: blendedBackground,
+        backgroundColor: const Color(0xFFE8920A),
         body: Stack(
           children: [
             // ── PageView ──────────────────────────────────────────────────────
@@ -370,7 +273,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           : () => _completeOnboardingAndGo('/login'),
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       child: Text(
@@ -378,7 +283,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         style: GoogleFonts.montserrat(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
-                          color: Colors.white.withValues(alpha: 0.9),
+                          color: const Color(0xFF1A0A00).withValues(alpha: 0.8),
                         ),
                       ),
                     ),
@@ -394,22 +299,18 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               right: 0,
               child: SafeArea(
                 child: Container(
-                  color: blendedBackground,
+                  color: Colors.white,
                   padding: const EdgeInsets.fromLTRB(32, 12, 32, 28),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Dots
                       _buildDots(),
                       const SizedBox(height: 24),
-
-                      // Button — circular arrow OR full-width CTA on last slide
                       AnimatedSwitcher(
                         duration: const Duration(milliseconds: 300),
                         transitionBuilder: (child, anim) =>
                             FadeTransition(opacity: anim, child: child),
                         child: isLast
-                            // ── Last page: Anza Sasa ──────────────────────────
                             ? SizedBox(
                                 key: const ValueKey('last'),
                                 width: double.infinity,
@@ -435,7 +336,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                   ),
                                 ),
                               )
-                            // ── Pages 0 & 1: circular arrow button ────────────
                             : Center(
                                 key: const ValueKey('next'),
                                 child: GestureDetector(
