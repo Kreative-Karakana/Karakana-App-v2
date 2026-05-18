@@ -456,111 +456,97 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                           ),
                         ),
                       ]),
-                      const SizedBox(height: 16),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            showDialog<void>(
-                              context: context,
-                              builder: (_) => AlertDialog(
-                                title: Text('Toka',
-                                    style: GoogleFonts.montserrat(
-                                        fontWeight: FontWeight.w700)),
-                                content: Text('Una uhakika unataka kutoka?',
-                                    style: GoogleFonts.montserrat()),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Text('Hapana',
-                                        style: GoogleFonts.montserrat(
-                                            color: const Color(0xFF9E8070))),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () {
+                                showDialog<void>(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text('Toka', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
+                                    content: Text('Una uhakika unataka kutoka?', style: GoogleFonts.montserrat()),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text('Hapana', style: GoogleFonts.montserrat(color: const Color(0xFF9E8070))),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          context.read<AuthProvider>().logout();
+                                          context.go('/login');
+                                        },
+                                        child: Text('Ndiyo, Toka', style: GoogleFonts.montserrat(color: const Color(0xFFB71C1C), fontWeight: FontWeight.w600)),
+                                      ),
+                                    ],
                                   ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      context.read<AuthProvider>().logout();
-                                      context.go('/login');
-                                    },
-                                    child: Text('Ndiyo, Toka',
-                                        style: GoogleFonts.montserrat(
-                                            color: const Color(0xFFB71C1C),
-                                            fontWeight: FontWeight.w600)),
-                                  ),
-                                ],
+                                );
+                              },
+                              icon: const Icon(Icons.logout, color: Color(0xFFB71C1C), size: 18),
+                              label: Text('Toka', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFFB71C1C))),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: Color(0xFFFFEBEE), width: 1.5),
+                                backgroundColor: const Color(0xFFFFEBEE),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                                padding: const EdgeInsets.symmetric(vertical: 14),
                               ),
-                            );
-                          },
-                          icon: const Icon(Icons.logout,
-                              color: Color(0xFFB71C1C), size: 20),
-                          label: Text('Toka',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFFB71C1C),
-                              )),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(
-                                color: Color(0xFFFFEBEE), width: 1.5),
-                            backgroundColor: const Color(0xFFFFEBEE),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14)),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            showDialog<void>(
-                              context: context,
-                              builder: (_) => AlertDialog(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                title: Text('Futa Akaunti?', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700, color: const Color(0xFF1A0A00))),
-                                content: Text(
-                                  'Akaunti yako itafutwa kabisa na data yote itapotea. Hii haiwezi kurejeshwa.',
-                                  style: GoogleFonts.montserrat(fontSize: 13, color: const Color(0xFF7B3A10), height: 1.5),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Text('Hapana', style: GoogleFonts.montserrat(color: const Color(0xFF9E8070))),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () async {
-                                      Navigator.pop(context);
-                                      try {
-                                        await context.read<AuthProvider>().deleteAccount();
-                                        if (context.mounted) context.go('/login');
-                                      } catch (_) {
-                                        if (context.mounted) showTopPopup(context, 'Imeshindikana kufuta akaunti. Jaribu tena.');
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFFB71C1C),
-                                      foregroundColor: Colors.white,
-                                      elevation: 0,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: () {
+                                showDialog<void>(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                    title: Text('Futa Akaunti?', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700, color: const Color(0xFF1A0A00))),
+                                    content: Text(
+                                      'Akaunti yako itafutwa kabisa na data yote itapotea. Hii haiwezi kurejeshwa.',
+                                      style: GoogleFonts.montserrat(fontSize: 13, color: const Color(0xFF7B3A10), height: 1.5),
                                     ),
-                                    child: Text('Ndiyo, Futa', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text('Hapana', style: GoogleFonts.montserrat(color: const Color(0xFF9E8070))),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () async {
+                                          Navigator.pop(context);
+                                          try {
+                                            await context.read<AuthProvider>().deleteAccount();
+                                            if (context.mounted) context.go('/login');
+                                          } catch (_) {
+                                            if (context.mounted) showTopPopup(context, 'Imeshindikana kufuta akaunti. Jaribu tena.');
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color(0xFFB71C1C),
+                                          foregroundColor: Colors.white,
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                        ),
+                                        child: Text('Ndiyo, Futa', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                );
+                              },
+                              icon: const Icon(Icons.delete_forever_outlined, color: Color(0xFF7B0000), size: 18),
+                              label: Text('Futa Akaunti', style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFF7B0000))),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: Color(0xFFFFCDD2), width: 1.5),
+                                backgroundColor: const Color(0xFFFFF0F0),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                                padding: const EdgeInsets.symmetric(vertical: 14),
                               ),
-                            );
-                          },
-                          icon: const Icon(Icons.delete_forever_outlined, color: Color(0xFF7B0000), size: 20),
-                          label: Text('Futa Akaunti', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFF7B0000))),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color: Color(0xFFFFCDD2), width: 1.5),
-                            backgroundColor: const Color(0xFFFFF0F0),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                      SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
+                      SizedBox(height: MediaQuery.of(context).padding.bottom + 24),
                     ],
                   ),
                 ),
