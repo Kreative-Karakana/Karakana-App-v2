@@ -290,7 +290,12 @@ class AppRouter {
         ),
         GoRoute(
           path: AppRoutes.account,
-          builder: (context, state) => const MainScreen(initialIndex: 4),
+          builder: (context, state) {
+            if (authProvider.isTrainer) {
+              return const TrainerDashboardScreen();
+            }
+            return const MainScreen(initialIndex: 4);
+          },
         ),
 
         // ── Courses ─────────────────────────────────────────────
