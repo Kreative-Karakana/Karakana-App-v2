@@ -5,10 +5,12 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/theme/app_colors.dart';
 import '../../../core/network/api_client.dart';
 import '../../../providers/theme_provider.dart';
 import '../../../widgets/common/top_popup.dart';
@@ -2211,31 +2213,69 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                       final firstName = auth.userFullName.isNotEmpty
                                           ? auth.userFullName.split(' ').first
                                           : 'Mkufunzi';
-                                      return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                  'Habari, $firstName!',
-                                                  style:
-                                                      GoogleFonts.montserrat(
-                                                          fontSize: 22,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          color:
-                                                              Colors.white)),
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                  'Dashibodi yako ya Mkufunzi',
-                                                  style:
-                                                      GoogleFonts.montserrat(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color: Colors.white
-                                                              .withValues(
-                                                                  alpha: 0.7))),
-                                            ]);
+                                      final avatarUrl = auth.userAvatar;
+                                      final hasAvatar =
+                                          avatarUrl != null && avatarUrl.isNotEmpty;
+                                      return Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 22.r,
+                                            backgroundColor: AppColors.primary,
+                                            backgroundImage: hasAvatar
+                                                ? NetworkImage(avatarUrl)
+                                                : null,
+                                            child: !hasAvatar
+                                                ? Text(
+                                                    firstName.isNotEmpty
+                                                        ? firstName[0]
+                                                            .toUpperCase()
+                                                        : 'M',
+                                                    style: GoogleFonts
+                                                        .montserrat(
+                                                      fontSize: 16.sp,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: Colors.white,
+                                                    ),
+                                                  )
+                                                : null,
+                                          ),
+                                          SizedBox(width: 12.w),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text('Habari, $firstName!',
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      fontSize: 20.sp,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: Colors.white,
+                                                    )),
+                                                Text('Mkufunzi wa Karakana',
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      fontSize: 12.sp,
+                                                      color: Colors.white70,
+                                                    )),
+                                              ],
+                                            ),
+                                          ),
+                                          IconButton(
+                                            icon: Icon(
+                                                Icons
+                                                    .notifications_outlined,
+                                                color: Colors.white,
+                                                size: 24.r),
+                                            onPressed: () =>
+                                                context.push('/notifications'),
+                                          ),
+                                        ],
+                                      );
                                     }),
                                 const SizedBox(height: 14),
                                 Row(children: [
@@ -2259,6 +2299,51 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                       'Ukadiriaji',
                                       Icons.star_outline),
                                 ]),
+                                SizedBox(height: 12.h),
+                                Builder(builder: (context) {
+                                  final balance =
+                                      (_stats['balance'] as num?) ?? 0;
+                                  return Container(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 16.w, vertical: 12.h),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Colors.white.withValues(alpha: 0.12),
+                                      borderRadius:
+                                          BorderRadius.circular(12.r),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                                Icons
+                                                    .account_balance_wallet_outlined,
+                                                color: AppColors.primary,
+                                                size: 18.r),
+                                            SizedBox(width: 8.w),
+                                            Text('Mapato wa Mwezi',
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: 13.sp,
+                                                  color: Colors.white70,
+                                                )),
+                                          ],
+                                        ),
+                                        Text(
+                                          'TSh ${balance.toStringAsFixed(0)}',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 15.sp,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
                               ])))
                 ]))));
   }
