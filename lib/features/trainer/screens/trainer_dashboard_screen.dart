@@ -12,7 +12,6 @@ import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/network/api_client.dart';
-import '../../../providers/theme_provider.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 
@@ -2071,93 +2070,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         forceElevated: innerBoxIsScrolled,
         automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFF3D1800),
-        actions: [
-          Container(
-              margin: const EdgeInsets.only(right: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(20),
-                  border:
-                      Border.all(color: Colors.white.withValues(alpha: 0.2))),
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                GestureDetector(
-                    onTap: () => context.push('/wallet'),
-                    child: const Icon(Icons.account_balance_wallet_outlined,
-                        color: Colors.white, size: 14)),
-                const SizedBox(width: 6),
-                GestureDetector(
-                    onTap: () => context.push('/wallet'),
-                    child: Text(
-                        _balanceVisible
-                            ? _formatPrice(_stats['balance'] ?? 0)
-                            : '••••••',
-                        style: GoogleFonts.montserrat(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white))),
-                const SizedBox(width: 6),
-                GestureDetector(
-                    onTap: () =>
-                        setState(() => _balanceVisible = !_balanceVisible),
-                    child: Icon(
-                        _balanceVisible
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                        color: Colors.white.withValues(alpha: 0.7),
-                        size: 13)),
-              ])),
-          Consumer<ThemeProvider>(
-              builder: (_, theme, __) => IconButton(
-                    icon: Icon(
-                        theme.isDark
-                            ? Icons.light_mode_outlined
-                            : Icons.dark_mode_outlined,
-                        color: Colors.white.withValues(alpha: 0.7),
-                        size: 20),
-                    tooltip: theme.isDark ? 'Mwanga' : 'Giza',
-                    onPressed: () => theme.toggleTheme(),
-                  )),
-          IconButton(
-            icon: Icon(Icons.menu_book_outlined,
-                color: Colors.white.withValues(alpha: 0.7), size: 20),
-            tooltip: 'Vitabu',
-            onPressed: () => context.push('/trainer/ebooks'),
-          ),
-          IconButton(
-              icon: Icon(Icons.logout,
-                  color: Colors.white.withValues(alpha: 0.7), size: 20),
-              tooltip: 'Toka',
-              onPressed: () => showDialog(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                      title: Text('Toka?',
-                          style: GoogleFonts.montserrat(
-                              fontWeight: FontWeight.w700)),
-                      content: Text('Una uhakika unataka kutoka?',
-                          style: GoogleFonts.montserrat()),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text('Hapana',
-                              style: GoogleFonts.montserrat(
-                                  color: const Color(0xFF9E8070))),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            context.read<AuthProvider>().logout();
-                            context.go('/login');
-                          },
-                          child: Text('Ndiyo, Toka',
-                              style: GoogleFonts.montserrat(
-                                  color: const Color(0xFFB71C1C),
-                                  fontWeight: FontWeight.w600)),
-                        ),
-                      ],
-                    ),
-                  )),
-        ],
+        actions: const [],
         title: innerBoxIsScrolled
             ? Text(
                 pageTitle,
@@ -2273,6 +2186,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                                 size: 24.r),
                                             onPressed: () =>
                                                 context.push('/notifications'),
+                                            tooltip: 'Arifa',
+                                          ),
+                                          IconButton(
+                                            icon: Icon(
+                                                Icons.settings_outlined,
+                                                color: Colors.white,
+                                                size: 24.r),
+                                            onPressed: () =>
+                                                context.push('/account'),
+                                            tooltip: 'Mipangilio',
                                           ),
                                         ],
                                       );
