@@ -595,8 +595,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         Expanded(child: _buildNavTab(index: 0, icon: Icons.dashboard_outlined)),
                         Expanded(child: _buildNavTab(index: 1, icon: Icons.school_outlined)),
                         const SizedBox(width: 72),
-                        Expanded(child: _buildNavTab(index: 2, icon: Icons.people_outline)),
                         Expanded(child: _buildNavTab(index: 3, icon: Icons.workspace_premium_outlined)),
+                        Expanded(
+                          child: _buildNavAction(
+                            icon: Icons.person_outline_rounded,
+                            onTap: () => context.push('/profile'),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -677,6 +682,27 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   color: Color(0xFFE87722), shape: BoxShape.circle),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavAction({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        HapticFeedback.lightImpact();
+        onTap();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Icon(
+          icon,
+          color: Colors.white.withValues(alpha: 0.55),
+          size: 24,
         ),
       ),
     );
@@ -2184,7 +2210,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                     builder: (_, auth, __) {
                                       final firstName = auth.userFullName.isNotEmpty
                                           ? auth.userFullName.split(' ').first
-                                          : 'Mwalimu';
+                                          : 'Mkufunzi';
                                       return Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -2200,7 +2226,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                                               Colors.white)),
                                               const SizedBox(height: 4),
                                               Text(
-                                                  'Dashibodi yako ya mwalimu',
+                                                  'Dashibodi yako ya Mkufunzi',
                                                   style:
                                                       GoogleFonts.montserrat(
                                                           fontSize: 13,
@@ -2255,5 +2281,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     ]));
   }
 }
+
 
 

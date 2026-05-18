@@ -161,7 +161,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
         elevation: 0,
         leading: const BackButton(color: Colors.white),
         title: Text(
-          'Omba Kuwa Mwalimu',
+          'Omba Kuwa Mkufunzi',
           style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w600,
@@ -195,7 +195,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Kuwa Mwalimu Karakana',
+                                'Kuwa Mkufunzi Karakana',
                                 style: GoogleFonts.montserrat(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
@@ -466,7 +466,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                   color: const Color(0xFF3D1800))),
         ]),
         const SizedBox(height: 8),
-        Text('Kabla ya kuomba kuwa mwalimu, hakikisha wasifu wako umekamilika:',
+        Text('Kabla ya kuomba kuwa Mkufunzi, hakikisha wasifu wako umekamilika:',
             style: GoogleFonts.montserrat(
                 fontSize: 13, color: const Color(0xFF7B3A10), height: 1.4)),
         const SizedBox(height: 16),
@@ -604,6 +604,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
     );
   }
 }
+
 
 
 

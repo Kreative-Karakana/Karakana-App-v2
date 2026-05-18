@@ -390,7 +390,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Mwalimu',
+                                'Mkufunzi',
                                 style: GoogleFonts.montserrat(
                                   fontSize: 11,
                                   color: const Color(0xFF9E8070),
@@ -1193,5 +1193,6 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     );
   }
 }
+
 
 

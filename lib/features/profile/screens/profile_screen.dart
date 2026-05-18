@@ -1,4 +1,4 @@
-﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -468,7 +468,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 ),
                                 child: Text(
-                                  auth.isTrainer ? 'Mwalimu' : 'Mwanafunzi',
+                                  auth.isTrainer ? 'Mkufunzi' : 'Mwanafunzi',
                                   style: GoogleFonts.montserrat(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
@@ -653,12 +653,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 16),
                       if (auth.isTrainer) ...[
                         _buildMenuGroup(
-                          'Mwalimu',
+                          'Mkufunzi',
                           [
                             _buildMenuItem(
                               Icons.dashboard_outlined,
                               const Color(0xFF3D1800),
-                              'Dashibodi ya Mwalimu',
+                              'Dashibodi ya Mkufunzi',
                               onTap: () => context.push('/trainer/dashboard'),
                             ),
                             _buildMenuItem(
@@ -707,7 +707,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Kuwa Mwalimu',
+                                        'Kuwa Mkufunzi',
                                         style: GoogleFonts.montserrat(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w700,
@@ -999,3 +999,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+

@@ -1,4 +1,4 @@
-﻿
+
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -409,7 +409,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         const SizedBox(width: 10),
                                         Expanded(
                                           child: Text(
-                                            'Tafuta kozi, mada, mwalimu...',
+                                            'Tafuta kozi, mada, Mkufunzi...',
                                             style: GoogleFonts.montserrat(
                                               fontSize: 13,
                                               color: Colors.white.withValues(alpha: 0.5),
@@ -595,7 +595,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       foregroundColor: Colors.white,
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                                     ),
-                                    child: Text('Jiunge Kama Mwalimu', style: GoogleFonts.montserrat(fontWeight: FontWeight.w600)),
+                                    child: Text('Jiunge Kama Mkufunzi', style: GoogleFonts.montserrat(fontWeight: FontWeight.w600)),
                                   ),
                                 ],
                               ),
@@ -856,4 +856,5 @@ class _BannerCarouselState extends State<_BannerCarousel> {
     );
   }
 }
+
 

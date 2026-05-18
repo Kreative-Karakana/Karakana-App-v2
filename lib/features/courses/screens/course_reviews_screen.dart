@@ -720,7 +720,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                             ),
                                             const SizedBox(width: 4),
                                             Text(
-                                              'Jibu la Mwalimu',
+                                              'Jibu la Mkufunzi',
                                               style: GoogleFonts.montserrat(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w700,
@@ -786,5 +786,6 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
     );
   }
 }
+
 
 
