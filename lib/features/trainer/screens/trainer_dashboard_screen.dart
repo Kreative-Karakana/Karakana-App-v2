@@ -727,11 +727,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 _buildQuickAction(Icons.school_outlined, 'Kozi',
                     const Color(0xFFE87722), () => _tabController.animateTo(1)),
                 const SizedBox(width: 10),
-                _buildQuickAction(Icons.people_outline_rounded, 'Wanafunzi',
-                    const Color(0xFF3D1800), () => _tabController.animateTo(2)),
-                const SizedBox(width: 10),
                 _buildQuickAction(Icons.workspace_premium_outlined, 'Vyeti',
                     const Color(0xFF7B3A10), () => _tabController.animateTo(3)),
+                const SizedBox(width: 10),
+                _buildQuickAction(Icons.person_outline_rounded, 'Akaunti',
+                    const Color(0xFF3D1800), () => context.push('/account')),
                 const SizedBox(width: 10),
                 _buildQuickAction(Icons.account_balance_wallet_outlined, 'Mkoba',
                     const Color(0xFF7B3A10), () => context.push('/wallet')),
@@ -2221,7 +2221,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                             CrossAxisAlignment.center,
                                         children: [
                                           CircleAvatar(
-                                            radius: 22.r,
+                                            radius: 20.r,
                                             backgroundColor: AppColors.primary,
                                             backgroundImage: hasAvatar
                                                 ? NetworkImage(avatarUrl)
@@ -2251,7 +2251,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                                 Text('Habari, $firstName!',
                                                     style:
                                                         GoogleFonts.montserrat(
-                                                      fontSize: 20.sp,
+                                                      fontSize: 18.sp,
                                                       fontWeight:
                                                           FontWeight.w700,
                                                       color: Colors.white,
@@ -2277,7 +2277,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                         ],
                                       );
                                     }),
-                                const SizedBox(height: 14),
+                                SizedBox(height: 8.h),
                                 Row(children: [
                                   _buildHeroStat('${_stats['total_courses']}',
                                       'Kozi', Icons.school_outlined),
@@ -2299,14 +2299,14 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                       'Ukadiriaji',
                                       Icons.star_outline),
                                 ]),
-                                SizedBox(height: 12.h),
+                                SizedBox(height: 8.h),
                                 Builder(builder: (context) {
                                   final balance =
                                       (_stats['balance'] as num?) ?? 0;
                                   return Container(
                                     width: double.infinity,
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: 16.w, vertical: 12.h),
+                                        horizontal: 16.w, vertical: 8.h),
                                     decoration: BoxDecoration(
                                       color:
                                           Colors.white.withValues(alpha: 0.12),
@@ -2327,7 +2327,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                             SizedBox(width: 8.w),
                                             Text('Mapato wa Mwezi',
                                                 style: GoogleFonts.montserrat(
-                                                  fontSize: 13.sp,
+                                                  fontSize: 12.sp,
                                                   color: Colors.white70,
                                                 )),
                                           ],
