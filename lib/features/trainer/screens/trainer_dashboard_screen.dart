@@ -392,7 +392,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             GestureDetector(
               onTap: () {
                 Navigator.pop(context);
-                context.push('/trainer/course/new');
+                context.push('/trainer/course-builder');
               },
               child: Container(
                 width: double.infinity,
