@@ -41,8 +41,15 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
   }
 
   Future<void> _pickEpub() async {
-    const typeGroup = XTypeGroup(label: 'epub', extensions: ['epub']);
-    final file = await openFile(acceptedTypeGroups: [typeGroup]);
+    final file = await openFile(
+      acceptedTypeGroups: [
+        const XTypeGroup(
+          label: 'eBook',
+          extensions: ['epub', 'pdf'],
+          mimeTypes: ['application/epub+zip', 'application/pdf', 'application/octet-stream'],
+        ),
+      ],
+    );
     if (file == null) return;
     setState(() {
       _epubPath = file.path;
