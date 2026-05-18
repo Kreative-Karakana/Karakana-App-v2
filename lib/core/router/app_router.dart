@@ -34,6 +34,7 @@ import '../../features/trainer/screens/course_builder_screen.dart';
 import '../../features/trainer/screens/lesson_manager_screen.dart';
 import '../../features/trainer/screens/quiz_manager_screen.dart';
 import '../../features/trainer/screens/student_progress_screen.dart';
+import '../../features/trainer/screens/trainer_account_screen.dart';
 import '../../features/trainer/screens/trainer_dashboard_screen.dart';
 import '../../features/fursa/screens/fursa_screen.dart';
 import '../../features/zana/screens/biz_manager_screen.dart';
@@ -409,6 +410,10 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.trainerDashboard,
           builder: (context, state) => const TrainerDashboardScreen(),
+        ),
+        GoRoute(
+          path: '/trainer/account',
+          builder: (context, state) => const TrainerAccountScreen(),
         ),
         GoRoute(
           path: AppRoutes.courseBuilder,
