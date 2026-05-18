@@ -2218,7 +2218,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                       height: 36,
                                       color: Colors.white.withValues(alpha: 0.2)),
                                   _buildHeroStat(
-                                      '${(_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1)}★',
+                                      '${(_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1)}',
                                       'Ukadiriaji',
                                       Icons.star_outline),
                                 ]),
