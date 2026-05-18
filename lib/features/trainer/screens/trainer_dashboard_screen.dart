@@ -730,7 +730,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     const Color(0xFF7B3A10), () => _tabController.animateTo(3)),
                 const SizedBox(width: 10),
                 _buildQuickAction(Icons.person_outline_rounded, 'Akaunti',
-                    const Color(0xFF3D1800), () => context.push('/account')),
+                    const Color(0xFF3D1800), () => context.push('/profile')),
                 const SizedBox(width: 10),
                 _buildQuickAction(Icons.account_balance_wallet_outlined, 'Mkoba',
                     const Color(0xFF7B3A10), () => context.push('/wallet')),
@@ -2194,7 +2194,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                                 color: Colors.white,
                                                 size: 24.r),
                                             onPressed: () =>
-                                                context.push('/account'),
+                                                context.push('/profile'),
                                             tooltip: 'Mipangilio',
                                           ),
                                         ],
