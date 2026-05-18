@@ -1,7 +1,7 @@
 name: karakana_app
 description: Karakana - Tanzanian Edutech Platform for Entrepreneurship Training
 publish_to: none
-version: 2.0.1+2
+version: 2.0.2+3
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -43,7 +43,6 @@ dependencies:
   flutter_dotenv: ^5.1.0
   image_picker: ^1.0.7
   file_selector: ^1.0.3
-  file_picker: ^6.1.1
   url_launcher: ^6.2.4
   share_plus: ^7.2.2
   connectivity_plus: ^5.0.2
