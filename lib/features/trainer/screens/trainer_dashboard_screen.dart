@@ -14,6 +14,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/network/api_client.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
+import 'trainer_account_screen.dart';
 
 class TrainerDashboardScreen extends StatefulWidget {
   const TrainerDashboardScreen({super.key});
@@ -45,7 +46,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
+    _tabController = TabController(length: 5, vsync: this);
     _tabController.addListener(() {
       if (mounted && !_tabController.indexIsChanging) setState(() {});
     });
@@ -552,11 +553,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     child: KarakanaWaveLoader(color: Color(0xFFE87722)))
                 : TabBarView(
                     controller: _tabController,
+                    physics: const NeverScrollableScrollPhysics(),
                     children: [
                       _buildOverviewTab(bgColor, surfaceColor, textPrimary, textSecondary),
                       _buildCoursesTab(bgColor, surfaceColor, textPrimary, textSecondary),
                       _buildStudentsTab(bgColor, surfaceColor, textPrimary, textSecondary),
                       _buildCertificatesTab(bgColor, surfaceColor, textPrimary, textSecondary),
+                      const TrainerAccountScreen(),
                     ])));
   }
 
@@ -599,8 +602,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         Expanded(child: _buildNavTab(index: 3, icon: Icons.workspace_premium_outlined)),
                         Expanded(
                           child: _buildNavAction(
+                            index: 4,
                             icon: Icons.person_outline_rounded,
-                            onTap: () => context.push('/trainer/account'),
+                            onTap: () =>
+                                setState(() => _tabController.animateTo(4)),
                           ),
                         ),
                       ],
@@ -689,9 +694,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   }
 
   Widget _buildNavAction({
+    required int index,
     required IconData icon,
     required VoidCallback onTap,
   }) {
+    final isSelected = _tabController.index == index;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -700,10 +707,26 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Icon(
-          icon,
-          color: Colors.white.withValues(alpha: 0.55),
-          size: 24,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected
+                  ? const Color(0xFFE87722)
+                  : Colors.white.withValues(alpha: 0.55),
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              width: isSelected ? 5 : 0,
+              height: isSelected ? 5 : 0,
+              decoration: const BoxDecoration(
+                  color: Color(0xFFE87722), shape: BoxShape.circle),
+            ),
+          ],
         ),
       ),
     );
@@ -730,7 +753,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     const Color(0xFF7B3A10), () => _tabController.animateTo(3)),
                 const SizedBox(width: 10),
                 _buildQuickAction(Icons.person_outline_rounded, 'Akaunti',
-                    const Color(0xFF3D1800), () => context.push('/trainer/account')),
+                    const Color(0xFF3D1800), () => _tabController.animateTo(4)),
                 const SizedBox(width: 10),
                 _buildQuickAction(Icons.account_balance_wallet_outlined, 'Mkoba',
                     const Color(0xFF7B3A10), () => context.push('/wallet')),
@@ -2194,7 +2217,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                                 color: Colors.white,
                                                 size: 24.r),
                                             onPressed: () =>
-                                                context.push('/trainer/account'),
+                                                _tabController.animateTo(4),
                                             tooltip: 'Mipangilio',
                                           ),
                                         ],
