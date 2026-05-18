@@ -12,7 +12,8 @@ import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 
 class TrainerAccountScreen extends StatefulWidget {
-  const TrainerAccountScreen({super.key});
+  final void Function(int tabIndex)? onTabSwitch;
+  const TrainerAccountScreen({super.key, this.onTabSwitch});
 
   @override
   State<TrainerAccountScreen> createState() => _TrainerAccountScreenState();
@@ -357,12 +358,6 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                           'Hariri Wasifu',
                           onTap: () => context.push('/profile/edit'),
                         ),
-                        _buildMenuItem(
-                          Icons.manage_accounts_outlined,
-                          const Color(0xFF3D1800),
-                          'Mipangilio ya Akaunti',
-                          onTap: () => context.push('/profile'),
-                        ),
                       ]),
                       const SizedBox(height: 16),
                       _buildMenuGroup('Kazi Yangu', [
@@ -370,19 +365,19 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                           Icons.dashboard_outlined,
                           const Color(0xFF3D1800),
                           'Dashibodi ya Mkufunzi',
-                          onTap: () => context.push('/trainer/dashboard'),
+                          onTap: () => widget.onTabSwitch?.call(0),
                         ),
                         _buildMenuItem(
                           Icons.school_outlined,
                           const Color(0xFFE87722),
                           'Kozi Zangu',
-                          onTap: () => context.push('/trainer/dashboard'),
+                          onTap: () => widget.onTabSwitch?.call(1),
                         ),
                         _buildMenuItem(
                           Icons.workspace_premium_outlined,
                           const Color(0xFF7B3A10),
                           'Vyeti vya Wanafunzi',
-                          onTap: () => context.push('/trainer/dashboard'),
+                          onTap: () => widget.onTabSwitch?.call(3),
                         ),
                       ]),
                       const SizedBox(height: 16),
@@ -393,12 +388,6 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                           'Mkoba Wangu',
                           onTap: () => context.push('/wallet'),
                         ),
-                        _buildMenuItem(
-                          Icons.receipt_long_outlined,
-                          const Color(0xFF6A1B9A),
-                          'Historia ya Malipo',
-                          onTap: () => context.push('/payment/history'),
-                        ),
                       ]),
                       const SizedBox(height: 16),
                       _buildMenuGroup('Msaada', [
@@ -406,7 +395,11 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                           Icons.headset_mic_outlined,
                           const Color(0xFFE87722),
                           'Msaada na Maswali',
-                          onTap: () => context.push('/support'),
+                          onTap: () => context.push('/support', extra: {
+                            'userEmail': auth.userEmail,
+                            'userName': auth.userFullName,
+                            'isTrainer': true,
+                          }),
                         ),
                         _buildMenuItem(
                           Icons.gavel_outlined,
@@ -512,6 +505,57 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                             backgroundColor: const Color(0xFFFFEBEE),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14)),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            showDialog<void>(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                title: Text('Futa Akaunti?', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700, color: const Color(0xFF1A0A00))),
+                                content: Text(
+                                  'Akaunti yako itafutwa kabisa na data yote itapotea. Hii haiwezi kurejeshwa.',
+                                  style: GoogleFonts.montserrat(fontSize: 13, color: const Color(0xFF7B3A10), height: 1.5),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text('Hapana', style: GoogleFonts.montserrat(color: const Color(0xFF9E8070))),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      Navigator.pop(context);
+                                      try {
+                                        await context.read<AuthProvider>().deleteAccount();
+                                        if (context.mounted) context.go('/login');
+                                      } catch (_) {
+                                        if (context.mounted) showTopPopup(context, 'Imeshindikana kufuta akaunti. Jaribu tena.');
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFFB71C1C),
+                                      foregroundColor: Colors.white,
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                    ),
+                                    child: Text('Ndiyo, Futa', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.delete_forever_outlined, color: Color(0xFF7B0000), size: 20),
+                          label: Text('Futa Akaunti', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFF7B0000))),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Color(0xFFFFCDD2), width: 1.5),
+                            backgroundColor: const Color(0xFFFFF0F0),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                         ),

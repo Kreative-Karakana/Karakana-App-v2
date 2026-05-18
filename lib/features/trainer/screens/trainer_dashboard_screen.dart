@@ -559,7 +559,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       _buildCoursesTab(bgColor, surfaceColor, textPrimary, textSecondary),
                       _buildStudentsTab(bgColor, surfaceColor, textPrimary, textSecondary),
                       _buildCertificatesTab(bgColor, surfaceColor, textPrimary, textSecondary),
-                      const TrainerAccountScreen(),
+                      TrainerAccountScreen(
+                        onTabSwitch: (index) => _tabController.animateTo(index),
+                      ),
                     ])));
   }
 
