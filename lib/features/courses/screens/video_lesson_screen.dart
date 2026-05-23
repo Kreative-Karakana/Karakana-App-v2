@@ -605,7 +605,7 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
                             children: [
                               Text(
                                 _formatDuration(position),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontSize: AppTextStyles.caption.fontSize,
                                 ),
@@ -613,7 +613,7 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
                               const Spacer(),
                               Text(
                                 _formatDuration(duration),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.white70,
                                   fontSize: AppTextStyles.caption.fontSize,
                                 ),
@@ -660,3 +660,4 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
     return playerWidget;
   }
 }
+
