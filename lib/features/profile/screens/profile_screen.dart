@@ -22,8 +22,6 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  static const double _expandedHeight = 120;
-  final ScrollController _scroll = ScrollController();
   final LocalAuthentication _localAuth = LocalAuthentication();
   bool _biometricEnabled = false;
   bool _biometricAvailable = false;
@@ -38,7 +36,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void dispose() {
-    _scroll.dispose();
     super.dispose();
   }
 
@@ -239,81 +236,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: CustomScrollView(
-            controller: _scroll,
             slivers: [
-              SliverAppBar(
-                expandedHeight: _expandedHeight,
-                pinned: true,
-                automaticallyImplyLeading: false,
-                backgroundColor: const Color(0xFF3D1800),
-                title: AnimatedBuilder(
-                  animation: _scroll,
-                  builder: (context, _) {
-                    final show = _scroll.hasClients &&
-                        _scroll.offset > (_expandedHeight - kToolbarHeight);
-                    return AnimatedOpacity(
-                      opacity: show ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 200),
-                      child: Text(
-                        'Akaunti',
-                        style: GoogleFonts.montserrat(
-                          fontSize: AppTextStyles.h3.fontSize,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                systemOverlayStyle: const SystemUiOverlayStyle(
-                  statusBarColor: Colors.transparent,
-                  statusBarIconBrightness: Brightness.light,
-                ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.logout, color: Colors.white),
-                    onPressed: () {
-                      showDialog<void>(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                          title: Text(
-                            'Toka',
-                            style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-                          ),
-                          content: Text(
-                            'Una uhakika unataka kutoka?',
-                            style: GoogleFonts.montserrat(),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(
-                                'Hapana',
-                                style: GoogleFonts.montserrat(color: const Color(0xFF9E8070)),
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                context.read<AuthProvider>().logout();
-                                context.go('/login');
-                              },
-                              child: Text(
-                                'Ndiyo, Toka',
-                                style: GoogleFonts.montserrat(
-                                  color: const Color(0xFFB71C1C),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+              SliverToBoxAdapter(
+                child: AnnotatedRegion<SystemUiOverlayStyle>(
+                  value: const SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent,
+                    statusBarIconBrightness: Brightness.light,
                   ),
-                ],
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Container(
+                  child: Container(
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         colors: [Color(0xFF2A0F04), Color(0xFF3D1800), Color(0xFF7B3A10)],
@@ -322,6 +252,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     child: Stack(
+                      clipBehavior: Clip.hardEdge,
                       children: [
                         Positioned(
                           top: -40,
@@ -357,19 +288,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         SafeArea(
+                          bottom: false,
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(AppSpacing.lg - AppSpacing.xs, AppSpacing.md - AppSpacing.xs / 2, AppSpacing.lg - AppSpacing.xs, 0),
+                            padding: const EdgeInsets.fromLTRB(
+                              AppSpacing.lg - AppSpacing.xs,
+                              AppSpacing.md - AppSpacing.xs / 2,
+                              AppSpacing.lg - AppSpacing.xs,
+                              AppSpacing.md,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  'Akaunti',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: (AppTextStyles.displayLarge.fontSize ?? 32) + AppSpacing.sm / 2,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white,
-                                    height: 1.0,
-                                  ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        'Akaunti',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: (AppTextStyles.displayLarge.fontSize ?? 32) + AppSpacing.sm / 2,
+                                          fontWeight: FontWeight.w800,
+                                          color: Colors.white,
+                                          height: 1.0,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.logout, color: Colors.white),
+                                      onPressed: () {
+                                        showDialog<void>(
+                                          context: context,
+                                          builder: (_) => AlertDialog(
+                                            title: Text(
+                                              'Toka',
+                                              style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
+                                            ),
+                                            content: Text(
+                                              'Una uhakika unataka kutoka?',
+                                              style: GoogleFonts.montserrat(),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(context),
+                                                child: Text(
+                                                  'Hapana',
+                                                  style: GoogleFonts.montserrat(color: const Color(0xFF9E8070)),
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  context.read<AuthProvider>().logout();
+                                                  context.go('/login');
+                                                },
+                                                child: Text(
+                                                  'Ndiyo, Toka',
+                                                  style: GoogleFonts.montserrat(
+                                                    color: const Color(0xFFB71C1C),
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: AppSpacing.sm - AppSpacing.xs / 2),
                                 Text(
