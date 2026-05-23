@@ -237,6 +237,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: CustomScrollView(
             slivers: [
+              SliverAppBar(
+                pinned: true,
+                automaticallyImplyLeading: false,
+                backgroundColor: const Color(0xFF3D1800),
+                title: Text(
+                  'Akaunti',
+                  style: GoogleFonts.montserrat(
+                    fontSize: AppTextStyles.h3.fontSize,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+                systemOverlayStyle: const SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.light,
+                ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.logout, color: Colors.white),
+                    onPressed: () {
+                      showDialog<void>(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text(
+                            'Toka',
+                            style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
+                          ),
+                          content: Text(
+                            'Una uhakika unataka kutoka?',
+                            style: GoogleFonts.montserrat(),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(
+                                'Hapana',
+                                style: GoogleFonts.montserrat(color: const Color(0xFF9E8070)),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                context.read<AuthProvider>().logout();
+                                context.go('/login');
+                              },
+                              child: Text(
+                                'Ndiyo, Toka',
+                                style: GoogleFonts.montserrat(
+                                  color: const Color(0xFFB71C1C),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
               SliverToBoxAdapter(
                 child: AnnotatedRegion<SystemUiOverlayStyle>(
                   value: const SystemUiOverlayStyle(
@@ -312,47 +372,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           height: 1.0,
                                         ),
                                       ),
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.logout, color: Colors.white),
-                                      onPressed: () {
-                                        showDialog<void>(
-                                          context: context,
-                                          builder: (_) => AlertDialog(
-                                            title: Text(
-                                              'Toka',
-                                              style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-                                            ),
-                                            content: Text(
-                                              'Una uhakika unataka kutoka?',
-                                              style: GoogleFonts.montserrat(),
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () => Navigator.pop(context),
-                                                child: Text(
-                                                  'Hapana',
-                                                  style: GoogleFonts.montserrat(color: const Color(0xFF9E8070)),
-                                                ),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                  context.read<AuthProvider>().logout();
-                                                  context.go('/login');
-                                                },
-                                                child: Text(
-                                                  'Ndiyo, Toka',
-                                                  style: GoogleFonts.montserrat(
-                                                    color: const Color(0xFFB71C1C),
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
                                     ),
                                   ],
                                 ),
