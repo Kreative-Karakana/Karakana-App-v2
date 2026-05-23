@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/common/top_popup.dart';
 
@@ -138,7 +140,12 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
       child: StatefulBuilder(
         builder: (context, setModalState) {
           return Padding(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              AppSpacing.md,
+              AppSpacing.lg,
+              AppSpacing.lg,
+            ),
             child: Column(
               children: [
                 // Handle bar
@@ -191,11 +198,8 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
               Text(
                 'Je, umepata usaidizi kutoka\nkwa balozi wetu?',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
+                style: AppTextStyles.h2.copyWith(
                   color: AppColors.textPrimary,
-                  height: 1.3,
                 ),
               ),
               const SizedBox(height: 12),
@@ -233,10 +237,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
                 ),
                 child: Text(
                   'Ndiyo',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppTextStyles.h4.copyWith(color: Colors.white),
                 ),
               ),
             ),
@@ -265,9 +266,8 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
                       )
                     : Text(
                         'Hapana',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                        style: AppTextStyles.h4.copyWith(
+                          color: AppColors.primary,
                         ),
                       ),
               ),
@@ -300,11 +300,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
         const SizedBox(height: 20),
         Text(
           'Weka Namba ya Balozi',
-          style: GoogleFonts.montserrat(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
+          style: AppTextStyles.h3.copyWith(color: AppColors.textPrimary),
         ),
         const SizedBox(height: 6),
         Text(
@@ -348,8 +344,10 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
               borderSide:
                   const BorderSide(color: AppColors.primary, width: 1.5),
             ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: 14,
+            ),
           ),
         ),
         const Spacer(),
@@ -379,10 +377,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
                       )
                     : Text(
                         'Wasilisha',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: AppTextStyles.h4.copyWith(color: Colors.white),
                       ),
               ),
             ),
@@ -407,10 +402,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
                 ),
                 child: Text(
                   'Rudi Nyuma',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppTextStyles.h4.copyWith(color: AppColors.primary),
                 ),
               ),
             ),

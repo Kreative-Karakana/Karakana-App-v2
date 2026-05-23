@@ -1,7 +1,8 @@
-﻿import 'dart:ui';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../core/theme/app_spacing.dart';
 
 import '../../courses/screens/explore_screen.dart';
 import '../../fursa/screens/fursa_screen.dart';
@@ -24,10 +25,10 @@ class _MainScreenState extends State<MainScreen> {
   // MUST match navbar order exactly:
   // 0=Nyumbani  1=Tafuta  2=Zana  3=Fursa  4=Akaunti
   final List<Widget> _screens = const [
-    HomeScreen(),    // 0
+    HomeScreen(), // 0
     ExploreScreen(), // 1
-    ZanaScreen(),    // 2
-    FursaScreen(),   // 3
+    ZanaScreen(), // 2
+    FursaScreen(), // 3
     ProfileScreen(), // 4
   ];
 
@@ -47,8 +48,8 @@ class _MainScreenState extends State<MainScreen> {
       body: MediaQuery(
         data: MediaQuery.of(context).copyWith(
           padding: MediaQuery.of(context).padding.copyWith(
-            bottom: bottomPadding,
-          ),
+                bottom: bottomPadding,
+              ),
         ),
         child: IndexedStack(
           index: _currentIndex,
@@ -65,7 +66,7 @@ class _MainScreenState extends State<MainScreen> {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 12),
           child: Stack(
             clipBehavior: Clip.none,
             alignment: Alignment.center,
@@ -94,18 +95,22 @@ class _MainScreenState extends State<MainScreen> {
                     child: Row(
                       children: [
                         Expanded(
-                          child: _buildNavTab(index: 0, icon: Icons.home_outlined),
+                          child:
+                              _buildNavTab(index: 0, icon: Icons.home_outlined),
                         ),
                         Expanded(
-                          child: _buildNavTab(index: 1, icon: Icons.explore_outlined),
+                          child: _buildNavTab(
+                              index: 1, icon: Icons.explore_outlined),
                         ),
                         // Placeholder space for raised Zana FAB
                         const SizedBox(width: 72),
                         Expanded(
-                          child: _buildNavTab(index: 3, icon: Icons.lightbulb_outline),
+                          child: _buildNavTab(
+                              index: 3, icon: Icons.lightbulb_outline),
                         ),
                         Expanded(
-                          child: _buildNavTab(index: 4, icon: Icons.person_outline),
+                          child: _buildNavTab(
+                              index: 4, icon: Icons.person_outline),
                         ),
                       ],
                     ),
@@ -138,7 +143,7 @@ class _MainScreenState extends State<MainScreen> {
           shape: BoxShape.circle,
         ),
         child: Padding(
-          padding: const EdgeInsets.all(4),
+          padding: const EdgeInsets.all(AppSpacing.xs),
           child: Container(
             decoration: BoxDecoration(
               color: const Color(0xFFE87722),
@@ -151,7 +156,8 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ],
             ),
-            child: const Icon(Icons.construction, color: Colors.white, size: 28),
+            child:
+                const Icon(Icons.construction, color: Colors.white, size: 28),
           ),
         ),
       ),
@@ -178,7 +184,7 @@ class _MainScreenState extends State<MainScreen> {
                   : Colors.white.withValues(alpha: 0.55),
               size: 24,
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AppSpacing.xs),
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,

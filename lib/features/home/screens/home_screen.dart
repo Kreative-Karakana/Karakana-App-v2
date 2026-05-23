@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/cards/course_card_horizontal.dart';
 import '../../../widgets/cards/shimmer_card.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -345,7 +347,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(
-                                  20, kToolbarHeight + 58, 20, 10),
+                                20,
+                                kToolbarHeight + 58,
+                                20,
+                                10,
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
@@ -372,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 4),
+                                  const SizedBox(height: AppSpacing.xs),
                                   // ── Name ──
                                   Text(
                                     _getFirstName(auth),
@@ -390,7 +396,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
+                                  const SizedBox(height: AppSpacing.xs),
                                   // ── Tagline ──
                                   Text(
                                     _getTagline(),
@@ -563,7 +569,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (courses.isLoading) ...[
                     SliverToBoxAdapter(
                         child: Padding(
-                            padding: const EdgeInsets.only(top: 24),
+                            padding: const EdgeInsets.only(top: AppSpacing.lg),
                             child: _shimmer())),
                     SliverToBoxAdapter(child: _shimmer()),
                   ] else ...[
@@ -605,7 +611,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: _empty('Hakuna kozi bure kwa sasa'))
                     else
                       SliverPadding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.md),
                         sliver: SliverGrid(
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
@@ -632,7 +639,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     if (!auth.isTrainer)
                       SliverToBoxAdapter(
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),
+                          padding: const EdgeInsets.fromLTRB(
+                            20,
+                            AppSpacing.lg,
+                            20,
+                            AppSpacing.sm,
+                          ),
                           child: Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
@@ -720,7 +732,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                   SliverToBoxAdapter(
                     child: SizedBox(
-                      height: MediaQuery.of(context).padding.bottom + 16,
+                      height:
+                          MediaQuery.of(context).padding.bottom + AppSpacing.md,
                     ),
                   ),
                 ],
@@ -738,7 +751,7 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 260,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: AppSpacing.screenPadding,
         itemCount: items.length,
         itemBuilder: (_, i) => Padding(
           padding: const EdgeInsets.only(right: 12),
@@ -781,7 +794,7 @@ class _HomeScreenState extends State<HomeScreen> {
       height: 260,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: AppSpacing.screenPadding,
         itemCount: 3,
         itemBuilder: (_, __) => const Padding(
           padding: EdgeInsets.only(right: 12),
@@ -802,7 +815,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, AppSpacing.sm),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -811,9 +824,7 @@ class _SectionHeader extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: GoogleFonts.montserrat(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                style: AppTextStyles.h4.copyWith(
                   color: Theme.of(context).textTheme.bodyLarge?.color ??
                       const Color(0xFF1A0A00),
                 ),
@@ -821,8 +832,7 @@ class _SectionHeader extends StatelessWidget {
               if (subtitle != null)
                 Text(
                   subtitle!,
-                  style: GoogleFonts.montserrat(
-                    fontSize: 12,
+                  style: AppTextStyles.bodySmall.copyWith(
                     color: AppColors.textTertiary,
                   ),
                 ),
@@ -833,9 +843,7 @@ class _SectionHeader extends StatelessWidget {
               onTap: onTapAll,
               child: Text(
                 'Tazama Zote →',
-                style: GoogleFonts.montserrat(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                style: AppTextStyles.labelMedium.copyWith(
                   color: AppColors.primary,
                 ),
               ),
@@ -875,7 +883,7 @@ class _BannerCarouselState extends State<_BannerCarousel> {
     final banners = widget.banners;
     return Column(
       children: [
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.md),
         SizedBox(
           height: 148,
           child: PageView.builder(
@@ -916,7 +924,7 @@ class _BannerCarouselState extends State<_BannerCarousel> {
           ),
         ),
         if (banners.length > 1) ...[
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
