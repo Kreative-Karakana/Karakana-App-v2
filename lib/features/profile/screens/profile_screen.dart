@@ -372,54 +372,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     ],
                                   ),
                                 ),
-                                Container(
-                                  width: 48,
-                                  height: 48,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFD7EEF8),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      initial,
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w700,
-                                        color: const Color(0xFF1A0A00),
-                                      ),
-                                    ),
-                                  ),
-                                ),
                               ],
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            Container(
-                              height: 46,
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? Theme.of(context).cardColor
-                                    : const Color(0xFFF1F3F5),
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: Row(
-                                children: [
-                                  const SizedBox(width: 12),
-                                  Icon(
-                                    Icons.search,
-                                    size: 20,
-                                    color: const Color(0xFF9E8070)
-                                        .withValues(alpha: 0.9),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'Tafuta kwenye akaunti',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 14,
-                                      color: const Color(0xFF9E8070),
-                                    ),
-                                  ),
-                                ],
-                              ),
                             ),
                           ],
                         ),
