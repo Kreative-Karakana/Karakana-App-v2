@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/utils/secure_storage.dart';
 import '../../features/auth/providers/auth_provider.dart';
 
@@ -46,7 +47,7 @@ class _TermsDialogState extends State<_TermsDialog> {
 
   Widget _section(String title, String body) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: AppSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -58,7 +59,7 @@ class _TermsDialogState extends State<_TermsDialog> {
               color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.xs),
           Text(
             body,
             style: GoogleFonts.inter(
@@ -75,7 +76,8 @@ class _TermsDialogState extends State<_TermsDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.cardLg)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -86,13 +88,14 @@ class _TermsDialogState extends State<_TermsDialog> {
             decoration: const BoxDecoration(
               color: AppColors.primaryDark,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+                topLeft: Radius.circular(AppRadius.cardLg),
+                topRight: Radius.circular(AppRadius.cardLg),
               ),
             ),
             child: Row(
               children: [
-                const Icon(Icons.policy_outlined, color: Colors.white, size: 24),
+                const Icon(Icons.policy_outlined,
+                    color: Colors.white, size: 24),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -158,7 +161,7 @@ class _TermsDialogState extends State<_TermsDialog> {
                       '7. Mabadiliko ya Masharti',
                       'Karakana inaweza kubadilisha masharti haya wakati wowote. Utaarifiwa kuhusu mabadiliko muhimu kupitia arifa.',
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.sm),
                     if (!_hasScrolledToBottom)
                       Center(
                         child: Text(
@@ -180,12 +183,12 @@ class _TermsDialogState extends State<_TermsDialog> {
 
           // Buttons
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.cardPadding,
             child: Column(
               children: [
                 if (!_hasScrolledToBottom)
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                     child: Text(
                       'Soma masharti yote ili uweze kukubali',
                       style: GoogleFonts.inter(
@@ -203,9 +206,9 @@ class _TermsDialogState extends State<_TermsDialog> {
                           ? AppColors.primary
                           : AppColors.border,
                       foregroundColor: Colors.white,
-                      minimumSize: const Size(double.infinity, 48),
+                      minimumSize: const Size(double.infinity, AppSpacing.xxl),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(AppRadius.button),
                       ),
                     ),
                     onPressed: _hasScrolledToBottom && !_isAccepting
@@ -227,7 +230,7 @@ class _TermsDialogState extends State<_TermsDialog> {
                           ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
                 TextButton(
                   onPressed: () {
                     context.read<AuthProvider>().logout();
@@ -250,5 +253,3 @@ class _TermsDialogState extends State<_TermsDialog> {
     );
   }
 }
-
-

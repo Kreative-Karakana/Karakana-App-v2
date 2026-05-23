@@ -1,7 +1,9 @@
-﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_text_styles.dart';
 import '../../features/courses/models/course_model.dart';
 
 class CourseCardHorizontal extends StatelessWidget {
@@ -24,7 +26,7 @@ class CourseCardHorizontal extends StatelessWidget {
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(AppRadius.card),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.07),
@@ -41,8 +43,8 @@ class CourseCardHorizontal extends StatelessWidget {
               aspectRatio: 16 / 9,
               child: ClipRRect(
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
+                  topLeft: Radius.circular(AppRadius.card),
+                  topRight: Radius.circular(AppRadius.card),
                 ),
                 child: Stack(
                   fit: StackFit.expand,
@@ -87,10 +89,11 @@ class CourseCardHorizontal extends StatelessWidget {
                     // FREE badge top-left
                     if (course.isFree)
                       Positioned(
-                        top: 8,
-                        left: 8,
+                        top: AppSpacing.sm,
+                        left: AppSpacing.sm,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: AppColors.success,
                             borderRadius: BorderRadius.circular(6),
@@ -107,8 +110,8 @@ class CourseCardHorizontal extends StatelessWidget {
                       ),
                     // Bookmark button top-right
                     Positioned(
-                      top: 8,
-                      right: 8,
+                      top: AppSpacing.sm,
+                      right: AppSpacing.sm,
                       child: GestureDetector(
                         onTap: onWishlistTap,
                         child: Container(
@@ -122,9 +125,13 @@ class CourseCardHorizontal extends StatelessWidget {
                             ],
                           ),
                           child: Icon(
-                            course.isWishlisted ? Icons.bookmark : Icons.bookmark_border,
+                            course.isWishlisted
+                                ? Icons.bookmark
+                                : Icons.bookmark_border,
                             size: 16,
-                            color: course.isWishlisted ? const Color(0xFFE87722) : Colors.grey[700],
+                            color: course.isWishlisted
+                                ? const Color(0xFFE87722)
+                                : Colors.grey[700],
                           ),
                         ),
                       ),
@@ -152,12 +159,14 @@ class CourseCardHorizontal extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      Icon(Icons.person_outline, size: 13, color: Colors.grey[500]),
+                      Icon(Icons.person_outline,
+                          size: 13, color: Colors.grey[500]),
                       const SizedBox(width: 3),
                       Expanded(
                         child: Text(
                           course.trainerName,
-                          style: GoogleFonts.montserrat(fontSize: 12, color: Colors.grey[500]),
+                          style: AppTextStyles.bodySmall
+                              .copyWith(color: Colors.grey[500]),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -167,7 +176,8 @@ class CourseCardHorizontal extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      const Icon(Icons.star_rounded, size: 14, color: Color(0xFFFFA726)),
+                      const Icon(Icons.star_rounded,
+                          size: 14, color: Color(0xFFFFA726)),
                       const SizedBox(width: 4),
                       Text(
                         course.averageRating.toStringAsFixed(1),
@@ -179,7 +189,8 @@ class CourseCardHorizontal extends StatelessWidget {
                       ),
                       const Spacer(),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF0F0F0),
                           borderRadius: BorderRadius.circular(20),
@@ -201,7 +212,9 @@ class CourseCardHorizontal extends StatelessWidget {
                     style: GoogleFonts.montserrat(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: course.isFree ? AppColors.success : const Color(0xFFE87722),
+                      color: course.isFree
+                          ? AppColors.success
+                          : const Color(0xFFE87722),
                     ),
                   ),
                 ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_spacing.dart';
 
 OverlayEntry? _activeTopPopup;
 
@@ -16,7 +17,8 @@ void showTopPopup(
   _activeTopPopup = null;
 
   final overlay = Overlay.of(context);
-  final popupType = type ?? (isError ? TopPopupType.error : TopPopupType.success);
+  final popupType =
+      type ?? (isError ? TopPopupType.error : TopPopupType.success);
   final _PopupStyle style = _styleForType(popupType);
 
   _activeTopPopup = OverlayEntry(
@@ -58,7 +60,8 @@ class _TopPopupAnimatedBanner extends StatefulWidget {
   });
 
   @override
-  State<_TopPopupAnimatedBanner> createState() => _TopPopupAnimatedBannerState();
+  State<_TopPopupAnimatedBanner> createState() =>
+      _TopPopupAnimatedBannerState();
 }
 
 class _TopPopupAnimatedBannerState extends State<_TopPopupAnimatedBanner>
@@ -135,7 +138,7 @@ class _TopPopupAnimatedBannerState extends State<_TopPopupAnimatedBanner>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(AppRadius.card),
                 border: Border.all(
                     color: widget.style.accentColor.withValues(alpha: 0.35)),
                 boxShadow: [
@@ -158,7 +161,8 @@ class _TopPopupAnimatedBannerState extends State<_TopPopupAnimatedBanner>
                     ),
                     child: Icon(widget.style.icon,
                         size: 16,
-                        color: widget.style.accentColor.withValues(alpha: 0.95)),
+                        color:
+                            widget.style.accentColor.withValues(alpha: 0.95)),
                   ),
                   const SizedBox(width: 10),
                   Flexible(

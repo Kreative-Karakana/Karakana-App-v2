@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_text_styles.dart';
 import '../../features/courses/models/course_model.dart';
 
 class CourseListCard extends StatelessWidget {
@@ -21,7 +23,7 @@ class CourseListCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.input),
         boxShadow: const [
           BoxShadow(
             color: AppColors.cardShadow,
@@ -31,7 +33,7 @@ class CourseListCard extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.input),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
@@ -93,7 +95,8 @@ class CourseListCard extends StatelessWidget {
                         // Level badge
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 4),
+                              horizontal: AppSpacing.sm,
+                              vertical: AppSpacing.xs),
                           decoration: BoxDecoration(
                             color: AppColors.primaryLight,
                             borderRadius: BorderRadius.circular(6),
@@ -107,7 +110,7 @@ class CourseListCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         Text(
                           course.title,
                           style: GoogleFonts.montserrat(
@@ -118,13 +121,11 @@ class CourseListCard extends StatelessWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         Text(
                           course.trainerName,
-                          style: GoogleFonts.montserrat(
-                            fontSize: 11,
-                            color: AppColors.textTertiary,
-                          ),
+                          style: AppTextStyles.caption
+                              .copyWith(color: AppColors.textTertiary),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -174,7 +175,4 @@ class CourseListCard extends StatelessWidget {
       ),
     );
   }
-
 }
-
-
