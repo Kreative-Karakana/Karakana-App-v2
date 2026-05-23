@@ -318,65 +318,82 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: AnnotatedRegion<SystemUiOverlayStyle>(
                   value: const SystemUiOverlayStyle(
                     statusBarColor: Colors.transparent,
-                    statusBarIconBrightness: Brightness.dark,
+                    statusBarIconBrightness: Brightness.light,
                   ),
                   child: Container(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    child: SafeArea(
-                      bottom: false,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          AppSpacing.lg - AppSpacing.xs,
-                          AppSpacing.md - AppSpacing.xs / 2,
-                          AppSpacing.lg - AppSpacing.xs,
-                          AppSpacing.md,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF2A0F04), Color(0xFF3D1800), Color(0xFF7B3A10)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Stack(
+                      clipBehavior: Clip.hardEdge,
+                      children: [
+                        Positioned(
+                          top: -40,
+                          right: -30,
+                          child: Container(
+                            width: 180,
+                            height: 180,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withValues(alpha: 0.04),
+                            ),
+                          ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Row(
+                        Positioned(
+                          bottom: -30,
+                          left: -20,
+                          child: Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withValues(alpha: 0.03),
+                            ),
+                          ),
+                        ),
+                        SafeArea(
+                          bottom: false,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              AppSpacing.lg - AppSpacing.xs,
+                              AppSpacing.md - AppSpacing.xs / 2,
+                              AppSpacing.lg - AppSpacing.xs,
+                              AppSpacing.lg,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Akaunti',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize:
-                                              (AppTextStyles.displayLarge
-                                                          .fontSize ??
-                                                      32) -
-                                                  2,
-                                          fontWeight: FontWeight.w800,
-                                          color: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge
-                                                  ?.color ??
-                                              const Color(0xFF1A0A00),
-                                          height: 1.0,
-                                        ),
-                                      ),
-                                      const SizedBox(height: AppSpacing.xs),
-                                      Text(
-                                        'Wasifu na Mipangilio Yako',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize:
-                                              AppTextStyles.bodyMedium.fontSize,
-                                          color: const Color(0xFF9E8070),
-                                          height: 1.35,
-                                        ),
-                                      ),
-                                    ],
+                                Text(
+                                  'Akaunti',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize:
+                                        (AppTextStyles.displayLarge.fontSize ??
+                                                32) -
+                                            1,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                    height: 1.0,
+                                  ),
+                                ),
+                                const SizedBox(height: AppSpacing.xs),
+                                Text(
+                                  'Wasifu na Mipangilio Yako',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: AppTextStyles.bodyMedium.fontSize,
+                                    color: Colors.white.withValues(alpha: 0.65),
+                                    height: 1.35,
                                   ),
                                 ),
                               ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ),
