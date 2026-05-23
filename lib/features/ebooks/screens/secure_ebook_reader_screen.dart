@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/screenshot_prevention.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../providers/ebook_provider.dart';
@@ -144,10 +146,10 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
 
   Widget _buildCanvas() {
     if (_screenCaptured) {
-      return const Center(
+      return Center(
         child: Text(
           'Screenshot/recording is blocked while reading.',
-          style: TextStyle(color: Colors.white),
+          style: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
           textAlign: TextAlign.center,
         ),
       );
@@ -159,8 +161,9 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(_error!, style: const TextStyle(color: Colors.white)),
-            const SizedBox(height: 10),
+            Text(_error!,
+                style: AppTextStyles.bodyMedium.copyWith(color: Colors.white)),
+            const SizedBox(height: AppSpacing.sm + AppSpacing.xs / 2),
             OutlinedButton(
               onPressed: () =>
                   _loadPage(context.read<EbookProvider>().currentEbookPage),
@@ -185,7 +188,12 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
     return Consumer<EbookProvider>(
       builder: (_, p, __) {
         return Container(
-          padding: const EdgeInsets.fromLTRB(14, 10, 14, 18),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.md - AppSpacing.xs / 2,
+            AppSpacing.sm + AppSpacing.xs / 2,
+            AppSpacing.md - AppSpacing.xs / 2,
+            AppSpacing.md + AppSpacing.xs / 2,
+          ),
           decoration: BoxDecoration(
             color: Colors.black.withValues(alpha: 0.72),
             border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.2))),
@@ -203,9 +211,14 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
                     Text(widget.ebookTitle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
-                    const SizedBox(height: 4),
-                    Text('${p.currentEbookPage} / ${p.totalPages}', style: const TextStyle(color: Colors.white70)),
+                        style: AppTextStyles.h4.copyWith(color: Colors.white)),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      '${p.currentEbookPage} / ${p.totalPages}',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: Colors.white70,
+                      ),
+                    ),
                   ],
                 ),
               ),

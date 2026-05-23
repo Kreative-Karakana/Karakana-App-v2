@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../providers/ebook_provider.dart';
 import '../services/ebook_service.dart';
@@ -61,7 +63,7 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
               keyboardType: TextInputType.phone,
               decoration: const InputDecoration(labelText: 'Namba ya simu'),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             DropdownButtonFormField<String>(
               value: provider,
               items: const ['Mpesa', 'Airtel', 'Tigo', 'Halopesa']
@@ -158,7 +160,7 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
       appBar: AppBar(title: const Text('Maelezo ya Kitabu')),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.cardPadding,
           children: [
             AspectRatio(
               aspectRatio: 16 / 9,
@@ -169,18 +171,19 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
                       color: const Color(0xFFF5E6D8),
                       child: const Icon(Icons.menu_book_outlined, size: 48)),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Text((d['title'] ?? '').toString(),
-                style:
-                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Text((d['author_name'] ?? '').toString()),
-            const SizedBox(height: 12),
-            Text((d['description'] ?? '').toString()),
-            const SizedBox(height: 18),
+                style: AppTextStyles.h1),
+            const SizedBox(height: AppSpacing.sm),
+            Text((d['author_name'] ?? '').toString(),
+                style: AppTextStyles.bodyMedium),
+            const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
+            Text((d['description'] ?? '').toString(),
+                style: AppTextStyles.bodyMedium),
+            const SizedBox(height: AppSpacing.md + AppSpacing.xs / 2),
             Text(price <= 0 ? 'Bure' : 'TZS $price',
-                style: const TextStyle(fontWeight: FontWeight.w700)),
-            const SizedBox(height: 14),
+                style: AppTextStyles.price),
+            const SizedBox(height: AppSpacing.md - AppSpacing.xs / 2),
             FilledButton(
               onPressed: _processing
                   ? null

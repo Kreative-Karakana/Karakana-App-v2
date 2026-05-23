@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../providers/ebook_provider.dart';
 
@@ -47,11 +48,7 @@ class _EbookStoreScreenState extends State<EbookStoreScreen> {
             const SizedBox(width: 8),
             Text(
               'Duka la Vitabu',
-              style: GoogleFonts.montserrat(
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
+              style: AppTextStyles.h3.copyWith(color: Colors.white),
             ),
           ],
         ),
@@ -72,11 +69,11 @@ class _EbookStoreScreenState extends State<EbookStoreScreen> {
             return const Center(child: Text('Hakuna vitabu kwa sasa.'));
           }
           return GridView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.cardPadding,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
+              crossAxisSpacing: AppSpacing.sm + AppSpacing.xs,
+              mainAxisSpacing: AppSpacing.sm + AppSpacing.xs,
               childAspectRatio: 0.62,
             ),
             itemCount: provider.store.length,
@@ -102,7 +99,8 @@ class _EbookStoreScreenState extends State<EbookStoreScreen> {
                               ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(
+                            AppSpacing.sm + AppSpacing.xs / 2),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -110,17 +108,19 @@ class _EbookStoreScreenState extends State<EbookStoreScreen> {
                               ebook.title,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w700),
+                              style: AppTextStyles.h4,
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: AppSpacing.xs),
                             Text(ebook.authorName,
-                                maxLines: 1, overflow: TextOverflow.ellipsis),
-                            const SizedBox(height: 4),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTextStyles.bodyMedium),
+                            const SizedBox(height: AppSpacing.xs),
                             Text(ebook.isFree
                                 ? 'Bure'
-                                : 'TZS ${ebook.priceInTzs}'),
-                            const SizedBox(height: 8),
+                                : 'TZS ${ebook.priceInTzs}',
+                                style: AppTextStyles.bodyMedium),
+                            const SizedBox(height: AppSpacing.sm),
                             SizedBox(
                               width: double.infinity,
                               child: FilledButton(

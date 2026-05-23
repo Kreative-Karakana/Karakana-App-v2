@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/theme/app_spacing.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../providers/ebook_provider.dart';
 
@@ -34,9 +35,10 @@ class _EbookLibraryScreenState extends State<EbookLibraryScreen> {
             return const Center(child: Text('Bado hujanunua eBook yoyote.'));
           }
           return ListView.separated(
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.cardPadding,
             itemCount: provider.library.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            separatorBuilder: (_, __) =>
+                const SizedBox(height: AppSpacing.sm + AppSpacing.xs / 2),
             itemBuilder: (_, i) {
               final p = provider.library[i];
               return Card(
@@ -47,7 +49,7 @@ class _EbookLibraryScreenState extends State<EbookLibraryScreen> {
                   ),
                   leading: p.ebook.coverImageUrl != null
                       ? ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(AppSpacing.sm),
                           child: Image.network(
                             p.ebook.coverImageUrl!,
                             width: 48,
