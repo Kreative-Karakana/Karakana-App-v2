@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/responsive.dart';
 import '../../../widgets/buttons/gradient_button.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../providers/auth_provider.dart';
@@ -74,7 +75,14 @@ class _SignupScreenState extends State<SignupScreen>
   Future<void> _handleAppleSignIn() async {
     final auth = context.read<AuthProvider>();
     final success = await auth.loginWithApple();
-    if (success && mounted) context.go('/home');
+    if (success && mounted) {
+      context.go(auth.homeRoute);
+    } else if (mounted) {
+      showTopPopup(
+        context,
+        auth.errorMessage ?? 'Imeshindikana kuingia kwa Apple. Tafadhali jaribu tena.',
+      );
+    }
   }
 
   Widget _buildField({
@@ -173,10 +181,10 @@ class _SignupScreenState extends State<SignupScreen>
                     ),
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(
-                        22,
-                        compact ? 12 : 18,
-                        22,
-                        compact ? 8 : 10,
+                        AppSpacing.md,
+                        Responsive.h(context, compact ? 0.012 : 0.02),
+                        AppSpacing.md,
+                        Responsive.h(context, compact ? 0.008 : 0.012),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -306,7 +314,11 @@ class _SignupScreenState extends State<SignupScreen>
                                       ),
                                       Padding(
                                         padding: EdgeInsets.fromLTRB(
-                                            0, 16.h, 0, 16.h),
+                                          0,
+                                          16.h,
+                                          0,
+                                          8.h + Responsive.bottomPadding(context),
+                                        ),
                                         child: Center(
                                           child: GestureDetector(
                                             onTap: () => context.go('/login'),

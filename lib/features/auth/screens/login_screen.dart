@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/responsive.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/buttons/gradient_button.dart';
 import '../providers/auth_provider.dart';
@@ -320,10 +321,10 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                         child: Padding(
                           padding: EdgeInsets.fromLTRB(
-                            22,
-                            compact ? 14 : 24,
-                            22,
-                            compact ? 10 : 16,
+                            AppSpacing.md,
+                            Responsive.h(context, compact ? 0.015 : 0.025),
+                            AppSpacing.md,
+                            Responsive.h(context, compact ? 0.01 : 0.018),
                           ),
                           child: SingleChildScrollView(
                             physics: const ClampingScrollPhysics(),
@@ -687,13 +688,15 @@ class _LoginScreenState extends State<LoginScreen>
                         ),
                       ),
                     ),
-                    SafeArea(
-                      top: false,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(24.w, 8.h, 24.w, 16.h),
-                        child: const Center(
-                          child: _SignupFooter(),
-                        ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        24.w,
+                        8.h,
+                        24.w,
+                        8.h + Responsive.bottomPadding(context),
+                      ),
+                      child: const Center(
+                        child: _SignupFooter(),
                       ),
                     ),
                   ],
