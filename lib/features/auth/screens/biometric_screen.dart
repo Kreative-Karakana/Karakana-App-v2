@@ -27,7 +27,8 @@ class _BiometricScreenState extends State<BiometricScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _prepareAndAuthenticate());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _prepareAndAuthenticate());
   }
 
   Future<void> _prepareAndAuthenticate() async {
@@ -96,7 +97,8 @@ class _BiometricScreenState extends State<BiometricScreen> {
           setState(() {
             _isAuthenticating = false;
             _failed = true;
-            _statusMessage = 'Kikao cha biometric kimeisha. Ingia kwa nywila kisha washa tena biometric.';
+            _statusMessage =
+                'Kikao cha biometric kimeisha. Ingia kwa nywila kisha washa tena biometric.';
           });
           return;
         }
@@ -166,130 +168,131 @@ class _BiometricScreenState extends State<BiometricScreen> {
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 120),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 120),
 
-                  // Logo
-                  Container(
-                    width: 88,
-                    height: 88,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.95),
-                      shape: BoxShape.circle,
-                    ),
-                    child: ClipOval(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Image.asset(
-                          'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                          fit: BoxFit.contain,
-                          errorBuilder: (_, __, ___) => Center(
-                            child: Text(
-                              'K',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 36,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.primary,
+                    // Logo
+                    Container(
+                      width: 88,
+                      height: 88,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.95),
+                        shape: BoxShape.circle,
+                      ),
+                      child: ClipOval(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Image.asset(
+                            'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => Center(
+                              child: Text(
+                                'K',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.primary,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                  const SizedBox(height: 40),
+                    const SizedBox(height: 40),
 
-                  // Fingerprint icon
-                  Icon(
-                    _hasFaceId
-                        ? Icons.face_retouching_natural_rounded
-                        : Icons.fingerprint,
-                    size: 80,
-                    color: _failed
-                        ? Colors.red.shade400
-                        : AppColors.primaryMid,
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  Text(
-                    'Ingia Kwa Usalama',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                    // Fingerprint icon
+                    Icon(
+                      _hasFaceId
+                          ? Icons.face_retouching_natural_rounded
+                          : Icons.fingerprint,
+                      size: 80,
+                      color:
+                          _failed ? Colors.red.shade400 : AppColors.primaryMid,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
 
-                  const SizedBox(height: 12),
+                    const SizedBox(height: 24),
 
-                  Text(
-                    _hasFaceId
-                        ? 'Tumia Face ID kuthibitisha utambulisho wako na kuingia salama'
-                        : 'Tumia alama ya kidole kuthibitisha utambulisho wako na kuingia salama',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: AppColors.textTertiary,
-                      height: 1.5,
+                    Text(
+                      'Ingia Kwa Usalama',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
-                    textAlign: TextAlign.center,
-                  ),
 
-                  const SizedBox(height: 48),
+                    const SizedBox(height: 12),
 
-                  if (_isAuthenticating)
-                    const KarakanaWaveLoader(
-                      color: AppColors.primaryMid,
-                    )
-                  else if (_failed)
-                    Column(
-                      children: [
-                        Text(
-                          _statusMessage ?? 'Uthibitishaji umeshindwa',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 14,
-                            color: Colors.red.shade300,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          child: GradientButton(
-                            text: 'Jaribu Tena',
-                            onTap: _authenticate,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        TextButton(
-                          onPressed: () => context.go('/login'),
-                          child: Text(
-                            'Ingia kwa Nywila',
+                    Text(
+                      _hasFaceId
+                          ? 'Tumia Face ID kuthibitisha utambulisho wako na kuingia salama'
+                          : 'Tumia alama ya kidole kuthibitisha utambulisho wako na kuingia salama',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 14,
+                        color: AppColors.textTertiary,
+                        height: 1.5,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    const SizedBox(height: 48),
+
+                    if (_isAuthenticating)
+                      const KarakanaWaveLoader(
+                        color: AppColors.primaryMid,
+                      )
+                    else if (_failed)
+                      Column(
+                        children: [
+                          Text(
+                            _statusMessage ?? 'Uthibitishaji umeshindwa',
                             style: GoogleFonts.montserrat(
                               fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.primaryMid,
+                              color: Colors.red.shade300,
                             ),
                           ),
-                        ),
-                      ],
-                    )
-                  else
-                    TextButton(
-                      onPressed: _authenticate,
-                      child: Text(
-                        'Gusa kwa kidole',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.primaryMid,
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            child: GradientButton(
+                              text: 'Jaribu Tena',
+                              onTap: _authenticate,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          TextButton(
+                            onPressed: () => context.go('/login'),
+                            child: Text(
+                              'Ingia kwa Nywila',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.primaryMid,
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    else
+                      TextButton(
+                        onPressed: _authenticate,
+                        child: Text(
+                          'Gusa kwa kidole',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.primaryMid,
+                          ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -298,5 +301,3 @@ class _BiometricScreenState extends State<BiometricScreen> {
     );
   }
 }
-
-

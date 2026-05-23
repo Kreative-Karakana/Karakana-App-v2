@@ -117,86 +117,88 @@ class _SplashScreenState extends State<SplashScreen>
 
             // Center content — fades in and scales up on load
             Center(
-              child: FadeTransition(
-                opacity: _fadeAnim,
-                child: ScaleTransition(
-                  scale: _scaleAnim,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Logo
-                      Container(
-                        width: 88,
-                        height: 88,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.95),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withValues(alpha: 0.4),
-                              blurRadius: 32,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: ClipOval(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Image.asset(
-                              'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) => Center(
-                                child: Text(
-                                  'K',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 36,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.primary,
+              child: SingleChildScrollView(
+                child: FadeTransition(
+                  opacity: _fadeAnim,
+                  child: ScaleTransition(
+                    scale: _scaleAnim,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Logo
+                        Container(
+                          width: 88,
+                          height: 88,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.95),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withValues(alpha: 0.4),
+                                blurRadius: 32,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: ClipOval(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Image.asset(
+                                'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                                fit: BoxFit.contain,
+                                errorBuilder: (_, __, ___) => Center(
+                                  child: Text(
+                                    'K',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 36,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.primary,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
 
-                      const SizedBox(height: 20),
+                        const SizedBox(height: 20),
 
-                      // App name
-                      Text(
-                        'KARAKANA',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          letterSpacing: 4.0,
+                        // App name
+                        Text(
+                          'KARAKANA',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            letterSpacing: 4.0,
+                          ),
                         ),
-                      ),
 
-                      const SizedBox(height: 8),
+                        const SizedBox(height: 8),
 
-                      // Tagline
-                      Text(
-                        'Fundisha • Jifunze • Kua',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 13,
-                          color: AppColors.primaryMid,
-                          letterSpacing: 2.0,
+                        // Tagline
+                        Text(
+                          'Fundisha • Jifunze • Kua',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 13,
+                            color: AppColors.primaryMid,
+                            letterSpacing: 2.0,
+                          ),
                         ),
-                      ),
 
-                      const SizedBox(height: 80),
+                        const SizedBox(height: 80),
 
-                      // Loading spinner
-                      const SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: KarakanaWaveLoader(
-                          color: Color(0xFFE87722),
-                          strokeWidth: 2.5,
+                        // Loading spinner
+                        const SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: KarakanaWaveLoader(
+                            color: Color(0xFFE87722),
+                            strokeWidth: 2.5,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

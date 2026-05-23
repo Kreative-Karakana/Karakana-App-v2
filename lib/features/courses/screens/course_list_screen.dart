@@ -67,36 +67,38 @@ class CourseListScreen extends StatelessWidget {
           }
 
           if (courses.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.school_outlined,
-                      size: 64,
-                      color: Color(0xFFE8D5C8),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Hakuna kozi kwa sasa',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF3D1800),
+            return SingleChildScrollView(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.school_outlined,
+                        size: 64,
+                        color: Color(0xFFE8D5C8),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Jaribu tena baadaye au tafuta kozi nyingine.',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 13,
-                        color: const Color(0xFF9E8070),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Hakuna kozi kwa sasa',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF3D1800),
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      Text(
+                        'Jaribu tena baadaye au tafuta kozi nyingine.',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 13,
+                          color: const Color(0xFF9E8070),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );

@@ -144,7 +144,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
           ),
         ),
         content: SizedBox(
-          width: 420,
+          width: double.infinity,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

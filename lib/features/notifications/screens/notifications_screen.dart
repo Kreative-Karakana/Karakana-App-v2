@@ -210,42 +210,45 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   Widget _buildEmptyState() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 96,
-            height: 96,
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
-              shape: BoxShape.circle,
+    return SingleChildScrollView(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 96,
+              height: 96,
+              decoration: BoxDecoration(
+                color:
+                    isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.notifications_none_rounded,
+                size: 48,
+                color: Color(0xFFE87722),
+              ),
             ),
-            child: const Icon(
-              Icons.notifications_none_rounded,
-              size: 48,
-              color: Color(0xFFE87722),
+            const SizedBox(height: 20),
+            Text(
+              'Hakuna Arifa Bado',
+              style: GoogleFonts.montserrat(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).textTheme.bodyLarge?.color ??
+                    const Color(0xFF1A0A00),
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Hakuna Arifa Bado',
-            style: GoogleFonts.montserrat(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).textTheme.bodyLarge?.color ??
-                  const Color(0xFF1A0A00),
+            const SizedBox(height: 8),
+            Text(
+              'Arifa zako zitaonekana hapa.',
+              style: GoogleFonts.montserrat(
+                fontSize: 14,
+                color: const Color(0xFF9E8070),
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Arifa zako zitaonekana hapa.',
-            style: GoogleFonts.montserrat(
-              fontSize: 14,
-              color: const Color(0xFF9E8070),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
