@@ -255,22 +255,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SliverAppBar(
                   pinned: true,
                   automaticallyImplyLeading: false,
-                  backgroundColor: const Color(0xFF3D1800),
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  elevation: 0,
                   title: Text(
                     'Akaunti',
                     style: GoogleFonts.montserrat(
                       fontSize: AppTextStyles.h3.fontSize,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: Theme.of(context).textTheme.bodyLarge?.color ??
+                          const Color(0xFF1A0A00),
                     ),
                   ),
                   systemOverlayStyle: const SystemUiOverlayStyle(
                     statusBarColor: Colors.transparent,
-                    statusBarIconBrightness: Brightness.light,
+                    statusBarIconBrightness: Brightness.dark,
                   ),
                   actions: [
                     IconButton(
-                      icon: const Icon(Icons.logout, color: Colors.white),
+                      icon: const Icon(Icons.logout, color: Color(0xFF1A0A00)),
                       onPressed: () {
                         showDialog<void>(
                           context: context,
@@ -316,94 +318,112 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: AnnotatedRegion<SystemUiOverlayStyle>(
                   value: const SystemUiOverlayStyle(
                     statusBarColor: Colors.transparent,
-                    statusBarIconBrightness: Brightness.light,
+                    statusBarIconBrightness: Brightness.dark,
                   ),
                   child: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF2A0F04), Color(0xFF3D1800), Color(0xFF7B3A10)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: Stack(
-                      clipBehavior: Clip.hardEdge,
-                      children: [
-                        Positioned(
-                          top: -40,
-                          right: -40,
-                          child: Container(
-                            width: 200,
-                            height: 200,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: 0.04),
-                            ),
-                          ),
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    child: SafeArea(
+                      bottom: false,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.lg - AppSpacing.xs,
+                          AppSpacing.md - AppSpacing.xs / 2,
+                          AppSpacing.lg - AppSpacing.xs,
+                          AppSpacing.md,
                         ),
-                        Positioned(
-                          bottom: -30,
-                          left: -20,
-                          child: Container(
-                            width: 130,
-                            height: 130,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: const Color(0xFFE87722).withValues(alpha: 0.15),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 30,
-                          right: 16,
-                          child: Icon(
-                            Icons.account_circle_outlined,
-                            size: 100,
-                            color: Colors.white.withValues(alpha: 0.04),
-                          ),
-                        ),
-                        SafeArea(
-                          bottom: false,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              AppSpacing.lg - AppSpacing.xs,
-                              AppSpacing.md - AppSpacing.xs / 2,
-                              AppSpacing.lg - AppSpacing.xs,
-                              AppSpacing.md,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
                               children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
                                         'Akaunti',
                                         style: GoogleFonts.montserrat(
-                                          fontSize: (AppTextStyles.displayLarge.fontSize ?? 32) + AppSpacing.sm / 2,
+                                          fontSize:
+                                              (AppTextStyles.displayLarge
+                                                          .fontSize ??
+                                                      32) -
+                                                  2,
                                           fontWeight: FontWeight.w800,
-                                          color: Colors.white,
+                                          color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.color ??
+                                              const Color(0xFF1A0A00),
                                           height: 1.0,
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(height: AppSpacing.xs),
+                                      Text(
+                                        'Wasifu na Mipangilio Yako',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize:
+                                              AppTextStyles.bodyMedium.fontSize,
+                                          color: const Color(0xFF9E8070),
+                                          height: 1.35,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                const SizedBox(height: AppSpacing.sm - AppSpacing.xs / 2),
-                                Text(
-                                  'Wasifu na Mipangilio Yako',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: AppTextStyles.bodyMedium.fontSize,
-                                    color: Colors.white.withValues(alpha: 0.60),
-                                    height: 1.35,
+                                Container(
+                                  width: 48,
+                                  height: 48,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFD7EEF8),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      initial,
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                        color: const Color(0xFF1A0A00),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                          ),
+                            const SizedBox(height: AppSpacing.md),
+                            Container(
+                              height: 46,
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? Theme.of(context).cardColor
+                                    : const Color(0xFFF1F3F5),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Row(
+                                children: [
+                                  const SizedBox(width: 12),
+                                  Icon(
+                                    Icons.search,
+                                    size: 20,
+                                    color: const Color(0xFF9E8070)
+                                        .withValues(alpha: 0.9),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Tafuta kwenye akaunti',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 14,
+                                      color: const Color(0xFF9E8070),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
@@ -413,15 +433,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(AppSpacing.lg - AppSpacing.xs, AppSpacing.md, AppSpacing.lg - AppSpacing.xs, 0),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg, horizontal: AppSpacing.lg - AppSpacing.xs),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: AppSpacing.md + 2,
+                        horizontal: AppSpacing.lg - AppSpacing.xs),
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(AppRadius.cardLg),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white10
+                            : const Color(0xFFECE7E2),
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFE87722).withValues(alpha: 0.08),
-                          blurRadius: 20,
-                          offset: const Offset(0, 4),
+                          color: const Color(0x0A000000),
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
@@ -445,8 +472,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: auth.userAvatar != null
                                 ? CachedNetworkImage(
                                     imageUrl: auth.userAvatar!,
-                                    width: 72,
-                                    height: 72,
+                                    width: 64,
+                                    height: 64,
                                     fit: BoxFit.cover,
                                     errorWidget: (_, __, ___) => _avatarFallback(initial),
                                   )
@@ -880,14 +907,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _avatarFallback(String initial) {
     return Container(
-      width: 88,
-      height: 88,
+      width: 64,
+      height: 64,
       color: const Color(0xFFE87722),
       child: Center(
         child: Text(
           initial,
           style: GoogleFonts.montserrat(
-            fontSize: 32,
+            fontSize: 24,
             fontWeight: FontWeight.w700,
             color: Colors.white,
           ),
@@ -901,12 +928,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: isDark ? Colors.white10 : const Color(0xFFECE7E2),
+        ),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x0FC4620A),
-            blurRadius: 8,
-            offset: Offset(0, 2),
+            color: Color(0x0A000000),
+            blurRadius: 10,
+            offset: Offset(0, 3),
           ),
         ],
       ),
@@ -919,10 +949,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Text(
                   title,
                   style: GoogleFonts.montserrat(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
                     color: const Color(0xFF9E8070),
-                    letterSpacing: 0.5,
+                    letterSpacing: 0.2,
                   ),
                 ),
               ],
@@ -954,20 +984,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     VoidCallback? onTap,
   }) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 2),
       leading: Container(
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: iconColor.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(10),
+          color: iconColor.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(11),
         ),
-        child: Icon(icon, color: iconColor, size: 18),
+        child: Icon(icon, color: iconColor, size: 17),
       ),
       title: Text(
         label,
         style: GoogleFonts.montserrat(
-          fontSize: 14,
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
           color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
         ),
       ),
