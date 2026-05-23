@@ -108,6 +108,7 @@ class _ExploreScreenState extends State<ExploreScreen>
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
+          top: false,
           child: Column(
         children: [
           // ── Gradient header ────────────────────────────────────
@@ -160,83 +161,87 @@ class _ExploreScreenState extends State<ExploreScreen>
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    20,
-                    MediaQuery.of(context).padding.top + 18,
-                    20,
-                    20,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Tafuta',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                          height: 1.1,
+                SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.md,
+                      AppSpacing.sm,
+                      AppSpacing.md,
+                      AppSpacing.lg,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Tafuta',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            height: 1.1,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        'Gundua kozi yako inayofuata',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 13,
-                          color: Colors.white.withValues(alpha: 0.55),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          'Gundua kozi yako inayofuata',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 13,
+                            color: Colors.white.withValues(alpha: 0.55),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      // Search bar inside header
-                      TextField(
-                        controller: _searchController,
-                        onChanged: _onSearchChanged,
-                        style: GoogleFonts.montserrat(
-                          fontSize: AppTextStyles.bodyMedium.fontSize,
-                          color: AppColors.textPrimary,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'Tafuta kozi yoyote...',
-                          hintStyle: GoogleFonts.montserrat(
+                        const SizedBox(height: AppSpacing.md),
+                        // Search bar inside header
+                        TextField(
+                          controller: _searchController,
+                          onChanged: _onSearchChanged,
+                          style: GoogleFonts.montserrat(
                             fontSize: AppTextStyles.bodyMedium.fontSize,
-                            color: AppColors.textHint,
+                            color: AppColors.textPrimary,
                           ),
-                          prefixIcon: const Icon(
-                            Icons.search_rounded,
-                            color: AppColors.primary,
-                            size: 20,
-                          ),
-                          suffixIcon: _searchQuery.isNotEmpty
-                              ? IconButton(
-                                  icon: const Icon(Icons.clear,
-                                      size: 18, color: AppColors.textTertiary),
-                                  onPressed: () {
-                                    _searchController.clear();
-                                    _onSearchChanged('');
-                                  },
-                                )
-                              : null,
-                          filled: true,
-                          fillColor: Theme.of(context).cardColor,
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 14),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: const BorderSide(
-                                color: AppColors.primary, width: 1.5),
+                          decoration: InputDecoration(
+                            hintText: 'Tafuta kozi yoyote...',
+                            hintStyle: GoogleFonts.montserrat(
+                              fontSize: AppTextStyles.bodyMedium.fontSize,
+                              color: AppColors.textHint,
+                            ),
+                            prefixIcon: const Icon(
+                              Icons.search_rounded,
+                              color: AppColors.primary,
+                              size: 20,
+                            ),
+                            suffixIcon: _searchQuery.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear,
+                                        size: 18, color: AppColors.textTertiary),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      _onSearchChanged('');
+                                    },
+                                  )
+                                : null,
+                            filled: true,
+                            fillColor: Theme.of(context).cardColor,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 14),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: const BorderSide(
+                                  color: AppColors.primary, width: 1.5),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
