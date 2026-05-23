@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/responsive.dart';
 import '../../../widgets/buttons/gradient_button.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../providers/auth_provider.dart';
@@ -121,23 +122,26 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(
-                      22,
-                      compact ? 14 : 24,
-                      22,
-                      compact ? 10 : 16,
+                      AppSpacing.md,
+                      Responsive.h(context, compact ? 0.015 : 0.025),
+                      AppSpacing.md,
+                      Responsive.h(context, compact ? 0.01 : 0.018),
                     ),
-                    child: SingleChildScrollView(
-                      physics: keyboardOpen
-                          ? const ClampingScrollPhysics()
-                          : const NeverScrollableScrollPhysics(),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight:
-                              constraints.maxHeight - (compact ? 24 : 40),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.topCenter,
+                        child: SizedBox(
+                          width: constraints.maxWidth - (AppSpacing.md * 2),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight:
+                                  constraints.maxHeight - (compact ? 24 : 40),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
                             const SizedBox(height: 28),
                             Center(
                               child: Container(
@@ -371,7 +375,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                       ],
                                     ),
                             ),
-                          ],
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),

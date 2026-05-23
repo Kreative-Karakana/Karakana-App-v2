@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/responsive.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/buttons/gradient_button.dart';
 import '../../../widgets/common/terms_dialog.dart';
@@ -160,14 +161,21 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               SafeArea(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(
-                    22,
-                    compact ? 14 : 24,
-                    22,
-                    compact ? 10 : 16,
+                    AppSpacing.md,
+                    Responsive.h(context, compact ? 0.015 : 0.025),
+                    AppSpacing.md,
+                    Responsive.h(context, compact ? 0.01 : 0.018),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.topCenter,
+                      child: SizedBox(
+                        width: constraints.maxWidth - (AppSpacing.md * 2),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
                       const SizedBox(height: 28),
                       Center(
                         child: Container(
@@ -405,7 +413,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           ],
                         ),
                       ),
-                    ],
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
