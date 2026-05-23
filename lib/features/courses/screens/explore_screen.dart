@@ -1,14 +1,47 @@
 import 'dart:async';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:provider/provider.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/cards/course_card_list.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/cards/shimmer_card.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../models/course_model.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../providers/course_provider.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -146,7 +179,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                           height: 1.1,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.xs),
                       Text(
                         'Gundua kozi yako inayofuata',
                         style: GoogleFonts.montserrat(
@@ -154,19 +187,19 @@ class _ExploreScreenState extends State<ExploreScreen>
                           color: Colors.white.withValues(alpha: 0.55),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.md),
                       // Search bar inside header
                       TextField(
                         controller: _searchController,
                         onChanged: _onSearchChanged,
                         style: GoogleFonts.montserrat(
-                          fontSize: 14,
+                          fontSize: AppTextStyles.bodyMedium.fontSize,
                           color: AppColors.textPrimary,
                         ),
                         decoration: InputDecoration(
                           hintText: 'Tafuta kozi yoyote...',
                           hintStyle: GoogleFonts.montserrat(
-                            fontSize: 14,
+                            fontSize: AppTextStyles.bodyMedium.fontSize,
                             color: AppColors.textHint,
                           ),
                           prefixIcon: const Icon(
@@ -250,7 +283,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                             child: Text(
                               isAll ? 'Zote' : provider.categories[i - 1].name,
                               style: GoogleFonts.montserrat(
-                                fontSize: 12,
+                                fontSize: AppTextStyles.bodySmall.fontSize,
                                 fontWeight: FontWeight.w600,
                                 color: isSelected
                                     ? Colors.white
@@ -310,7 +343,7 @@ class _ExploreScreenState extends State<ExploreScreen>
             child: provider.isLoading
                 ? ListView.builder(
                     itemCount: 6,
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(AppSpacing.lg),
                     itemBuilder: (_, __) => const Padding(
                       padding: EdgeInsets.only(bottom: 12),
                       child: ShimmerCard(width: double.infinity, height: 96),
@@ -326,7 +359,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                               size: 64,
                               color: AppColors.border,
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: AppSpacing.md),
                             Text(
                               'Kozi haikupatikana',
                               style: GoogleFonts.montserrat(
@@ -339,11 +372,11 @@ class _ExploreScreenState extends State<ExploreScreen>
                                     const Color(0xFF1A0A00),
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: AppSpacing.sm),
                             Text(
                               'Jaribu maneno mengine ya utafutaji',
                               style: GoogleFonts.montserrat(
-                                fontSize: 14,
+                                fontSize: AppTextStyles.bodyMedium.fontSize,
                                 color: AppColors.textTertiary,
                               ),
                             ),
@@ -450,7 +483,7 @@ class _ExploreCarouselState extends State<_ExploreCarousel> {
                   Text(
                     'Maarufu Sasa',
                     style: GoogleFonts.montserrat(
-                      fontSize: 16,
+                      fontSize: AppTextStyles.bodyLarge.fontSize,
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).textTheme.bodyLarge?.color ??
                           const Color(0xFF1A0A00),
@@ -459,7 +492,7 @@ class _ExploreCarouselState extends State<_ExploreCarousel> {
                   Text(
                     'Kozi zinazovuma',
                     style: GoogleFonts.montserrat(
-                      fontSize: 12,
+                      fontSize: AppTextStyles.bodySmall.fontSize,
                       color: AppColors.textTertiary,
                     ),
                   ),
@@ -471,7 +504,7 @@ class _ExploreCarouselState extends State<_ExploreCarousel> {
                 child: Text(
                   'Tazama Zote →',
                   style: GoogleFonts.montserrat(
-                    fontSize: 12,
+                    fontSize: AppTextStyles.bodySmall.fontSize,
                     fontWeight: FontWeight.w600,
                     color: AppColors.primary,
                   ),
@@ -516,7 +549,7 @@ class _ExploreCarouselState extends State<_ExploreCarousel> {
         Text(
           'Kozi Zote',
           style: GoogleFonts.montserrat(
-            fontSize: 16,
+            fontSize: AppTextStyles.bodyLarge.fontSize,
             fontWeight: FontWeight.w600,
             color: Theme.of(context).textTheme.bodyLarge?.color ??
                 const Color(0xFF1A0A00),
@@ -592,7 +625,7 @@ class _FeaturedCard extends StatelessWidget {
                           child: Text(
                             tag,
                             style: GoogleFonts.montserrat(
-                                fontSize: 10,
+                                fontSize: AppTextStyles.labelSmall.fontSize,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white,
                                 letterSpacing: 0.3),
@@ -611,7 +644,7 @@ class _FeaturedCard extends StatelessWidget {
                           child: Text(
                             course.formattedPrice,
                             style: GoogleFonts.montserrat(
-                                fontSize: 10,
+                                fontSize: AppTextStyles.labelSmall.fontSize,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.white),
                           ),
@@ -624,7 +657,7 @@ class _FeaturedCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.montserrat(
-                        fontSize: 17,
+                        fontSize: AppTextStyles.h3.fontSize,
                         height: 1.2,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
@@ -635,7 +668,7 @@ class _FeaturedCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.sm),
                     Row(
                       children: [
                         if (course.trainerAvatar != null) ...[
@@ -659,7 +692,7 @@ class _FeaturedCard extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.montserrat(
-                                fontSize: 11,
+                                fontSize: AppTextStyles.caption.fontSize,
                                 color: Colors.white.withValues(alpha: 0.8)),
                           ),
                         ),
@@ -672,7 +705,7 @@ class _FeaturedCard extends StatelessWidget {
                               ? course.averageRating.toStringAsFixed(1)
                               : 'Mpya',
                           style: GoogleFonts.montserrat(
-                              fontSize: 11,
+                              fontSize: AppTextStyles.caption.fontSize,
                               fontWeight: FontWeight.w600,
                               color: Colors.white.withValues(alpha: 0.85)),
                         ),

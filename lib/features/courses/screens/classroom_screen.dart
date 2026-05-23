@@ -1,11 +1,32 @@
 import 'dart:convert';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:provider/provider.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 import '../providers/course_provider.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 class ClassroomScreen extends StatefulWidget {
   final int courseId;
@@ -72,7 +93,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
               title: Text(
                 'Darasani',
                 style: GoogleFonts.montserrat(
-                  fontSize: 16,
+                  fontSize: AppTextStyles.bodyLarge.fontSize,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
@@ -80,7 +101,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             ),
             body: Center(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(AppSpacing.lg),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -95,7 +116,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                           'Hatukuweza kufungua darasa hili.',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.montserrat(
-                        fontSize: 14,
+                        fontSize: AppTextStyles.bodyMedium.fontSize,
                         color: const Color(0xFF5C3D2E),
                         height: 1.5,
                       ),
@@ -137,7 +158,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             title: Text(
               course.title.isNotEmpty ? course.title : 'Darasani',
               style: GoogleFonts.montserrat(
-                fontSize: 16,
+                fontSize: AppTextStyles.bodyLarge.fontSize,
                 fontWeight: FontWeight.w600,
                 color: Colors.white,
               ),
@@ -158,7 +179,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             children: [
               Container(
                 color: Theme.of(context).cardColor,
-                padding: const EdgeInsets.all(16),
+                padding: AppSpacing.cardPadding,
                 child: Row(
                   children: [
                     SizedBox(
@@ -178,7 +199,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                           Text(
                             '${(progress * 100).round()}%',
                             style: GoogleFonts.montserrat(
-                              fontSize: 12,
+                              fontSize: AppTextStyles.bodySmall.fontSize,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFFE87722),
                             ),
@@ -194,25 +215,25 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                           Text(
                             'Maendeleo Yako',
                             style: GoogleFonts.montserrat(
-                              fontSize: 12,
+                              fontSize: AppTextStyles.bodySmall.fontSize,
                               color: const Color(0xFF9E8070),
                             ),
                           ),
                           Text(
                             '$completedLessons / $totalLessons Masomo',
                             style: GoogleFonts.montserrat(
-                              fontSize: 15,
+                              fontSize: AppTextStyles.h4.fontSize,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF3D1800),
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AppSpacing.xs),
                           Text(
                             progress >= 1.0
                                 ? 'Kozi imekamilika!'
                                 : 'Endelea vizuri!',
                             style: GoogleFonts.montserrat(
-                              fontSize: 12,
+                              fontSize: AppTextStyles.bodySmall.fontSize,
                               color: progress >= 1.0
                                   ? const Color(0xFFE87722)
                                   : const Color(0xFF9E8070),
@@ -241,7 +262,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                   Text(
                                     'Umefaulu kozi hii!',
                                     style: GoogleFonts.montserrat(
-                                      fontSize: 12,
+                                      fontSize:
+                                          AppTextStyles.bodySmall.fontSize,
                                       color: Colors.green,
                                     ),
                                   ),
@@ -271,7 +293,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         child: Text(
                           'Cheti',
                           style: GoogleFonts.montserrat(
-                            fontSize: 12,
+                            fontSize: AppTextStyles.bodySmall.fontSize,
                             fontWeight: FontWeight.w600,
                             color: const Color(0xFFE87722),
                           ),
@@ -310,7 +332,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.sm),
                       ConstrainedBox(
                         constraints: const BoxConstraints(maxHeight: 210),
                         child: SingleChildScrollView(
@@ -381,7 +403,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                           child: Text(
                                             '${sectionIndex + 1}',
                                             style: GoogleFonts.montserrat(
-                                              fontSize: 12,
+                                              fontSize: AppTextStyles
+                                                  .bodySmall.fontSize,
                                               fontWeight: FontWeight.w700,
                                               color: Colors.white,
                                             ),
@@ -397,7 +420,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                             Text(
                                               section.title,
                                               style: GoogleFonts.montserrat(
-                                                fontSize: 14,
+                                                fontSize: AppTextStyles
+                                                    .bodyMedium.fontSize,
                                                 fontWeight: FontWeight.w600,
                                                 color: const Color(0xFF3D1800),
                                               ),
@@ -405,7 +429,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                             Text(
                                               '$completedInSection/${section.lessons.length} masomo',
                                               style: GoogleFonts.montserrat(
-                                                fontSize: 12,
+                                                fontSize: AppTextStyles
+                                                    .bodySmall.fontSize,
                                                 color: const Color(0xFF9E8070),
                                               ),
                                             ),
@@ -469,7 +494,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                               : Text(
                                                   '${lessonIndex + 1}',
                                                   style: GoogleFonts.montserrat(
-                                                    fontSize: 14,
+                                                    fontSize: AppTextStyles
+                                                        .bodyMedium.fontSize,
                                                     fontWeight: FontWeight.w700,
                                                     color:
                                                         const Color(0xFFE87722),
@@ -480,7 +506,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                       title: Text(
                                         lesson.title,
                                         style: GoogleFonts.montserrat(
-                                          fontSize: 14,
+                                          fontSize:
+                                              AppTextStyles.bodyMedium.fontSize,
                                           fontWeight: lesson.isRead
                                               ? FontWeight.w400
                                               : FontWeight.w600,
@@ -596,7 +623,7 @@ class _ClassroomAppBarPlaceholder extends StatelessWidget
       title: Text(
         'Darasani',
         style: GoogleFonts.montserrat(
-          fontSize: 16,
+          fontSize: AppTextStyles.bodyLarge.fontSize,
           fontWeight: FontWeight.w600,
           color: Colors.white,
         ),
@@ -630,7 +657,7 @@ class _EmptyClassroomState extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -646,13 +673,13 @@ class _EmptyClassroomState extends StatelessWidget {
                   : 'Masomo bado hayajaonekana hapa',
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
-                fontSize: 16,
+                fontSize: AppTextStyles.bodyLarge.fontSize,
                 fontWeight: FontWeight.w700,
                 color: Theme.of(context).textTheme.bodyLarge?.color ??
                     const Color(0xFF1A0A00),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               hasError
                   ? sectionsErrorMessage!
@@ -664,7 +691,7 @@ class _EmptyClassroomState extends StatelessWidget {
                 height: 1.5,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             OutlinedButton(
               onPressed: onRetry,
               style: OutlinedButton.styleFrom(

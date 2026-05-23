@@ -1,10 +1,28 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 class WishlistScreen extends StatefulWidget {
   const WishlistScreen({super.key});
@@ -64,7 +82,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
         title: Text(
           'Vipendwa Vyangu',
           style: GoogleFonts.montserrat(
-            fontSize: 17,
+            fontSize: AppTextStyles.h3.fontSize,
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
@@ -78,7 +96,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
               : _courses.isEmpty
                   ? _buildEmptyState(context)
                   : ListView.builder(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(AppSpacing.lg),
                       itemCount: _courses.length,
                       itemBuilder: (_, i) {
                         final course = _courses[i] as Map;
@@ -138,27 +156,30 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: GoogleFonts.montserrat(
-                                            fontSize: 14,
+                                            fontSize: AppTextStyles
+                                                .bodyMedium.fontSize,
                                             fontWeight: FontWeight.w600,
                                             color: const Color(0xFF3D1800),
                                           ),
                                         ),
-                                        const SizedBox(height: 4),
+                                        const SizedBox(height: AppSpacing.xs),
                                         Text(
                                           trainerName,
                                           style: GoogleFonts.montserrat(
-                                            fontSize: 12,
+                                            fontSize: AppTextStyles
+                                                .bodySmall.fontSize,
                                             color: const Color(0xFF9E8070),
                                           ),
                                         ),
-                                        const SizedBox(height: 8),
+                                        const SizedBox(height: AppSpacing.sm),
                                         Row(
                                           children: [
                                             Expanded(
                                               child: Text(
                                                 'Fungua maelezo ya kozi',
                                                 style: GoogleFonts.montserrat(
-                                                  fontSize: 11,
+                                                  fontSize: AppTextStyles
+                                                      .caption.fontSize,
                                                   color:
                                                       const Color(0xFFBDA99C),
                                                 ),
@@ -217,11 +238,11 @@ class _WishlistScreenState extends State<WishlistScreen> {
               color: const Color(0xFF1A0A00),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             'Tafuta kozi nzuri na uziweke hapa.',
             style: GoogleFonts.montserrat(
-              fontSize: 14,
+              fontSize: AppTextStyles.bodyMedium.fontSize,
               color: const Color(0xFF9E8070),
             ),
           ),

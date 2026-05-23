@@ -1,10 +1,28 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 class MyCoursesScreen extends StatefulWidget {
   const MyCoursesScreen({super.key});
@@ -54,7 +72,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
         title: Text(
           'Kozi Zangu',
           style: GoogleFonts.montserrat(
-            fontSize: 17,
+            fontSize: AppTextStyles.h3.fontSize,
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
@@ -68,7 +86,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
               : _courses.isEmpty
                   ? _buildEmptyState(context)
                   : ListView.builder(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(AppSpacing.lg),
                       itemCount: _courses.length,
                       itemBuilder: (_, i) {
                         final course = _courses[i] as Map;
@@ -132,7 +150,8 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: GoogleFonts.montserrat(
-                                            fontSize: 14,
+                                            fontSize: AppTextStyles
+                                                .bodyMedium.fontSize,
                                             fontWeight: FontWeight.w600,
                                             color: Theme.of(context)
                                                     .textTheme
@@ -141,15 +160,16 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                                                 const Color(0xFF1A0A00),
                                           ),
                                         ),
-                                        const SizedBox(height: 4),
+                                        const SizedBox(height: AppSpacing.xs),
                                         Text(
                                           trainerName,
                                           style: GoogleFonts.montserrat(
-                                            fontSize: 12,
+                                            fontSize: AppTextStyles
+                                                .bodySmall.fontSize,
                                             color: const Color(0xFF9E8070),
                                           ),
                                         ),
-                                        const SizedBox(height: 8),
+                                        const SizedBox(height: AppSpacing.sm),
                                         Row(
                                           children: [
                                             Expanded(
@@ -173,14 +193,15 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                                             Text(
                                               '$progress%',
                                               style: GoogleFonts.montserrat(
-                                                fontSize: 11,
+                                                fontSize: AppTextStyles
+                                                    .caption.fontSize,
                                                 fontWeight: FontWeight.w700,
                                                 color: const Color(0xFFE87722),
                                               ),
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 8),
+                                        const SizedBox(height: AppSpacing.sm),
                                         Row(
                                           children: [
                                             Container(
@@ -197,7 +218,8 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                                               child: Text(
                                                 'Imeandikishwa',
                                                 style: GoogleFonts.montserrat(
-                                                  fontSize: 10,
+                                                  fontSize: AppTextStyles
+                                                      .labelSmall.fontSize,
                                                   fontWeight: FontWeight.w700,
                                                   color: Colors.white,
                                                 ),
@@ -254,15 +276,15 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
                   const Color(0xFF1A0A00),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             'Tafuta kozi na uanze kujifunza.',
             style: GoogleFonts.montserrat(
-              fontSize: 14,
+              fontSize: AppTextStyles.bodyMedium.fontSize,
               color: const Color(0xFF9E8070),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: AppSpacing.lg),
           ElevatedButton(
             onPressed: () => context.go('/home'),
             style: ElevatedButton.styleFrom(

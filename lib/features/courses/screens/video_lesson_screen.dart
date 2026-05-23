@@ -1,11 +1,32 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:flutter/services.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:video_player/video_player.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 class VideoLessonScreen extends StatefulWidget {
   final int lessonId;
@@ -90,7 +111,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
           _lesson?['title'] ?? 'Somo',
           maxLines: 1,
           style: GoogleFonts.montserrat(
-            fontSize: 16,
+            fontSize: AppTextStyles.bodyLarge.fontSize,
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
@@ -143,7 +164,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                       Text(
                         'Somo la Maandishi',
                         style: GoogleFonts.montserrat(
-                          fontSize: 14,
+                          fontSize: AppTextStyles.bodyMedium.fontSize,
                           color: Colors.white.withValues(alpha: 0.6),
                         ),
                       ),
@@ -164,7 +185,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                 ),
               ),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(AppSpacing.lg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -178,7 +199,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.md),
                     Text(
                       _lesson?['title'] ?? '',
                       style: GoogleFonts.montserrat(
@@ -193,12 +214,12 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                       Text(
                         _lesson!['content'],
                         style: GoogleFonts.montserrat(
-                          fontSize: 14,
+                          fontSize: AppTextStyles.bodyMedium.fontSize,
                           color: const Color(0xFF5C3D2E),
                           height: 1.6,
                         ),
                       ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.lg),
                     if (!_isCompleted)
                       SizedBox(
                         width: double.infinity,
@@ -207,7 +228,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                           label: Text(
                             'Kamilisha Somo',
                             style: GoogleFonts.montserrat(
-                              fontSize: 15,
+                              fontSize: AppTextStyles.h4.fontSize,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -224,7 +245,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                       )
                     else
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: AppSpacing.cardPadding,
                         decoration: BoxDecoration(
                           color: const Color(0xFFF5E6D8),
                           borderRadius: BorderRadius.circular(14),
@@ -240,7 +261,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                             Text(
                               'Umekamilisha somo hili!',
                               style: GoogleFonts.montserrat(
-                                fontSize: 14,
+                                fontSize: AppTextStyles.bodyMedium.fontSize,
                                 fontWeight: FontWeight.w600,
                                 color: const Color(0xFFE87722),
                               ),
@@ -248,7 +269,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                           ],
                         ),
                       ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.md),
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(14),
@@ -278,7 +299,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AppSpacing.sm),
                           Text(
                             _lessonSummary(),
                             style: GoogleFonts.montserrat(
@@ -310,7 +331,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                               color: const Color(0xFF3D1800),
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AppSpacing.sm),
                           Text(
                             _isCompleted
                                 ? 'Somo limekamilika. Rudi darasani uendelee na somo linalofuata.'
@@ -324,7 +345,7 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: AppSpacing.xl),
                   ],
                 ),
               ),
@@ -586,7 +607,7 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
                                 _formatDuration(position),
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 11,
+                                  fontSize: AppTextStyles.caption.fontSize,
                                 ),
                               ),
                               const Spacer(),
@@ -594,7 +615,7 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
                                 _formatDuration(duration),
                                 style: const TextStyle(
                                   color: Colors.white70,
-                                  fontSize: 11,
+                                  fontSize: AppTextStyles.caption.fontSize,
                                 ),
                               ),
                               const SizedBox(width: 8),

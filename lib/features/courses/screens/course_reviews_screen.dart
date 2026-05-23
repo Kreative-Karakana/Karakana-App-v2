@@ -1,13 +1,40 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:provider/provider.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../providers/course_provider.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 class CourseReviewsScreen extends StatefulWidget {
   final int courseId;
@@ -95,7 +122,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               Text(
                 'Jibu Maoni',
                 style: GoogleFonts.montserrat(
@@ -112,7 +139,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                   color: Colors.grey.shade600,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               TextField(
                 controller: controller,
                 maxLines: 5,
@@ -132,7 +159,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -179,7 +206,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                               ? 'Hariri Jibu'
                               : 'Tuma Jibu',
                           style: GoogleFonts.montserrat(
-                              fontSize: 15, fontWeight: FontWeight.w600),
+                              fontSize: AppTextStyles.h4.fontSize,
+                              fontWeight: FontWeight.w600),
                         ),
                 ),
               ),
@@ -218,7 +246,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                           },
                     child: Text('Futa Jibu',
                         style: GoogleFonts.montserrat(
-                            fontSize: 15, fontWeight: FontWeight.w600)),
+                            fontSize: AppTextStyles.h4.fontSize,
+                            fontWeight: FontWeight.w600)),
                   ),
                 ),
               ],
@@ -298,7 +327,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               Text(
                 'Andika Tathmini',
                 style: GoogleFonts.montserrat(
@@ -307,7 +336,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                   color: const Color(0xFF3D1800),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
@@ -322,7 +351,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               TextField(
                 controller: _reviewController,
                 maxLines: 4,
@@ -343,7 +372,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -399,7 +428,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                       : Text(
                           'Tuma Tathmini',
                           style: GoogleFonts.montserrat(
-                            fontSize: 15,
+                            fontSize: AppTextStyles.h4.fontSize,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -431,7 +460,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
         title: Text(
           'Tathmini',
           style: GoogleFonts.montserrat(
-            fontSize: 17,
+            fontSize: AppTextStyles.h3.fontSize,
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
@@ -443,7 +472,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
               child: Text(
                 'Tathmini',
                 style: GoogleFonts.montserrat(
-                  fontSize: 14,
+                  fontSize: AppTextStyles.bodyMedium.fontSize,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFFE8A96A),
                 ),
@@ -456,7 +485,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
         children: [
           Container(
             color: Colors.white,
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Row(
               children: [
                 Column(
@@ -482,7 +511,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                     Text(
                       '${_reviews.length} Tathmini',
                       style: GoogleFonts.montserrat(
-                        fontSize: 12,
+                        fontSize: AppTextStyles.bodySmall.fontSize,
                         color: const Color(0xFF9E8070),
                       ),
                     ),
@@ -504,7 +533,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                             Text(
                               '$stars',
                               style: GoogleFonts.montserrat(
-                                fontSize: 12,
+                                fontSize: AppTextStyles.bodySmall.fontSize,
                                 color: const Color(0xFF5C3D2E),
                               ),
                             ),
@@ -534,7 +563,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                               child: Text(
                                 '$count',
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 11,
+                                  fontSize: AppTextStyles.caption.fontSize,
                                   color: const Color(0xFF9E8070),
                                 ),
                               ),
@@ -584,7 +613,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                         child: Text(
                           'Andika tathmini yako...',
                           style: GoogleFonts.montserrat(
-                            fontSize: 14,
+                            fontSize: AppTextStyles.bodyMedium.fontSize,
                             color: const Color(0xFFBDA99C),
                           ),
                         ),
@@ -609,7 +638,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                               size: 64,
                               color: Color(0xFFE8D5C8),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: AppSpacing.md),
                             Text(
                               'Hakuna Tathmini Bado',
                               style: GoogleFonts.montserrat(
@@ -618,11 +647,11 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                 color: const Color(0xFF1A0A00),
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: AppSpacing.sm),
                             Text(
                               'Kuwa wa kwanza kutoa tathmini!',
                               style: GoogleFonts.montserrat(
-                                fontSize: 14,
+                                fontSize: AppTextStyles.bodyMedium.fontSize,
                                 color: const Color(0xFF9E8070),
                               ),
                             ),
@@ -649,7 +678,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                               context.read<AuthProvider>().isTrainer;
                           return Container(
                             margin: const EdgeInsets.only(bottom: 16),
-                            padding: const EdgeInsets.all(16),
+                            padding: AppSpacing.cardPadding,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(14),
@@ -679,7 +708,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                               ? name[0].toUpperCase()
                                               : 'U',
                                           style: GoogleFonts.montserrat(
-                                            fontSize: 14,
+                                            fontSize: AppTextStyles
+                                                .bodyMedium.fontSize,
                                             fontWeight: FontWeight.w700,
                                             color: Colors.white,
                                           ),
@@ -695,7 +725,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                           Text(
                                             name.isEmpty ? 'Mwanafunzi' : name,
                                             style: GoogleFonts.montserrat(
-                                              fontSize: 14,
+                                              fontSize: AppTextStyles
+                                                  .bodyMedium.fontSize,
                                               fontWeight: FontWeight.w600,
                                               color: const Color(0xFF3D1800),
                                             ),
@@ -721,7 +752,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                 Text(
                                   content,
                                   style: GoogleFonts.montserrat(
-                                    fontSize: 14,
+                                    fontSize: AppTextStyles.bodyMedium.fontSize,
                                     color: const Color(0xFF5C3D2E),
                                     height: 1.5,
                                   ),
@@ -749,7 +780,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                             Text(
                                               'Jibu la Mkufunzi',
                                               style: GoogleFonts.montserrat(
-                                                fontSize: 12,
+                                                fontSize: AppTextStyles
+                                                    .bodySmall.fontSize,
                                                 fontWeight: FontWeight.w700,
                                                 color: const Color(0xFFE87722),
                                               ),

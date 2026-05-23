@@ -1,16 +1,52 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:intl/intl.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:printing/printing.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:provider/provider.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:share_plus/share_plus.dart' show Share;
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../utils/certificate_pdf_generator.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 class CourseCompleteScreen extends StatefulWidget {
   final int courseId;
@@ -96,7 +132,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
           child: Consumer<AuthProvider>(
             builder: (_, auth, __) => Column(
               children: [
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSpacing.xl),
                 // Trophy icon
                 Center(
                   child: Container(
@@ -120,7 +156,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.lg),
                 Text(
                   'Hongera!',
                   textAlign: TextAlign.center,
@@ -130,7 +166,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                     color: const Color(0xFF3D1800),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
                 Text(
                   'Umekamilisha kozi kwa mafanikio!',
                   textAlign: TextAlign.center,
@@ -145,16 +181,16 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                   widget.courseTitle,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
-                    fontSize: 15,
+                    fontSize: AppTextStyles.h4.fontSize,
                     color: const Color(0xFFE87722),
                     fontStyle: FontStyle.italic,
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSpacing.xl),
                 // Certificate preview card
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(AppSpacing.lg),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFFFFF8F4), Color(0xFFFFF0E6)],
@@ -189,7 +225,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                               child: Text(
                                 'K',
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 16,
+                                  fontSize: AppTextStyles.bodyLarge.fontSize,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.white,
                                 ),
@@ -203,7 +239,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                               Text(
                                 'KARAKANA',
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 12,
+                                  fontSize: AppTextStyles.bodySmall.fontSize,
                                   fontWeight: FontWeight.w700,
                                   color: const Color(0xFF3D1800),
                                   letterSpacing: 2,
@@ -212,7 +248,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                               Text(
                                 'Cheti cha Ukamilishaji',
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 10,
+                                  fontSize: AppTextStyles.labelSmall.fontSize,
                                   color: const Color(0xFF9E8070),
                                 ),
                               ),
@@ -220,11 +256,11 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.md),
                       Divider(
                         color: const Color(0xFFE87722).withValues(alpha: 0.3),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.md),
                       Text(
                         'Hii inathibitisha kwamba',
                         style: GoogleFonts.montserrat(
@@ -232,7 +268,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                           color: const Color(0xFF9E8070),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.sm),
                       Text(
                         auth.userFullName,
                         style: GoogleFonts.montserrat(
@@ -241,7 +277,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                           color: const Color(0xFF3D1800),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.sm),
                       Text(
                         'amekamilisha kwa mafanikio kozi ya',
                         style: GoogleFonts.montserrat(
@@ -249,17 +285,17 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                           color: const Color(0xFF9E8070),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.sm),
                       Text(
                         widget.courseTitle,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.montserrat(
-                          fontSize: 16,
+                          fontSize: AppTextStyles.bodyLarge.fontSize,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFFE87722),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.md),
                       Text(
                         'Cheti hiki kinatambua kujituma, uelewa wa kina, na uwezo wa kutumia maarifa ya kozi katika vitendo vya kazi na biashara.',
                         textAlign: TextAlign.center,
@@ -271,7 +307,8 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        _certificate != null && _certificate!['issued_at'] != null
+                        _certificate != null &&
+                                _certificate!['issued_at'] != null
                             ? DateFormat('d MMMM yyyy').format(
                                 DateTime.tryParse(
                                       _certificate!['issued_at'].toString(),
@@ -280,7 +317,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                               )
                             : DateFormat('d MMMM yyyy').format(DateTime.now()),
                         style: GoogleFonts.montserrat(
-                          fontSize: 12,
+                          fontSize: AppTextStyles.bodySmall.fontSize,
                           color: const Color(0xFF9E8070),
                         ),
                       ),
@@ -290,21 +327,21 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                         Text(
                           'No. ${_certificate!['certificate_number'].toString().toUpperCase().replaceAll('-', '').substring(0, 10)}',
                           style: GoogleFonts.montserrat(
-                            fontSize: 10,
+                            fontSize: AppTextStyles.labelSmall.fontSize,
                             letterSpacing: 1.5,
                             color: const Color(0xFF9E8070),
                           ),
                         ),
                       ],
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.md),
                       Divider(
                         color: const Color(0xFFE87722).withValues(alpha: 0.3),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.sm),
                       Text(
                         'Imetolewa na Kreative Karakana',
                         style: GoogleFonts.montserrat(
-                          fontSize: 11,
+                          fontSize: AppTextStyles.caption.fontSize,
                           color: const Color(0xFFBDA99C),
                         ),
                       ),
@@ -333,7 +370,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                               ? 'Inapakua...'
                               : 'Pakua Cheti (PDF)',
                       style: GoogleFonts.montserrat(
-                        fontSize: 16,
+                        fontSize: AppTextStyles.bodyLarge.fontSize,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -363,7 +400,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                     label: Text(
                       'Shiriki Mafanikio',
                       style: GoogleFonts.montserrat(
-                        fontSize: 14,
+                        fontSize: AppTextStyles.bodyMedium.fontSize,
                         fontWeight: FontWeight.w600,
                         color: const Color(0xFFE87722),
                       ),
@@ -376,7 +413,8 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       minimumSize: const Size(double.infinity, 52),
                     ),
                     onPressed: () async {
-                      final date = DateFormat('d MMMM yyyy').format(DateTime.now());
+                      final date =
+                          DateFormat('d MMMM yyyy').format(DateTime.now());
                       final text =
                           '🎓 Nimekamilisha kozi ya "${widget.courseTitle}" kwenye Karakana!\n\nTarehe: $date\n\n— ${auth.userFullName}\n\nPakua Karakana: https://kreativekarakana.co.tz';
                       await Share.share(
@@ -386,18 +424,18 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                     },
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.md),
                 TextButton(
                   onPressed: () => context.go('/home'),
                   child: Text(
                     'Rudi Nyumbani',
                     style: GoogleFonts.montserrat(
-                      fontSize: 14,
+                      fontSize: AppTextStyles.bodyMedium.fontSize,
                       color: const Color(0xFF9E8070),
                     ),
                   ),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: AppSpacing.xl),
               ],
             ),
           ),
@@ -406,5 +444,3 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
     );
   }
 }
-
-

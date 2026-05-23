@@ -1,18 +1,60 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'dart:io';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:intl/intl.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:provider/provider.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../payments/providers/iap_provider.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../models/course_model.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../providers/course_provider.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 class CourseDetailScreen extends StatefulWidget {
   final int courseId;
@@ -110,7 +152,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             body: Center(
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(AppSpacing.lg),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -119,12 +161,12 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       size: 48,
                       color: AppColors.primary,
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.md),
                     Text(
                       provider.errorMessage ?? 'Hatukuweza kupata kozi hii.',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.montserrat(
-                        fontSize: 14,
+                        fontSize: AppTextStyles.bodyMedium.fontSize,
                         color: AppColors.textSecondary,
                         height: 1.5,
                       ),
@@ -287,7 +329,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                               child: Text(
                                 course.formattedLevel,
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 10,
+                                  fontSize: AppTextStyles.labelSmall.fontSize,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),
@@ -307,7 +349,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                 child: Text(
                                   'BURE',
                                   style: GoogleFonts.montserrat(
-                                    fontSize: 10,
+                                    fontSize: AppTextStyles.labelSmall.fontSize,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.white,
                                   ),
@@ -348,7 +390,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           Text(
                             course.averageRating.toStringAsFixed(1),
                             style: GoogleFonts.montserrat(
-                              fontSize: 15,
+                              fontSize: AppTextStyles.h4.fontSize,
                               fontWeight: FontWeight.w700,
                               color: const Color(0xFF5C3D2E),
                             ),
@@ -377,7 +419,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.md),
                       Row(
                         children: [
                           ClipOval(
@@ -399,14 +441,14 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                               Text(
                                 'Mkufunzi',
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 11,
+                                  fontSize: AppTextStyles.caption.fontSize,
                                   color: const Color(0xFF9E8070),
                                 ),
                               ),
                               Text(
                                 course.trainerName,
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 14,
+                                  fontSize: AppTextStyles.bodyMedium.fontSize,
                                   fontWeight: FontWeight.w600,
                                   color: const Color(0xFF3D1800),
                                 ),
@@ -423,7 +465,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       ),
                       const SizedBox(height: 20),
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: AppSpacing.cardPadding,
                         decoration: BoxDecoration(
                           color: isDark
                               ? const Color(0xFF2A1A0A)
@@ -454,7 +496,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                   Text(
                                     '/ kozi mzima',
                                     style: GoogleFonts.montserrat(
-                                      fontSize: 12,
+                                      fontSize:
+                                          AppTextStyles.bodySmall.fontSize,
                                       color: const Color(0xFF9E8070),
                                     ),
                                   ),
@@ -470,25 +513,25 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AppSpacing.lg),
                       Text(
                         'Muhtasari',
                         style: GoogleFonts.montserrat(
-                          fontSize: 16,
+                          fontSize: AppTextStyles.bodyLarge.fontSize,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF3D1800),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.sm),
                       Text(
                         course.excerpt,
                         style: GoogleFonts.montserrat(
-                          fontSize: 14,
+                          fontSize: AppTextStyles.bodyMedium.fontSize,
                           color: const Color(0xFF5C3D2E),
                           height: 1.6,
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AppSpacing.lg),
                       _buildFaqSection(course.faqs, isDark),
                     ],
                   ),
@@ -522,7 +565,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       const SizedBox(height: 12),
                       if (!course.isEnrolled)
                         Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: AppSpacing.cardPadding,
                           margin: const EdgeInsets.only(bottom: 12),
                           decoration: BoxDecoration(
                             color: isDark
@@ -557,7 +600,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         )
                       else if (provider.sectionsErrorMessage != null)
                         Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: AppSpacing.cardPadding,
                           margin: const EdgeInsets.only(bottom: 12),
                           decoration: BoxDecoration(
                             color: isDark
@@ -595,20 +638,22 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                             color: const Color(0xFF3D1800),
                                           ),
                                         ),
-                                        const SizedBox(height: 4),
+                                        const SizedBox(height: AppSpacing.xs),
                                         Text(
                                           provider.sectionsErrorMessage!,
                                           style: GoogleFonts.montserrat(
-                                            fontSize: 12,
+                                            fontSize: AppTextStyles
+                                                .bodySmall.fontSize,
                                             color: const Color(0xFF5C3D2E),
                                             height: 1.5,
                                           ),
                                         ),
-                                        const SizedBox(height: 8),
+                                        const SizedBox(height: AppSpacing.sm),
                                         Text(
                                           'Jaribu kuingia tena au fungua ukurasa huu baada ya ruhusa za kozi kusasishwa.',
                                           style: GoogleFonts.montserrat(
-                                            fontSize: 12,
+                                            fontSize: AppTextStyles
+                                                .bodySmall.fontSize,
                                             color: const Color(0xFF9E8070),
                                             height: 1.5,
                                           ),
@@ -643,7 +688,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         )
                       else if (provider.sections.isEmpty)
                         Container(
-                          padding: const EdgeInsets.all(16),
+                          padding: AppSpacing.cardPadding,
                           margin: const EdgeInsets.only(bottom: 12),
                           decoration: BoxDecoration(
                             color: isDark
@@ -719,7 +764,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AppSpacing.sm),
                         ...provider.reviews.take(3).map(_buildReviewCard),
                       ],
                     ),
@@ -749,7 +794,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
           label: Text(
             'Endelea Kujifunza',
             style: GoogleFonts.montserrat(
-              fontSize: 16,
+              fontSize: AppTextStyles.bodyLarge.fontSize,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -799,7 +844,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
               : Text(
                   'Jiandikishe Bure',
                   style: GoogleFonts.montserrat(
-                    fontSize: 16,
+                    fontSize: AppTextStyles.bodyLarge.fontSize,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -826,7 +871,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
             child: Text(
               'Haipatikani kwenye iOS',
               style: GoogleFonts.montserrat(
-                fontSize: 16,
+                fontSize: AppTextStyles.bodyLarge.fontSize,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -860,7 +905,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
               : Text(
                   'Nunua Kozi • ${course.formattedPrice}',
                   style: GoogleFonts.montserrat(
-                    fontSize: 16,
+                    fontSize: AppTextStyles.bodyLarge.fontSize,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -891,7 +936,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
         child: Text(
           'Nunua Kozi • ${course.formattedPrice}',
           style: GoogleFonts.montserrat(
-            fontSize: 16,
+            fontSize: AppTextStyles.bodyLarge.fontSize,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -905,7 +950,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       title: Text(
         section.title,
         style: GoogleFonts.montserrat(
-          fontSize: 14,
+          fontSize: AppTextStyles.bodyMedium.fontSize,
           fontWeight: FontWeight.w600,
           color: const Color(0xFF3D1800),
         ),
@@ -913,7 +958,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       subtitle: Text(
         '${section.lessons.length} masomo',
         style: GoogleFonts.montserrat(
-          fontSize: 12,
+          fontSize: AppTextStyles.bodySmall.fontSize,
           color: const Color(0xFF9E8070),
         ),
       ),
@@ -1031,13 +1076,13 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
               Text(
                 _formatReviewDate(review.createdAt),
                 style: GoogleFonts.montserrat(
-                  fontSize: 11,
+                  fontSize: AppTextStyles.caption.fontSize,
                   color: const Color(0xFF9E8070),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             review.content,
             style: GoogleFonts.montserrat(
@@ -1047,7 +1092,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
             ),
           ),
           if (review.trainerReply != null) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -1068,7 +1113,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     child: Text(
                       review.trainerReply!,
                       style: GoogleFonts.montserrat(
-                        fontSize: 12,
+                        fontSize: AppTextStyles.bodySmall.fontSize,
                         color: const Color(0xFF5C3D2E),
                       ),
                     ),
@@ -1106,7 +1151,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
         child: Text(
           review.userName.isNotEmpty ? review.userName[0] : 'U',
           style: GoogleFonts.montserrat(
-            fontSize: 14,
+            fontSize: AppTextStyles.bodyMedium.fontSize,
             fontWeight: FontWeight.w700,
             color: const Color(0xFFE87722),
           ),
@@ -1156,7 +1201,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
         Text(
           'Maswali Yanayoulizwa Mara kwa Mara (FAQ)',
           style: GoogleFonts.montserrat(
-            fontSize: 16,
+            fontSize: AppTextStyles.bodyLarge.fontSize,
             fontWeight: FontWeight.w700,
             color: const Color(0xFF3D1800),
           ),

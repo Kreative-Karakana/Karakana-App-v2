@@ -1,13 +1,40 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import 'package:provider/provider.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/cards/course_card_list.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../models/course_model.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../providers/course_provider.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 /// Generic course list screen for recommended / popular / weekly / free /
 /// enrolled categories. Pass [listType] and [title] via GoRouter extra:
@@ -50,7 +77,7 @@ class CourseListScreen extends StatelessWidget {
         title: Text(
           title,
           style: GoogleFonts.montserrat(
-            fontSize: 17,
+            fontSize: AppTextStyles.h3.fontSize,
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),
@@ -70,7 +97,7 @@ class CourseListScreen extends StatelessWidget {
             return SingleChildScrollView(
               child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(32),
+                  padding: const EdgeInsets.all(AppSpacing.xl),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -79,16 +106,16 @@ class CourseListScreen extends StatelessWidget {
                         size: 64,
                         color: Color(0xFFE8D5C8),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.md),
                       Text(
                         'Hakuna kozi kwa sasa',
                         style: GoogleFonts.montserrat(
-                          fontSize: 16,
+                          fontSize: AppTextStyles.bodyLarge.fontSize,
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF3D1800),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.sm),
                       Text(
                         'Jaribu tena baadaye au tafuta kozi nyingine.',
                         textAlign: TextAlign.center,
