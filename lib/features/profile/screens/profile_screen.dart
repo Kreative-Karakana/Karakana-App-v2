@@ -23,20 +23,33 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final LocalAuthentication _localAuth = LocalAuthentication();
+  final ScrollController _scrollController = ScrollController();
   bool _biometricEnabled = false;
   bool _biometricAvailable = false;
   bool _biometricBusy = false;
   String _biometricLabel = 'Biometric';
+  bool _showPinnedTopBar = false;
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_handleScroll);
     _loadBiometricSettings();
   }
 
   @override
   void dispose() {
+    _scrollController.removeListener(_handleScroll);
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _handleScroll() {
+    if (!_scrollController.hasClients) return;
+    final shouldShow = _scrollController.offset > 8;
+    if (shouldShow != _showPinnedTopBar && mounted) {
+      setState(() => _showPinnedTopBar = shouldShow);
+    }
   }
 
   Future<void> _loadBiometricSettings() async {
@@ -236,67 +249,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: CustomScrollView(
+            controller: _scrollController,
             slivers: [
-              SliverAppBar(
-                pinned: true,
-                automaticallyImplyLeading: false,
-                backgroundColor: const Color(0xFF3D1800),
-                title: Text(
-                  'Akaunti',
-                  style: GoogleFonts.montserrat(
-                    fontSize: AppTextStyles.h3.fontSize,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+              if (_showPinnedTopBar)
+                SliverAppBar(
+                  pinned: true,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: const Color(0xFF3D1800),
+                  title: Text(
+                    'Akaunti',
+                    style: GoogleFonts.montserrat(
+                      fontSize: AppTextStyles.h3.fontSize,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                systemOverlayStyle: const SystemUiOverlayStyle(
-                  statusBarColor: Colors.transparent,
-                  statusBarIconBrightness: Brightness.light,
-                ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.logout, color: Colors.white),
-                    onPressed: () {
-                      showDialog<void>(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                          title: Text(
-                            'Toka',
-                            style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-                          ),
-                          content: Text(
-                            'Una uhakika unataka kutoka?',
-                            style: GoogleFonts.montserrat(),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(
-                                'Hapana',
-                                style: GoogleFonts.montserrat(color: const Color(0xFF9E8070)),
-                              ),
+                  systemOverlayStyle: const SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent,
+                    statusBarIconBrightness: Brightness.light,
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.logout, color: Colors.white),
+                      onPressed: () {
+                        showDialog<void>(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: Text(
+                              'Toka',
+                              style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
                             ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                context.read<AuthProvider>().logout();
-                                context.go('/login');
-                              },
-                              child: Text(
-                                'Ndiyo, Toka',
-                                style: GoogleFonts.montserrat(
-                                  color: const Color(0xFFB71C1C),
-                                  fontWeight: FontWeight.w600,
+                            content: Text(
+                              'Una uhakika unataka kutoka?',
+                              style: GoogleFonts.montserrat(),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text(
+                                  'Hapana',
+                                  style: GoogleFonts.montserrat(color: const Color(0xFF9E8070)),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  context.read<AuthProvider>().logout();
+                                  context.go('/login');
+                                },
+                                child: Text(
+                                  'Ndiyo, Toka',
+                                  style: GoogleFonts.montserrat(
+                                    color: const Color(0xFFB71C1C),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               SliverToBoxAdapter(
                 child: AnnotatedRegion<SystemUiOverlayStyle>(
                   value: const SystemUiOverlayStyle(
