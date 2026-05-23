@@ -124,240 +124,257 @@ class _HomeScreenState extends State<HomeScreen> {
               child: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
                 slivers: [
-                  SliverAppBar(
-                    expandedHeight: 232,
-                    toolbarHeight: 62,
-                    pinned: true,
-                    automaticallyImplyLeading: false,
-                    centerTitle: false,
-                    titleSpacing: 12,
-                    backgroundColor: AppColors.primaryDark,
-                    surfaceTintColor: Colors.transparent,
-                    title: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 34,
-                          height: 34,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(4),
-                            child: Image.asset(
-                              'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Center(
-                                child: Text(
-                                  'K',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          'Karakana',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 19,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    actions: [
-                      Consumer<ThemeProvider>(
-                        builder: (_, theme, __) => Container(
-                          margin: const EdgeInsets.only(right: 3),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            icon: Icon(
-                              theme.isDark
-                                  ? Icons.light_mode_outlined
-                                  : Icons.dark_mode_outlined,
-                              color: Colors.white,
-                              size: 19,
-                            ),
-                            onPressed: () => theme.toggleTheme(),
-                            padding: const EdgeInsets.all(5),
-                            constraints: const BoxConstraints(),
-                          ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0xFF2A1106),
+                            Color(0xFF5C2208),
+                            Color(0xFFB5540A)
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          stops: [0.0, 0.5, 1.0],
                         ),
                       ),
-                      Stack(
-                        clipBehavior: Clip.none,
+                      child: Stack(
+                        clipBehavior: Clip.hardEdge,
                         children: [
-                          Container(
-                            margin: const EdgeInsets.only(right: 3),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.notifications_outlined,
-                                color: Colors.white,
-                                size: 19,
+                          Positioned(
+                            top: -60,
+                            right: -40,
+                            child: Container(
+                              width: 240,
+                              height: 240,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white.withValues(alpha: 0.04),
                               ),
-                              onPressed: () async {
-                                await context
-                                    .read<NotificationProvider>()
-                                    .loadNotifications();
-                                if (!mounted) return;
-                                context.push('/notifications');
-                              },
-                              padding: const EdgeInsets.all(5),
-                              constraints: const BoxConstraints(),
                             ),
                           ),
-                          if (notifications.unreadCount > 0)
-                            Positioned(
-                              right: 1,
-                              top: -1,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 5, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFE53935),
-                                  borderRadius: BorderRadius.circular(999),
-                                  border: Border.all(
-                                      color: Colors.white, width: 1.2),
-                                ),
-                                constraints: const BoxConstraints(minWidth: 16),
-                                child: Text(
-                                  notifications.unreadCount > 99
-                                      ? '99+'
-                                      : '${notifications.unreadCount}',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
-                                    height: 1.1,
-                                  ),
-                                ),
+                          Positioned(
+                            top: 40,
+                            right: 60,
+                            child: Container(
+                              width: 80,
+                              height: 80,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.primary.withValues(alpha: 0.18),
                               ),
                             ),
-                        ],
-                      ),
-                      GestureDetector(
-                        onTap: () => context.go('/account'),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          margin: const EdgeInsets.only(right: 12),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: AppColors.primary, width: 1.6),
                           ),
-                          child: ClipOval(
-                            child: auth.userAvatar != null
-                                ? CachedNetworkImage(
-                                    imageUrl: auth.userAvatar!,
-                                    fit: BoxFit.cover,
-                                    width: 32,
-                                    height: 32,
-                                  )
-                                : Container(
-                                    color: AppColors.primary,
-                                    child: Center(
-                                      child: Text(
-                                        _getFirstName(auth).isNotEmpty
-                                            ? _getFirstName(auth)[0]
-                                                .toUpperCase()
-                                            : 'K',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: 12.5,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                          Positioned(
+                            bottom: -30,
+                            left: -30,
+                            child: Container(
+                              width: 160,
+                              height: 160,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white.withValues(alpha: 0.03),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(0xFF2A1106),
-                              Color(0xFF5C2208),
-                              Color(0xFFB5540A)
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            stops: [0.0, 0.5, 1.0],
-                          ),
-                        ),
-                        child: Stack(
-                          clipBehavior: Clip.hardEdge,
-                          children: [
-                            // Top-right large decorative circle
-                            Positioned(
-                              top: -60,
-                              right: -40,
-                              child: Container(
-                                width: 240,
-                                height: 240,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white.withValues(alpha: 0.04),
-                                ),
-                              ),
-                            ),
-                            // Mid-right accent circle
-                            Positioned(
-                              top: 40,
-                              right: 60,
-                              child: Container(
-                                width: 80,
-                                height: 80,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color:
-                                      AppColors.primary.withValues(alpha: 0.18),
-                                ),
-                              ),
-                            ),
-                            // Bottom-left decorative circle
-                            Positioned(
-                              bottom: -30,
-                              left: -30,
-                              child: Container(
-                                width: 160,
-                                height: 160,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white.withValues(alpha: 0.03),
-                                ),
-                              ),
-                            ),
-                            Padding(
+                          SafeArea(
+                            bottom: false,
+                            child: Padding(
                               padding: const EdgeInsets.fromLTRB(
-                                20,
-                                kToolbarHeight + AppSpacing.sm,
-                                20,
-                                10,
+                                AppSpacing.md,
+                                AppSpacing.sm,
+                                AppSpacing.md,
+                                AppSpacing.lg,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  // ── Time-aware greeting ──
+                                  Row(
+                                    children: [
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            width: 34,
+                                            height: 34,
+                                            decoration: const BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(4),
+                                              child: Image.asset(
+                                                'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (_, __, ___) =>
+                                                    Center(
+                                                  child: Text(
+                                                    'K',
+                                                    style: GoogleFonts.montserrat(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: AppColors.primary,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                            'Karakana',
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 19,
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const Spacer(),
+                                      Consumer<ThemeProvider>(
+                                        builder: (_, theme, __) => Container(
+                                          margin:
+                                              const EdgeInsets.only(right: 3),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white
+                                                .withValues(alpha: 0.1),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: IconButton(
+                                            icon: Icon(
+                                              theme.isDark
+                                                  ? Icons.light_mode_outlined
+                                                  : Icons.dark_mode_outlined,
+                                              color: Colors.white,
+                                              size: 19,
+                                            ),
+                                            onPressed: () =>
+                                                theme.toggleTheme(),
+                                            padding: const EdgeInsets.all(5),
+                                            constraints:
+                                                const BoxConstraints(),
+                                          ),
+                                        ),
+                                      ),
+                                      Stack(
+                                        clipBehavior: Clip.none,
+                                        children: [
+                                          Container(
+                                            margin:
+                                                const EdgeInsets.only(right: 3),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white
+                                                  .withValues(alpha: 0.1),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: IconButton(
+                                              icon: const Icon(
+                                                Icons.notifications_outlined,
+                                                color: Colors.white,
+                                                size: 19,
+                                              ),
+                                              onPressed: () async {
+                                                await context
+                                                    .read<NotificationProvider>()
+                                                    .loadNotifications();
+                                                if (!mounted) return;
+                                                context.push('/notifications');
+                                              },
+                                              padding:
+                                                  const EdgeInsets.all(5),
+                                              constraints:
+                                                  const BoxConstraints(),
+                                            ),
+                                          ),
+                                          if (notifications.unreadCount > 0)
+                                            Positioned(
+                                              right: 1,
+                                              top: -1,
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 5,
+                                                        vertical: 2),
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      const Color(0xFFE53935),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          999),
+                                                  border: Border.all(
+                                                      color: Colors.white,
+                                                      width: 1.2),
+                                                ),
+                                                constraints:
+                                                    const BoxConstraints(
+                                                        minWidth: 16),
+                                                child: Text(
+                                                  notifications.unreadCount > 99
+                                                      ? '99+'
+                                                      : '${notifications.unreadCount}',
+                                                  textAlign: TextAlign.center,
+                                                  style:
+                                                      GoogleFonts.montserrat(
+                                                    fontSize: 9,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Colors.white,
+                                                    height: 1.1,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                      GestureDetector(
+                                        onTap: () => context.go('/account'),
+                                        child: Container(
+                                          width: 32,
+                                          height: 32,
+                                          margin:
+                                              const EdgeInsets.only(right: 12),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                                color: AppColors.primary,
+                                                width: 1.6),
+                                          ),
+                                          child: ClipOval(
+                                            child: auth.userAvatar != null
+                                                ? CachedNetworkImage(
+                                                    imageUrl: auth.userAvatar!,
+                                                    fit: BoxFit.cover,
+                                                    width: 32,
+                                                    height: 32,
+                                                  )
+                                                : Container(
+                                                    color: AppColors.primary,
+                                                    child: Center(
+                                                      child: Text(
+                                                        _getFirstName(auth)
+                                                                .isNotEmpty
+                                                            ? _getFirstName(
+                                                                    auth)[0]
+                                                                .toUpperCase()
+                                                            : 'K',
+                                                        style: GoogleFonts
+                                                            .montserrat(
+                                                          fontSize: 12.5,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: AppSpacing.lg),
                                   Row(
                                     children: [
                                       Icon(
@@ -380,7 +397,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ],
                                   ),
                                   const SizedBox(height: AppSpacing.xs),
-                                  // ── Name ──
                                   Text(
                                     _getFirstName(auth),
                                     style: GoogleFonts.montserrat(
@@ -390,15 +406,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                       height: 1.1,
                                       shadows: [
                                         Shadow(
-                                            color: Colors.black
-                                                .withValues(alpha: 0.2),
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 2)),
+                                          color:
+                                              Colors.black.withValues(alpha: 0.2),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 2),
+                                        ),
                                       ],
                                     ),
                                   ),
                                   const SizedBox(height: AppSpacing.xs),
-                                  // ── Tagline ──
                                   Text(
                                     _getTagline(),
                                     style: GoogleFonts.montserrat(
@@ -408,8 +424,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       letterSpacing: 0.1,
                                     ),
                                   ),
-                                  const SizedBox(height: 14),
-                                  // ── Search bar ──
+                                  const SizedBox(height: AppSpacing.md),
                                   GestureDetector(
                                     onTap: () => context.push('/explore'),
                                     child: Container(
@@ -455,9 +470,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   BorderRadius.circular(10),
                                             ),
                                             child: const Icon(
-                                                Icons.tune_rounded,
-                                                color: Colors.white,
-                                                size: 15),
+                                              Icons.tune_rounded,
+                                              color: Colors.white,
+                                              size: 15,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -466,8 +482,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
