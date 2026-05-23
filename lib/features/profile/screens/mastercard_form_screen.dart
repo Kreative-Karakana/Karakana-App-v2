@@ -7,6 +7,8 @@ import 'package:dio/dio.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
 
 class MastercardFormScreen extends StatefulWidget {
@@ -182,50 +184,47 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Fomu ya Taarifa',
-          style: GoogleFonts.montserrat(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+          style: AppTextStyles.h3.copyWith(color: Colors.white),
         ),
         centerTitle: true,
       ),
       body: SafeArea(
           child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
+        padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg - AppSpacing.xs,
+            AppSpacing.lg,
+            AppSpacing.lg - AppSpacing.xs,
+            AppSpacing.xl + AppSpacing.sm),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Maboresho ya wasifu wa mtumiaji',
-              style: GoogleFonts.montserrat(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
+              style: AppTextStyles.h1.copyWith(
                 color: AppColors.textPrimary,
                 height: 1.2,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
 
             // Info banner
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.all(AppSpacing.md - AppSpacing.xs / 2),
               decoration: BoxDecoration(
                 color: AppColors.primaryLight,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Icon(Icons.info_outline,
                       color: AppColors.primary, size: 20),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: AppSpacing.sm + AppSpacing.xs / 2),
                   Expanded(
                     child: Text(
                       'Maelezo yako ni ya siri na yatatumika kwa madhumuni ya takwimu tu, ili tuweze kuboresha huduma zetu.',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 13,
+                      style: AppTextStyles.bodyMedium.copyWith(
                         color: AppColors.textPrimary,
                         height: 1.4,
                       ),
@@ -234,17 +233,16 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               'Tafadhali jaza maelezo yote kwa ukamilifu',
-              style: GoogleFonts.montserrat(
-                  fontSize: 13.5, color: Colors.grey.shade600),
+              style: AppTextStyles.bodyMedium.copyWith(color: Colors.grey.shade600),
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: AppSpacing.xl - AppSpacing.xs),
 
             // ── Location type ─────────────────────────────────────
             _sectionLabel('Aina ya makao yako'),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             DropdownButtonFormField<String>(
               value: _locationType,
               decoration: _inputDecoration(
@@ -256,11 +254,11 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                   .toList(),
               onChanged: (v) => setState(() => _locationType = v),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg),
 
             // ── Region ────────────────────────────────────────────
             _sectionLabel('Mkoa'),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             if (_loadingRegions)
               const Center(child: KarakanaWaveLoader(color: AppColors.primary))
             else
@@ -282,16 +280,15 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                   if (v != null) _loadDistricts(v);
                 },
               ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg),
 
             // ── District ──────────────────────────────────────────
             _sectionLabel('Wilaya'),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             if (_selectedRegionCode == null)
               Text(
                 'Chagua mkoa kwanza',
-                style: GoogleFonts.montserrat(
-                    fontSize: 13, color: Colors.grey.shade400),
+                style: AppTextStyles.bodyMedium.copyWith(color: Colors.grey.shade400),
               )
             else if (_loadingDistricts)
               const Center(child: KarakanaWaveLoader(color: AppColors.primary))
@@ -307,11 +304,11 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                     .toList(),
                 onChanged: (v) => setState(() => _selectedDistrictCode = v),
               ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg),
 
             // ── Education level ───────────────────────────────────
             _sectionLabel('Kiwango cha Elimu'),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             DropdownButtonFormField<String>(
               value: _educationLevel,
               decoration: _inputDecoration(
@@ -320,18 +317,18 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                   .map((o) => DropdownMenuItem(
                         value: o.value,
                         child: Text(o.label,
-                            style: GoogleFonts.montserrat(fontSize: 13)),
+                            style: AppTextStyles.bodyMedium),
                       ))
                   .toList(),
               onChanged: (v) => setState(() => _educationLevel = v),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg),
 
             // ── Switches ──────────────────────────────────────────
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(AppRadius.input),
                 border: Border.all(color: const Color(0xFFE8D5C8)),
               ),
               child: Column(
@@ -350,7 +347,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 36),
+            const SizedBox(height: AppSpacing.xl + AppSpacing.xs),
 
             // ── Submit button ─────────────────────────────────────
             SizedBox(
@@ -362,7 +359,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 54),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(28),
+                    borderRadius: BorderRadius.circular(AppRadius.button),
                   ),
                   elevation: 0,
                 ),
@@ -375,9 +372,8 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                       )
                     : Text(
                         'Wasilisha Fomu',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                        style: AppTextStyles.buttonLarge.copyWith(
+                          color: Colors.white,
                         ),
                       ),
               ),
@@ -390,31 +386,27 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
 
   Widget _sectionLabel(String text) => Text(
         text,
-        style: GoogleFonts.montserrat(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
-        ),
+        style: AppTextStyles.labelLarge.copyWith(color: AppColors.textPrimary),
       );
 
   InputDecoration _inputDecoration(String hint, IconData icon) =>
       InputDecoration(
         hintText: hint,
         hintStyle:
-            GoogleFonts.montserrat(fontSize: 13.5, color: Colors.grey.shade400),
+            AppTextStyles.bodyMedium.copyWith(color: Colors.grey.shade400),
         prefixIcon: Icon(icon, color: AppColors.primary, size: 20),
         filled: true,
         fillColor: Theme.of(context).cardColor,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppRadius.input),
           borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppRadius.input),
           borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppRadius.input),
           borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
       );
@@ -425,14 +417,14 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
     required ValueChanged<bool> onChanged,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.md - AppSpacing.xs / 2),
       child: Row(
         children: [
           Expanded(
             child: Text(
               label,
-              style: GoogleFonts.montserrat(
-                fontSize: 14,
+              style: AppTextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w500,
                 color: AppColors.textPrimary,
               ),
@@ -498,3 +490,5 @@ class _District {
   final String name;
   const _District({required this.code, required this.name});
 }
+
+

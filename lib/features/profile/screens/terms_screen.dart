@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 class TermsScreen extends StatefulWidget {
   const TermsScreen({super.key});
@@ -23,22 +24,18 @@ class _TermsScreenState extends State<TermsScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           isSw ? 'Masharti na Vigezo' : 'Terms & Conditions',
-          style: GoogleFonts.montserrat(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+          style: AppTextStyles.h3.copyWith(color: Colors.white),
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.only(right: AppSpacing.sm + AppSpacing.xs),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: _lang,
                 dropdownColor: const Color(0xFF3D1800),
                 icon: const Icon(Icons.language, color: Colors.white, size: 18),
                 style:
-                    GoogleFonts.montserrat(color: Colors.white, fontSize: 13),
+                    AppTextStyles.bodyMedium.copyWith(color: Colors.white),
                 items: const [
                   DropdownMenuItem(value: 'sw', child: Text('Kiswahili')),
                   DropdownMenuItem(value: 'en', child: Text('English')),
@@ -53,7 +50,8 @@ class _TermsScreenState extends State<TermsScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 48),
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.xxl),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             // Header
@@ -63,44 +61,35 @@ class _TermsScreenState extends State<TermsScreen> {
                   Text(
                     isSw ? 'Masharti na Vigezo' : 'Terms and Conditions',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF1A0A00),
-                    ),
+                    style: AppTextStyles.h1.copyWith(color: const Color(0xFF1A0A00)),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                   Text(
                     'Kreative Karakana',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFFE87722),
-                    ),
+                    style: AppTextStyles.h4.copyWith(color: const Color(0xFFE87722)),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                   Text(
                     isSw
                         ? 'Ilisasishwa: 12 Agosti 2025'
                         : 'Last Updated: 12 August 2025',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 13,
+                    style: AppTextStyles.bodyMedium.copyWith(
                       color: const Color(0xFF9E8070),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg),
             const Divider(color: Color(0xFFE8D5C8)),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg),
 
             // Intro paragraph
             _body(isSw
                 ? 'Kreative Karakana ("sisi", "yetu", "kutupatia") imejitolea kulinda faragha yako. Sera hii ya Faragha inaeleza jinsi tunavyokusanya, kutumia, kufichua, na kulinda taarifa unapotumia programu ya simu ya Karakana ("App"), ambayo hutoa mafunzo ya ujasiriamali yaliyolokalishwa, zana za vitendo za biashara, na huduma za kidijitali nafuu kwa MSME nchini Tanzania na kwingineko.'
                 : 'Kreative Karakana ("we", "our", "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard information when you use the Karakana mobile application ("App"), which provides localized entrepreneurship learning, practical business tools, and affordable digital services to MSMEs across Tanzania and beyond.'),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.lg),
             _section(
               isSw ? '1. Kukubaliana na Masharti' : '1. Acceptance of Terms',
               isSw
@@ -198,17 +187,17 @@ class _TermsScreenState extends State<TermsScreen> {
 
             // Section 15: Contact Us
             _sectionTitle(isSw ? '15. Wasiliana Nasi' : '15. Contact Us'),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             _body(isSw
                 ? 'Iwapo una maswali yoyote kuhusu Masharti na Vigezo hivi, tafadhali wasiliana nasi:'
                 : 'If you have any questions about these Terms and Conditions, please contact us:'),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.cardPadding,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
                 border: Border.all(color: const Color(0xFFE8D5C8)),
               ),
               child: Column(
@@ -217,25 +206,24 @@ class _TermsScreenState extends State<TermsScreen> {
                   _body(isSw
                       ? 'Barua Pepe: info@kreativekarakana.co.tz'
                       : 'Email: info@kreativekarakana.co.tz'),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
                   _body(isSw
                       ? 'Anuani: Sido (Mwemberadu), Kigamboni'
                       : 'Address: Sido (Mwemberadu), Kigamboni'),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                   _body('Dar-es-Salaam, Tanzania'),
                 ],
               ),
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.xl),
             const Divider(color: Color(0xFFE8D5C8)),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Center(
               child: Text(
                 '©️ 2025 Kreative Karakana. All Rights Reserved.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                  fontSize: 12,
+                style: AppTextStyles.bodySmall.copyWith(
                   color: const Color(0xFF9E8070),
                 ),
               ),
@@ -249,8 +237,7 @@ class _TermsScreenState extends State<TermsScreen> {
   Widget _sectionTitle(String text) {
     return Text(
       text,
-      style: GoogleFonts.montserrat(
-        fontSize: 16,
+      style: AppTextStyles.h4.copyWith(
         fontWeight: FontWeight.w700,
         color: const Color(0xFF3D1800),
       ),
@@ -260,8 +247,7 @@ class _TermsScreenState extends State<TermsScreen> {
   Widget _body(String text) {
     return Text(
       text,
-      style: GoogleFonts.montserrat(
-        fontSize: 14,
+      style: AppTextStyles.bodyMedium.copyWith(
         color: const Color(0xFF3D1800),
         height: 1.6,
       ),
@@ -270,15 +256,17 @@ class _TermsScreenState extends State<TermsScreen> {
 
   Widget _section(String title, String body) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _sectionTitle(title),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           _body(body),
         ],
       ),
     );
   }
 }
+
+

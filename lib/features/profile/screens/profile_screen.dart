@@ -7,6 +7,8 @@ import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../../../providers/theme_provider.dart';
 import '../../../widgets/common/top_popup.dart';
@@ -255,7 +257,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Text(
                         'Akaunti',
                         style: GoogleFonts.montserrat(
-                          fontSize: 18,
+                          fontSize: AppTextStyles.h3.fontSize,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
@@ -356,24 +358,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         SafeArea(
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+                            padding: const EdgeInsets.fromLTRB(AppSpacing.lg - AppSpacing.xs, AppSpacing.md - AppSpacing.xs / 2, AppSpacing.lg - AppSpacing.xs, 0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   'Akaunti',
                                   style: GoogleFonts.montserrat(
-                                    fontSize: 38,
+                                    fontSize: (AppTextStyles.displayLarge.fontSize ?? 32) + AppSpacing.sm / 2,
                                     fontWeight: FontWeight.w800,
                                     color: Colors.white,
                                     height: 1.0,
                                   ),
                                 ),
-                                const SizedBox(height: 6),
+                                const SizedBox(height: AppSpacing.sm - AppSpacing.xs / 2),
                                 Text(
                                   'Wasifu na Mipangilio Yako',
                                   style: GoogleFonts.montserrat(
-                                    fontSize: 13,
+                                    fontSize: AppTextStyles.bodyMedium.fontSize,
                                     color: Colors.white.withValues(alpha: 0.60),
                                     height: 1.35,
                                   ),
@@ -390,12 +392,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // Profile card
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(AppSpacing.lg - AppSpacing.xs, AppSpacing.md, AppSpacing.lg - AppSpacing.xs, 0),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg, horizontal: AppSpacing.lg - AppSpacing.xs),
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(AppRadius.cardLg),
                       boxShadow: [
                         BoxShadow(
                           color: const Color(0xFFE87722).withValues(alpha: 0.08),
@@ -447,7 +449,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 2),
+                              const SizedBox(height: AppSpacing.xs / 2),
                               Text(
                                 userEmail,
                                 style: GoogleFonts.montserrat(
@@ -457,12 +459,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: AppSpacing.sm),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm + AppSpacing.xs / 2, vertical: AppSpacing.xs),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFE87722).withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(AppRadius.cardLg),
                                   border: Border.all(
                                     color: const Color(0xFFE87722).withValues(alpha: 0.4),
                                   ),
@@ -486,7 +488,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(AppSpacing.lg - AppSpacing.xs, AppSpacing.md, AppSpacing.lg - AppSpacing.xs, 0),
                   child: Column(
                     children: [
                       _buildMenuGroup(
@@ -507,7 +509,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.md),
                       _buildMenuGroup(
                         'Akaunti',
                         [
@@ -532,7 +534,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.md),
                       _buildMenuGroup(
                         'Msaada',
                         [
@@ -556,7 +558,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.md),
                       Consumer<ThemeProvider>(
                         builder: (context, themeProvider, _) {
                           return _buildMenuGroup(
@@ -650,7 +652,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           );
                         },
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.md),
                       if (auth.isTrainer) ...[
                         _buildMenuGroup(
                           'Mkufunzi',
@@ -669,19 +671,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AppSpacing.md),
                       ] else ...[
                         GestureDetector(
                           onTap: () => context.push('/trainer/apply'),
                           child: Container(
-                            padding: const EdgeInsets.all(16),
+                            padding: AppSpacing.cardPadding,
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
                                 colors: [Color(0xFF1A0A00), Color(0xFF3D1800), Color(0xFF7B3A10)],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
-                              borderRadius: BorderRadius.circular(24),
+                              borderRadius: BorderRadius.circular(AppRadius.modal),
                               boxShadow: [
                                 BoxShadow(
                                   color: const Color(0xFF3D1800).withValues(alpha: 0.18),
@@ -697,7 +699,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   height: 56,
                                   decoration: BoxDecoration(
                                     color: Colors.white.withValues(alpha: 0.12),
-                                    borderRadius: BorderRadius.circular(16),
+                                    borderRadius: BorderRadius.circular(AppRadius.card),
                                   ),
                                   child: const Icon(Icons.school, color: Colors.white, size: 28),
                                 ),
@@ -729,7 +731,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: AppSpacing.md),
                       ],
                       const SizedBox(height: 24),
                       Row(
@@ -764,8 +766,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(color: Color(0xFFE8D5C8), width: 1.5),
                                 backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.input)),
+                                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md - AppSpacing.xs / 2),
                               ),
                             ),
                           ),
@@ -774,18 +776,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: OutlinedButton.icon(
                               onPressed: () => _deleteAccount(context, auth),
                               icon: const Icon(Icons.delete_forever_outlined, color: Colors.white, size: 18),
-                              label: Text('Futa Akaunti', style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
+                              label: Text('Futa Akaunti', style: GoogleFonts.montserrat(fontSize: AppTextStyles.bodyMedium.fontSize, fontWeight: FontWeight.w600, color: Colors.white)),
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(color: Color(0xFFB71C1C), width: 1.5),
                                 backgroundColor: const Color(0xFFB71C1C),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.input)),
+                                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md - AppSpacing.xs / 2),
                               ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: MediaQuery.of(context).padding.bottom + 24),
+                      SizedBox(height: MediaQuery.of(context).padding.bottom + AppSpacing.lg),
                     ],
                   ),
                 ),
@@ -799,10 +801,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _headerChip(IconData icon, String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm + AppSpacing.xs, vertical: AppSpacing.sm - 1),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppRadius.cardLg),
         border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
       ),
       child: Row(
@@ -832,7 +834,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       borderRadius: BorderRadius.circular(12),
       onTap: onTap,
       child: Ink(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm + AppSpacing.xs / 2, vertical: AppSpacing.sm + 1),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
@@ -880,7 +882,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         boxShadow: const [
           BoxShadow(
             color: Color(0x0FC4620A),
@@ -892,7 +894,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm + AppSpacing.xs, AppSpacing.md, AppSpacing.xs),
             child: Row(
               children: [
                 Text(
@@ -933,7 +935,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     VoidCallback? onTap,
   }) {
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      contentPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
       leading: Container(
         width: 36,
         height: 36,
@@ -968,4 +970,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+
+
+
 

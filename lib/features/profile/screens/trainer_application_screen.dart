@@ -8,6 +8,8 @@ import 'package:file_selector/file_selector.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
 
 class TrainerApplicationScreen extends StatefulWidget {
@@ -170,11 +172,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Omba Kuwa Mkufunzi',
-          style: GoogleFonts.montserrat(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+          style: AppTextStyles.h3.copyWith(color: Colors.white),
         ),
       ),
       body: SafeArea(
@@ -183,12 +181,12 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                   child: KarakanaWaveLoader(color: Color(0xFFE87722)),
                 )
               : SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
+                  padding: AppSpacing.sectionPadding,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(20),
+                        padding: AppSpacing.sectionPadding,
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [
@@ -199,7 +197,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
                           ),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(AppRadius.card),
                         ),
                         child: Row(
                           children: [
@@ -209,19 +207,13 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                 children: [
                                   Text(
                                     'Kuwa Mkufunzi Karakana',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
-                                    ),
+                                    style: AppTextStyles.h3.copyWith(color: Colors.white),
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: AppSpacing.sm),
                                   Text(
                                     'Shiriki ujuzi wako na upate kipato kwa kufundisha wengine.',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 13,
-                                      color:
-                                          Colors.white.withValues(alpha: 0.85),
+                                    style: AppTextStyles.bodyMedium.copyWith(
+                                      color: Colors.white.withValues(alpha: 0.85),
                                       height: 1.4,
                                     ),
                                   ),
@@ -236,7 +228,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 28),
+                      const SizedBox(height: AppSpacing.xl - AppSpacing.xs),
                       if (_profileData != null && !_isProfileComplete)
                         _buildProfileGate()
                       else if (_existingApplication != null)
@@ -254,7 +246,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                     ? 'Weka cheo chako'
                                     : null,
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: AppSpacing.md),
                               _buildField(
                                 'Wasifu wa Kitaaluma',
                                 _bioController,
@@ -264,14 +256,14 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                     ? 'Weka wasifu wako'
                                     : null,
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: AppSpacing.md),
                               _buildField(
                                 'Uzoefu wa Kufundisha',
                                 _experienceController,
                                 hint: 'Je, umewahi kufundisha kabla? Elezea...',
                                 maxLines: 3,
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: AppSpacing.md),
                               _buildField(
                                 'Kwa Nini Unataka Kufundisha?',
                                 _whyController,
@@ -281,7 +273,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                     ? 'Weka sababu yako'
                                     : null,
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: AppSpacing.md),
                               _buildField(
                                 'Mada za Kufundisha',
                                 _topicsController,
@@ -290,7 +282,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                     ? 'Weka mada zako'
                                     : null,
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: AppSpacing.md),
                               _buildField(
                                 'Nchi Unayoishi *',
                                 _countryController,
@@ -299,34 +291,31 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                     ? 'Weka nchi unayoishi'
                                     : null,
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: AppSpacing.md),
                               Text(
                                 'CV / Portfolio',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                                style: AppTextStyles.labelLarge.copyWith(
                                   color: AppColors.textPrimary,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: AppSpacing.xs),
                               Text(
                                 'Pakia CV yako kwa PDF ili tuweze kukutathmini vizuri zaidi.',
-                                style: GoogleFonts.inter(
-                                  fontSize: 12,
+                                style: AppTextStyles.bodySmall.copyWith(
                                   color: AppColors.textTertiary,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: AppSpacing.sm),
                               GestureDetector(
                                 onTap: _isPickingFile ? null : _pickCV,
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 200),
-                                  padding: const EdgeInsets.all(16),
+                                  padding: AppSpacing.cardPadding,
                                   decoration: BoxDecoration(
                                     color: _cvFile != null
                                         ? AppColors.successLight
                                         : Colors.white,
-                                    borderRadius: BorderRadius.circular(14),
+                                    borderRadius: BorderRadius.circular(AppRadius.input),
                                     border: Border.all(
                                       color: _cvFile != null
                                           ? AppColors.success
@@ -345,7 +334,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                                   .withValues(alpha: 0.1)
                                               : AppColors.primaryLight,
                                           borderRadius:
-                                              BorderRadius.circular(12),
+                                              BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
                                         ),
                                         child: _isPickingFile
                                             ? const Center(
@@ -381,20 +370,20 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                                       'Faili limechaguliwa')
                                                   : 'Pakia CV / Portfolio',
                                               style: GoogleFonts.inter(
-                                                fontSize: 14,
+                                                fontSize: AppTextStyles.bodyMedium.fontSize,
                                                 fontWeight: FontWeight.w600,
                                                 color: _cvFile != null
                                                     ? AppColors.success
                                                     : AppColors.textPrimary,
                                               ),
                                             ),
-                                            const SizedBox(height: 2),
+                                            const SizedBox(height: AppSpacing.xs / 2),
                                             Text(
                                               _cvFile != null
                                                   ? 'Bonyeza kubadilisha faili'
                                                   : 'PDF pekee (max 5MB)',
                                               style: GoogleFonts.inter(
-                                                fontSize: 11,
+                                                fontSize: AppTextStyles.caption.fontSize,
                                                 color: AppColors.textTertiary,
                                               ),
                                             ),
@@ -417,7 +406,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 28),
+                              const SizedBox(height: AppSpacing.xl - AppSpacing.xs),
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
@@ -427,7 +416,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                     minimumSize:
                                         const Size(double.infinity, 54),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(28),
+                                      borderRadius: BorderRadius.circular(AppRadius.button),
                                     ),
                                   ),
                                   onPressed:
@@ -443,9 +432,8 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                         )
                                       : Text(
                                           'Tuma Ombi',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
+                                          style: AppTextStyles.buttonLarge.copyWith(
+                                            color: Colors.white,
                                           ),
                                         ),
                                 ),
@@ -453,7 +441,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                             ],
                           ),
                         ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: AppSpacing.xl + AppSpacing.sm),
                     ],
                   ),
                 )),
@@ -474,10 +462,10 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
       ('Tarehe ya kuzaliwa', (p['date_of_birth'] as String? ?? '').isNotEmpty),
     ];
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: AppSpacing.sectionPadding,
       decoration: BoxDecoration(
         color: const Color(0xFFFFF0E6),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         border:
             Border.all(color: const Color(0xFFE87722).withValues(alpha: 0.4)),
       ),
@@ -487,18 +475,18 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
           const SizedBox(width: 8),
           Text('Kamili Wasifu Wako Kwanza',
               style: GoogleFonts.montserrat(
-                  fontSize: 15,
+                  fontSize: AppTextStyles.h4.fontSize,
                   fontWeight: FontWeight.w700,
                   color: const Color(0xFF3D1800))),
         ]),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         Text(
             'Kabla ya kuomba kuwa Mkufunzi, hakikisha wasifu wako umekamilika:',
             style: GoogleFonts.montserrat(
-                fontSize: 13, color: const Color(0xFF7B3A10), height: 1.4)),
-        const SizedBox(height: 16),
+                fontSize: AppTextStyles.bodyMedium.fontSize, color: const Color(0xFF7B3A10), height: 1.4)),
+        const SizedBox(height: AppSpacing.md),
         ...checks.map((check) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm + AppSpacing.xs / 2),
               child: Row(children: [
                 Icon(
                   check.$2 ? Icons.check_circle : Icons.radio_button_unchecked,
@@ -507,10 +495,10 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                       ? const Color(0xFFE87722)
                       : const Color(0xFFBDA99C),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: AppSpacing.sm + AppSpacing.xs / 2),
                 Text(check.$1,
                     style: GoogleFonts.montserrat(
-                        fontSize: 13,
+                        fontSize: AppTextStyles.bodyMedium.fontSize,
                         fontWeight:
                             check.$2 ? FontWeight.w500 : FontWeight.w400,
                         color: check.$2
@@ -518,7 +506,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                             : const Color(0xFF9E8070))),
               ]),
             )),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppSpacing.sm),
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
@@ -526,13 +514,13 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
             icon: const Icon(Icons.edit_outlined, size: 18),
             label: Text('Kamili Wasifu Wako',
                 style: GoogleFonts.montserrat(
-                    fontSize: 14, fontWeight: FontWeight.w600)),
+                    fontSize: AppTextStyles.buttonMedium.fontSize, fontWeight: FontWeight.w600)),
             style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFE87722),
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(28))),
+                    borderRadius: BorderRadius.circular(AppRadius.button))),
           ),
         ),
       ]),
@@ -563,30 +551,30 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
             : 'Ombi lako lipo kwenye uhakiki. Tutakujibu hivi karibuni.';
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: AppSpacing.sectionPadding,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         border: Border.all(color: color, width: 1.5),
       ),
       child: Column(
         children: [
           Icon(icon, color: color, size: 48),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
           Text(
             title,
             style: GoogleFonts.montserrat(
-              fontSize: 18,
+              fontSize: AppTextStyles.h3.fontSize,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF3D1800),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             message,
             textAlign: TextAlign.center,
             style: GoogleFonts.montserrat(
-              fontSize: 14,
+              fontSize: AppTextStyles.bodyMedium.fontSize,
               color: const Color(0xFF9E8070),
               height: 1.4,
             ),
@@ -613,18 +601,18 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
         filled: true,
         fillColor: Theme.of(context).cardColor,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppRadius.input),
           borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppRadius.input),
           borderSide: const BorderSide(
             color: Color(0xFFE87722),
             width: 1.5,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(AppRadius.input),
           borderSide: const BorderSide(
             color: Color(0xFFB71C1C),
             width: 1.5,

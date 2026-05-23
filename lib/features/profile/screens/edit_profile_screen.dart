@@ -13,6 +13,8 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 
@@ -101,7 +103,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       context: context,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.cardLg)),
       ),
       builder: (sheetContext) => Padding(
         padding: EdgeInsets.only(
@@ -111,29 +113,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
               Container(
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
                   color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.circular(AppSpacing.xs / 2),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               ListTile(
                 leading: const Icon(Icons.photo_library_outlined),
                 title: Text('Chagua kutoka Matunzio',
-                    style: GoogleFonts.montserrat(fontSize: 15)),
+                    style: AppTextStyles.h4),
                 onTap: () => Navigator.pop(context, ImageSource.gallery),
               ),
               ListTile(
                 leading: const Icon(Icons.camera_alt_outlined),
                 title: Text('Piga Picha',
-                    style: GoogleFonts.montserrat(fontSize: 15)),
+                    style: AppTextStyles.h4),
                 onTap: () => Navigator.pop(context, ImageSource.camera),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.sm),
             ],
           ),
         ),
@@ -277,11 +279,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Hariri Wasifu',
-          style: GoogleFonts.montserrat(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+          style: AppTextStyles.h3.copyWith(color: Colors.white),
         ),
         actions: [
           TextButton(
@@ -295,11 +293,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   )
                 : Text(
                     'Hifadhi',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
+                    style: AppTextStyles.buttonMedium.copyWith(color: Colors.white),
                   ),
           ),
         ],
@@ -322,29 +316,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
 
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.lg - AppSpacing.xs, AppSpacing.lg, AppSpacing.lg - AppSpacing.xs, AppSpacing.xl),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // ── Basic Info ────────────────────────────────────
                     _sectionLabel('Taarifa za Msingi'),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
                     _buildField('Jina la Kwanza', _firstNameController,
                         Icons.person_outline,
                         validator: (v) => v == null || v.isEmpty
                             ? 'Weka jina la kwanza'
                             : null),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
                     _buildField('Jina la Familia', _lastNameController,
                         Icons.person_outline,
                         validator: (v) => v == null || v.isEmpty
                             ? 'Weka jina la familia'
                             : null),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
                     _buildField('Maelezo Mafupi', _biographyController,
                         Icons.info_outline,
                         maxLines: 3),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
                     _buildField('Nambari ya Simu', _phoneController,
                         Icons.phone_outlined,
                         keyboardType: TextInputType.phone,
@@ -358,7 +352,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ? null
                           : 'Weka namba sahihi ya Tanzania (mfano: +255712345678)';
                     }),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
 
                     // Gender dropdown
                     DropdownButtonFormField<String>(
@@ -372,7 +366,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ],
                       onChanged: (v) => setState(() => _selectedGender = v),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
 
                     // Date of Birth
                     GestureDetector(
@@ -391,8 +385,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             Icons.cake_outlined,
                           ).copyWith(
                             hintText: 'Bonyeza kuchagua tarehe',
-                            hintStyle: GoogleFonts.montserrat(
-                              fontSize: 14,
+                            hintStyle: AppTextStyles.bodyMedium.copyWith(
                               color: Colors.grey.shade400,
                             ),
                             suffixIcon: const Icon(
@@ -406,9 +399,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
                     // ── Social Media (trainers only) ──────────────────
                     if (isTrainer) ...[
-                      const SizedBox(height: 28),
+                      const SizedBox(height: AppSpacing.xl - AppSpacing.xs),
                       _sectionLabel('Mitandao ya Kijamii'),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
                       _buildField(
                         'Facebook',
                         _facebookController,
@@ -417,7 +410,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         hint: 'https://facebook.com/jina-lako',
                         keyboardType: TextInputType.url,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
                       _buildField(
                         'Instagram',
                         _instagramController,
@@ -426,7 +419,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         hint: 'https://instagram.com/jina-lako',
                         keyboardType: TextInputType.url,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
                       _buildField(
                         'X (Twitter)',
                         _xController,
@@ -435,7 +428,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         hint: 'https://twitter.com/jina-lako',
                         keyboardType: TextInputType.url,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
                       _buildField(
                         'LinkedIn',
                         _linkedinController,
@@ -446,7 +439,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ],
 
-                    const SizedBox(height: 32),
+                    const SizedBox(height: AppSpacing.xl),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -456,7 +449,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           foregroundColor: Colors.white,
                           minimumSize: const Size(double.infinity, 54),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28),
+                            borderRadius: BorderRadius.circular(AppRadius.button),
                           ),
                         ),
                         child: _isSaving
@@ -468,9 +461,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               )
                             : Text(
                                 'Hifadhi Mabadiliko',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
+                                style: AppTextStyles.buttonLarge.copyWith(
+                                  color: Colors.white,
                                 ),
                               ),
                       ),
@@ -488,11 +480,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget _sectionLabel(String text) {
     return Text(
       text,
-      style: GoogleFonts.montserrat(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
+      style: AppTextStyles.labelLarge.copyWith(color: AppColors.textPrimary),
     );
   }
 
@@ -501,28 +489,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return InputDecoration(
       labelText: label,
       labelStyle:
-          GoogleFonts.montserrat(fontSize: 13, color: Colors.grey.shade600),
+          AppTextStyles.bodyMedium.copyWith(color: Colors.grey.shade600),
       prefixIcon: Icon(icon, color: iconColor ?? AppColors.primary, size: 20),
       filled: true,
       fillColor: Theme.of(context).cardColor,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.input),
         borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.input),
         borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.input),
         borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.input),
         borderSide: const BorderSide(color: AppColors.error, width: 1.5),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.input),
         borderSide: const BorderSide(color: AppColors.error, width: 1.5),
       ),
     );
@@ -543,11 +531,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       maxLines: maxLines,
       keyboardType: keyboardType,
       validator: validator,
-      style: GoogleFonts.montserrat(fontSize: 14, color: AppColors.textPrimary),
+      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
       decoration: _inputDecoration(label, icon, iconColor: iconColor).copyWith(
         hintText: hint,
         hintStyle:
-            GoogleFonts.montserrat(fontSize: 13, color: Colors.grey.shade400),
+            AppTextStyles.bodyMedium.copyWith(color: Colors.grey.shade400),
       ),
     );
   }
@@ -682,3 +670,4 @@ class _CoverAvatarHeader extends StatelessWidget {
     );
   }
 }
+
