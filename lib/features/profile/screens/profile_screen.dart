@@ -255,24 +255,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SliverAppBar(
                   pinned: true,
                   automaticallyImplyLeading: false,
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  backgroundColor: const Color(0xFF3D1800),
                   elevation: 0,
                   title: Text(
                     'Akaunti',
                     style: GoogleFonts.montserrat(
                       fontSize: AppTextStyles.h3.fontSize,
                       fontWeight: FontWeight.w600,
-                      color: Theme.of(context).textTheme.bodyLarge?.color ??
-                          const Color(0xFF1A0A00),
+                      color: Colors.white,
                     ),
                   ),
                   systemOverlayStyle: const SystemUiOverlayStyle(
                     statusBarColor: Colors.transparent,
-                    statusBarIconBrightness: Brightness.dark,
+                    statusBarIconBrightness: Brightness.light,
                   ),
                   actions: [
                     IconButton(
-                      icon: const Icon(Icons.logout, color: Color(0xFF1A0A00)),
+                      icon: const Icon(Icons.logout, color: Colors.white),
                       onPressed: () {
                         showDialog<void>(
                           context: context,
