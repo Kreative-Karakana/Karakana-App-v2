@@ -10,6 +10,7 @@ import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/responsive.dart';
 import '../../../widgets/cards/course_card_horizontal.dart';
 import '../../../widgets/cards/shimmer_card.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -111,19 +112,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        top: false,
-        child: Consumer3<CourseProvider, AuthProvider, NotificationProvider>(
-          builder: (context, courses, auth, notifications, _) {
-            return RefreshIndicator(
-              color: AppColors.primary,
-              onRefresh: () => context.read<CourseProvider>().loadHomeData(),
-              child: CustomScrollView(
-                physics: const BouncingScrollPhysics(),
-                slivers: [
+      body: Consumer3<CourseProvider, AuthProvider, NotificationProvider>(
+        builder: (context, courses, auth, notifications, _) {
+          return RefreshIndicator(
+            color: AppColors.primary,
+            onRefresh: () => context.read<CourseProvider>().loadHomeData(),
+            child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              slivers: [
                   SliverToBoxAdapter(
                     child: Container(
                       decoration: const BoxDecoration(
@@ -138,243 +136,183 @@ class _HomeScreenState extends State<HomeScreen> {
                           stops: [0.0, 0.5, 1.0],
                         ),
                       ),
-                      child: Stack(
-                        clipBehavior: Clip.hardEdge,
+                      padding: EdgeInsets.only(
+                        top: Responsive.topPadding(context) + AppSpacing.sm,
+                        left: AppSpacing.md,
+                        right: AppSpacing.md,
+                        bottom: AppSpacing.lg,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Positioned(
-                            top: -60,
-                            right: -40,
-                            child: Container(
-                              width: 240,
-                              height: 240,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white.withValues(alpha: 0.04),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 40,
-                            right: 60,
-                            child: Container(
-                              width: 80,
-                              height: 80,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppColors.primary.withValues(alpha: 0.18),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            bottom: -30,
-                            left: -30,
-                            child: Container(
-                              width: 160,
-                              height: 160,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white.withValues(alpha: 0.03),
-                              ),
-                            ),
-                          ),
-                          SafeArea(
-                            bottom: false,
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                AppSpacing.md,
-                                AppSpacing.sm,
-                                AppSpacing.md,
-                                AppSpacing.lg,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Container(
-                                            width: 34,
-                                            height: 34,
-                                            decoration: const BoxDecoration(
-                                              color: Colors.white,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(4),
-                                              child: Image.asset(
-                                                'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (_, __, ___) =>
-                                                    Center(
-                                                  child: Text(
-                                                    'K',
-                                                    style: GoogleFonts.montserrat(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color: AppColors.primary,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Text(
-                                            'Karakana',
+                                  Container(
+                                    width: 34,
+                                    height: 34,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4),
+                                      child: Image.asset(
+                                        'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, __, ___) => Center(
+                                          child: Text(
+                                            'K',
                                             style: GoogleFonts.montserrat(
-                                              fontSize: 19,
+                                              fontSize: 15,
                                               fontWeight: FontWeight.w700,
-                                              color: Colors.white,
+                                              color: AppColors.primary,
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      const Spacer(),
-                                      Consumer<ThemeProvider>(
-                                        builder: (_, theme, __) => Container(
-                                          margin:
-                                              const EdgeInsets.only(right: 3),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white
-                                                .withValues(alpha: 0.1),
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: IconButton(
-                                            icon: Icon(
-                                              theme.isDark
-                                                  ? Icons.light_mode_outlined
-                                                  : Icons.dark_mode_outlined,
-                                              color: Colors.white,
-                                              size: 19,
-                                            ),
-                                            onPressed: () =>
-                                                theme.toggleTheme(),
-                                            padding: const EdgeInsets.all(5),
-                                            constraints:
-                                                const BoxConstraints(),
                                           ),
                                         ),
                                       ),
-                                      Stack(
-                                        clipBehavior: Clip.none,
-                                        children: [
-                                          Container(
-                                            margin:
-                                                const EdgeInsets.only(right: 3),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    'Karakana',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 19,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Consumer<ThemeProvider>(
+                                    builder: (_, theme, __) => Container(
+                                      margin: const EdgeInsets.only(right: 3),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(alpha: 0.1),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: IconButton(
+                                        icon: Icon(
+                                          theme.isDark
+                                              ? Icons.light_mode_outlined
+                                              : Icons.dark_mode_outlined,
+                                          color: Colors.white,
+                                          size: 19,
+                                        ),
+                                        onPressed: () => theme.toggleTheme(),
+                                        padding: const EdgeInsets.all(5),
+                                        constraints: const BoxConstraints(),
+                                      ),
+                                    ),
+                                  ),
+                                  Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.only(right: 3),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withValues(alpha: 0.1),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: IconButton(
+                                          icon: const Icon(
+                                            Icons.notifications_outlined,
+                                            color: Colors.white,
+                                            size: 19,
+                                          ),
+                                          onPressed: () async {
+                                            await context
+                                                .read<NotificationProvider>()
+                                                .loadNotifications();
+                                            if (!mounted) return;
+                                            context.push('/notifications');
+                                          },
+                                          padding: const EdgeInsets.all(5),
+                                          constraints: const BoxConstraints(),
+                                        ),
+                                      ),
+                                      if (notifications.unreadCount > 0)
+                                        Positioned(
+                                          right: 1,
+                                          top: -1,
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 5, vertical: 2),
                                             decoration: BoxDecoration(
-                                              color: Colors.white
-                                                  .withValues(alpha: 0.1),
-                                              shape: BoxShape.circle,
+                                              color: const Color(0xFFE53935),
+                                              borderRadius:
+                                                  BorderRadius.circular(999),
+                                              border: Border.all(
+                                                  color: Colors.white, width: 1.2),
                                             ),
-                                            child: IconButton(
-                                              icon: const Icon(
-                                                Icons.notifications_outlined,
+                                            constraints:
+                                                const BoxConstraints(minWidth: 16),
+                                            child: Text(
+                                              notifications.unreadCount > 99
+                                                  ? '99+'
+                                                  : '${notifications.unreadCount}',
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.w700,
                                                 color: Colors.white,
-                                                size: 19,
-                                              ),
-                                              onPressed: () async {
-                                                await context
-                                                    .read<NotificationProvider>()
-                                                    .loadNotifications();
-                                                if (!mounted) return;
-                                                context.push('/notifications');
-                                              },
-                                              padding:
-                                                  const EdgeInsets.all(5),
-                                              constraints:
-                                                  const BoxConstraints(),
-                                            ),
-                                          ),
-                                          if (notifications.unreadCount > 0)
-                                            Positioned(
-                                              right: 1,
-                                              top: -1,
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 5,
-                                                        vertical: 2),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      const Color(0xFFE53935),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          999),
-                                                  border: Border.all(
-                                                      color: Colors.white,
-                                                      width: 1.2),
-                                                ),
-                                                constraints:
-                                                    const BoxConstraints(
-                                                        minWidth: 16),
-                                                child: Text(
-                                                  notifications.unreadCount > 99
-                                                      ? '99+'
-                                                      : '${notifications.unreadCount}',
-                                                  textAlign: TextAlign.center,
-                                                  style:
-                                                      GoogleFonts.montserrat(
-                                                    fontSize: 9,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Colors.white,
-                                                    height: 1.1,
-                                                  ),
-                                                ),
+                                                height: 1.1,
                                               ),
                                             ),
-                                        ],
-                                      ),
-                                      GestureDetector(
-                                        onTap: () => context.go('/account'),
-                                        child: Container(
-                                          width: 32,
-                                          height: 32,
-                                          margin:
-                                              const EdgeInsets.only(right: 12),
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                                color: AppColors.primary,
-                                                width: 1.6),
-                                          ),
-                                          child: ClipOval(
-                                            child: auth.userAvatar != null
-                                                ? CachedNetworkImage(
-                                                    imageUrl: auth.userAvatar!,
-                                                    fit: BoxFit.cover,
-                                                    width: 32,
-                                                    height: 32,
-                                                  )
-                                                : Container(
-                                                    color: AppColors.primary,
-                                                    child: Center(
-                                                      child: Text(
-                                                        _getFirstName(auth)
-                                                                .isNotEmpty
-                                                            ? _getFirstName(
-                                                                    auth)[0]
-                                                                .toUpperCase()
-                                                            : 'K',
-                                                        style: GoogleFonts
-                                                            .montserrat(
-                                                          fontSize: 12.5,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
                                           ),
                                         ),
-                                      ),
                                     ],
                                   ),
-                                  const SizedBox(height: AppSpacing.lg),
+                                  GestureDetector(
+                                    onTap: () => context.go('/account'),
+                                    child: Container(
+                                      width: 32,
+                                      height: 32,
+                                      margin: const EdgeInsets.only(right: 12),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            color: AppColors.primary, width: 1.6),
+                                      ),
+                                      child: ClipOval(
+                                        child: auth.userAvatar != null
+                                            ? CachedNetworkImage(
+                                                imageUrl: auth.userAvatar!,
+                                                fit: BoxFit.cover,
+                                                width: 32,
+                                                height: 32,
+                                              )
+                                            : Container(
+                                                color: AppColors.primary,
+                                                child: Center(
+                                                  child: Text(
+                                                    _getFirstName(auth).isNotEmpty
+                                                        ? _getFirstName(auth)[0]
+                                                            .toUpperCase()
+                                                        : 'K',
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      fontSize: 12.5,
+                                                      fontWeight: FontWeight.w700,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: Responsive.h(context, 0.03)),
                                   Row(
                                     children: [
                                       Icon(
@@ -396,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: AppSpacing.xs),
+                          const SizedBox(height: AppSpacing.xs),
                                   Text(
                                     _getFirstName(auth),
                                     style: GoogleFonts.montserrat(
@@ -414,7 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(height: AppSpacing.xs),
+                          const SizedBox(height: AppSpacing.xs),
                                   Text(
                                     _getTagline(),
                                     style: GoogleFonts.montserrat(
@@ -424,7 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       letterSpacing: 0.1,
                                     ),
                                   ),
-                                  const SizedBox(height: AppSpacing.md),
+                          const SizedBox(height: AppSpacing.md),
                                   GestureDetector(
                                     onTap: () => context.push('/explore'),
                                     child: Container(
@@ -479,10 +417,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                     ),
@@ -753,11 +687,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           MediaQuery.of(context).padding.bottom + AppSpacing.md,
                     ),
                   ),
-                ],
-              ),
-            );
-          },
-        ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
