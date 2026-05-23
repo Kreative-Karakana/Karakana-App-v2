@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
   const PaymentSuccessScreen({super.key});
@@ -12,14 +13,14 @@ class PaymentSuccessScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: AppSpacing.screenPadding,
           child: Column(
             children: [
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      const SizedBox(height: 40),
+                      const SizedBox(height: AppSpacing.xl + AppSpacing.sm),
                       Container(
                         width: 120,
                         height: 120,
@@ -33,33 +34,30 @@ class PaymentSuccessScreen extends StatelessWidget {
                           size: 64,
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AppSpacing.lg),
                       Text(
                         'Malipo Yamefanikiwa!',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
+                        style: AppTextStyles.h1.copyWith(
                           color: const Color(0xFF3D1800),
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
                       Text(
                         'Umeingia kwenye kozi yako. Anza kujifunza sasa hivi!',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
+                        style: AppTextStyles.h4.copyWith(
                           color: const Color(0xFF9E8070),
                           height: 1.5,
                         ),
                       ),
-                      const SizedBox(height: 32),
+                      const SizedBox(height: AppSpacing.xl),
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.all(20),
+                        padding: AppSpacing.sectionPadding,
                         decoration: BoxDecoration(
                           color: const Color(0xFFF5E6D8),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(AppRadius.card),
                           border: Border.all(color: const Color(0xFFE8D5C8)),
                         ),
                         child: Column(
@@ -69,24 +67,22 @@ class PaymentSuccessScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   'Hali',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 13,
+                                  style: AppTextStyles.bodyMedium.copyWith(
                                     color: const Color(0xFF9E8070),
                                   ),
                                 ),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 4,
+                                    horizontal: AppSpacing.sm + AppSpacing.xs / 2,
+                                    vertical: AppSpacing.xs,
                                   ),
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFE87722),
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
                                   ),
                                   child: Text(
                                     'Imefaulu',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 11,
+                                    style: AppTextStyles.caption.copyWith(
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white,
                                     ),
@@ -94,22 +90,20 @@ class PaymentSuccessScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   'Tarehe',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 13,
+                                  style: AppTextStyles.bodyMedium.copyWith(
                                     color: const Color(0xFF9E8070),
                                   ),
                                 ),
                                 Text(
                                   DateFormat('dd MMM yyyy')
                                       .format(DateTime.now()),
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 13,
+                                  style: AppTextStyles.bodyMedium.copyWith(
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFF3D1800),
                                   ),
@@ -119,7 +113,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AppSpacing.lg),
                     ],
                   ),
                 ),
@@ -130,34 +124,30 @@ class PaymentSuccessScreen extends StatelessWidget {
                   icon: const Icon(Icons.play_arrow_rounded),
                   label: Text(
                     'Anza Kujifunza',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTextStyles.buttonLarge.copyWith(color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFE87722),
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 54),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: BorderRadius.circular(AppRadius.button),
                     ),
                   ),
                   onPressed: () => context.go('/home'),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
               TextButton(
                 onPressed: () => context.go('/home'),
                 child: Text(
                   'Rudi Nyumbani',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 14,
+                  style: AppTextStyles.bodyMedium.copyWith(
                     color: const Color(0xFF9E8070),
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
             ],
           ),
         ),

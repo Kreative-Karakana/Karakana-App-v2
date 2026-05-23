@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
 
 class WalletScreen extends StatefulWidget {
@@ -69,14 +70,14 @@ class _WalletScreenState extends State<WalletScreen> {
       isScrollControlled: true,
       backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.modal)),
       ),
       builder: (_) => Padding(
         padding: EdgeInsets.fromLTRB(
-          24,
-          20,
-          24,
-          MediaQuery.of(context).viewInsets.bottom + 24,
+          AppSpacing.lg,
+          AppSpacing.lg,
+          AppSpacing.lg,
+          MediaQuery.of(context).viewInsets.bottom + AppSpacing.lg,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -86,19 +87,15 @@ class _WalletScreenState extends State<WalletScreen> {
               height: 4,
               decoration: BoxDecoration(
                 color: const Color(0xFFE8D5C8),
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: BorderRadius.circular(AppSpacing.xs / 2),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg),
             Text(
               'Omba Malipo',
-              style: GoogleFonts.montserrat(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF3D1800),
-              ),
+              style: AppTextStyles.h3.copyWith(color: const Color(0xFF3D1800)),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg),
             TextField(
               controller: _amountController,
               keyboardType: TextInputType.number,
@@ -111,11 +108,11 @@ class _WalletScreenState extends State<WalletScreen> {
                 filled: true,
                 fillColor: Theme.of(context).scaffoldBackgroundColor,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(AppRadius.input),
                   borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(AppRadius.input),
                   borderSide: const BorderSide(
                     color: Color(0xFFE87722),
                     width: 1.5,
@@ -123,7 +120,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
             TextField(
               controller: _remarkController,
               decoration: InputDecoration(
@@ -135,11 +132,11 @@ class _WalletScreenState extends State<WalletScreen> {
                 filled: true,
                 fillColor: Theme.of(context).scaffoldBackgroundColor,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(AppRadius.input),
                   borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(AppRadius.input),
                   borderSide: const BorderSide(
                     color: Color(0xFFE87722),
                     width: 1.5,
@@ -147,7 +144,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -156,7 +153,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 54),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(28),
+                    borderRadius: BorderRadius.circular(AppRadius.button),
                   ),
                 ),
                 onPressed: () async {
@@ -188,9 +185,8 @@ class _WalletScreenState extends State<WalletScreen> {
                 },
                 child: Text(
                   'Tuma Ombi',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
+                  style: AppTextStyles.buttonMedium.copyWith(
+                    color: Colors.white,
                   ),
                 ),
               ),
@@ -223,11 +219,11 @@ class _WalletScreenState extends State<WalletScreen> {
       formattedDate = date;
     }
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm + AppSpacing.xs / 2),
+      padding: const EdgeInsets.all(AppSpacing.md - AppSpacing.xs / 2),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
         boxShadow: [
           BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -243,7 +239,7 @@ class _WalletScreenState extends State<WalletScreen> {
             color: isSuccessful
                 ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8))
                 : const Color(0xFFFFA726).withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
           ),
           child: Icon(
             isSuccessful ? Icons.check_circle_outline : Icons.pending_outlined,
@@ -253,67 +249,64 @@ class _WalletScreenState extends State<WalletScreen> {
             size: 20,
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: AppSpacing.sm + AppSpacing.xs),
         Expanded(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(remark.isEmpty ? 'Ombi la Malipo' : remark,
-              style: GoogleFonts.montserrat(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF3D1800))),
+              style: AppTextStyles.bodyMedium.copyWith(
+                  fontWeight: FontWeight.w600, color: const Color(0xFF3D1800))),
           Row(children: [
             Text(formattedDate,
-                style: GoogleFonts.montserrat(
-                    fontSize: 11, color: const Color(0xFF9E8070))),
-            const SizedBox(width: 8),
+                style: AppTextStyles.caption.copyWith(color: const Color(0xFF9E8070))),
+            const SizedBox(width: AppSpacing.sm),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sm - AppSpacing.xs / 2,
+                vertical: AppSpacing.xs / 2,
+              ),
               decoration: BoxDecoration(
                 color: isSuccessful
                     ? const Color(0xFFE87722).withValues(alpha: 0.1)
                     : const Color(0xFFFFA726).withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(6),
+                borderRadius: BorderRadius.circular(AppSpacing.sm - AppSpacing.xs / 2),
               ),
               child: Text(isSuccessful ? 'Imekamilika' : 'Inasubiri',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w700,
+                  style: AppTextStyles.labelSmall.copyWith(
                       color: isSuccessful
                           ? const Color(0xFFE87722)
                           : const Color(0xFFFFA726))),
             ),
           ]),
         ])),
-        const SizedBox(width: 8),
+        const SizedBox(width: AppSpacing.sm),
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Text('TZS ${_formatPrice(amount)}',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
+              style: AppTextStyles.labelLarge.copyWith(
                   color: isSuccessful
                       ? const Color(0xFFE87722)
                       : const Color(0xFFFFA726))),
           if (isSuccessful && receiptUrl != null && receiptUrl.isNotEmpty) ...[
-            const SizedBox(height: 4),
+            const SizedBox(height: AppSpacing.xs),
             GestureDetector(
               onTap: () => _openReceipt(receiptUrl),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.xs - 1,
+                ),
                 decoration: BoxDecoration(
                   color: isDark
                       ? const Color(0xFF2A1A0A)
                       : const Color(0xFFF5E6D8),
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(AppSpacing.sm - AppSpacing.xs / 2),
                 ),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   const Icon(Icons.receipt_outlined,
                       size: 11, color: Color(0xFF7B3A10)),
-                  const SizedBox(width: 3),
+                  const SizedBox(width: AppSpacing.xs - 1),
                   Text('Risiti',
-                      style: GoogleFonts.montserrat(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
+                      style: AppTextStyles.labelSmall.copyWith(
                           color: const Color(0xFF7B3A10))),
                 ]),
               ),
@@ -328,16 +321,21 @@ class _WalletScreenState extends State<WalletScreen> {
     if (items.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(AppSpacing.xl),
           child: Text(emptyMessage,
-              style: GoogleFonts.montserrat(
-                  fontSize: 14, color: const Color(0xFF9E8070)),
+              style: AppTextStyles.bodyMedium.copyWith(
+                  color: const Color(0xFF9E8070)),
               textAlign: TextAlign.center),
         ),
       );
     }
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg - AppSpacing.xs,
+        AppSpacing.sm + AppSpacing.xs,
+        AppSpacing.lg - AppSpacing.xs,
+        AppSpacing.lg,
+      ),
       itemCount: items.length,
       itemBuilder: (_, i) => _buildCheckoutItem(items[i] as Map),
     );
@@ -372,13 +370,13 @@ class _WalletScreenState extends State<WalletScreen> {
             ),
           ),
           leading: Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(AppSpacing.sm + AppSpacing.xs / 2),
             child: GestureDetector(
               onTap: () => Navigator.pop(context),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
                 ),
                 child: const Icon(Icons.arrow_back_ios_new_rounded,
                     color: Colors.white, size: 16),
@@ -390,10 +388,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 color: Colors.white, size: 18),
             const SizedBox(width: 8),
             Text('Mkoba Wangu',
-                style: GoogleFonts.montserrat(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white)),
+                style: AppTextStyles.h3.copyWith(color: Colors.white)),
           ]),
           centerTitle: true,
         ),
@@ -404,10 +399,15 @@ class _WalletScreenState extends State<WalletScreen> {
                 : Column(children: [
                     // ── BALANCE CARD ──
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.lg - AppSpacing.xs,
+                        AppSpacing.md,
+                        AppSpacing.lg - AppSpacing.xs,
+                        AppSpacing.lg,
+                      ),
                       child: Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.all(24),
+                        padding: const EdgeInsets.all(AppSpacing.lg),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [
@@ -418,7 +418,7 @@ class _WalletScreenState extends State<WalletScreen> {
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(AppRadius.modal),
                           boxShadow: [
                             BoxShadow(
                                 color: const Color(0xFFE87722)
@@ -439,18 +439,15 @@ class _WalletScreenState extends State<WalletScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text('Salio Linalopatikana',
-                                              style: GoogleFonts.montserrat(
-                                                  fontSize: 12,
+                                              style: AppTextStyles.bodySmall.copyWith(
                                                   color: Colors.white
                                                       .withValues(alpha: 0.7))),
-                                          const SizedBox(height: 6),
+                                          const SizedBox(height: AppSpacing.sm - AppSpacing.xs / 2),
                                           Text(
                                             _balanceVisible
                                                 ? 'TZS ${_formatPrice(_wallet?['balance'] ?? 0)}'
                                                 : 'TZS ••••••',
-                                            style: GoogleFonts.montserrat(
-                                                fontSize: 28,
-                                                fontWeight: FontWeight.w700,
+                                            style: AppTextStyles.displayMedium.copyWith(
                                                 color: Colors.white),
                                           ),
                                         ]),
@@ -474,7 +471,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                       ),
                                     ),
                                   ]),
-                              const SizedBox(height: 24),
+                              const SizedBox(height: AppSpacing.lg),
                               Row(children: [
                                 Expanded(
                                     child: Column(
@@ -482,8 +479,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                       Text('Mapato Yote',
-                                          style: GoogleFonts.montserrat(
-                                              fontSize: 11,
+                                          style: AppTextStyles.caption.copyWith(
                                               color: Colors.white
                                                   .withValues(alpha: 0.6))),
                                       const SizedBox(height: 4),
@@ -491,8 +487,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                         _balanceVisible
                                             ? 'TZS ${_formatPrice(_wallet?['total_income'] ?? 0)}'
                                             : 'TZS ••••',
-                                        style: GoogleFonts.montserrat(
-                                            fontSize: 16,
+                                        style: AppTextStyles.buttonLarge.copyWith(
                                             fontWeight: FontWeight.w700,
                                             color: Colors.white),
                                       ),
@@ -503,14 +498,13 @@ class _WalletScreenState extends State<WalletScreen> {
                                     color: Colors.white.withValues(alpha: 0.2)),
                                 Expanded(
                                     child: Padding(
-                                  padding: const EdgeInsets.only(left: 16),
+                                  padding: const EdgeInsets.only(left: AppSpacing.md),
                                   child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text('Iliyotolewa',
-                                            style: GoogleFonts.montserrat(
-                                                fontSize: 11,
+                                            style: AppTextStyles.caption.copyWith(
                                                 color: Colors.white
                                                     .withValues(alpha: 0.6))),
                                         const SizedBox(height: 4),
@@ -518,15 +512,14 @@ class _WalletScreenState extends State<WalletScreen> {
                                           _balanceVisible
                                               ? 'TZS ${_formatPrice(_wallet?['total_disbursed'] ?? 0)}'
                                               : 'TZS ••••',
-                                          style: GoogleFonts.montserrat(
-                                              fontSize: 16,
+                                          style: AppTextStyles.buttonLarge.copyWith(
                                               fontWeight: FontWeight.w700,
                                               color: Colors.white),
                                         ),
                                       ]),
                                 )),
                               ]),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: AppSpacing.lg),
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
@@ -535,15 +528,13 @@ class _WalletScreenState extends State<WalletScreen> {
                                     foregroundColor: const Color(0xFFE87722),
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
-                                            BorderRadius.circular(12)),
+                                            BorderRadius.circular(AppSpacing.sm + AppSpacing.xs)),
                                     minimumSize:
                                         const Size(double.infinity, 48),
                                   ),
                                   onPressed: _showWithdrawSheet,
                                   child: Text('Omba Malipo',
-                                      style: GoogleFonts.montserrat(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
+                                      style: AppTextStyles.buttonMedium.copyWith(
                                           color: const Color(0xFFE87722))),
                                 ),
                               ),
@@ -553,24 +544,27 @@ class _WalletScreenState extends State<WalletScreen> {
 
                     // ── TAB BAR ──
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.lg - AppSpacing.xs,
+                        0,
+                        AppSpacing.lg - AppSpacing.xs,
+                        AppSpacing.sm,
+                      ),
                       child: Container(
                         decoration: BoxDecoration(
                           color: isDark
                               ? const Color(0xFF2A1A0A)
                               : const Color(0xFFF5E6D8),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
                         ),
                         child: TabBar(
                           indicator: BoxDecoration(
                             color: const Color(0xFFE87722),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
                           ),
                           indicatorSize: TabBarIndicatorSize.tab,
-                          labelStyle: GoogleFonts.montserrat(
-                              fontSize: 12, fontWeight: FontWeight.w600),
-                          unselectedLabelStyle:
-                              GoogleFonts.montserrat(fontSize: 12),
+                          labelStyle: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
+                          unselectedLabelStyle: AppTextStyles.bodySmall,
                           labelColor: Colors.white,
                           unselectedLabelColor: const Color(0xFF7B3A10),
                           dividerColor: Colors.transparent,

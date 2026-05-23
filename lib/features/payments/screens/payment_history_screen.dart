@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 
 class PaymentHistoryScreen extends StatefulWidget {
   const PaymentHistoryScreen({super.key});
@@ -60,11 +61,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Historia ya Malipo',
-          style: GoogleFonts.montserrat(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+          style: AppTextStyles.h3.copyWith(color: Colors.white),
         ),
       ),
       body: SafeArea(
@@ -75,7 +72,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
               : _payments.isEmpty
                   ? _buildEmptyState(context)
                   : ListView.builder(
-                      padding: const EdgeInsets.all(20),
+                      padding: AppSpacing.sectionPadding,
                       itemCount: _payments.length,
                       itemBuilder: (_, i) {
                         final payment = _payments[i] as Map;
@@ -99,11 +96,11 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                         final isDark =
                             Theme.of(context).brightness == Brightness.dark;
                         return Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.all(16),
+                          margin: const EdgeInsets.only(bottom: AppSpacing.sm + AppSpacing.xs),
+                          padding: AppSpacing.cardPadding,
                           decoration: BoxDecoration(
                             color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(AppRadius.input),
                             boxShadow: const [
                               BoxShadow(
                                 color: Color(0x08C4620A),
@@ -123,7 +120,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                           ? const Color(0xFF2A1A0A)
                                           : const Color(0xFFF5E6D8))
                                       : const Color(0xFFFFEBEE),
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
                                 ),
                                 child: Icon(
                                   isSuccessful
@@ -135,7 +132,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                   size: 24,
                                 ),
                               ),
-                              const SizedBox(width: 12),
+                              const SizedBox(width: AppSpacing.sm + AppSpacing.xs),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,41 +141,36 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                       courseTitle,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
+                                      style: AppTextStyles.labelLarge.copyWith(
                                         color: const Color(0xFF3D1800),
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
+                                    const SizedBox(height: AppSpacing.xs),
                                     Row(
                                       children: [
                                         Container(
                                           padding: const EdgeInsets.symmetric(
-                                            horizontal: 6,
-                                            vertical: 2,
+                                            horizontal: AppSpacing.sm - AppSpacing.xs / 2,
+                                            vertical: AppSpacing.xs / 2,
                                           ),
                                           decoration: BoxDecoration(
                                             color: isDark
                                                 ? const Color(0xFF2A1A0A)
                                                 : const Color(0xFFF5E6D8),
                                             borderRadius:
-                                                BorderRadius.circular(6),
+                                                BorderRadius.circular(AppSpacing.sm - AppSpacing.xs / 2),
                                           ),
                                           child: Text(
                                             method.toUpperCase(),
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: 9,
-                                              fontWeight: FontWeight.w700,
+                                            style: AppTextStyles.labelSmall.copyWith(
                                               color: const Color(0xFFE87722),
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(width: 8),
+                                        const SizedBox(width: AppSpacing.sm),
                                         Text(
                                           formattedDate,
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 12,
+                                          style: AppTextStyles.bodySmall.copyWith(
                                             color: const Color(0xFF9E8070),
                                           ),
                                         ),
@@ -192,17 +184,15 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                 children: [
                                   Text(
                                     _formatPrice(amount),
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
+                                    style: AppTextStyles.labelLarge.copyWith(
                                       color: const Color(0xFFE87722),
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
+                                  const SizedBox(height: AppSpacing.xs),
                                   Container(
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 3,
+                                      horizontal: AppSpacing.sm,
+                                      vertical: AppSpacing.xs - 1,
                                     ),
                                     decoration: BoxDecoration(
                                       color: isSuccessful
@@ -210,13 +200,11 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                               ? const Color(0xFF2A1A0A)
                                               : const Color(0xFFF5E6D8))
                                           : const Color(0xFFFFEBEE),
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
                                     ),
                                     child: Text(
                                       isSuccessful ? 'Imefaulu' : 'Imeshindwa',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w700,
+                                      style: AppTextStyles.labelSmall.copyWith(
                                         color: isSuccessful
                                             ? const Color(0xFFE87722)
                                             : const Color(0xFFB71C1C),
@@ -243,29 +231,27 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
             size: 48,
             color: Color(0xFFE87722),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.lg),
           Text(
             'Hakuna Historia ya Malipo',
-            style: GoogleFonts.montserrat(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+            style: AppTextStyles.h3.copyWith(
               color: Theme.of(context).textTheme.bodyLarge?.color ??
                   const Color(0xFF1A0A00),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
           ElevatedButton(
             onPressed: () => context.go('/home'),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFE87722),
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
+                borderRadius: BorderRadius.circular(AppRadius.button),
               ),
             ),
             child: Text(
               'Tafuta Kozi',
-              style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
+              style: AppTextStyles.buttonMedium.copyWith(color: Colors.white),
             ),
           ),
         ],

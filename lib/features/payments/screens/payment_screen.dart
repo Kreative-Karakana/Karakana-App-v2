@@ -8,6 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
 
 class PaymentScreen extends StatefulWidget {
@@ -70,26 +72,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.cardLg)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const KarakanaWaveLoader(size: 30),
-            const SizedBox(height: 18),
+            const SizedBox(height: AppSpacing.md + AppSpacing.xs / 2),
             Text(
               'Inashughulikia Malipo...',
-              style: GoogleFonts.montserrat(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF3D1800),
-              ),
+              style: AppTextStyles.h3.copyWith(color: const Color(0xFF3D1800)),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: AppSpacing.sm + AppSpacing.xs / 2),
             Text(
               'Thibitisha malipo kwenye simu yako.\nUsifunge programu hii.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
-                fontSize: 13,
+              style: AppTextStyles.bodyMedium.copyWith(
                 color: const Color(0xFF5C3D2E),
                 height: 1.5,
               ),
@@ -241,24 +238,20 @@ class _PaymentScreenState extends State<PaymentScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Lipia Kozi',
-          style: GoogleFonts.montserrat(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+          style: AppTextStyles.h3.copyWith(color: Colors.white),
         ),
       ),
       body: SafeArea(
           child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: AppSpacing.sectionPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.cardPadding,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(AppRadius.card),
                 boxShadow: const [
                   BoxShadow(
                     color: Color(0x14C4620A),
@@ -271,7 +264,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 children: [
                   if (widget.courseThumbnail != null)
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
                       child: CachedNetworkImage(
                         imageUrl: widget.courseThumbnail!,
                         width: 72,
@@ -282,7 +275,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     )
                   else
                     _thumbFallback(),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AppSpacing.sm + AppSpacing.xs),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,18 +284,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           widget.courseTitle,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                          style: AppTextStyles.labelLarge.copyWith(
                             color: const Color(0xFF3D1800),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AppSpacing.sm),
                         Text(
                           _formatPrice(widget.coursePrice),
-                          style: GoogleFonts.montserrat(
+                          style: AppTextStyles.price.copyWith(
                             fontSize: 18,
-                            fontWeight: FontWeight.w700,
                             color: const Color(0xFFE87722),
                           ),
                         ),
@@ -312,24 +302,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.lg),
             Text(
               'Chagua Njia ya Malipo',
-              style: GoogleFonts.montserrat(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF3D1800),
-              ),
+              style: AppTextStyles.h4.copyWith(color: const Color(0xFF3D1800)),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AppSpacing.xs),
             Text(
               'Tumia nambari yako ya simu kulipa',
-              style: GoogleFonts.montserrat(
-                fontSize: 13,
+              style: AppTextStyles.bodyMedium.copyWith(
                 color: const Color(0xFF9E8070),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             ...providers.map((provider) {
               final isSelected = _selectedProvider == provider['id'];
               final color = provider['color']! as Color;
@@ -339,11 +324,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.only(bottom: AppSpacing.sm + AppSpacing.xs / 2),
+                  padding: AppSpacing.cardPadding,
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(AppRadius.input),
                     border: Border.all(
                       color: isSelected ? color : const Color(0xFFE8D5C8),
                       width: isSelected ? 2 : 1,
@@ -365,7 +350,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         height: 48,
                         decoration: BoxDecoration(
                           color: color.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(6),
@@ -380,23 +365,20 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 14),
+                      const SizedBox(width: AppSpacing.md - AppSpacing.xs / 2),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               provider['name']! as String,
-                              style: GoogleFonts.montserrat(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
+                              style: AppTextStyles.h4.copyWith(
                                 color: const Color(0xFF3D1800),
                               ),
                             ),
                             Text(
                               'Lipa kwa ${provider['name']}',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 12,
+                              style: AppTextStyles.bodySmall.copyWith(
                                 color: const Color(0xFF9E8070),
                               ),
                             ),
@@ -427,7 +409,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               );
             }),
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 8),
+              margin: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
               height: 80,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -464,7 +446,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               size: 24,
                             ),
                           ),
-                          const SizedBox(width: 12),
+                              const SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -491,7 +473,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 6),
+                                horizontal: AppSpacing.sm + AppSpacing.xs / 2, vertical: AppSpacing.sm - AppSpacing.xs / 2),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
@@ -508,12 +490,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         ],
                       ),
                     ),
-                    Positioned(
-                      top: 4,
-                      right: 4,
+                            Positioned(
+                      top: AppSpacing.xs,
+                      right: AppSpacing.xs,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 4, vertical: 2),
+                            horizontal: AppSpacing.xs, vertical: AppSpacing.xs / 2),
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(4),
@@ -531,16 +513,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.lg),
             Text(
               'Nambari ya Simu',
-              style: GoogleFonts.montserrat(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF3D1800),
-              ),
+              style: AppTextStyles.h4.copyWith(color: const Color(0xFF3D1800)),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Row(
               children: [
                 Container(
@@ -554,68 +532,63 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   child: Center(
                     child: Text(
                       '+255',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
+                      style: AppTextStyles.h4.copyWith(
                         color: const Color(0xFF3D1800),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: TextField(
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
                     onChanged: (_) => setState(() {}),
-                    style: GoogleFonts.montserrat(
-                      fontSize: 15,
+                    style: AppTextStyles.h4.copyWith(
                       color: const Color(0xFF3D1800),
                     ),
                     decoration: InputDecoration(
                       hintText: '7XX XXX XXX',
-                      hintStyle: GoogleFonts.montserrat(
-                        fontSize: 14,
+                      hintStyle: AppTextStyles.bodyMedium.copyWith(
                         color: const Color(0xFFBDA99C),
                       ),
                       filled: true,
                       fillColor: const Color(0xFFFFF8F4),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(AppRadius.input),
                         borderSide: const BorderSide(
                           color: Color(0xFFE8D5C8),
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(AppRadius.input),
                         borderSide: const BorderSide(
                           color: Color(0xFFE87722),
                           width: 1.5,
                         ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 18,
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.md + AppSpacing.xs / 2,
                       ),
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               'Mfano: 0712345678 au 712345678',
-              style: GoogleFonts.montserrat(
-                fontSize: 11,
+              style: AppTextStyles.caption.copyWith(
                 color: const Color(0xFFBDA99C),
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.xl),
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: AppSpacing.sectionPadding,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(AppRadius.card),
                 border: Border.all(color: const Color(0xFFE8D5C8)),
               ),
               child: Column(
@@ -625,36 +598,32 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     children: [
                       Text(
                         'Jumla',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
+                        style: AppTextStyles.bodyMedium.copyWith(
                           color: const Color(0xFF9E8070),
                         ),
                       ),
                       Text(
                         _formatPrice(widget.coursePrice),
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
+                        style: AppTextStyles.buttonLarge.copyWith(
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFF3D1800),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         'Ada ya Malipo',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
+                        style: AppTextStyles.bodyMedium.copyWith(
                           color: const Color(0xFF9E8070),
                         ),
                       ),
                       Text(
                         'Bure',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
+                        style: AppTextStyles.bodyMedium.copyWith(
                           color: const Color(0xFFE87722),
                         ),
                       ),
@@ -669,17 +638,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     children: [
                       Text(
                         'Jumla ya Kulipa',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
+                        style: AppTextStyles.labelLarge.copyWith(
                           color: const Color(0xFF3D1800),
                         ),
                       ),
                       Text(
                         _formatPrice(widget.coursePrice),
-                        style: GoogleFonts.montserrat(
+                        style: AppTextStyles.price.copyWith(
                           fontSize: 18,
-                          fontWeight: FontWeight.w700,
                           color: const Color(0xFFE87722),
                         ),
                       ),
@@ -688,7 +654,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -697,7 +663,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 56),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(28),
+                    borderRadius: BorderRadius.circular(AppRadius.button),
                   ),
                   elevation: 0,
                 ),
@@ -717,14 +683,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       )
                     : Text(
                         'Lipa ${_formatPrice(widget.coursePrice)}',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                        style: AppTextStyles.buttonLarge.copyWith(
+                          color: Colors.white,
                         ),
                       ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -736,14 +701,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 const SizedBox(width: 6),
                 Text(
                   'Malipo Salama na Karakana',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 12,
+                  style: AppTextStyles.bodySmall.copyWith(
                     color: const Color(0xFF9E8070),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: AppSpacing.xl + AppSpacing.sm),
           ],
         ),
       )),
