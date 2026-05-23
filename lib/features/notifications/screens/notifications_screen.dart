@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../providers/notification_provider.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -32,11 +33,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Arifa',
-          style: GoogleFonts.montserrat(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+          style: AppTextStyles.h3.copyWith(color: Colors.white),
         ),
         actions: [
           Consumer<NotificationProvider>(
@@ -45,8 +42,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     onPressed: provider.markAllRead,
                     child: Text(
                       'Soma Zote',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 13,
+                      style: AppTextStyles.bodyMedium.copyWith(
                         color: Colors.white.withValues(alpha: 0.7),
                       ),
                     ),
@@ -67,7 +63,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             return _buildEmptyState();
           }
           return ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
             itemCount: provider.notifications.length,
             itemBuilder: (_, index) {
               final notif = provider.notifications[index];
@@ -79,7 +75,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         : const Color(0xFFF5E6D8).withValues(alpha: 0.5))
                     : Colors.transparent,
                 child: ListTile(
-                  contentPadding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+                  contentPadding: const EdgeInsets.fromLTRB(
+                    AppSpacing.lg - AppSpacing.xs,
+                    AppSpacing.sm,
+                    AppSpacing.lg - AppSpacing.xs,
+                    AppSpacing.sm,
+                  ),
                   leading: Container(
                     width: 50,
                     height: 50,
@@ -87,7 +88,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       color: isUnread
                           ? const Color(0xFFE87722).withValues(alpha: 0.14)
                           : const Color(0xFF9E8070).withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(AppRadius.input),
                       border: Border.all(
                         color: isUnread
                             ? const Color(0xFFE87722).withValues(alpha: 0.3)
@@ -104,8 +105,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ),
                   title: Text(
                     notif.title,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 14,
+                    style: AppTextStyles.bodyMedium.copyWith(
                       fontWeight: isUnread ? FontWeight.w600 : FontWeight.w400,
                       color: Theme.of(context).textTheme.bodyLarge?.color ??
                           const Color(0xFF1A0A00),
@@ -114,22 +114,20 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.xs),
                       Text(
                         notif.message,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 13,
+                        style: AppTextStyles.bodyMedium.copyWith(
                           color: const Color(0xFF9E8070),
                           height: 1.4,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.xs),
                       Text(
                         _timeAgo(notif.createdAt),
-                        style: GoogleFonts.montserrat(
-                          fontSize: 11,
+                        style: AppTextStyles.caption.copyWith(
                           color: const Color(0xFFBDA99C),
                         ),
                       ),
@@ -229,21 +227,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 color: Color(0xFFE87722),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg - AppSpacing.xs),
             Text(
               'Hakuna Arifa Bado',
-              style: GoogleFonts.montserrat(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+              style: AppTextStyles.h3.copyWith(
                 color: Theme.of(context).textTheme.bodyLarge?.color ??
                     const Color(0xFF1A0A00),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               'Arifa zako zitaonekana hapa.',
-              style: GoogleFonts.montserrat(
-                fontSize: 14,
+              style: AppTextStyles.bodyMedium.copyWith(
                 color: const Color(0xFF9E8070),
               ),
             ),

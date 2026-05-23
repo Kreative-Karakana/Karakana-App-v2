@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
 
 class SupportScreen extends StatefulWidget {
@@ -61,11 +63,7 @@ class _SupportScreenState extends State<SupportScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Msaada',
-          style: GoogleFonts.montserrat(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+          style: AppTextStyles.h3.copyWith(color: Colors.white),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -78,11 +76,7 @@ class _SupportScreenState extends State<SupportScreen> {
         icon: const Icon(Icons.add, color: Colors.white),
         label: Text(
           'Tiketi Mpya',
-          style: GoogleFonts.montserrat(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+          style: AppTextStyles.buttonMedium.copyWith(color: Colors.white),
         ),
       ),
       body: SafeArea(
@@ -90,18 +84,14 @@ class _SupportScreenState extends State<SupportScreen> {
         children: [
           Container(
             color: Theme.of(context).cardColor,
-            padding: const EdgeInsets.all(16),
+            padding: AppSpacing.cardPadding,
             child: Column(
               children: [
                 Text(
                   'Tunawezaje Kukusaidia?',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF3D1800),
-                  ),
+                  style: AppTextStyles.h4.copyWith(color: const Color(0xFF3D1800)),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
                 Row(
                   children: [
                     Expanded(
@@ -113,7 +103,7 @@ class _SupportScreenState extends State<SupportScreen> {
                         isDark: isDark,
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: AppSpacing.sm + AppSpacing.xs / 2),
                     Expanded(
                       child: _buildQuickHelp(
                         Icons.email_outlined,
@@ -124,7 +114,7 @@ class _SupportScreenState extends State<SupportScreen> {
                         isDark: isDark,
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: AppSpacing.sm + AppSpacing.xs / 2),
                     Expanded(
                       child: _buildQuickHelp(
                         Icons.add_comment_outlined,
@@ -146,14 +136,17 @@ class _SupportScreenState extends State<SupportScreen> {
               height: 1,
               color: isDark ? Colors.white10 : const Color(0xFFF0E4DA)),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg - AppSpacing.xs,
+              AppSpacing.md,
+              AppSpacing.lg - AppSpacing.xs,
+              AppSpacing.sm,
+            ),
             child: Row(
               children: [
                 Text(
                   'Tiketi Zangu',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
+                  style: AppTextStyles.h4.copyWith(
                     color: Theme.of(context).textTheme.bodyLarge?.color ??
                         const Color(0xFF1A0A00),
                   ),
@@ -161,8 +154,7 @@ class _SupportScreenState extends State<SupportScreen> {
                 const Spacer(),
                 Text(
                   '${_tickets.length} Tiketi',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 13,
+                  style: AppTextStyles.bodyMedium.copyWith(
                     color: const Color(0xFF9E8070),
                   ),
                 ),
@@ -186,7 +178,12 @@ class _SupportScreenState extends State<SupportScreen> {
                           await _loadTickets();
                         },
                         child: ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 80),
+                          padding: const EdgeInsets.fromLTRB(
+                            AppSpacing.lg - AppSpacing.xs,
+                            0,
+                            AppSpacing.lg - AppSpacing.xs,
+                            80,
+                          ),
                           itemCount: _tickets.length,
                           itemBuilder: (_, index) {
                             final ticket = _tickets[index];
@@ -205,11 +202,11 @@ class _SupportScreenState extends State<SupportScreen> {
                                 }
                               },
                               child: Container(
-                                margin: const EdgeInsets.only(bottom: 10),
-                                padding: const EdgeInsets.all(14),
+                                margin: const EdgeInsets.only(bottom: AppSpacing.sm + AppSpacing.xs / 2),
+                                padding: const EdgeInsets.all(AppSpacing.md - AppSpacing.xs / 2),
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
-                                  borderRadius: BorderRadius.circular(14),
+                                  borderRadius: BorderRadius.circular(AppRadius.input),
                                   boxShadow: const [
                                     BoxShadow(
                                       color: Color(0x0FC4620A),
@@ -227,7 +224,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                         color: isDark
                                             ? const Color(0xFF2A1A0A)
                                             : const Color(0xFFF5E6D8),
-                                        borderRadius: BorderRadius.circular(11),
+                                        borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs - 1),
                                       ),
                                       child: const Icon(
                                         Icons.support_agent_outlined,
@@ -235,7 +232,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                         size: 22,
                                       ),
                                     ),
-                                    const SizedBox(width: 12),
+                                    const SizedBox(width: AppSpacing.sm + AppSpacing.xs),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
@@ -244,18 +241,16 @@ class _SupportScreenState extends State<SupportScreen> {
                                           Text(
                                             'TKT-${ticketId.toString().padLeft(4, '0')}',
                                             style: GoogleFonts.montserrat(
-                                              fontSize: 11,
+                                              fontSize: AppTextStyles.caption.fontSize,
                                               color: const Color(0xFFBDA99C),
                                             ),
                                           ),
-                                          const SizedBox(height: 2),
+                                          const SizedBox(height: AppSpacing.xs / 2),
                                           Text(
                                             subject,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
+                                            style: AppTextStyles.labelLarge.copyWith(
                                               color: const Color(0xFF3D1800),
                                             ),
                                           ),
@@ -264,14 +259,14 @@ class _SupportScreenState extends State<SupportScreen> {
                                     ),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 4,
+                                        horizontal: AppSpacing.sm + AppSpacing.xs / 2,
+                                        vertical: AppSpacing.xs,
                                       ),
                                       decoration: BoxDecoration(
                                         color: isResolved
                                             ? const Color(0xFFF5E6D8)
                                             : const Color(0xFFFFF8F4),
-                                        borderRadius: BorderRadius.circular(10),
+                                        borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
                                         border: Border.all(
                                           color: isResolved
                                               ? const Color(0xFFE87722)
@@ -280,9 +275,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                       ),
                                       child: Text(
                                         isResolved ? 'Imemalizwa' : 'Wazi',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700,
+                                        style: AppTextStyles.labelSmall.copyWith(
                                           color: isResolved
                                               ? const Color(0xFFE87722)
                                               : const Color(0xFFE87722),
@@ -311,10 +304,10 @@ class _SupportScreenState extends State<SupportScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(AppSpacing.sm + AppSpacing.xs),
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
           border: Border.all(
               color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
         ),
@@ -322,12 +315,11 @@ class _SupportScreenState extends State<SupportScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, color: const Color(0xFFE87722), size: 24),
-            const SizedBox(height: 6),
+            const SizedBox(height: AppSpacing.sm - AppSpacing.xs / 2),
             Text(
               label,
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
-                fontSize: 11,
+              style: AppTextStyles.caption.copyWith(
                 color: const Color(0xFF5C3D2E),
                 height: 1.3,
               ),
@@ -357,21 +349,18 @@ class _SupportScreenState extends State<SupportScreen> {
               color: Color(0xFFE87722),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.lg - AppSpacing.xs),
           Text(
             'Hakuna Tiketi Bado',
-            style: GoogleFonts.montserrat(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+            style: AppTextStyles.h3.copyWith(
               color: Theme.of(context).textTheme.bodyLarge?.color ??
                   const Color(0xFF1A0A00),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             'Unda tiketi ili upate msaada.',
-            style: GoogleFonts.montserrat(
-              fontSize: 14,
+            style: AppTextStyles.bodyMedium.copyWith(
               color: const Color(0xFF9E8070),
             ),
           ),

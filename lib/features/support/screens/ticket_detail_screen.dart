@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
 
 class TicketDetailScreen extends StatefulWidget {
@@ -280,17 +282,18 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
 
   Widget _metaChip(String text) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm + AppSpacing.xs / 2,
+        vertical: AppSpacing.sm - AppSpacing.xs / 2,
+      ),
       decoration: BoxDecoration(
         color: const Color(0xFFFFF3EA),
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(AppRadius.circle),
         border: Border.all(color: const Color(0xFFF0D5C3)),
       ),
       child: Text(
         text,
-        style: GoogleFonts.montserrat(
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
+        style: AppTextStyles.labelSmall.copyWith(
           color: const Color(0xFF8C5D3D),
         ),
       ),
@@ -319,8 +322,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
         body: Center(
           child: Text(
             'Hatukuweza kufungua tiketi hii.',
-            style: GoogleFonts.montserrat(
-              fontSize: 14,
+            style: AppTextStyles.bodyMedium.copyWith(
               color: const Color(0xFF9E8070),
             ),
           ),
@@ -347,7 +349,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
             Text(
               'TKT-${widget.ticketId.toString().padLeft(4, '0')}',
               style: GoogleFonts.montserrat(
-                fontSize: 11,
+                fontSize: AppTextStyles.caption.fontSize,
                 color: Colors.white.withValues(alpha: 0.6),
               ),
             ),
@@ -355,11 +357,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               subject,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.montserrat(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
+              style: AppTextStyles.h4.copyWith(color: Colors.white),
             ),
           ],
         ),
@@ -368,34 +366,38 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
         children: [
           Container(
             color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg - AppSpacing.xs,
+              AppSpacing.sm + AppSpacing.xs,
+              AppSpacing.lg - AppSpacing.xs,
+              AppSpacing.sm + AppSpacing.xs,
+            ),
             child: Row(
               children: [
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.sm + AppSpacing.xs / 2, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF5E6D8),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
                   ),
                   child: Text(
                     'Msaada',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 11,
+                    style: AppTextStyles.caption.copyWith(
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFFE87722),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.sm + AppSpacing.xs / 2, vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
                     color: isResolved
                         ? const Color(0xFFF5E6D8)
                         : const Color(0xFFFFF8F4),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
                     border: Border.all(
                       color: isResolved
                           ? const Color(0xFFE87722)
@@ -404,9 +406,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   ),
                   child: Text(
                     isResolved ? 'Imemalizwa' : 'Wazi',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
+                    style: AppTextStyles.labelSmall.copyWith(
                       color: isResolved
                           ? const Color(0xFFE87722)
                           : const Color(0xFFE87722),
@@ -419,7 +419,12 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
           Container(
             width: double.infinity,
             color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg - AppSpacing.xs,
+              0,
+              AppSpacing.lg - AppSpacing.xs,
+              AppSpacing.sm + AppSpacing.xs,
+            ),
             child: Row(
               children: [
                 Expanded(
@@ -429,7 +434,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       foregroundColor: const Color(0xFFE87722),
                       side: const BorderSide(color: Color(0xFFE87722)),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
                       ),
                     ),
                     icon: _isUpdatingTicket
@@ -447,7 +452,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: AppSpacing.sm + AppSpacing.xs / 2),
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: _isUpdatingTicket ? null : _deleteTicket,
@@ -455,7 +460,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       foregroundColor: const Color(0xFFC62828),
                       side: const BorderSide(color: Color(0xFFC62828)),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
                       ),
                     ),
                     icon: const Icon(Icons.delete_outline, size: 18),
@@ -473,11 +478,16 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
           const Divider(height: 1, color: Color(0xFFF0E4DA)),
           Container(
             width: double.infinity,
-            margin: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.sm + AppSpacing.xs,
+              AppSpacing.md,
+              AppSpacing.sm,
+            ),
+            padding: const EdgeInsets.all(AppSpacing.sm + AppSpacing.xs),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(AppRadius.input),
               border: Border.all(color: const Color(0xFFF0E4DA)),
               boxShadow: [
                 BoxShadow(
@@ -497,11 +507,10 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       color: Color(0xFFE87722),
                       size: 18,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AppSpacing.sm),
                     Text(
                       'Muhtasari wa Tiketi',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 12,
+                      style: AppTextStyles.labelMedium.copyWith(
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF3D1800),
                       ),
@@ -509,22 +518,21 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   ],
                 ),
                 if (description.isNotEmpty) ...[
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
                   Text(
                     description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 12,
+                    style: AppTextStyles.bodySmall.copyWith(
                       height: 1.35,
                       color: const Color(0xFF6F5445),
                     ),
                   ),
                 ],
-                const SizedBox(height: 10),
+                const SizedBox(height: AppSpacing.sm + AppSpacing.xs / 2),
                 Wrap(
-                  spacing: 8,
-                  runSpacing: 6,
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm - AppSpacing.xs / 2,
                   children: [
                     _metaChip('Hali: $statusLabel'),
                     if (createdAt.isNotEmpty)
@@ -548,15 +556,14 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   ? Center(
                       child: Text(
                         'Hakuna ujumbe bado.',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 14,
+                        style: AppTextStyles.bodyMedium.copyWith(
                           color: const Color(0xFF9E8070),
                         ),
                       ),
                     )
                   : ListView.builder(
                       controller: _scrollController,
-                      padding: const EdgeInsets.all(16),
+                      padding: AppSpacing.cardPadding,
                       itemCount: _messages.length,
                       itemBuilder: (_, index) {
                         final msg = _messages[index];
@@ -606,8 +613,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                                 0.72,
                                       ),
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 14,
-                                        vertical: 10,
+                                        horizontal: AppSpacing.md - AppSpacing.xs / 2,
+                                        vertical: AppSpacing.sm + AppSpacing.xs / 2,
                                       ),
                                       decoration: BoxDecoration(
                                         color: isUser
@@ -638,17 +645,16 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                             Text(
                                               'Msaada wa Karakana',
                                               style: GoogleFonts.montserrat(
-                                                fontSize: 11,
+                                                fontSize: AppTextStyles.caption.fontSize,
                                                 fontWeight: FontWeight.w600,
                                                 color: const Color(0xFFE87722),
                                               ),
                                             ),
-                                            const SizedBox(height: 4),
+                                            const SizedBox(height: AppSpacing.xs),
                                           ],
                                           Text(
                                             msg['message'] as String? ?? '',
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: 14,
+                                            style: AppTextStyles.bodyMedium.copyWith(
                                               height: 1.4,
                                               color: isUser
                                                   ? Colors.white
@@ -673,7 +679,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                   child: Text(
                                     ts,
                                     style: GoogleFonts.montserrat(
-                                      fontSize: 10,
+                                      fontSize: AppTextStyles.labelSmall.fontSize,
                                       color: const Color(0xFFBDA99C),
                                     ),
                                   ),
@@ -688,7 +694,12 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
           if (!isResolved)
             Container(
               color: Colors.white,
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md,
+                AppSpacing.sm,
+                AppSpacing.md,
+                AppSpacing.md,
+              ),
               child: Row(
                 children: [
                   Expanded(
@@ -697,32 +708,31 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       maxLines: null,
                       decoration: InputDecoration(
                         hintText: 'Andika ujumbe...',
-                        hintStyle: GoogleFonts.montserrat(
-                          fontSize: 14,
+                        hintStyle: AppTextStyles.bodyMedium.copyWith(
                           color: const Color(0xFFBDA99C),
                         ),
                         filled: true,
                         fillColor: const Color(0xFFFFF8F4),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(AppRadius.modal),
                           borderSide:
                               const BorderSide(color: Color(0xFFE8D5C8)),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
+                          borderRadius: BorderRadius.circular(AppRadius.modal),
                           borderSide: const BorderSide(
                             color: Color(0xFFE87722),
                             width: 1.5,
                           ),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
+                          horizontal: AppSpacing.md,
+                          vertical: AppSpacing.sm + AppSpacing.xs / 2,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppSpacing.sm),
                   GestureDetector(
                     onTap: _isSending ? null : _sendMessage,
                     child: Container(
@@ -755,12 +765,11 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
           else
             Container(
               color: Colors.white,
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.cardPadding,
               child: Text(
                 'Tiketi hii imefungwa.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                  fontSize: 13,
+                style: AppTextStyles.bodyMedium.copyWith(
                   color: const Color(0xFFBDA99C),
                 ),
               ),

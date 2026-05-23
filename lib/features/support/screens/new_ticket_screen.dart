@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
 
 class NewTicketScreen extends StatefulWidget {
@@ -45,16 +46,12 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
         leading: const BackButton(color: Colors.white),
         title: Text(
           'Tiketi Mpya',
-          style: GoogleFonts.montserrat(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
+          style: AppTextStyles.h3.copyWith(color: Colors.white),
         ),
       ),
       body: SafeArea(
           child: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: AppSpacing.sectionPadding,
         child: Form(
           key: _formKey,
           child: Column(
@@ -62,16 +59,12 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
             children: [
               Text(
                 'Aina ya Tatizo',
-                style: GoogleFonts.montserrat(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF3D1800),
-                ),
+                style: AppTextStyles.h4.copyWith(color: const Color(0xFF3D1800)),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
               Wrap(
-                spacing: 8,
-                runSpacing: 8,
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
                 children: issueTypes.map((type) {
                   final isSelected = _selectedType == type[0];
                   return GestureDetector(
@@ -80,13 +73,13 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 8,
+                        horizontal: AppSpacing.md - AppSpacing.xs / 2,
+                        vertical: AppSpacing.sm,
                       ),
                       decoration: BoxDecoration(
                         color:
                             isSelected ? const Color(0xFFE87722) : Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(AppRadius.chip),
                         border: Border.all(
                           color: isSelected
                               ? const Color(0xFFE87722)
@@ -103,11 +96,10 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                                 ? Colors.white
                                 : const Color(0xFF9E8070),
                           ),
-                          const SizedBox(width: 6),
+                          const SizedBox(width: AppSpacing.sm - AppSpacing.xs / 2),
                           Text(
                             type[1] as String,
-                            style: GoogleFonts.montserrat(
-                              fontSize: 13,
+                            style: AppTextStyles.bodyMedium.copyWith(
                               fontWeight: FontWeight.w600,
                               color: isSelected
                                   ? Colors.white
@@ -120,7 +112,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSpacing.lg - AppSpacing.xs),
               TextFormField(
                 controller: _subjectController,
                 decoration: InputDecoration(
@@ -129,11 +121,11 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                   filled: true,
                   fillColor: Theme.of(context).cardColor,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(AppRadius.input),
                     borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(AppRadius.input),
                     borderSide: const BorderSide(
                       color: Color(0xFFE87722),
                       width: 1.5,
@@ -143,7 +135,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                 validator: (v) =>
                     v == null || v.isEmpty ? 'Weka mada ya tiketi' : null,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               TextFormField(
                 controller: _messageController,
                 maxLines: 6,
@@ -153,11 +145,11 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                   filled: true,
                   fillColor: Theme.of(context).cardColor,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(AppRadius.input),
                     borderSide: const BorderSide(color: Color(0xFFE8D5C8)),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(AppRadius.input),
                     borderSide: const BorderSide(
                       color: Color(0xFFE87722),
                       width: 1.5,
@@ -166,7 +158,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                 ),
                 validator: (v) => v == null || v.isEmpty ? 'Weka ujumbe' : null,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.lg),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -175,7 +167,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 54),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: BorderRadius.circular(AppRadius.button),
                     ),
                   ),
                   onPressed: _isSubmitting ? null : _submitTicket,
@@ -190,14 +182,13 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                         )
                       : Text(
                           'Tuma Tiketi',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                          style: AppTextStyles.buttonLarge.copyWith(
+                            color: Colors.white,
                           ),
                         ),
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: AppSpacing.xl),
             ],
           ),
         ),
