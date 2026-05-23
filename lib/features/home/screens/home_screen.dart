@@ -380,85 +380,102 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   const SizedBox(height: AppSpacing.xs),
                                   // ── Name ──
-                                  Text(
-                                    _getFirstName(auth),
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.w800,
-                                      color: Colors.white,
-                                      height: 1.1,
-                                      shadows: [
-                                        Shadow(
-                                            color: Colors.black
-                                                .withValues(alpha: 0.2),
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 2)),
-                                      ],
+                                  Flexible(
+                                    fit: FlexFit.loose,
+                                    child: FittedBox(
+                                      alignment: Alignment.centerLeft,
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        _getFirstName(auth),
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.w800,
+                                          color: Colors.white,
+                                          height: 1.1,
+                                          shadows: [
+                                            Shadow(
+                                                color: Colors.black
+                                                    .withValues(alpha: 0.2),
+                                                blurRadius: 10,
+                                                offset: const Offset(0, 2)),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(height: AppSpacing.xs),
                                   // ── Tagline ──
-                                  Text(
-                                    _getTagline(),
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 12,
-                                      color:
-                                          Colors.white.withValues(alpha: 0.42),
-                                      letterSpacing: 0.1,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 14),
-                                  // ── Search bar ──
-                                  GestureDetector(
-                                    onTap: () => context.push('/explore'),
-                                    child: Container(
-                                      height: 48,
-                                      decoration: BoxDecoration(
-                                        color:
-                                            Colors.white.withValues(alpha: 0.1),
-                                        borderRadius: BorderRadius.circular(14),
-                                        border: Border.all(
+                                  Flexible(
+                                    fit: FlexFit.loose,
+                                    child: FittedBox(
+                                      alignment: Alignment.centerLeft,
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        _getTagline(),
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 12,
                                           color: Colors.white
-                                              .withValues(alpha: 0.2),
-                                          width: 1.5,
+                                              .withValues(alpha: 0.42),
+                                          letterSpacing: 0.1,
                                         ),
                                       ),
-                                      child: Row(
-                                        children: [
-                                          const SizedBox(width: 14),
-                                          Icon(
-                                            Icons.search_rounded,
+                                    ),
+                                  ),
+                                  const SizedBox(height: AppSpacing.xs),
+                                  // ── Search bar ──
+                                  Flexible(
+                                    fit: FlexFit.loose,
+                                    child: GestureDetector(
+                                      onTap: () => context.push('/explore'),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.white
+                                              .withValues(alpha: 0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                          border: Border.all(
                                             color: Colors.white
-                                                .withValues(alpha: 0.65),
-                                            size: 20,
+                                                .withValues(alpha: 0.2),
+                                            width: 1.5,
                                           ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Text(
-                                              'Tafuta kozi, mada, Mkufunzi...',
-                                              style: GoogleFonts.montserrat(
-                                                fontSize: 13,
-                                                color: Colors.white
-                                                    .withValues(alpha: 0.5),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            const SizedBox(width: 14),
+                                            Icon(
+                                              Icons.search_rounded,
+                                              color: Colors.white
+                                                  .withValues(alpha: 0.65),
+                                              size: 20,
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: Text(
+                                                'Tafuta kozi, mada, Mkufunzi...',
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: 13,
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.5),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Container(
-                                            margin:
-                                                const EdgeInsets.only(right: 8),
-                                            padding: const EdgeInsets.all(7),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.primary
-                                                  .withValues(alpha: 0.35),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
+                                            Container(
+                                              margin: const EdgeInsets.only(
+                                                  right: 8),
+                                              padding: const EdgeInsets.all(7),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.primary
+                                                    .withValues(alpha: 0.35),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: const Icon(
+                                                  Icons.tune_rounded,
+                                                  color: Colors.white,
+                                                  size: 15),
                                             ),
-                                            child: const Icon(
-                                                Icons.tune_rounded,
-                                                color: Colors.white,
-                                                size: 15),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
