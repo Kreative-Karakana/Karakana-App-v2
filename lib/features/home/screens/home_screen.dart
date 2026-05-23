@@ -115,6 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
+        top: false,
         child: Consumer3<CourseProvider, AuthProvider, NotificationProvider>(
           builder: (context, courses, auth, notifications, _) {
             return RefreshIndicator(
@@ -124,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 physics: const BouncingScrollPhysics(),
                 slivers: [
                   SliverAppBar(
-                    expandedHeight: 268,
+                    expandedHeight: 232,
                     toolbarHeight: 62,
                     pinned: true,
                     automaticallyImplyLeading: false,
@@ -348,7 +349,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Padding(
                               padding: const EdgeInsets.fromLTRB(
                                 20,
-                                kToolbarHeight + 58,
+                                kToolbarHeight + AppSpacing.sm,
                                 20,
                                 10,
                               ),
@@ -970,4 +971,3 @@ class _BannerCarouselState extends State<_BannerCarousel> {
     );
   }
 }
-
