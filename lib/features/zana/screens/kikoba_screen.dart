@@ -66,7 +66,8 @@ class _KikobaScreenState extends State<KikobaScreen> {
         ),
         elevation: 0,
       ),
-      body: SingleChildScrollView(
+      body: SafeArea(
+          child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
@@ -297,7 +298,8 @@ class _KikobaScreenState extends State<KikobaScreen> {
                                 ),
                               ),
                             ),
-                            validator: (v) => v!.isEmpty ? 'Weka jina lako' : null,
+                            validator: (v) =>
+                                v!.isEmpty ? 'Weka jina lako' : null,
                           ),
                           const SizedBox(height: 14),
                           TextFormField(
@@ -464,9 +466,7 @@ class _KikobaScreenState extends State<KikobaScreen> {
             ),
           ],
         ),
-      ),
+      )),
     );
   }
 }
-
-

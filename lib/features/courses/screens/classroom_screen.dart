@@ -39,11 +39,12 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: const _ClassroomAppBarPlaceholder(),
-            body: Center(
+            body: SafeArea(
+                child: Center(
               child: KarakanaWaveLoader(
                 color: Color(0xFFE87722),
               ),
-            ),
+            )),
           );
         }
 
@@ -90,7 +91,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     ),
                     const SizedBox(height: 14),
                     Text(
-                      provider.errorMessage ?? 'Hatukuweza kufungua darasa hili.',
+                      provider.errorMessage ??
+                          'Hatukuweza kufungua darasa hili.',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.montserrat(
                         fontSize: 14,
@@ -100,7 +102,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     ),
                     const SizedBox(height: 18),
                     ElevatedButton(
-                      onPressed: () => provider.loadCourseDetail(widget.courseId),
+                      onPressed: () =>
+                          provider.loadCourseDetail(widget.courseId),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFE87722),
                         foregroundColor: Colors.white,
@@ -251,11 +254,10 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     ),
                     if (progress >= 1.0)
                       OutlinedButton(
-                        onPressed: () =>
-                            context.push(
-                              '/course/${widget.courseId}/complete',
-                              extra: {'courseTitle': course.title},
-                            ),
+                        onPressed: () => context.push(
+                          '/course/${widget.courseId}/complete',
+                          extra: {'courseTitle': course.title},
+                        ),
                         style: OutlinedButton.styleFrom(
                           side: const BorderSide(color: Color(0xFFE87722)),
                           shape: RoundedRectangleBorder(
@@ -335,7 +337,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                 child: sections.isEmpty
                     ? _EmptyClassroomState(
                         sectionsErrorMessage: provider.sectionsErrorMessage,
-                        onRetry: () => provider.loadCourseDetail(widget.courseId),
+                        onRetry: () =>
+                            provider.loadCourseDetail(widget.courseId),
                       )
                     : ListView.builder(
                         padding: const EdgeInsets.only(bottom: 80),
@@ -358,7 +361,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                   }
                                 }),
                                 child: Container(
-                                  color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
+                                  color: isDark
+                                      ? const Color(0xFF2A1A0A)
+                                      : const Color(0xFFF5E6D8),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 20,
                                     vertical: 14,
@@ -424,7 +429,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                   return Container(
                                     decoration: BoxDecoration(
                                       color: lesson.isRead
-                                          ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8))
+                                          ? (isDark
+                                              ? const Color(0xFF2A1A0A)
+                                              : const Color(0xFFF5E6D8))
                                           : Theme.of(context).cardColor,
                                       border: const Border(
                                         bottom: BorderSide(
@@ -446,7 +453,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                           color: lesson.isRead
                                               ? const Color(0xFFE87722)
                                                   .withValues(alpha: 0.1)
-                                              : (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)),
+                                              : (isDark
+                                                  ? const Color(0xFF2A1A0A)
+                                                  : const Color(0xFFF5E6D8)),
                                           borderRadius:
                                               BorderRadius.circular(10),
                                         ),
@@ -491,12 +500,16 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                               color: Color(0xFF9E8070),
                                               size: 22,
                                             ),
-                                      onTap: () =>
-                                          context.push('/lesson/${lesson.id}').then((_) {
-                                            if (context.mounted) {
-                                              context.read<CourseProvider>().loadCourseDetail(widget.courseId);
-                                            }
-                                          }),
+                                      onTap: () => context
+                                          .push('/lesson/${lesson.id}')
+                                          .then((_) {
+                                        if (context.mounted) {
+                                          context
+                                              .read<CourseProvider>()
+                                              .loadCourseDetail(
+                                                  widget.courseId);
+                                        }
+                                      }),
                                     ),
                                   );
                                 }),
@@ -511,7 +524,6 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
       },
     );
   }
-
 
   String _buildCourseSummaryText(String description, String excerpt) {
     final source = description.trim().isNotEmpty ? description : excerpt;
@@ -567,8 +579,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         .toList();
     return parts.isEmpty ? text.trim() : parts.first;
   }
-
 }
+
 class _ClassroomAppBarPlaceholder extends StatelessWidget
     implements PreferredSizeWidget {
   const _ClassroomAppBarPlaceholder();
@@ -636,7 +648,8 @@ class _EmptyClassroomState extends StatelessWidget {
               style: GoogleFonts.montserrat(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+                color: Theme.of(context).textTheme.bodyLarge?.color ??
+                    const Color(0xFF1A0A00),
               ),
             ),
             const SizedBox(height: 8),
@@ -676,12 +689,3 @@ class _EmptyClassroomState extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
-

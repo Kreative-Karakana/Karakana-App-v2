@@ -56,7 +56,7 @@ class CourseListScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: Consumer<CourseProvider>(
+      body: SafeArea(child: Consumer<CourseProvider>(
         builder: (context, provider, _) {
           final courses = _getCourses(provider);
 
@@ -111,9 +111,7 @@ class CourseListScreen extends StatelessWidget {
             ),
           );
         },
-      ),
+      )),
     );
   }
 }
-
-

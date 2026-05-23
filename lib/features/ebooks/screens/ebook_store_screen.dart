@@ -63,7 +63,7 @@ class _EbookStoreScreenState extends State<EbookStoreScreen> {
           ),
         ],
       ),
-      body: Consumer<EbookProvider>(
+      body: SafeArea(child: Consumer<EbookProvider>(
         builder: (_, provider, __) {
           if (provider.isLoadingStore) {
             return const Center(child: KarakanaWaveLoader());
@@ -91,11 +91,14 @@ class _EbookStoreScreenState extends State<EbookStoreScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: ebook.coverImageUrl != null && ebook.coverImageUrl!.isNotEmpty
-                            ? Image.network(ebook.coverImageUrl!, fit: BoxFit.cover, width: double.infinity)
+                        child: ebook.coverImageUrl != null &&
+                                ebook.coverImageUrl!.isNotEmpty
+                            ? Image.network(ebook.coverImageUrl!,
+                                fit: BoxFit.cover, width: double.infinity)
                             : Container(
                                 color: const Color(0xFFF5E6D8),
-                                child: const Center(child: Icon(Icons.menu_book_outlined)),
+                                child: const Center(
+                                    child: Icon(Icons.menu_book_outlined)),
                               ),
                       ),
                       Padding(
@@ -107,17 +110,22 @@ class _EbookStoreScreenState extends State<EbookStoreScreen> {
                               ebook.title,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontWeight: FontWeight.w700),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w700),
                             ),
                             const SizedBox(height: 4),
-                            Text(ebook.authorName, maxLines: 1, overflow: TextOverflow.ellipsis),
+                            Text(ebook.authorName,
+                                maxLines: 1, overflow: TextOverflow.ellipsis),
                             const SizedBox(height: 4),
-                            Text(ebook.isFree ? 'Bure' : 'TZS ${ebook.priceInTzs}'),
+                            Text(ebook.isFree
+                                ? 'Bure'
+                                : 'TZS ${ebook.priceInTzs}'),
                             const SizedBox(height: 8),
                             SizedBox(
                               width: double.infinity,
                               child: FilledButton(
-                                onPressed: () => context.push('/zana/ebooks/${ebook.id}'),
+                                onPressed: () =>
+                                    context.push('/zana/ebooks/${ebook.id}'),
                                 child: Text(owned ? 'Soma' : 'Nunua'),
                               ),
                             ),
@@ -131,7 +139,7 @@ class _EbookStoreScreenState extends State<EbookStoreScreen> {
             },
           );
         },
-      ),
+      )),
     );
   }
 }

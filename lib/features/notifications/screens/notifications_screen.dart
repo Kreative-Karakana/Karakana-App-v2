@@ -55,7 +55,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
         ],
       ),
-      body: Consumer<NotificationProvider>(
+      body: SafeArea(child: Consumer<NotificationProvider>(
         builder: (_, provider, __) {
           final isDark = Theme.of(context).brightness == Brightness.dark;
           if (provider.isLoading) {
@@ -74,7 +74,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               final isUnread = !notif.isRead;
               return Container(
                 color: isUnread
-                    ? (isDark ? const Color(0xFF2A1A0A).withValues(alpha: 0.5) : const Color(0xFFF5E6D8).withValues(alpha: 0.5))
+                    ? (isDark
+                        ? const Color(0xFF2A1A0A).withValues(alpha: 0.5)
+                        : const Color(0xFFF5E6D8).withValues(alpha: 0.5))
                     : Colors.transparent,
                 child: ListTile(
                   contentPadding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
@@ -104,9 +106,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     notif.title,
                     style: GoogleFonts.montserrat(
                       fontSize: 14,
-                      fontWeight:
-                          isUnread ? FontWeight.w600 : FontWeight.w400,
-                      color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+                      fontWeight: isUnread ? FontWeight.w600 : FontWeight.w400,
+                      color: Theme.of(context).textTheme.bodyLarge?.color ??
+                          const Color(0xFF1A0A00),
                     ),
                   ),
                   subtitle: Column(
@@ -155,7 +157,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             },
           );
         },
-      ),
+      )),
     );
   }
 
@@ -231,7 +233,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+              color: Theme.of(context).textTheme.bodyLarge?.color ??
+                  const Color(0xFF1A0A00),
             ),
           ),
           const SizedBox(height: 8),
@@ -247,5 +250,3 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     );
   }
 }
-
-

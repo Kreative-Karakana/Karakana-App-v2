@@ -56,9 +56,7 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
     if (_search.isEmpty) return _students;
     final q = _search.toLowerCase();
     return _students.where((s) {
-      final name = (s['full_name'] as String? ??
-              s['username'] as String? ??
-              '')
+      final name = (s['full_name'] as String? ?? s['username'] as String? ?? '')
           .toLowerCase();
       return name.contains(q);
     }).toList();
@@ -104,7 +102,8 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
           ),
         ],
       ),
-      body: Column(
+      body: SafeArea(
+          child: Column(
         children: [
           // Search bar
           Container(
@@ -140,7 +139,11 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
               ),
             ),
           ),
-          Divider(height: 1, color: Theme.of(context).brightness == Brightness.dark ? Colors.white10 : const Color(0xFFF0E4DA)),
+          Divider(
+              height: 1,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white10
+                  : const Color(0xFFF0E4DA)),
 
           // Summary bar
           if (!_isLoading && _error == null && _students.isNotEmpty)
@@ -180,7 +183,7 @@ class _StudentProgressScreenState extends State<StudentProgressScreen> {
                           ),
           ),
         ],
-      ),
+      )),
     );
   }
 }
@@ -200,11 +203,10 @@ class _SummaryBar extends StatelessWidget {
     final avgProgress = students.isEmpty
         ? 0.0
         : students.fold<double>(
-                0,
-                (sum, s) =>
-                    sum +
-                    ((s['progress_percentage'] as num?)?.toDouble() ?? 0),
-              ) /
+              0,
+              (sum, s) =>
+                  sum + ((s['progress_percentage'] as num?)?.toDouble() ?? 0),
+            ) /
             students.length;
 
     return Container(
@@ -252,7 +254,9 @@ class _SummaryBar extends StatelessWidget {
         builder: (context) => Container(
           height: 32,
           width: 1,
-          color: Theme.of(context).brightness == Brightness.dark ? Colors.white12 : const Color(0xFFE8D5C8),
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white12
+              : const Color(0xFFE8D5C8),
         ),
       );
 }
@@ -299,9 +303,9 @@ class _StudentCard extends StatelessWidget {
               // Avatar
               CircleAvatar(
                 radius: 22,
-                backgroundColor: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
-                backgroundImage:
-                    avatar != null ? NetworkImage(avatar) : null,
+                backgroundColor:
+                    isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
+                backgroundImage: avatar != null ? NetworkImage(avatar) : null,
                 child: avatar == null
                     ? Text(
                         name.isNotEmpty ? name[0].toUpperCase() : 'M',
@@ -324,7 +328,8 @@ class _StudentCard extends StatelessWidget {
                       style: GoogleFonts.montserrat(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+                        color: Theme.of(context).textTheme.bodyLarge?.color ??
+                            const Color(0xFF1A0A00),
                       ),
                     ),
                     if (email.isNotEmpty)
@@ -340,12 +345,15 @@ class _StudentCard extends StatelessWidget {
               ),
               // Status badge
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: isCompleted
-                      ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8))
-                      : (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4)),
+                      ? (isDark
+                          ? const Color(0xFF2A1A0A)
+                          : const Color(0xFFF5E6D8))
+                      : (isDark
+                          ? const Color(0xFF2A1A0A)
+                          : const Color(0xFFFFF8F4)),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: isCompleted
@@ -401,7 +409,9 @@ class _StudentCard extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: (progress / 100).clamp(0.0, 1.0),
                   minHeight: 6,
-                  backgroundColor: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF0E4DA),
+                  backgroundColor: isDark
+                      ? const Color(0xFF2A1A0A)
+                      : const Color(0xFFF0E4DA),
                   valueColor: AlwaysStoppedAnimation<Color>(
                     isCompleted
                         ? const Color(0xFFE87722)
@@ -440,7 +450,8 @@ class _EmptyState extends StatelessWidget {
             style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+              color: Theme.of(context).textTheme.bodyLarge?.color ??
+                  const Color(0xFF1A0A00),
             ),
           ),
           const SizedBox(height: 8),
@@ -504,5 +515,3 @@ class _ErrorState extends StatelessWidget {
     );
   }
 }
-
-

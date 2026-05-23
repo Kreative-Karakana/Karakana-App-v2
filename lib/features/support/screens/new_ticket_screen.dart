@@ -52,7 +52,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
+      body: SafeArea(
+          child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
@@ -74,7 +75,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                 children: issueTypes.map((type) {
                   final isSelected = _selectedType == type[0];
                   return GestureDetector(
-                    onTap: () => setState(() => _selectedType = type[0] as String),
+                    onTap: () =>
+                        setState(() => _selectedType = type[0] as String),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       padding: const EdgeInsets.symmetric(
@@ -82,9 +84,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: isSelected
-                            ? const Color(0xFFE87722)
-                            : Colors.white,
+                        color:
+                            isSelected ? const Color(0xFFE87722) : Colors.white,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isSelected
@@ -139,9 +140,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                     ),
                   ),
                 ),
-                validator: (v) => v == null || v.isEmpty
-                    ? 'Weka mada ya tiketi'
-                    : null,
+                validator: (v) =>
+                    v == null || v.isEmpty ? 'Weka mada ya tiketi' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -201,7 +201,7 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
             ],
           ),
         ),
-      ),
+      )),
     );
   }
 
@@ -247,5 +247,3 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
     }
   }
 }
-
-

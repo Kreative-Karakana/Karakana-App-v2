@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -19,8 +19,7 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen>
     with AutomaticKeepAliveClientMixin {
-  final TextEditingController _searchController =
-      TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String? _selectedCategoryName;
   Timer? _debounceTimer;
@@ -75,7 +74,8 @@ class _ExploreScreenState extends State<ExploreScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Column(
+      body: SafeArea(
+          child: Column(
         children: [
           // ── Gradient header ────────────────────────────────────
           Container(
@@ -177,8 +177,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                           suffixIcon: _searchQuery.isNotEmpty
                               ? IconButton(
                                   icon: const Icon(Icons.clear,
-                                      size: 18,
-                                      color: AppColors.textTertiary),
+                                      size: 18, color: AppColors.textTertiary),
                                   onPressed: () {
                                     _searchController.clear();
                                     _onSearchChanged('');
@@ -226,11 +225,9 @@ class _ExploreScreenState extends State<ExploreScreen>
                       itemCount: provider.categories.length + 1,
                       itemBuilder: (_, i) {
                         final isAll = i == 0;
-                        final catName = isAll
-                            ? null
-                            : provider.categories[i - 1].name;
-                        final isSelected = _selectedCategoryName ==
-                            catName;
+                        final catName =
+                            isAll ? null : provider.categories[i - 1].name;
+                        final isSelected = _selectedCategoryName == catName;
                         return GestureDetector(
                           onTap: () => _selectCategory(catName),
                           child: Container(
@@ -241,19 +238,17 @@ class _ExploreScreenState extends State<ExploreScreen>
                               color: isSelected
                                   ? AppColors.primary
                                   : Theme.of(context).cardColor,
-                              borderRadius:
-                                  BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color: isSelected
                                     ? AppColors.primary
-                                    : (isDark ? Colors.white12 : AppColors.border),
+                                    : (isDark
+                                        ? Colors.white12
+                                        : AppColors.border),
                               ),
                             ),
                             child: Text(
-                              isAll
-                                  ? 'Zote'
-                                  : provider
-                                      .categories[i - 1].name,
+                              isAll ? 'Zote' : provider.categories[i - 1].name,
                               style: GoogleFonts.montserrat(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -271,8 +266,7 @@ class _ExploreScreenState extends State<ExploreScreen>
 
                 // Count + sort row
                 Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       '${displayCourses.length} Kozi Zimepatikana',
@@ -282,17 +276,14 @@ class _ExploreScreenState extends State<ExploreScreen>
                       ),
                     ),
                     PopupMenuButton<String>(
-                      onSelected: (val) =>
-                          setState(() => _sortBy = val),
+                      onSelected: (val) => setState(() => _sortBy = val),
                       icon: const Icon(Icons.sort,
                           color: AppColors.primary, size: 20),
                       itemBuilder: (_) => [
                         const PopupMenuItem(
-                            value: 'default',
-                            child: Text('Default')),
+                            value: 'default', child: Text('Default')),
                         const PopupMenuItem(
-                            value: 'rating',
-                            child: Text('Ukadiriaji Juu')),
+                            value: 'rating', child: Text('Ukadiriaji Juu')),
                         const PopupMenuItem(
                             value: 'price_asc',
                             child: Text('Bei: Chini → Juu')),
@@ -300,8 +291,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                             value: 'price_desc',
                             child: Text('Bei: Juu → Chini')),
                         const PopupMenuItem(
-                            value: 'title_az',
-                            child: Text('Jina A → Z')),
+                            value: 'title_az', child: Text('Jina A → Z')),
                       ],
                     ),
                   ],
@@ -323,15 +313,13 @@ class _ExploreScreenState extends State<ExploreScreen>
                     padding: const EdgeInsets.all(20),
                     itemBuilder: (_, __) => const Padding(
                       padding: EdgeInsets.only(bottom: 12),
-                      child: ShimmerCard(
-                          width: double.infinity, height: 96),
+                      child: ShimmerCard(width: double.infinity, height: 96),
                     ),
                   )
                 : displayCourses.isEmpty
                     ? Center(
                         child: Column(
-                          mainAxisAlignment:
-                              MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Icon(
                               Icons.search_off_rounded,
@@ -344,7 +332,11 @@ class _ExploreScreenState extends State<ExploreScreen>
                               style: GoogleFonts.montserrat(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
-                                color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color ??
+                                    const Color(0xFF1A0A00),
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -361,7 +353,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                     : _buildResultsList(context, provider, displayCourses),
           ),
         ],
-      ),
+      )),
     );
   }
 
@@ -377,7 +369,8 @@ class _ExploreScreenState extends State<ExploreScreen>
     final itemCount = displayCourses.length + (showCarousel ? 1 : 0);
 
     return ListView.builder(
-      padding: EdgeInsets.fromLTRB(20, showCarousel ? 0 : 20, 20, MediaQuery.of(context).padding.bottom + 16),
+      padding: EdgeInsets.fromLTRB(20, showCarousel ? 0 : 20, 20,
+          MediaQuery.of(context).padding.bottom + 16),
       itemCount: itemCount,
       itemBuilder: (_, i) {
         if (showCarousel && i == 0) {
@@ -399,8 +392,7 @@ class _ExploreScreenState extends State<ExploreScreen>
     final list = List.of(provider.courses);
     switch (_sortBy) {
       case 'rating':
-        list.sort(
-            (a, b) => b.averageRating.compareTo(a.averageRating));
+        list.sort((a, b) => b.averageRating.compareTo(a.averageRating));
       case 'price_asc':
         list.sort((a, b) => a.price.compareTo(b.price));
       case 'price_desc':
@@ -460,7 +452,8 @@ class _ExploreCarouselState extends State<_ExploreCarousel> {
                     style: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+                      color: Theme.of(context).textTheme.bodyLarge?.color ??
+                          const Color(0xFF1A0A00),
                     ),
                   ),
                   Text(
@@ -525,7 +518,8 @@ class _ExploreCarouselState extends State<_ExploreCarousel> {
           style: GoogleFonts.montserrat(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+            color: Theme.of(context).textTheme.bodyLarge?.color ??
+                const Color(0xFF1A0A00),
           ),
         ),
         const SizedBox(height: 12),
@@ -709,9 +703,7 @@ class _FeaturedCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-            colors: pair,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight),
+            colors: pair, begin: Alignment.topLeft, end: Alignment.bottomRight),
       ),
     );
   }

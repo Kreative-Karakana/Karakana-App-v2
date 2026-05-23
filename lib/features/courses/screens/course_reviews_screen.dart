@@ -44,11 +44,13 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
   Future<void> _loadReviews() async {
     try {
       final currentUserId = context.read<AuthProvider>().userId;
-      final res =
-          await ApiClient().dio.get('/api/v1/courses/${widget.courseId}/reviews/');
+      final res = await ApiClient()
+          .dio
+          .get('/api/v1/courses/${widget.courseId}/reviews/');
       final data = res.data;
-      final results =
-          data is Map ? (data['results'] as List? ?? []) : (data as List? ?? []);
+      final results = data is Map
+          ? (data['results'] as List? ?? [])
+          : (data as List? ?? []);
       if (!mounted) return;
       setState(() {
         _reviews = results;
@@ -77,14 +79,17 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
       builder: (_) => StatefulBuilder(
         builder: (ctx, setSheet) => Padding(
           padding: EdgeInsets.fromLTRB(
-            24, 20, 24,
+            24,
+            20,
+            24,
             MediaQuery.of(context).viewInsets.bottom + 24,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 40, height: 4,
+                width: 40,
+                height: 4,
                 decoration: BoxDecoration(
                   color: const Color(0xFFE8D5C8),
                   borderRadius: BorderRadius.circular(2),
@@ -94,7 +99,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
               Text(
                 'Jibu Maoni',
                 style: GoogleFonts.montserrat(
-                  fontSize: 18, fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
                 ),
               ),
@@ -102,7 +108,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
               Text(
                 'Fikia wanafunzi kwa kujibu maoni yao',
                 style: GoogleFonts.montserrat(
-                  fontSize: 13, color: Colors.grey.shade600,
+                  fontSize: 13,
+                  color: Colors.grey.shade600,
                 ),
               ),
               const SizedBox(height: 16),
@@ -120,7 +127,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
-                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                    borderSide:
+                        const BorderSide(color: AppColors.primary, width: 1.5),
                   ),
                 ),
               ),
@@ -151,16 +159,21 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                             Navigator.of(ctx).pop();
                             await _loadReviews();
                             if (!mounted) return;
-                            showTopPopup(context, 'Jibu limetumwa kikamilifu!', isError: false);
+                            showTopPopup(context, 'Jibu limetumwa kikamilifu!',
+                                isError: false);
                           } catch (_) {
                             setSheet(() => isSaving = false);
                             if (!ctx.mounted) return;
-                            showTopPopup(context, 'Zoezi limeshindikana. Jaribu tena.');
+                            showTopPopup(
+                                context, 'Zoezi limeshindikana. Jaribu tena.');
                           }
                         },
                   child: isSaving
-                      ? const SizedBox(width: 20, height: 20,
-                          child: KarakanaWaveLoader(color: Colors.white, strokeWidth: 2))
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: KarakanaWaveLoader(
+                              color: Colors.white, strokeWidth: 2))
                       : Text(
                           existingReply != null && existingReply.isNotEmpty
                               ? 'Hariri Jibu'
@@ -189,13 +202,14 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                             setSheet(() => isSaving = true);
                             try {
                               await ApiClient().dio.delete(
-                                '/api/v1/courses/${widget.courseId}/reviews/$reviewId/reply/',
-                              );
+                                    '/api/v1/courses/${widget.courseId}/reviews/$reviewId/reply/',
+                                  );
                               if (!ctx.mounted) return;
                               Navigator.of(ctx).pop();
                               await _loadReviews();
                               if (!mounted) return;
-                              showTopPopup(context, 'Jibu limefutwa.', isError: false);
+                              showTopPopup(context, 'Jibu limefutwa.',
+                                  isError: false);
                             } catch (_) {
                               setSheet(() => isSaving = false);
                               if (!ctx.mounted) return;
@@ -221,12 +235,14 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
     final isEnrolled = course?.isEnrolled ?? false;
 
     if (!isEnrolled) {
-      showTopPopup(context, 'Unahitaji kujiandikisha kwenye kozi hii kwanza ili uweze kutoa tathmini.');
+      showTopPopup(context,
+          'Unahitaji kujiandikisha kwenye kozi hii kwanza ili uweze kutoa tathmini.');
       return;
     }
 
     final sections = provider.sections;
-    final totalLessons = sections.fold<int>(0, (sum, s) => sum + s.lessons.length);
+    final totalLessons =
+        sections.fold<int>(0, (sum, s) => sum + s.lessons.length);
     final completedLessons = sections.fold<int>(
       0,
       (sum, s) => sum + s.lessons.where((l) => l.isRead).length,
@@ -234,7 +250,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
     final progress = totalLessons > 0 ? completedLessons / totalLessons : 0.0;
 
     if (progress < 0.8) {
-      showTopPopup(context, 'Kamilisha kozi hii kwanza ili uweze kutoa tathmini ya uzoefu wako.');
+      showTopPopup(context,
+          'Kamilisha kozi hii kwanza ili uweze kutoa tathmini ya uzoefu wako.');
       return;
     }
 
@@ -247,7 +264,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
     final isEnrolled = course?.isEnrolled ?? false;
     if (!isEnrolled) return;
     final sections = provider.sections;
-    final totalLessons = sections.fold<int>(0, (sum, s) => sum + s.lessons.length);
+    final totalLessons =
+        sections.fold<int>(0, (sum, s) => sum + s.lessons.length);
     final completedLessons = sections.fold<int>(
       0,
       (sum, s) => sum + s.lessons.where((l) => l.isRead).length,
@@ -360,7 +378,9 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                             });
                             await _loadReviews();
                             if (!mounted) return;
-                            showTopPopup(context, 'Asante! Tathmini yako imetumwa.', isError: false);
+                            showTopPopup(
+                                context, 'Asante! Tathmini yako imetumwa.',
+                                isError: false);
                           } catch (_) {
                             if (mounted) {
                               setState(() => _isSubmitting = false);
@@ -431,7 +451,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
             ),
         ],
       ),
-      body: Column(
+      body: SafeArea(
+          child: Column(
         children: [
           Container(
             color: Colors.white,
@@ -474,7 +495,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                       final count = _reviews
                           .where((r) => (r as Map)['rating'] == stars)
                           .length;
-                      final percent = _reviews.isEmpty ? 0.0 : count / _reviews.length;
+                      final percent =
+                          _reviews.isEmpty ? 0.0 : count / _reviews.length;
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 2),
                         child: Row(
@@ -532,7 +554,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
               onTap: _onWriteReviewTap,
               child: Container(
                 color: const Color(0xFFFFF8F4),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                 child: Row(
                   children: [
                     Container(
@@ -543,7 +566,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                         shape: BoxShape.circle,
                       ),
                       child: const Center(
-                        child: Icon(Icons.person, color: Colors.white, size: 20),
+                        child:
+                            Icon(Icons.person, color: Colors.white, size: 20),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -621,7 +645,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                           final rating = review['rating'] as int? ?? 0;
                           final content = review['content'] as String? ?? '';
                           final reply = review['reply'] as String?;
-                          final isTrainer = context.read<AuthProvider>().isTrainer;
+                          final isTrainer =
+                              context.read<AuthProvider>().isTrainer;
                           return Container(
                             margin: const EdgeInsets.only(bottom: 16),
                             padding: const EdgeInsets.all(16),
@@ -664,7 +689,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                     const SizedBox(width: 10),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             name.isEmpty ? 'Mwanafunzi' : name,
@@ -709,7 +735,8 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
@@ -782,10 +809,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                       ),
           ),
         ],
-      ),
+      )),
     );
   }
 }
-
-
-

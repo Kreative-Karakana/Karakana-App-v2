@@ -61,8 +61,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
 
   void _addQuestion() {
     final questionController = TextEditingController();
-    final optionControllers =
-        List.generate(4, (_) => TextEditingController());
+    final optionControllers = List.generate(4, (_) => TextEditingController());
     int selectedCorrect = 0;
 
     showModalBottomSheet<void>(
@@ -84,116 +83,121 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE8D5C8),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Ongeza Swali',
-                style: GoogleFonts.montserrat(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF3D1800),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: questionController,
-                decoration: InputDecoration(
-                  labelText: 'Swali',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              ...List.generate(4, (i) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => setModalState(() => selectedCorrect = i),
-                        child: Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: selectedCorrect == i
-                                  ? const Color(0xFFE87722)
-                                  : const Color(0xFFE8D5C8),
-                              width: 2,
-                            ),
-                            color: selectedCorrect == i
-                                ? const Color(0xFFE87722).withValues(alpha: 0.12)
-                                : Colors.transparent,
-                          ),
-                          child: selectedCorrect == i
-                              ? const Icon(
-                                  Icons.check,
-                                  size: 14,
-                                  color: Color(0xFFE87722),
-                                )
-                              : null,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: TextField(
-                          controller: optionControllers[i],
-                          decoration: InputDecoration(
-                            labelText: 'Chaguo ${['A', 'B', 'C', 'D'][i]}',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }),
-              const SizedBox(height: 8),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (questionController.text.trim().isEmpty ||
-                        optionControllers.any((c) => c.text.trim().isEmpty)) {
-                      showTopPopup(context, 'Jaza swali na majibu yote manne.');
-                      return;
-                    }
-                    setState(() {
-                      _questions.add({
-                        'question': questionController.text.trim(),
-                        'options': optionControllers
-                            .map((controller) => controller.text.trim())
-                            .toList(),
-                        'correct': selectedCorrect,
-                      });
-                    });
-                    Navigator.of(ctx).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE87722),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 52),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8D5C8),
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: Text(
-                    'Hifadhi Swali',
-                    style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Ongeza Swali',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF3D1800),
+                    ),
                   ),
-                ),
-              ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: questionController,
+                    decoration: InputDecoration(
+                      labelText: 'Swali',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ...List.generate(4, (i) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () =>
+                                setModalState(() => selectedCorrect = i),
+                            child: Container(
+                              width: 24,
+                              height: 24,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: selectedCorrect == i
+                                      ? const Color(0xFFE87722)
+                                      : const Color(0xFFE8D5C8),
+                                  width: 2,
+                                ),
+                                color: selectedCorrect == i
+                                    ? const Color(0xFFE87722)
+                                        .withValues(alpha: 0.12)
+                                    : Colors.transparent,
+                              ),
+                              child: selectedCorrect == i
+                                  ? const Icon(
+                                      Icons.check,
+                                      size: 14,
+                                      color: Color(0xFFE87722),
+                                    )
+                                  : null,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: TextField(
+                              controller: optionControllers[i],
+                              decoration: InputDecoration(
+                                labelText: 'Chaguo ${['A', 'B', 'C', 'D'][i]}',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (questionController.text.trim().isEmpty ||
+                            optionControllers
+                                .any((c) => c.text.trim().isEmpty)) {
+                          showTopPopup(
+                              context, 'Jaza swali na majibu yote manne.');
+                          return;
+                        }
+                        setState(() {
+                          _questions.add({
+                            'question': questionController.text.trim(),
+                            'options': optionControllers
+                                .map((controller) => controller.text.trim())
+                                .toList(),
+                            'correct': selectedCorrect,
+                          });
+                        });
+                        Navigator.of(ctx).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFE87722),
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(double.infinity, 52),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                      ),
+                      child: Text(
+                        'Hifadhi Swali',
+                        style:
+                            GoogleFonts.montserrat(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -253,7 +257,8 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
           ),
         ],
       ),
-      body: Column(
+      body: SafeArea(
+          child: Column(
         children: [
           Container(
             color: Theme.of(context).cardColor,
@@ -321,7 +326,9 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
               ],
             ),
           ),
-          Divider(height: 1, color: isDark ? Colors.white10 : const Color(0xFFF0E4DA)),
+          Divider(
+              height: 1,
+              color: isDark ? Colors.white10 : const Color(0xFFF0E4DA)),
           Expanded(
             child: _questions.isEmpty
                 ? Center(
@@ -339,7 +346,9 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                           style: GoogleFonts.montserrat(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
-                            color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color ??
+                                    const Color(0xFF1A0A00),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -433,7 +442,9 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                                             color: e.key ==
                                                     (q['correct'] as int? ?? 0)
                                                 ? const Color(0xFFE87722)
-                                                : (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)),
+                                                : (isDark
+                                                    ? const Color(0xFF2A1A0A)
+                                                    : const Color(0xFFF5E6D8)),
                                             shape: BoxShape.circle,
                                           ),
                                           child: Center(
@@ -498,9 +509,7 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
             ),
           ),
         ],
-      ),
+      )),
     );
   }
 }
-
-

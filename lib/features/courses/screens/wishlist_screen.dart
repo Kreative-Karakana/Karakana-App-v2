@@ -27,8 +27,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
     try {
       final res = await ApiClient().dio.get('/api/v1/wishlist/');
       final data = res.data;
-      final results =
-          data is Map ? (data['results'] as List? ?? []) : (data as List? ?? []);
+      final results = data is Map
+          ? (data['results'] as List? ?? [])
+          : (data as List? ?? []);
       if (!mounted) return;
       setState(() {
         _courses = results;
@@ -42,7 +43,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
   Future<void> _removeFromWishlist(int courseId) async {
     try {
-      await ApiClient().dio.post('/api/v1/wishlist/', data: {'course_id': courseId});
+      await ApiClient()
+          .dio
+          .post('/api/v1/wishlist/', data: {'course_id': courseId});
       if (!mounted) return;
       setState(() {
         _courses.removeWhere((c) => (c as Map)['id'] == courseId);
@@ -67,117 +70,122 @@ class _WishlistScreenState extends State<WishlistScreen> {
           ),
         ),
       ),
-      body: _isLoading
-          ? const Center(
-              child: KarakanaWaveLoader(color: Color(0xFFE87722)),
-            )
-          : _courses.isEmpty
-              ? _buildEmptyState(context)
-              : ListView.builder(
-                  padding: const EdgeInsets.all(20),
-                  itemCount: _courses.length,
-                  itemBuilder: (_, i) {
-                    final course = _courses[i] as Map;
-                    final title = course['title'] as String? ?? '';
-                    final coverPhoto = course['cover_photo'] as String?;
-                    final courseId = course['id'] as int? ?? 0;
-                    final trainer = course['trainer'] as Map?;
-                    final trainerName = trainer != null
-                        ? '${trainer['first_name'] ?? ''} ${trainer['last_name'] ?? ''}'
-                            .trim()
-                        : '';
+      body: SafeArea(
+          child: _isLoading
+              ? const Center(
+                  child: KarakanaWaveLoader(color: Color(0xFFE87722)),
+                )
+              : _courses.isEmpty
+                  ? _buildEmptyState(context)
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(20),
+                      itemCount: _courses.length,
+                      itemBuilder: (_, i) {
+                        final course = _courses[i] as Map;
+                        final title = course['title'] as String? ?? '';
+                        final coverPhoto = course['cover_photo'] as String?;
+                        final courseId = course['id'] as int? ?? 0;
+                        final trainer = course['trainer'] as Map?;
+                        final trainerName = trainer != null
+                            ? '${trainer['first_name'] ?? ''} ${trainer['last_name'] ?? ''}'
+                                .trim()
+                            : '';
 
-                    return GestureDetector(
-                      onTap: () => context.push('/course/$courseId'),
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x0FC4620A),
-                              blurRadius: 10,
-                              offset: Offset(0, 2),
+                        return GestureDetector(
+                          onTap: () => context.push('/course/$courseId'),
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x0FC4620A),
+                                  blurRadius: 10,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(16),
-                                bottomLeft: Radius.circular(16),
-                              ),
-                              child: coverPhoto != null
-                                  ? CachedNetworkImage(
-                                      imageUrl: coverPhoto,
-                                      width: 100,
-                                      height: 90,
-                                      fit: BoxFit.cover,
-                                      errorWidget: (_, __, ___) => _coverFallback(),
-                                    )
-                                  : _coverFallback(),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      title,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: const Color(0xFF3D1800),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      trainerName,
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 12,
-                                        color: const Color(0xFF9E8070),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Row(
+                            child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(16),
+                                    bottomLeft: Radius.circular(16),
+                                  ),
+                                  child: coverPhoto != null
+                                      ? CachedNetworkImage(
+                                          imageUrl: coverPhoto,
+                                          width: 100,
+                                          height: 90,
+                                          fit: BoxFit.cover,
+                                          errorWidget: (_, __, ___) =>
+                                              _coverFallback(),
+                                        )
+                                      : _coverFallback(),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Expanded(
-                                          child: Text(
-                                            'Fungua maelezo ya kozi',
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: 11,
-                                              color: const Color(0xFFBDA99C),
-                                            ),
+                                        Text(
+                                          title,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color(0xFF3D1800),
                                           ),
                                         ),
-                                        IconButton(
-                                          onPressed: () =>
-                                              _removeFromWishlist(courseId),
-                                          icon: const Icon(
-                                            Icons.bookmark_remove,
-                                            color: Color(0xFFE87722),
-                                            size: 22,
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          trainerName,
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 12,
+                                            color: const Color(0xFF9E8070),
                                           ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                'Fungua maelezo ya kozi',
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: 11,
+                                                  color:
+                                                      const Color(0xFFBDA99C),
+                                                ),
+                                              ),
+                                            ),
+                                            IconButton(
+                                              onPressed: () =>
+                                                  _removeFromWishlist(courseId),
+                                              icon: const Icon(
+                                                Icons.bookmark_remove,
+                                                color: Color(0xFFE87722),
+                                                size: 22,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(width: 4),
+                              ],
                             ),
-                            const SizedBox(width: 4),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                          ),
+                        );
+                      },
+                    )),
     );
   }
 
@@ -235,5 +243,3 @@ class _WishlistScreenState extends State<WishlistScreen> {
     );
   }
 }
-
-

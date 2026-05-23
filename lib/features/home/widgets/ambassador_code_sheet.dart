@@ -41,7 +41,10 @@ Future<void> showAmbassadorCodeSheet(BuildContext context) async {
     isScrollControlled: true,
     enableDrag: false,
     backgroundColor: Colors.transparent,
-    builder: (_) => const _AmbassadorCodeSheet(),
+    builder: (ctx) => Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+      child: const _AmbassadorCodeSheet(),
+    ),
   );
 }
 
@@ -70,7 +73,8 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
     _slideAnimation = Tween<Offset>(
       begin: const Offset(1, 0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeInOut));
+    ).animate(
+        CurvedAnimation(parent: _animController, curve: Curves.easeInOut));
   }
 
   @override
@@ -111,7 +115,8 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
       );
       await SecureStorage().setAmbassadorCodeState(false);
       if (mounted) {
-        showTopPopup(context, 'Namba ya balozi imewasilishwa kwa mafanikio', isError: false);
+        showTopPopup(context, 'Namba ya balozi imewasilishwa kwa mafanikio',
+            isError: false);
         Navigator.of(context).pop();
       }
     } catch (_) {
@@ -243,7 +248,8 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
                 onPressed: _isLoading ? null : _decline,
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primary,
-                  side: BorderSide(color: AppColors.primary.withValues(alpha: 0.4)),
+                  side: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.4)),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -329,17 +335,21 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
             fillColor: AppColors.primaryLight.withValues(alpha: 0.4),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
+              borderSide:
+                  BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
+              borderSide:
+                  BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+              borderSide:
+                  const BorderSide(color: AppColors.primary, width: 1.5),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           ),
         ),
         const Spacer(),
@@ -389,7 +399,8 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
                       },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primary,
-                  side: BorderSide(color: AppColors.primary.withValues(alpha: 0.4)),
+                  side: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.4)),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -409,5 +420,3 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
     );
   }
 }
-
-

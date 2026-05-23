@@ -103,33 +103,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 8),
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2),
+      builder: (sheetContext) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
+        ),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 8),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              leading: const Icon(Icons.photo_library_outlined),
-              title: Text('Chagua kutoka Matunzio',
-                  style: GoogleFonts.montserrat(fontSize: 15)),
-              onTap: () => Navigator.pop(context, ImageSource.gallery),
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt_outlined),
-              title: Text('Piga Picha', style: GoogleFonts.montserrat(fontSize: 15)),
-              onTap: () => Navigator.pop(context, ImageSource.camera),
-            ),
-            const SizedBox(height: 8),
-          ],
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined),
+                title: Text('Chagua kutoka Matunzio',
+                    style: GoogleFonts.montserrat(fontSize: 15)),
+                onTap: () => Navigator.pop(context, ImageSource.gallery),
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt_outlined),
+                title: Text('Piga Picha',
+                    style: GoogleFonts.montserrat(fontSize: 15)),
+                onTap: () => Navigator.pop(context, ImageSource.camera),
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
         ),
       ),
     );
@@ -158,7 +164,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         DateTime.now().subtract(const Duration(days: 3 * 365 + 1));
     if (picked.isAfter(threeYearsAgo)) {
       if (!mounted) return;
-      showTopPopup(context, 'Tarehe ya kuzaliwa lazima iwe zaidi ya miaka 3 iliyopita');
+      showTopPopup(
+          context, 'Tarehe ya kuzaliwa lazima iwe zaidi ya miaka 3 iliyopita');
       return;
     }
     setState(() => _dateOfBirth = picked);
@@ -193,13 +200,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           if (_selectedGender != null) 'gender': _selectedGender,
           if (_dateOfBirth != null)
             'date_of_birth': DateFormat('yyyy-MM-dd').format(_dateOfBirth!),
-          'facebook_username':
-              _nullIfEmpty(_facebookController.text.trim()),
-          'instagram_username':
-              _nullIfEmpty(_instagramController.text.trim()),
+          'facebook_username': _nullIfEmpty(_facebookController.text.trim()),
+          'instagram_username': _nullIfEmpty(_instagramController.text.trim()),
           'x_username': _nullIfEmpty(_xController.text.trim()),
-          'linkedin_username':
-              _nullIfEmpty(_linkedinController.text.trim()),
+          'linkedin_username': _nullIfEmpty(_linkedinController.text.trim()),
         },
       );
     } catch (e) {
@@ -235,15 +239,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ));
         }
         await ApiClient().dio.patch(
-          '${ApiEndpoints.profileDetail}$userId/',
-          data: formData,
-          options: Options(
-            contentType: 'multipart/form-data',
-          ),
-        );
+              '${ApiEndpoints.profileDetail}$userId/',
+              data: formData,
+              options: Options(
+                contentType: 'multipart/form-data',
+              ),
+            );
       } catch (_) {
         if (mounted) {
-          showTopPopup(context, 'Maelezo yamehifadhiwa lakini picha hazikupakiwa. Jaribu tena.');
+          showTopPopup(context,
+              'Maelezo yamehifadhiwa lakini picha hazikupakiwa. Jaribu tena.');
         }
       }
     }
@@ -285,8 +290,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ? const SizedBox(
                     width: 20,
                     height: 20,
-                    child: KarakanaWaveLoader(
-                        color: Colors.white, strokeWidth: 2),
+                    child:
+                        KarakanaWaveLoader(color: Colors.white, strokeWidth: 2),
                   )
                 : Text(
                     'Hifadhi',
@@ -326,8 +331,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const SizedBox(height: 12),
                     _buildField('Jina la Kwanza', _firstNameController,
                         Icons.person_outline,
-                        validator: (v) =>
-                            v == null || v.isEmpty ? 'Weka jina la kwanza' : null),
+                        validator: (v) => v == null || v.isEmpty
+                            ? 'Weka jina la kwanza'
+                            : null),
                     const SizedBox(height: 12),
                     _buildField('Jina la Familia', _lastNameController,
                         Icons.person_outline,
@@ -342,23 +348,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     _buildField('Nambari ya Simu', _phoneController,
                         Icons.phone_outlined,
                         keyboardType: TextInputType.phone,
-                        hint: 'Mfano: +255712345678',
-                        validator: (v) {
-                          if (v == null || v.isEmpty) return null; // optional field
-                          final cleaned = v.replaceAll(RegExp(r'\s+'), '');
-                          final valid = RegExp(
-                            r'^(\+?255|0)[67]\d{8}$',
-                          ).hasMatch(cleaned);
-                          return valid
-                              ? null
-                              : 'Weka namba sahihi ya Tanzania (mfano: +255712345678)';
-                        }),
+                        hint: 'Mfano: +255712345678', validator: (v) {
+                      if (v == null || v.isEmpty) return null; // optional field
+                      final cleaned = v.replaceAll(RegExp(r'\s+'), '');
+                      final valid = RegExp(
+                        r'^(\+?255|0)[67]\d{8}$',
+                      ).hasMatch(cleaned);
+                      return valid
+                          ? null
+                          : 'Weka namba sahihi ya Tanzania (mfano: +255712345678)';
+                    }),
                     const SizedBox(height: 12),
 
                     // Gender dropdown
                     DropdownButtonFormField<String>(
                       initialValue: _selectedGender,
-                      decoration: _inputDecoration('Jinsia', Icons.people_outline),
+                      decoration:
+                          _inputDecoration('Jinsia', Icons.people_outline),
                       items: const [
                         DropdownMenuItem(value: 'M', child: Text('Mwanaume')),
                         DropdownMenuItem(value: 'F', child: Text('Mwanamke')),
@@ -376,7 +382,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           readOnly: true,
                           controller: TextEditingController(
                             text: _dateOfBirth != null
-                                ? DateFormat('dd MMM yyyy').format(_dateOfBirth!)
+                                ? DateFormat('dd MMM yyyy')
+                                    .format(_dateOfBirth!)
                                 : '',
                           ),
                           decoration: _inputDecoration(
@@ -388,8 +395,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               fontSize: 14,
                               color: Colors.grey.shade400,
                             ),
-                            suffixIcon: const Icon(Icons.calendar_today_outlined,
-                                size: 18, color: AppColors.primary),
+                            suffixIcon: const Icon(
+                                Icons.calendar_today_outlined,
+                                size: 18,
+                                color: AppColors.primary),
                           ),
                         ),
                       ),
@@ -491,7 +500,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       {Color? iconColor}) {
     return InputDecoration(
       labelText: label,
-      labelStyle: GoogleFonts.montserrat(fontSize: 13, color: Colors.grey.shade600),
+      labelStyle:
+          GoogleFonts.montserrat(fontSize: 13, color: Colors.grey.shade600),
       prefixIcon: Icon(icon, color: iconColor ?? AppColors.primary, size: 20),
       filled: true,
       fillColor: Theme.of(context).cardColor,
@@ -536,7 +546,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       style: GoogleFonts.montserrat(fontSize: 14, color: AppColors.textPrimary),
       decoration: _inputDecoration(label, icon, iconColor: iconColor).copyWith(
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(fontSize: 13, color: Colors.grey.shade400),
+        hintStyle:
+            GoogleFonts.montserrat(fontSize: 13, color: Colors.grey.shade400),
       ),
     );
   }
@@ -671,5 +682,3 @@ class _CoverAvatarHeader extends StatelessWidget {
     );
   }
 }
-
-

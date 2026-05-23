@@ -205,9 +205,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           );
           context.pop();
         } else {
-          final res = await ApiClient()
-              .dio
-              .post('/api/v1/courses/', data: formData);
+          final res =
+              await ApiClient().dio.post('/api/v1/courses/', data: formData);
           final createdId = (res.data as Map?)?['id'] as int?;
           if (createdId != null) await _saveQuiz(createdId);
           if (!mounted) return;
@@ -332,7 +331,10 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                             shape: BoxShape.circle,
                             color: selectedCorrect == i
                                 ? const Color(0xFFE87722)
-                                : (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)),
+                                : (Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? const Color(0xFF2A1A0A)
+                                    : const Color(0xFFF5E6D8)),
                           ),
                           child: Center(
                             child: Text(labels[i],
@@ -370,7 +372,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                       final opts =
                           optionControllers.map((c) => c.text.trim()).toList();
                       if (q.isEmpty || opts.any((o) => o.isEmpty)) {
-                        showTopPopup(context, 'Jaza swali na majibu yote manne.');
+                        showTopPopup(
+                            context, 'Jaza swali na majibu yote manne.');
                         return;
                       }
                       setState(() => _questions.add({
@@ -407,8 +410,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide:
-              const BorderSide(color: Color(0xFFE87722), width: 1.5),
+          borderSide: const BorderSide(color: Color(0xFFE87722), width: 1.5),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -433,8 +435,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                   fontWeight: FontWeight.w600,
                   color: Colors.white)),
         ),
-        body: const Center(
-            child: KarakanaWaveLoader(color: Color(0xFFE87722))),
+        body: SafeArea(
+            child: const Center(
+                child: KarakanaWaveLoader(color: Color(0xFFE87722)))),
       );
     }
 
@@ -671,7 +674,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
             child: Container(
               height: 150,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
+                color:
+                    isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
                   color: _coverImage != null
@@ -707,7 +711,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                           width: 52,
                           height: 52,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE87722).withValues(alpha: 0.12),
+                            color:
+                                const Color(0xFFE87722).withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(14),
                           ),
                           child: const Icon(Icons.add_photo_alternate_outlined,
@@ -946,7 +951,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+                  border: Border.all(
+                      color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -957,8 +963,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                           width: 24,
                           height: 24,
                           decoration: const BoxDecoration(
-                              color: Color(0xFFE87722),
-                              shape: BoxShape.circle),
+                              color: Color(0xFFE87722), shape: BoxShape.circle),
                           child: Center(
                             child: Text('${i + 1}',
                                 style: GoogleFonts.montserrat(
@@ -976,8 +981,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                                   color: const Color(0xFF3D1800))),
                         ),
                         GestureDetector(
-                          onTap: () =>
-                              setState(() => _questions.removeAt(i)),
+                          onTap: () => setState(() => _questions.removeAt(i)),
                           child: const Icon(Icons.delete_outline,
                               color: Color(0xFF9E8070), size: 18),
                         ),
@@ -997,7 +1001,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                               shape: BoxShape.circle,
                               color: isCorrect
                                   ? const Color(0xFFE87722)
-                                  : (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)),
+                                  : (isDark
+                                      ? const Color(0xFF2A1A0A)
+                                      : const Color(0xFFF5E6D8)),
                             ),
                             child: Center(
                               child: Text(labels[opt.key],
@@ -1040,8 +1046,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
       'intermediate': 'Kati',
       'advanced': 'Juu',
     };
-    final categoryName = _categories
-        .firstWhere(
+    final categoryName = _categories.firstWhere(
           (c) => c['id'].toString() == _selectedCategory,
           orElse: () => {'name': '—'},
         )['name'] as String? ??
@@ -1060,8 +1065,11 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           ),
           const SizedBox(height: 16),
         ],
-        _summaryTile('Jina la Kozi',
-            _titleController.text.trim().isEmpty ? '—' : _titleController.text.trim()),
+        _summaryTile(
+            'Jina la Kozi',
+            _titleController.text.trim().isEmpty
+                ? '—'
+                : _titleController.text.trim()),
         _summaryTile('Kategoria', categoryName),
         _summaryTile(
             'Bei', price == 0 ? 'Bure' : 'TZS ${price.toStringAsFixed(0)}'),
@@ -1075,7 +1083,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+            border: Border.all(
+                color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1135,7 +1144,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+        border: Border.all(
+            color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
       ),
       child: DropdownButton<T>(
         value: safeValue,
@@ -1147,7 +1157,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         items: dedupedItems,
         onChanged: onChanged,
         style: GoogleFonts.montserrat(
-            fontSize: 14, color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF3D1800)),
+            fontSize: 14,
+            color: Theme.of(context).textTheme.bodyLarge?.color ??
+                const Color(0xFF3D1800)),
         dropdownColor: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(14),
       ),
@@ -1263,7 +1275,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFFFFF0E6),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFE87722).withValues(alpha: 0.3)),
+        border:
+            Border.all(color: const Color(0xFFE87722).withValues(alpha: 0.3)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1301,7 +1314,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+        border: Border.all(
+            color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1315,12 +1329,11 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 style: GoogleFonts.montserrat(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00))),
+                    color: Theme.of(context).textTheme.bodyLarge?.color ??
+                        const Color(0xFF1A0A00))),
           ),
         ],
       ),
     );
   }
 }
-
-

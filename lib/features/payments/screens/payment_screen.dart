@@ -134,11 +134,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
               : 'Malipo hayakuanzishwa. Jaribu tena.',
         );
         return;
-      } else
-      if (checkoutUrl != null && checkoutUrl.isNotEmpty) {
+      } else if (checkoutUrl != null && checkoutUrl.isNotEmpty) {
         final uri = Uri.tryParse(checkoutUrl);
         if (uri != null) {
-          var opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+          var opened =
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
           if (!opened) {
             opened = await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
           }
@@ -147,7 +147,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
           }
           if (!opened) {
             if (mounted) Navigator.of(context, rootNavigator: true).pop();
-            _showError('Imeshindikana kufungua ukurasa wa malipo. Jaribu tena.');
+            _showError(
+                'Imeshindikana kufungua ukurasa wa malipo. Jaribu tena.');
             return;
           }
         }
@@ -247,7 +248,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
+      body: SafeArea(
+          child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -744,7 +746,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             const SizedBox(height: 40),
           ],
         ),
-      ),
+      )),
     );
   }
 
@@ -763,5 +765,3 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 }
-
-

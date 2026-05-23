@@ -32,7 +32,8 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
 
   Future<void> _loadLesson() async {
     try {
-      final res = await ApiClient().dio.get('/api/v1/lessons/${widget.lessonId}/');
+      final res =
+          await ApiClient().dio.get('/api/v1/lessons/${widget.lessonId}/');
       if (!mounted) return;
       setState(() {
         _lesson = Map<String, dynamic>.from(res.data as Map);
@@ -47,7 +48,9 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
 
   Future<void> _markComplete() async {
     try {
-      await ApiClient().dio.post('/api/v1/lessons/${widget.lessonId}/progress/');
+      await ApiClient()
+          .dio
+          .post('/api/v1/lessons/${widget.lessonId}/progress/');
       if (!mounted) return;
       setState(() => _isCompleted = true);
       showTopPopup(context, 'Somo limekamilika! ✓', isError: false);
@@ -67,9 +70,10 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
     if (_isLoading) {
       return const Scaffold(
         backgroundColor: Color(0xFF1A0A00),
-        body: Center(
+        body: SafeArea(
+            child: Center(
           child: KarakanaWaveLoader(color: Color(0xFFE87722)),
-        ),
+        )),
       );
     }
 
@@ -95,7 +99,8 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
           if (_isCompleted)
             const Padding(
               padding: EdgeInsets.only(right: 12),
-              child: Icon(Icons.check_circle, color: Color(0xFFE87722), size: 24),
+              child:
+                  Icon(Icons.check_circle, color: Color(0xFFE87722), size: 24),
             )
           else
             TextButton(
@@ -503,9 +508,8 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
     final duration = value.duration;
 
     final playerWidget = AspectRatio(
-      aspectRatio: _isFullscreen
-          ? MediaQuery.of(context).size.aspectRatio
-          : 16 / 9,
+      aspectRatio:
+          _isFullscreen ? MediaQuery.of(context).size.aspectRatio : 16 / 9,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -635,5 +639,3 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
     return playerWidget;
   }
 }
-
-

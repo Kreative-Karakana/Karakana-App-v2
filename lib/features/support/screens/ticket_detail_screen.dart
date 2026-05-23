@@ -150,7 +150,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
             children: [
               TextField(
                 controller: subjectController,
-                decoration: const InputDecoration(labelText: 'Kichwa cha Tiketi'),
+                decoration:
+                    const InputDecoration(labelText: 'Kichwa cha Tiketi'),
               ),
               const SizedBox(height: 10),
               TextField(
@@ -264,8 +265,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     setState(() => _isUpdatingTicket = true);
     try {
       await ApiClient().dio.delete(
-        '/api/v1/communications/tickets/${widget.ticketId}/',
-      );
+            '/api/v1/communications/tickets/${widget.ticketId}/',
+          );
       if (!mounted) return;
       showTopPopup(context, 'Tiketi imefutwa kikamilifu.', isError: false);
       context.pop(true);
@@ -301,9 +302,10 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     if (_isLoading) {
       return const Scaffold(
         backgroundColor: Color(0xFFFFF8F4),
-        body: Center(
+        body: SafeArea(
+            child: Center(
           child: KarakanaWaveLoader(color: Color(0xFFE87722)),
-        ),
+        )),
       );
     }
     if (_ticket == null) {
@@ -326,8 +328,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
       );
     }
 
-    final isResolved = _ticket!['status'] == 'resolved' ||
-        _ticket!['status'] == 'closed';
+    final isResolved =
+        _ticket!['status'] == 'resolved' || _ticket!['status'] == 'closed';
     final createdAt = _formatTs(_ticket!['created_at'] as String?);
     final statusLabel = _statusLabel(_ticket!['status'] as String?);
     final description = (_ticket!['description'] as String? ?? '').trim();
@@ -525,7 +527,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   runSpacing: 6,
                   children: [
                     _metaChip('Hali: $statusLabel'),
-                    if (createdAt.isNotEmpty) _metaChip('Imefunguliwa: $createdAt'),
+                    if (createdAt.isNotEmpty)
+                      _metaChip('Imefunguliwa: $createdAt'),
                     _metaChip('Ujumbe: ${_messages.length}'),
                   ],
                 ),
@@ -543,143 +546,143 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               ),
               child: _messages.isEmpty
                   ? Center(
-                    child: Text(
-                      'Hakuna ujumbe bado.',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 14,
-                        color: const Color(0xFF9E8070),
+                      child: Text(
+                        'Hakuna ujumbe bado.',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 14,
+                          color: const Color(0xFF9E8070),
+                        ),
                       ),
-                    ),
-                  )
+                    )
                   : ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _messages.length,
-                    itemBuilder: (_, index) {
-                      final msg = _messages[index];
-                      final isStaff = msg['is_staff'] == true;
-                      final isUser = !isStaff;
-                      final ts = _formatTs(
-                          msg['created_at'] as String? ?? '');
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Column(
-                          crossAxisAlignment: isUser
-                              ? CrossAxisAlignment.end
-                              : CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: isUser
-                                  ? MainAxisAlignment.end
-                                  : MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                if (isStaff) ...[
-                                  Container(
-                                    width: 32,
-                                    height: 32,
-                                    decoration: const BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Color(0xFFE87722),
-                                          Color(0xFFFFA726)
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(16),
+                      itemCount: _messages.length,
+                      itemBuilder: (_, index) {
+                        final msg = _messages[index];
+                        final isStaff = msg['is_staff'] == true;
+                        final isUser = !isStaff;
+                        final ts =
+                            _formatTs(msg['created_at'] as String? ?? '');
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Column(
+                            crossAxisAlignment: isUser
+                                ? CrossAxisAlignment.end
+                                : CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: isUser
+                                    ? MainAxisAlignment.end
+                                    : MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  if (isStaff) ...[
+                                    Container(
+                                      width: 32,
+                                      height: 32,
+                                      decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Color(0xFFE87722),
+                                            Color(0xFFFFA726)
+                                          ],
+                                        ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.support_agent,
+                                        color: Colors.white,
+                                        size: 16,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                  ],
+                                  Flexible(
+                                    child: Container(
+                                      constraints: BoxConstraints(
+                                        maxWidth:
+                                            MediaQuery.of(context).size.width *
+                                                0.72,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 10,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: isUser
+                                            ? const Color(0xFFE87722)
+                                            : Colors.white,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: const Radius.circular(16),
+                                          topRight: const Radius.circular(16),
+                                          bottomLeft:
+                                              Radius.circular(isUser ? 16 : 4),
+                                          bottomRight:
+                                              Radius.circular(isUser ? 4 : 16),
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black
+                                                .withValues(alpha: 0.08),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 1),
+                                          ),
                                         ],
                                       ),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.support_agent,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                ],
-                                Flexible(
-                                  child: Container(
-                                    constraints: BoxConstraints(
-                                      maxWidth:
-                                          MediaQuery.of(context).size.width *
-                                              0.72,
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 14,
-                                      vertical: 10,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isUser
-                                          ? const Color(0xFFE87722)
-                                          : Colors.white,
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: const Radius.circular(16),
-                                        topRight: const Radius.circular(16),
-                                        bottomLeft:
-                                            Radius.circular(isUser ? 16 : 4),
-                                        bottomRight:
-                                            Radius.circular(isUser ? 4 : 16),
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black
-                                              .withValues(alpha: 0.08),
-                                          blurRadius: 4,
-                                          offset: const Offset(0, 1),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        if (isStaff) ...[
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          if (isStaff) ...[
+                                            Text(
+                                              'Msaada wa Karakana',
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w600,
+                                                color: const Color(0xFFE87722),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                          ],
                                           Text(
-                                            'Msaada wa Karakana',
+                                            msg['message'] as String? ?? '',
                                             style: GoogleFonts.montserrat(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w600,
-                                              color: const Color(0xFFE87722),
+                                              fontSize: 14,
+                                              height: 1.4,
+                                              color: isUser
+                                                  ? Colors.white
+                                                  : const Color(0xFF3D1800),
                                             ),
                                           ),
-                                          const SizedBox(height: 4),
                                         ],
-                                        Text(
-                                          msg['message'] as String? ?? '',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 14,
-                                            height: 1.4,
-                                            color: isUser
-                                                ? Colors.white
-                                                : const Color(0xFF3D1800),
-                                          ),
-                                        ),
-                                      ],
+                                      ),
+                                    ),
+                                  ),
+                                  if (isUser) const SizedBox(width: 8),
+                                ],
+                              ),
+                              if (ts.isNotEmpty)
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    top: 3,
+                                    left: isStaff ? 40 : 0,
+                                    right: isUser ? 8 : 0,
+                                    bottom: 8,
+                                  ),
+                                  child: Text(
+                                    ts,
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 10,
+                                      color: const Color(0xFFBDA99C),
                                     ),
                                   ),
                                 ),
-                                if (isUser) const SizedBox(width: 8),
-                              ],
-                            ),
-                            if (ts.isNotEmpty)
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  top: 3,
-                                  left: isStaff ? 40 : 0,
-                                  right: isUser ? 8 : 0,
-                                  bottom: 8,
-                                ),
-                                child: Text(
-                                  ts,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 10,
-                                    color: const Color(0xFFBDA99C),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
             ),
           ),
           if (!isResolved)
@@ -767,6 +770,3 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     );
   }
 }
-
-
-

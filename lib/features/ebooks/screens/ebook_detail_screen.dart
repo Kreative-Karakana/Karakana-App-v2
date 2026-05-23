@@ -73,8 +73,12 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Ghairi')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Endelea')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Ghairi')),
+          FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Endelea')),
         ],
       ),
     );
@@ -108,13 +112,16 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
       if (externalId != null && externalId.isNotEmpty) {
         for (var i = 0; i < 10; i++) {
           await Future.delayed(const Duration(seconds: 3));
-          final statusRes = await ApiClient().dio.get('/api/v1/payments/$externalId/');
+          final statusRes =
+              await ApiClient().dio.get('/api/v1/payments/$externalId/');
           if ((statusRes.data['is_successful'] == true) && mounted) {
             await context.read<EbookProvider>().fetchLibrary();
             await context.read<EbookProvider>().fetchStore();
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Malipo yamekamilika. eBook imeongezwa kwenye maktaba.')),
+                const SnackBar(
+                    content: Text(
+                        'Malipo yamekamilika. eBook imeongezwa kwenye maktaba.')),
               );
               context.push('/zana/ebooks/library');
             }
@@ -124,7 +131,8 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ApiClient().parseError(e))));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(ApiClient().parseError(e))));
       }
     } finally {
       if (mounted) setState(() => _processing = false);
@@ -134,47 +142,66 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(body: Center(child: KarakanaWaveLoader()));
+      return const Scaffold(
+        body: SafeArea(
+          child: Center(child: KarakanaWaveLoader()),
+        ),
+      );
     }
 
     final d = _detail ?? {};
-    final isPurchased = d['is_purchased'] == true || context.watch<EbookProvider>().isOwned(widget.ebookId);
+    final isPurchased = d['is_purchased'] == true ||
+        context.watch<EbookProvider>().isOwned(widget.ebookId);
     final price = (d['price'] as num?)?.toInt() ?? 0;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Maelezo ya Kitabu')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: d['cover_image'] != null
-                ? Image.network(d['cover_image'].toString(), fit: BoxFit.cover)
-                : Container(color: const Color(0xFFF5E6D8), child: const Icon(Icons.menu_book_outlined, size: 48)),
-          ),
-          const SizedBox(height: 16),
-          Text((d['title'] ?? '').toString(), style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Text((d['author_name'] ?? '').toString()),
-          const SizedBox(height: 12),
-          Text((d['description'] ?? '').toString()),
-          const SizedBox(height: 18),
-          Text(price <= 0 ? 'Bure' : 'TZS $price', style: const TextStyle(fontWeight: FontWeight.w700)),
-          const SizedBox(height: 14),
-          FilledButton(
-            onPressed: _processing ? null : () {
-              if (isPurchased) {
-                context.push(
-                  '/zana/ebooks/read/${widget.ebookId}',
-                  extra: {'ebookTitle': (d['title'] ?? 'eBook').toString()},
-                );
-              } else {
-                _purchase();
-              }
-            },
-            child: _processing ? const KarakanaWaveLoader(color: Colors.white, size: 12) : Text(isPurchased ? 'Soma' : 'Nunua'),
-          ),
-        ],
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: d['cover_image'] != null
+                  ? Image.network(d['cover_image'].toString(),
+                      fit: BoxFit.cover)
+                  : Container(
+                      color: const Color(0xFFF5E6D8),
+                      child: const Icon(Icons.menu_book_outlined, size: 48)),
+            ),
+            const SizedBox(height: 16),
+            Text((d['title'] ?? '').toString(),
+                style:
+                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text((d['author_name'] ?? '').toString()),
+            const SizedBox(height: 12),
+            Text((d['description'] ?? '').toString()),
+            const SizedBox(height: 18),
+            Text(price <= 0 ? 'Bure' : 'TZS $price',
+                style: const TextStyle(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 14),
+            FilledButton(
+              onPressed: _processing
+                  ? null
+                  : () {
+                      if (isPurchased) {
+                        context.push(
+                          '/zana/ebooks/read/${widget.ebookId}',
+                          extra: {
+                            'ebookTitle': (d['title'] ?? 'eBook').toString()
+                          },
+                        );
+                      } else {
+                        _purchase();
+                      }
+                    },
+              child: _processing
+                  ? const KarakanaWaveLoader(color: Colors.white, size: 12)
+                  : Text(isPurchased ? 'Soma' : 'Nunua'),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -25,11 +25,13 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
 
   Future<void> _loadCourses() async {
     try {
-      final res =
-          await ApiClient().dio.get('/api/v1/courses/?enrolled=true&page_size=50');
+      final res = await ApiClient()
+          .dio
+          .get('/api/v1/courses/?enrolled=true&page_size=50');
       final data = res.data;
-      final results =
-          data is Map ? (data['results'] as List? ?? []) : (data as List? ?? []);
+      final results = data is Map
+          ? (data['results'] as List? ?? [])
+          : (data as List? ?? []);
       if (!mounted) return;
       setState(() {
         _courses = results;
@@ -58,155 +60,168 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
           ),
         ),
       ),
-      body: _isLoading
-          ? const Center(
-              child: KarakanaWaveLoader(color: Color(0xFFE87722)),
-            )
-          : _courses.isEmpty
-              ? _buildEmptyState(context)
-              : ListView.builder(
-                  padding: const EdgeInsets.all(20),
-                  itemCount: _courses.length,
-                  itemBuilder: (_, i) {
-                    final course = _courses[i] as Map;
-                    final title = course['title'] as String? ?? '';
-                    final coverPhoto = course['cover_photo'] as String?;
-                    final courseId = course['id'] as int? ?? 0;
-                    final trainer = course['trainer'] as Map?;
-                    final trainerName = trainer != null
-                        ? '${trainer['first_name'] ?? ''} ${trainer['last_name'] ?? ''}'
-                            .trim()
-                        : '';
-                    final progress = _extractProgress(course);
+      body: SafeArea(
+          child: _isLoading
+              ? const Center(
+                  child: KarakanaWaveLoader(color: Color(0xFFE87722)),
+                )
+              : _courses.isEmpty
+                  ? _buildEmptyState(context)
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(20),
+                      itemCount: _courses.length,
+                      itemBuilder: (_, i) {
+                        final course = _courses[i] as Map;
+                        final title = course['title'] as String? ?? '';
+                        final coverPhoto = course['cover_photo'] as String?;
+                        final courseId = course['id'] as int? ?? 0;
+                        final trainer = course['trainer'] as Map?;
+                        final trainerName = trainer != null
+                            ? '${trainer['first_name'] ?? ''} ${trainer['last_name'] ?? ''}'
+                                .trim()
+                            : '';
+                        final progress = _extractProgress(course);
 
-                    final isDark = Theme.of(context).brightness == Brightness.dark;
-                    return GestureDetector(
-                      onTap: () => context.push('/course/$courseId/classroom'),
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x0FC4620A),
-                              blurRadius: 10,
-                              offset: Offset(0, 2),
+                        final isDark =
+                            Theme.of(context).brightness == Brightness.dark;
+                        return GestureDetector(
+                          onTap: () =>
+                              context.push('/course/$courseId/classroom'),
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 16),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).cardColor,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x0FC4620A),
+                                  blurRadius: 10,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(16),
-                                bottomLeft: Radius.circular(16),
-                              ),
-                              child: coverPhoto != null
-                                  ? CachedNetworkImage(
-                                      imageUrl: coverPhoto,
-                                      width: 100,
-                                      height: 90,
-                                      fit: BoxFit.cover,
-                                      errorWidget: (_, __, ___) => _coverFallback(),
-                                    )
-                                  : _coverFallback(),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      title,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      trainerName,
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 12,
-                                        color: const Color(0xFF9E8070),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Row(
+                            child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(16),
+                                    bottomLeft: Radius.circular(16),
+                                  ),
+                                  child: coverPhoto != null
+                                      ? CachedNetworkImage(
+                                          imageUrl: coverPhoto,
+                                          width: 100,
+                                          height: 90,
+                                          fit: BoxFit.cover,
+                                          errorWidget: (_, __, ___) =>
+                                              _coverFallback(),
+                                        )
+                                      : _coverFallback(),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Expanded(
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(4),
-                                            child: LinearProgressIndicator(
-                                              value: progress / 100,
-                                              minHeight: 7,
-                                              backgroundColor: isDark
-                                                  ? const Color(0xFF2A1A0A)
-                                                  : const Color(0xFFF5E6D8),
-                                              valueColor: const AlwaysStoppedAnimation(
-                                                Color(0xFFE87722),
+                                        Text(
+                                          title,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyLarge
+                                                    ?.color ??
+                                                const Color(0xFF1A0A00),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          trainerName,
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 12,
+                                            color: const Color(0xFF9E8070),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                                child: LinearProgressIndicator(
+                                                  value: progress / 100,
+                                                  minHeight: 7,
+                                                  backgroundColor: isDark
+                                                      ? const Color(0xFF2A1A0A)
+                                                      : const Color(0xFFF5E6D8),
+                                                  valueColor:
+                                                      const AlwaysStoppedAnimation(
+                                                    Color(0xFFE87722),
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          '$progress%',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w700,
-                                            color: const Color(0xFFE87722),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 4,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFE87722),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: Text(
-                                            'Imeandikishwa',
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.white,
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              '$progress%',
+                                              style: GoogleFonts.montserrat(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w700,
+                                                color: const Color(0xFFE87722),
+                                              ),
                                             ),
-                                          ),
+                                          ],
                                         ),
-                                        const Spacer(),
-                                        const Icon(
-                                          Icons.arrow_forward_ios,
-                                          size: 14,
-                                          color: Color(0xFFE8D5C8),
+                                        const SizedBox(height: 8),
+                                        Row(
+                                          children: [
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                horizontal: 10,
+                                                vertical: 4,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFE87722),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: Text(
+                                                'Imeandikishwa',
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            const Spacer(),
+                                            const Icon(
+                                              Icons.arrow_forward_ios,
+                                              size: 14,
+                                              color: Color(0xFFE8D5C8),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                                const SizedBox(width: 12),
+                              ],
                             ),
-                            const SizedBox(width: 12),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                          ),
+                        );
+                      },
+                    )),
     );
   }
 
@@ -235,7 +250,8 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+              color: Theme.of(context).textTheme.bodyLarge?.color ??
+                  const Color(0xFF1A0A00),
             ),
           ),
           const SizedBox(height: 8),
@@ -255,8 +271,7 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(28),
               ),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
             ),
             child: Text(
               'Tafuta Kozi',
@@ -313,8 +328,12 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
       }
       final enrolledCompleted = _toDouble(enrollment['completed_lessons']);
       final enrolledTotal = _toDouble(enrollment['total_lessons']);
-      if (enrolledCompleted != null && enrolledTotal != null && enrolledTotal > 0) {
-        return ((enrolledCompleted / enrolledTotal) * 100).clamp(0, 100).round();
+      if (enrolledCompleted != null &&
+          enrolledTotal != null &&
+          enrolledTotal > 0) {
+        return ((enrolledCompleted / enrolledTotal) * 100)
+            .clamp(0, 100)
+            .round();
       }
     }
 
@@ -328,5 +347,3 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
     return null;
   }
 }
-
-

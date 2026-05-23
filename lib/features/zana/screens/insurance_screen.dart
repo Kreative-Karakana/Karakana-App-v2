@@ -72,7 +72,8 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
         ),
         elevation: 0,
       ),
-      body: SingleChildScrollView(
+      body: SafeArea(
+          child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
@@ -291,56 +292,56 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                   ),
                   const SizedBox(height: 16),
                   ...steps.map((step) => Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 36,
-                          height: 36,
-                          decoration: const BoxDecoration(
-                            color: _color,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Text(
-                              step[0],
-                              style: GoogleFonts.montserrat(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 36,
+                              height: 36,
+                              decoration: const BoxDecoration(
+                                color: _color,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  step[0],
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                step[1],
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF1A0A00),
-                                ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    step[1],
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFF1A0A00),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    step[2],
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 13,
+                                      color: const Color(0xFF9E8070),
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 2),
-                              Text(
-                                step[2],
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 13,
-                                  color: const Color(0xFF9E8070),
-                                  height: 1.4,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )),
+                      )),
 
                   const SizedBox(height: 8),
 
@@ -391,8 +392,9 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                 ),
                               ),
                             ),
-                            validator: (v) =>
-                                v == null || v.isEmpty ? 'Weka jina lako' : null,
+                            validator: (v) => v == null || v.isEmpty
+                                ? 'Weka jina lako'
+                                : null,
                           ),
                           const SizedBox(height: 14),
                           TextFormField(
@@ -420,8 +422,9 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                 ),
                               ),
                             ),
-                            validator: (v) =>
-                                v == null || v.isEmpty ? 'Weka nambari ya simu' : null,
+                            validator: (v) => v == null || v.isEmpty
+                                ? 'Weka nambari ya simu'
+                                : null,
                           ),
                           const SizedBox(height: 24),
                           SizedBox(
@@ -526,9 +529,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
             ),
           ],
         ),
-      ),
+      )),
     );
   }
 }
-
-

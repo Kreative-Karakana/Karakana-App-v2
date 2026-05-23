@@ -95,11 +95,12 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
         if (provider.isLoadingDetail) {
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            body: const Center(
+            body: SafeArea(
+                child: const Center(
               child: KarakanaWaveLoader(
                 color: Color(0xFFE87722),
               ),
-            ),
+            )),
           );
         }
 
@@ -130,7 +131,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () => provider.loadCourseDetail(widget.courseId),
+                      onPressed: () =>
+                          provider.loadCourseDetail(widget.courseId),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFE87722),
                         foregroundColor: Colors.white,
@@ -238,10 +240,14 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           imageUrl: course.coverPhoto!,
                           fit: BoxFit.cover,
                           placeholder: (_, __) => Container(
-                            color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
+                            color: isDark
+                                ? const Color(0xFF2A1A0A)
+                                : const Color(0xFFF5E6D8),
                           ),
                           errorWidget: (_, __, ___) => Container(
-                            color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
+                            color: isDark
+                                ? const Color(0xFF2A1A0A)
+                                : const Color(0xFFF5E6D8),
                           ),
                         )
                       else
@@ -381,7 +387,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                     width: 36,
                                     height: 36,
                                     fit: BoxFit.cover,
-                                    errorWidget: (_, __, ___) => _trainerFallback(),
+                                    errorWidget: (_, __, ___) =>
+                                        _trainerFallback(),
                                   )
                                 : _trainerFallback(),
                           ),
@@ -418,10 +425,14 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
+                          color: isDark
+                              ? const Color(0xFF2A1A0A)
+                              : const Color(0xFFFFF8F4),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: isDark ? Colors.white12 : const Color(0xFFE8D5C8),
+                            color: isDark
+                                ? Colors.white12
+                                : const Color(0xFFE8D5C8),
                           ),
                         ),
                         child: Column(
@@ -514,10 +525,14 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           padding: const EdgeInsets.all(16),
                           margin: const EdgeInsets.only(bottom: 12),
                           decoration: BoxDecoration(
-                            color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
+                            color: isDark
+                                ? const Color(0xFF2A1A0A)
+                                : const Color(0xFFFFF8F4),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: isDark ? Colors.white12 : const Color(0xFFE8D5C8),
+                              color: isDark
+                                  ? Colors.white12
+                                  : const Color(0xFFE8D5C8),
                             ),
                           ),
                           child: Row(
@@ -545,10 +560,14 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           padding: const EdgeInsets.all(16),
                           margin: const EdgeInsets.only(bottom: 12),
                           decoration: BoxDecoration(
-                            color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
+                            color: isDark
+                                ? const Color(0xFF2A1A0A)
+                                : const Color(0xFFFFF8F4),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: isDark ? Colors.white12 : const Color(0xFFE8D5C8),
+                              color: isDark
+                                  ? Colors.white12
+                                  : const Color(0xFFE8D5C8),
                             ),
                           ),
                           child: Column(
@@ -565,7 +584,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'Hatukuweza kufungua mtaala sasa hivi',
@@ -600,7 +620,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                               ),
                               const SizedBox(height: 12),
                               OutlinedButton(
-                                onPressed: () => provider.loadCourseDetail(widget.courseId),
+                                onPressed: () =>
+                                    provider.loadCourseDetail(widget.courseId),
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: const Color(0xFFE87722),
                                   side: const BorderSide(
@@ -625,10 +646,14 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           padding: const EdgeInsets.all(16),
                           margin: const EdgeInsets.only(bottom: 12),
                           decoration: BoxDecoration(
-                            color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
+                            color: isDark
+                                ? const Color(0xFF2A1A0A)
+                                : const Color(0xFFFFF8F4),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: isDark ? Colors.white12 : const Color(0xFFE8D5C8),
+                              color: isDark
+                                  ? Colors.white12
+                                  : const Color(0xFFE8D5C8),
                             ),
                           ),
                           child: Row(
@@ -905,7 +930,9 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                 decoration: BoxDecoration(
                   color: lesson.isRead
                       ? const Color(0xFFE87722).withValues(alpha: 0.1)
-                      : (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)),
+                      : (Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF2A1A0A)
+                          : const Color(0xFFF5E6D8)),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -932,7 +959,9 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       size: 16,
                     )
                   : null,
-              onTap: isEnrolled ? () => context.push('/lesson/${lesson.id}') : null,
+              onTap: isEnrolled
+                  ? () => context.push('/lesson/${lesson.id}')
+                  : null,
             ),
           )
           .toList(),
@@ -1022,7 +1051,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
+                color:
+                    isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -1092,7 +1122,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     return DateFormat('dd MMM yyyy').format(parsed);
   }
 
-  Future<void> _toggleWishlist(CourseModel course, CourseProvider provider) async {
+  Future<void> _toggleWishlist(
+      CourseModel course, CourseProvider provider) async {
     if (_wishlistBusy) return;
     final previous = course.isWishlisted;
     setState(() {
@@ -1155,7 +1186,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
             (faq) => Container(
               margin: const EdgeInsets.only(bottom: 8),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
+                color:
+                    isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isDark ? Colors.white12 : const Color(0xFFE8D5C8),
@@ -1193,6 +1225,3 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     );
   }
 }
-
-
-

@@ -7,11 +7,13 @@ class FursaScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Center(
+      body: SafeArea(
+          child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.lightbulb_outline, size: 64, color: Color(0xFFE87722)),
+            const Icon(Icons.lightbulb_outline,
+                size: 64, color: Color(0xFFE87722)),
             const SizedBox(height: 16),
             const Text(
               'Fursa Zinakuja Hivi Karibuni',
@@ -25,7 +27,7 @@ class FursaScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      )),
     );
   }
 }

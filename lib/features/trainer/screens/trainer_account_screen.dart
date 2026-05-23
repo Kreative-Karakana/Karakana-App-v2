@@ -151,9 +151,10 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
         final initial = userName.isNotEmpty ? userName[0].toUpperCase() : 'M';
         final isDark = Theme.of(context).brightness == Brightness.dark;
 
-        return CustomScrollView(
-          controller: _scroll,
-          slivers: [
+        return SafeArea(
+          child: CustomScrollView(
+            controller: _scroll,
+            slivers: [
               SliverAppBar(
                 expandedHeight: _expandedHeight,
                 pinned: true,
@@ -272,7 +273,8 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFFE87722).withValues(alpha: 0.08),
+                          color:
+                              const Color(0xFFE87722).withValues(alpha: 0.08),
                           blurRadius: 20,
                           offset: const Offset(0, 4),
                         ),
@@ -324,8 +326,8 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color:
-                                      const Color(0xFFE87722).withValues(alpha: 0.1),
+                                  color: const Color(0xFFE87722)
+                                      .withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
                                       color: const Color(0xFFE87722)
@@ -417,7 +419,8 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                             width: 36,
                             height: 36,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE87722).withValues(alpha: 0.1),
+                              color: const Color(0xFFE87722)
+                                  .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Icon(
@@ -432,7 +435,10 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                             'Ingia kwa $_biometricLabel',
                             style: GoogleFonts.montserrat(
                               fontSize: 14,
-                              color: Theme.of(context).textTheme.bodyLarge?.color ??
+                              color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color ??
                                   const Color(0xFF1A0A00),
                             ),
                           ),
@@ -451,8 +457,8 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                                 ? _toggleBiometric
                                 : null,
                             activeColor: const Color(0xFFE87722),
-                            activeTrackColor: const Color(0xFFE87722)
-                                .withValues(alpha: 0.3),
+                            activeTrackColor:
+                                const Color(0xFFE87722).withValues(alpha: 0.3),
                           ),
                         ),
                       ]),
@@ -465,12 +471,18 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                                 showDialog<void>(
                                   context: context,
                                   builder: (_) => AlertDialog(
-                                    title: Text('Toka', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
-                                    content: Text('Una uhakika unataka kutoka?', style: GoogleFonts.montserrat()),
+                                    title: Text('Toka',
+                                        style: GoogleFonts.montserrat(
+                                            fontWeight: FontWeight.w700)),
+                                    content: Text('Una uhakika unataka kutoka?',
+                                        style: GoogleFonts.montserrat()),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),
-                                        child: Text('Hapana', style: GoogleFonts.montserrat(color: const Color(0xFF9E8070))),
+                                        child: Text('Hapana',
+                                            style: GoogleFonts.montserrat(
+                                                color:
+                                                    const Color(0xFF9E8070))),
                                       ),
                                       TextButton(
                                         onPressed: () {
@@ -478,19 +490,30 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                                           context.read<AuthProvider>().logout();
                                           context.go('/login');
                                         },
-                                        child: Text('Ndiyo, Toka', style: GoogleFonts.montserrat(color: const Color(0xFFB71C1C), fontWeight: FontWeight.w600)),
+                                        child: Text('Ndiyo, Toka',
+                                            style: GoogleFonts.montserrat(
+                                                color: const Color(0xFFB71C1C),
+                                                fontWeight: FontWeight.w600)),
                                       ),
                                     ],
                                   ),
                                 );
                               },
-                              icon: const Icon(Icons.logout, color: Color(0xFF1A0A00), size: 18),
-                              label: Text('Toka', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFF1A0A00))),
+                              icon: const Icon(Icons.logout,
+                                  color: Color(0xFF1A0A00), size: 18),
+                              label: Text('Toka',
+                                  style: GoogleFonts.montserrat(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFF1A0A00))),
                               style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Color(0xFFE8D5C8), width: 1.5),
+                                side: const BorderSide(
+                                    color: Color(0xFFE8D5C8), width: 1.5),
                                 backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14)),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 14),
                               ),
                             ),
                           ),
@@ -501,57 +524,88 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                                 showDialog<void>(
                                   context: context,
                                   builder: (_) => AlertDialog(
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                    title: Text('Futa Akaunti?', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700, color: const Color(0xFF1A0A00))),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    title: Text('Futa Akaunti?',
+                                        style: GoogleFonts.montserrat(
+                                            fontWeight: FontWeight.w700,
+                                            color: const Color(0xFF1A0A00))),
                                     content: Text(
                                       'Akaunti yako itafutwa kabisa na data yote itapotea. Hii haiwezi kurejeshwa.',
-                                      style: GoogleFonts.montserrat(fontSize: 13, color: const Color(0xFF7B3A10), height: 1.5),
+                                      style: GoogleFonts.montserrat(
+                                          fontSize: 13,
+                                          color: const Color(0xFF7B3A10),
+                                          height: 1.5),
                                     ),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),
-                                        child: Text('Hapana', style: GoogleFonts.montserrat(color: const Color(0xFF9E8070))),
+                                        child: Text('Hapana',
+                                            style: GoogleFonts.montserrat(
+                                                color:
+                                                    const Color(0xFF9E8070))),
                                       ),
                                       ElevatedButton(
                                         onPressed: () async {
                                           Navigator.pop(context);
                                           try {
-                                            await context.read<AuthProvider>().deleteAccount();
-                                            if (context.mounted) context.go('/login');
+                                            await context
+                                                .read<AuthProvider>()
+                                                .deleteAccount();
+                                            if (context.mounted)
+                                              context.go('/login');
                                           } catch (_) {
-                                            if (context.mounted) showTopPopup(context, 'Imeshindikana kufuta akaunti. Jaribu tena.');
+                                            if (context.mounted)
+                                              showTopPopup(context,
+                                                  'Imeshindikana kufuta akaunti. Jaribu tena.');
                                           }
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color(0xFFB71C1C),
+                                          backgroundColor:
+                                              const Color(0xFFB71C1C),
                                           foregroundColor: Colors.white,
                                           elevation: 0,
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12)),
                                         ),
-                                        child: Text('Ndiyo, Futa', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
+                                        child: Text('Ndiyo, Futa',
+                                            style: GoogleFonts.montserrat(
+                                                fontWeight: FontWeight.w700)),
                                       ),
                                     ],
                                   ),
                                 );
                               },
-                              icon: const Icon(Icons.delete_forever_outlined, color: Colors.white, size: 18),
-                              label: Text('Futa Akaunti', style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
+                              icon: const Icon(Icons.delete_forever_outlined,
+                                  color: Colors.white, size: 18),
+                              label: Text('Futa Akaunti',
+                                  style: GoogleFonts.montserrat(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white)),
                               style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Color(0xFFB71C1C), width: 1.5),
+                                side: const BorderSide(
+                                    color: Color(0xFFB71C1C), width: 1.5),
                                 backgroundColor: const Color(0xFFB71C1C),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14)),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 14),
                               ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: MediaQuery.of(context).padding.bottom + 24),
+                      SizedBox(
+                          height: MediaQuery.of(context).padding.bottom + 24),
                     ],
                   ),
                 ),
               ),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -565,7 +619,9 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
       child: Center(
         child: Text(initial,
             style: GoogleFonts.montserrat(
-                fontSize: 32, fontWeight: FontWeight.w700, color: Colors.white)),
+                fontSize: 32,
+                fontWeight: FontWeight.w700,
+                color: Colors.white)),
       ),
     );
   }
@@ -639,8 +695,8 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
             color: Theme.of(context).textTheme.bodyLarge?.color ??
                 const Color(0xFF1A0A00),
           )),
-      trailing: const Icon(Icons.chevron_right,
-          color: Color(0xFFE8D5C8), size: 18),
+      trailing:
+          const Icon(Icons.chevron_right, color: Color(0xFFE8D5C8), size: 18),
       onTap: onTap,
     );
   }

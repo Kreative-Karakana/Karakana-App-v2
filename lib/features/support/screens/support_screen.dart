@@ -85,7 +85,8 @@ class _SupportScreenState extends State<SupportScreen> {
           ),
         ),
       ),
-      body: Column(
+      body: SafeArea(
+          child: Column(
         children: [
           Container(
             color: Theme.of(context).cardColor,
@@ -107,7 +108,8 @@ class _SupportScreenState extends State<SupportScreen> {
                       child: _buildQuickHelp(
                         Icons.help_outline,
                         'Maswali\nYaliyoulizwa',
-                        () => showTopPopup(context, 'Inakuja hivi karibuni', isError: false),
+                        () => showTopPopup(context, 'Inakuja hivi karibuni',
+                            isError: false),
                         isDark: isDark,
                       ),
                     ),
@@ -116,7 +118,9 @@ class _SupportScreenState extends State<SupportScreen> {
                       child: _buildQuickHelp(
                         Icons.email_outlined,
                         'Tutumie\nBarua Pepe',
-                        () => showTopPopup(context, 'support@kreativekarakana.co.tz', isError: false),
+                        () => showTopPopup(
+                            context, 'support@kreativekarakana.co.tz',
+                            isError: false),
                         isDark: isDark,
                       ),
                     ),
@@ -138,7 +142,9 @@ class _SupportScreenState extends State<SupportScreen> {
               ],
             ),
           ),
-          Divider(height: 1, color: isDark ? Colors.white10 : const Color(0xFFF0E4DA)),
+          Divider(
+              height: 1,
+              color: isDark ? Colors.white10 : const Color(0xFFF0E4DA)),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
             child: Row(
@@ -148,7 +154,8 @@ class _SupportScreenState extends State<SupportScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+                    color: Theme.of(context).textTheme.bodyLarge?.color ??
+                        const Color(0xFF1A0A00),
                   ),
                 ),
                 const Spacer(),
@@ -165,8 +172,7 @@ class _SupportScreenState extends State<SupportScreen> {
           Expanded(
             child: _isLoading
                 ? const Center(
-                    child:
-                        KarakanaWaveLoader(color: Color(0xFFE87722)),
+                    child: KarakanaWaveLoader(color: Color(0xFFE87722)),
                   )
                 : _tickets.isEmpty
                     ? _buildEmptyState()
@@ -180,116 +186,119 @@ class _SupportScreenState extends State<SupportScreen> {
                           await _loadTickets();
                         },
                         child: ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 80),
-                        itemCount: _tickets.length,
-                        itemBuilder: (_, index) {
-                          final ticket = _tickets[index];
-                          final isResolved = ticket['status'] == 'resolved' ||
-                              ticket['status'] == 'closed';
-                          final ticketId = ticket['id'] as int? ?? 0;
-                          final subject =
-                              ticket['subject'] as String? ?? 'Tiketi';
-                          return GestureDetector(
-                            onTap: () async {
-                              final result = await context.push('/support/$ticketId');
-                              if (!mounted) return;
-                              if (result == true) {
-                                await _loadTickets();
-                              }
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(bottom: 10),
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).cardColor,
-                                borderRadius: BorderRadius.circular(14),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color(0x0FC4620A),
-                                    blurRadius: 8,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 44,
-                                    height: 44,
-                                    decoration: BoxDecoration(
-                                      color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
-                                      borderRadius: BorderRadius.circular(11),
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 80),
+                          itemCount: _tickets.length,
+                          itemBuilder: (_, index) {
+                            final ticket = _tickets[index];
+                            final isResolved = ticket['status'] == 'resolved' ||
+                                ticket['status'] == 'closed';
+                            final ticketId = ticket['id'] as int? ?? 0;
+                            final subject =
+                                ticket['subject'] as String? ?? 'Tiketi';
+                            return GestureDetector(
+                              onTap: () async {
+                                final result =
+                                    await context.push('/support/$ticketId');
+                                if (!mounted) return;
+                                if (result == true) {
+                                  await _loadTickets();
+                                }
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 10),
+                                padding: const EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).cardColor,
+                                  borderRadius: BorderRadius.circular(14),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Color(0x0FC4620A),
+                                      blurRadius: 8,
+                                      offset: Offset(0, 2),
                                     ),
-                                    child: const Icon(
-                                      Icons.support_agent_outlined,
-                                      color: Color(0xFFE87722),
-                                      size: 22,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'TKT-${ticketId.toString().padLeft(4, '0')}',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 11,
-                                            color: const Color(0xFFBDA99C),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          subject,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color(0xFF3D1800),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isResolved
-                                          ? const Color(0xFFF5E6D8)
-                                          : const Color(0xFFFFF8F4),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: isResolved
-                                            ? const Color(0xFFE87722)
-                                            : const Color(0xFFE87722),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 44,
+                                      height: 44,
+                                      decoration: BoxDecoration(
+                                        color: isDark
+                                            ? const Color(0xFF2A1A0A)
+                                            : const Color(0xFFF5E6D8),
+                                        borderRadius: BorderRadius.circular(11),
+                                      ),
+                                      child: const Icon(
+                                        Icons.support_agent_outlined,
+                                        color: Color(0xFFE87722),
+                                        size: 22,
                                       ),
                                     ),
-                                    child: Text(
-                                      isResolved ? 'Imemalizwa' : 'Wazi',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w700,
-                                        color: isResolved
-                                            ? const Color(0xFFE87722)
-                                            : const Color(0xFFE87722),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'TKT-${ticketId.toString().padLeft(4, '0')}',
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 11,
+                                              color: const Color(0xFFBDA99C),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            subject,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: const Color(0xFF3D1800),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: isResolved
+                                            ? const Color(0xFFF5E6D8)
+                                            : const Color(0xFFFFF8F4),
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                          color: isResolved
+                                              ? const Color(0xFFE87722)
+                                              : const Color(0xFFE87722),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        isResolved ? 'Imemalizwa' : 'Wazi',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w700,
+                                          color: isResolved
+                                              ? const Color(0xFFE87722)
+                                              : const Color(0xFFE87722),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
+                            );
+                          },
+                        ),
                       ),
           ),
         ],
-      ),
+      )),
     );
   }
 
@@ -306,7 +315,8 @@ class _SupportScreenState extends State<SupportScreen> {
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+          border: Border.all(
+              color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -353,7 +363,8 @@ class _SupportScreenState extends State<SupportScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+              color: Theme.of(context).textTheme.bodyLarge?.color ??
+                  const Color(0xFF1A0A00),
             ),
           ),
           const SizedBox(height: 8),
@@ -369,5 +380,3 @@ class _SupportScreenState extends State<SupportScreen> {
     );
   }
 }
-
-

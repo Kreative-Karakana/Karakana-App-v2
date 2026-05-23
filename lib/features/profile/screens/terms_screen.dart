@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TermsScreen extends StatefulWidget {
@@ -37,7 +37,8 @@ class _TermsScreenState extends State<TermsScreen> {
                 value: _lang,
                 dropdownColor: const Color(0xFF3D1800),
                 icon: const Icon(Icons.language, color: Colors.white, size: 18),
-                style: GoogleFonts.montserrat(color: Colors.white, fontSize: 13),
+                style:
+                    GoogleFonts.montserrat(color: Colors.white, fontSize: 13),
                 items: const [
                   DropdownMenuItem(value: 'sw', child: Text('Kiswahili')),
                   DropdownMenuItem(value: 'en', child: Text('English')),
@@ -50,11 +51,11 @@ class _TermsScreenState extends State<TermsScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(24, 24, 24, 48),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 48),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             // Header
             Center(
               child: Column(
@@ -135,7 +136,9 @@ class _TermsScreenState extends State<TermsScreen> {
                   : 'You agree to use our platform only for lawful purposes and in accordance with these Terms. You may not use our services to transmit, distribute, or store material that is unlawful, harmful, threatening, abusive, harassing, defamatory, vulgar, obscene, or otherwise objectionable.',
             ),
             _section(
-              isSw ? '6. Jinsi Tunavyoshiriki Taarifa' : '6. How We Share Information',
+              isSw
+                  ? '6. Jinsi Tunavyoshiriki Taarifa'
+                  : '6. How We Share Information',
               isSw
                   ? 'Hatuzui taarifa zako binafsi. Tunaweza kushiriki taarifa chache:\n• Na watoa huduma wanaoendesha App, kushughulikia malipo, kutuma arifa, au kutoa uchanganuzi/taarifa za hitilafu\n• Na washauri/mafundi ambao umechagua kuwasiliana nao au kushirikiana nao\n• Ili kutimiza wajibu wa kisheria au kulinda haki, usalama, na ulinzi\n• Katika mchakato wa uhamisho wa biashara (kwa kutoa taarifa inapohitajika)'
                   : 'We do not sell your personal data. We may share limited data:\n• With service providers that host the App, process payments, send notifications, or provide analytics/crash reporting\n• With mentors/trainers you explicitly choose to contact or engage with\n• To comply with legal obligations or protect rights, safety, and security\n• In connection with a business transfer (with notice where required)',
@@ -237,7 +240,7 @@ class _TermsScreenState extends State<TermsScreen> {
                 ),
               ),
             ),
-          ],
+          ]),
         ),
       ),
     );

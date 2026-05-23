@@ -27,8 +27,9 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     try {
       final res = await ApiClient().dio.get('/api/v1/payments/checkout/');
       final data = res.data;
-      final results =
-          data is Map ? (data['results'] as List? ?? []) : (data as List? ?? []);
+      final results = data is Map
+          ? (data['results'] as List? ?? [])
+          : (data as List? ?? []);
       if (!mounted) return;
       setState(() {
         _payments = results;
@@ -66,160 +67,169 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
           ),
         ),
       ),
-      body: _isLoading
-          ? const Center(
-              child: KarakanaWaveLoader(color: Color(0xFFE87722)),
-            )
-          : _payments.isEmpty
-              ? _buildEmptyState(context)
-              : ListView.builder(
-                  padding: const EdgeInsets.all(20),
-                  itemCount: _payments.length,
-                  itemBuilder: (_, i) {
-                    final payment = _payments[i] as Map;
-                    final isSuccessful = payment['is_successful'] == true;
-                    final courseData = payment['course'];
-                    final courseTitle = courseData is Map
-                        ? courseData['title'] as String? ?? 'Kozi'
-                        : 'Kozi';
-                    final amount = payment['amount'];
-                    final method = payment['method'] as String? ?? '';
-                    final paidAt = payment['paid_at'] as String? ?? '';
+      body: SafeArea(
+          child: _isLoading
+              ? const Center(
+                  child: KarakanaWaveLoader(color: Color(0xFFE87722)),
+                )
+              : _payments.isEmpty
+                  ? _buildEmptyState(context)
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(20),
+                      itemCount: _payments.length,
+                      itemBuilder: (_, i) {
+                        final payment = _payments[i] as Map;
+                        final isSuccessful = payment['is_successful'] == true;
+                        final courseData = payment['course'];
+                        final courseTitle = courseData is Map
+                            ? courseData['title'] as String? ?? 'Kozi'
+                            : 'Kozi';
+                        final amount = payment['amount'];
+                        final method = payment['method'] as String? ?? '';
+                        final paidAt = payment['paid_at'] as String? ?? '';
 
-                    String formattedDate = '';
-                    try {
-                      formattedDate =
-                          DateFormat('dd MMM yyyy').format(DateTime.parse(paidAt));
-                    } catch (_) {
-                      formattedDate = paidAt;
-                    }
+                        String formattedDate = '';
+                        try {
+                          formattedDate = DateFormat('dd MMM yyyy')
+                              .format(DateTime.parse(paidAt));
+                        } catch (_) {
+                          formattedDate = paidAt;
+                        }
 
-                    final isDark = Theme.of(context).brightness == Brightness.dark;
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x08C4620A),
-                            blurRadius: 8,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 48,
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: isSuccessful
-                                  ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8))
-                                  : const Color(0xFFFFEBEE),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(
-                              isSuccessful
-                                  ? Icons.check_circle_outline
-                                  : Icons.error_outline,
-                              color: isSuccessful
-                                  ? const Color(0xFFE87722)
-                                  : const Color(0xFFB71C1C),
-                              size: 24,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  courseTitle,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF3D1800),
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 6,
-                                        vertical: 2,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Text(
-                                        method.toUpperCase(),
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.w700,
-                                          color: const Color(0xFFE87722),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      formattedDate,
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 12,
-                                        color: const Color(0xFF9E8070),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                _formatPrice(amount),
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFFE87722),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 3,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSuccessful
-                                      ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8))
-                                      : const Color(0xFFFFEBEE),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  isSuccessful ? 'Imefaulu' : 'Imeshindwa',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w700,
-                                    color: isSuccessful
-                                        ? const Color(0xFFE87722)
-                                        : const Color(0xFFB71C1C),
-                                  ),
-                                ),
+                        final isDark =
+                            Theme.of(context).brightness == Brightness.dark;
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x08C4620A),
+                                blurRadius: 8,
+                                offset: Offset(0, 2),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  color: isSuccessful
+                                      ? (isDark
+                                          ? const Color(0xFF2A1A0A)
+                                          : const Color(0xFFF5E6D8))
+                                      : const Color(0xFFFFEBEE),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Icon(
+                                  isSuccessful
+                                      ? Icons.check_circle_outline
+                                      : Icons.error_outline,
+                                  color: isSuccessful
+                                      ? const Color(0xFFE87722)
+                                      : const Color(0xFFB71C1C),
+                                  size: 24,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      courseTitle,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color(0xFF3D1800),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 6,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: isDark
+                                                ? const Color(0xFF2A1A0A)
+                                                : const Color(0xFFF5E6D8),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                          ),
+                                          child: Text(
+                                            method.toUpperCase(),
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 9,
+                                              fontWeight: FontWeight.w700,
+                                              color: const Color(0xFFE87722),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          formattedDate,
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 12,
+                                            color: const Color(0xFF9E8070),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    _formatPrice(amount),
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      color: const Color(0xFFE87722),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 3,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isSuccessful
+                                          ? (isDark
+                                              ? const Color(0xFF2A1A0A)
+                                              : const Color(0xFFF5E6D8))
+                                          : const Color(0xFFFFEBEE),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      isSuccessful ? 'Imefaulu' : 'Imeshindwa',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w700,
+                                        color: isSuccessful
+                                            ? const Color(0xFFE87722)
+                                            : const Color(0xFFB71C1C),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    )),
     );
   }
 
@@ -239,7 +249,8 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+              color: Theme.of(context).textTheme.bodyLarge?.color ??
+                  const Color(0xFF1A0A00),
             ),
           ),
           const SizedBox(height: 12),
@@ -262,5 +273,3 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     );
   }
 }
-
-

@@ -34,8 +34,9 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
     if (!mounted) return;
     setState(() => _isLoading = true);
     try {
-      final res = await ApiClient().dio.get(
-          '/api/v1/courses/${widget.courseId}/sections/');
+      final res = await ApiClient()
+          .dio
+          .get('/api/v1/courses/${widget.courseId}/sections/');
       final data = res.data;
       final sections = data is Map
           ? (data['results'] as List? ?? [])
@@ -123,7 +124,9 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                       } on DioException catch (e) {
                         // Some environments expose course-sections as read-only.
                         if (e.response?.statusCode == 405) {
-                          await ApiClient().dio.post('/api/v1/sections/', data: {
+                          await ApiClient()
+                              .dio
+                              .post('/api/v1/sections/', data: {
                             'course': widget.courseId,
                             'title': ctrl.text.trim(),
                             'order': _sections.length + 1,
@@ -276,7 +279,8 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                           'duration': int.tryParse(durationCtrl.text.trim()),
                       };
                       await ApiClient().dio.post(
-                          '/api/v1/sections/$sectionId/lessons/', data: body);
+                          '/api/v1/sections/$sectionId/lessons/',
+                          data: body);
                       if (!mounted) return;
                       nav.pop();
                       showTopPopup(
@@ -306,24 +310,20 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text('Futa Sehemu?',
             style: GoogleFonts.montserrat(
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF1A0A00))),
+                fontWeight: FontWeight.w700, color: const Color(0xFF1A0A00))),
         content: Text(
             'Sehemu "${section['title']}" itafutwa pamoja na masomo yake yote.',
             style: GoogleFonts.montserrat(
-                fontSize: 13,
-                color: const Color(0xFF7B3A10),
-                height: 1.5)),
+                fontSize: 13, color: const Color(0xFF7B3A10), height: 1.5)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
               child: Text('Hapana',
-                  style: GoogleFonts.montserrat(
-                      color: const Color(0xFF7B3A10)))),
+                  style:
+                      GoogleFonts.montserrat(color: const Color(0xFF7B3A10)))),
           ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
               style: ElevatedButton.styleFrom(
@@ -333,8 +333,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12))),
               child: Text('Futa',
-                  style: GoogleFonts.montserrat(
-                      fontWeight: FontWeight.w700))),
+                  style: GoogleFonts.montserrat(fontWeight: FontWeight.w700))),
         ],
       ),
     );
@@ -352,23 +351,19 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text('Futa Somo?',
             style: GoogleFonts.montserrat(
-                fontWeight: FontWeight.w700,
-                color: const Color(0xFF1A0A00))),
+                fontWeight: FontWeight.w700, color: const Color(0xFF1A0A00))),
         content: Text('Somo "${lesson['title']}" litafutwa kabisa.',
             style: GoogleFonts.montserrat(
-                fontSize: 13,
-                color: const Color(0xFF7B3A10),
-                height: 1.5)),
+                fontSize: 13, color: const Color(0xFF7B3A10), height: 1.5)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
               child: Text('Hapana',
-                  style: GoogleFonts.montserrat(
-                      color: const Color(0xFF7B3A10)))),
+                  style:
+                      GoogleFonts.montserrat(color: const Color(0xFF7B3A10)))),
           ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
               style: ElevatedButton.styleFrom(
@@ -378,8 +373,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12))),
               child: Text('Futa',
-                  style: GoogleFonts.montserrat(
-                      fontWeight: FontWeight.w700))),
+                  style: GoogleFonts.montserrat(fontWeight: FontWeight.w700))),
         ],
       ),
     );
@@ -411,8 +405,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                     color: Colors.white)),
             Text(widget.courseTitle,
                 style: GoogleFonts.montserrat(
-                    fontSize: 11,
-                    color: Colors.white.withValues(alpha: 0.7)),
+                    fontSize: 11, color: Colors.white.withValues(alpha: 0.7)),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis),
           ],
@@ -424,25 +417,24 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
         label: Text('Ongeza Sehemu',
-            style:
-                GoogleFonts.montserrat(fontWeight: FontWeight.w600)),
+            style: GoogleFonts.montserrat(fontWeight: FontWeight.w600)),
       ),
-      body: _isLoading
-          ? const Center(
-              child: KarakanaWaveLoader(color: Color(0xFFE87722)))
-          : RefreshIndicator(
-              color: const Color(0xFFE87722),
-              onRefresh: _loadSections,
-              child: _sections.isEmpty
-                  ? _buildEmptyState()
-                  : ListView.builder(
-                      padding:
-                          const EdgeInsets.fromLTRB(20, 20, 20, 120),
-                      itemCount: _sections.length,
-                      itemBuilder: (_, i) =>
-                          _buildSectionCard(_sections[i] as Map, i),
-                    ),
-            ),
+      body: SafeArea(
+          child: _isLoading
+              ? const Center(
+                  child: KarakanaWaveLoader(color: Color(0xFFE87722)))
+              : RefreshIndicator(
+                  color: const Color(0xFFE87722),
+                  onRefresh: _loadSections,
+                  child: _sections.isEmpty
+                      ? _buildEmptyState()
+                      : ListView.builder(
+                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
+                          itemCount: _sections.length,
+                          itemBuilder: (_, i) =>
+                              _buildSectionCard(_sections[i] as Map, i),
+                        ),
+                )),
     );
   }
 
@@ -456,13 +448,14 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
             width: 88,
             height: 88,
             decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8), shape: BoxShape.circle),
+                color:
+                    isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
+                shape: BoxShape.circle),
             child: const Icon(Icons.view_agenda_outlined,
                 size: 44, color: Color(0xFFE87722)),
           ),
           const SizedBox(height: 20),
-          Text(
-              'Hakuna sehemu bado.\nBonyeza + kuongeza sehemu ya kwanza!',
+          Text('Hakuna sehemu bado.\nBonyeza + kuongeza sehemu ya kwanza!',
               style: GoogleFonts.montserrat(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -516,7 +509,8 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                       style: GoogleFonts.montserrat(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00)))),
+                          color: Theme.of(context).textTheme.bodyLarge?.color ??
+                              const Color(0xFF1A0A00)))),
               Text('${lessons.length} masomo',
                   style: GoogleFonts.montserrat(
                       fontSize: 11, color: const Color(0xFF9E8070))),
@@ -528,20 +522,23 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
             ]),
           ),
 
-          Divider(height: 1, color: isDark ? Colors.white10 : const Color(0xFFF5E6D8)),
+          Divider(
+              height: 1,
+              color: isDark ? Colors.white10 : const Color(0xFFF5E6D8)),
 
           // Lessons list
           if (lessons.isEmpty)
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Text(
-                  'Hakuna masomo. Bonyeza + kuongeza somo.',
+              child: Text('Hakuna masomo. Bonyeza + kuongeza somo.',
                   style: GoogleFonts.montserrat(
                       fontSize: 12, color: const Color(0xFF9E8070))),
             )
           else
-            ...lessons.asMap().entries.map((e) =>
-                _buildLessonRow(e.value as Map, e.key)),
+            ...lessons
+                .asMap()
+                .entries
+                .map((e) => _buildLessonRow(e.value as Map, e.key)),
 
           // Add lesson button
           Padding(
@@ -569,15 +566,15 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
   Widget _buildLessonRow(Map lesson, int idx) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = lesson['title'] as String? ?? 'Somo ${idx + 1}';
-    final hasMux =
-        (lesson['mux_playback_id'] as String? ?? '').isNotEmpty;
+    final hasMux = (lesson['mux_playback_id'] as String? ?? '').isNotEmpty;
     final duration = lesson['duration'] as int?;
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: isDark ? Colors.white10 : const Color(0xFFF5E6D8)))),
+          border: Border(
+              top: BorderSide(
+                  color: isDark ? Colors.white10 : const Color(0xFFF5E6D8)))),
       child: Row(children: [
         Container(
           width: 32,
@@ -585,33 +582,31 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
           decoration: BoxDecoration(
               color: hasMux
                   ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8))
-                  : (isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF0EFEF)),
+                  : (isDark
+                      ? const Color(0xFF1E1E1E)
+                      : const Color(0xFFF0EFEF)),
               borderRadius: BorderRadius.circular(8)),
           child: Icon(
-              hasMux
-                  ? Icons.play_circle_outline
-                  : Icons.article_outlined,
+              hasMux ? Icons.play_circle_outline : Icons.article_outlined,
               size: 17,
-              color: hasMux
-                  ? const Color(0xFFE87722)
-                  : const Color(0xFF9E8070)),
+              color:
+                  hasMux ? const Color(0xFFE87722) : const Color(0xFF9E8070)),
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: GoogleFonts.montserrat(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00))),
-                if (duration != null)
-                  Text('$duration dak',
-                      style: GoogleFonts.montserrat(
-                          fontSize: 10,
-                          color: const Color(0xFF9E8070))),
-              ]),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(title,
+                style: GoogleFonts.montserrat(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).textTheme.bodyLarge?.color ??
+                        const Color(0xFF1A0A00))),
+            if (duration != null)
+              Text('$duration dak',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 10, color: const Color(0xFF9E8070))),
+          ]),
         ),
         GestureDetector(
             onTap: () => _deleteLesson(lesson),
@@ -621,5 +616,3 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
     );
   }
 }
-
-

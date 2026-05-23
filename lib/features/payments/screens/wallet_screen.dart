@@ -38,7 +38,8 @@ class _WalletScreenState extends State<WalletScreen> {
   Future<void> _loadWallet() async {
     try {
       final walletRes = await ApiClient().dio.get('/api/v1/wallet/me/');
-      final checkoutRes = await ApiClient().dio.get('/api/v1/wallet/checkouts/');
+      final checkoutRes =
+          await ApiClient().dio.get('/api/v1/wallet/checkouts/');
       final checkoutData = checkoutRes.data;
       if (!mounted) return;
       setState(() {
@@ -159,7 +160,8 @@ class _WalletScreenState extends State<WalletScreen> {
                   ),
                 ),
                 onPressed: () async {
-                  final amount = double.tryParse(_amountController.text.trim()) ?? 0;
+                  final amount =
+                      double.tryParse(_amountController.text.trim()) ?? 0;
                   if (amount < 500) {
                     showTopPopup(context, 'Kiasi cha chini ni TZS 500.');
                     return;
@@ -176,7 +178,8 @@ class _WalletScreenState extends State<WalletScreen> {
                     Navigator.pop(context);
                     _amountController.clear();
                     _remarkController.clear();
-                    showTopPopup(context, 'Ombi limetumwa kikamilifu!', isError: false);
+                    showTopPopup(context, 'Ombi limetumwa kikamilifu!',
+                        isError: false);
                     _loadWallet();
                   } catch (_) {
                     if (!mounted) return;
@@ -225,28 +228,44 @@ class _WalletScreenState extends State<WalletScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 6, offset: const Offset(0, 1))],
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 6,
+              offset: const Offset(0, 1))
+        ],
       ),
       child: Row(children: [
         Container(
-          width: 40, height: 40,
+          width: 40,
+          height: 40,
           decoration: BoxDecoration(
-            color: isSuccessful ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)) : const Color(0xFFFFA726).withValues(alpha: 0.12),
+            color: isSuccessful
+                ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8))
+                : const Color(0xFFFFA726).withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
             isSuccessful ? Icons.check_circle_outline : Icons.pending_outlined,
-            color: isSuccessful ? const Color(0xFFE87722) : const Color(0xFFFFA726),
+            color: isSuccessful
+                ? const Color(0xFFE87722)
+                : const Color(0xFFFFA726),
             size: 20,
           ),
         ),
         const SizedBox(width: 12),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Expanded(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(remark.isEmpty ? 'Ombi la Malipo' : remark,
-              style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600, color: const Color(0xFF3D1800))),
+              style: GoogleFonts.montserrat(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF3D1800))),
           Row(children: [
             Text(formattedDate,
-                style: GoogleFonts.montserrat(fontSize: 11, color: const Color(0xFF9E8070))),
+                style: GoogleFonts.montserrat(
+                    fontSize: 11, color: const Color(0xFF9E8070))),
             const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -257,16 +276,24 @@ class _WalletScreenState extends State<WalletScreen> {
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(isSuccessful ? 'Imekamilika' : 'Inasubiri',
-                  style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w700,
-                      color: isSuccessful ? const Color(0xFFE87722) : const Color(0xFFFFA726))),
+                  style: GoogleFonts.montserrat(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                      color: isSuccessful
+                          ? const Color(0xFFE87722)
+                          : const Color(0xFFFFA726))),
             ),
           ]),
         ])),
         const SizedBox(width: 8),
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Text('TZS ${_formatPrice(amount)}',
-              style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w700,
-                  color: isSuccessful ? const Color(0xFFE87722) : const Color(0xFFFFA726))),
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: isSuccessful
+                      ? const Color(0xFFE87722)
+                      : const Color(0xFFFFA726))),
           if (isSuccessful && receiptUrl != null && receiptUrl.isNotEmpty) ...[
             const SizedBox(height: 4),
             GestureDetector(
@@ -274,14 +301,19 @@ class _WalletScreenState extends State<WalletScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
+                  color: isDark
+                      ? const Color(0xFF2A1A0A)
+                      : const Color(0xFFF5E6D8),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  const Icon(Icons.receipt_outlined, size: 11, color: Color(0xFF7B3A10)),
+                  const Icon(Icons.receipt_outlined,
+                      size: 11, color: Color(0xFF7B3A10)),
                   const SizedBox(width: 3),
                   Text('Risiti',
-                      style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w700,
+                      style: GoogleFonts.montserrat(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
                           color: const Color(0xFF7B3A10))),
                 ]),
               ),
@@ -298,7 +330,8 @@ class _WalletScreenState extends State<WalletScreen> {
         child: Padding(
           padding: const EdgeInsets.all(32),
           child: Text(emptyMessage,
-              style: GoogleFonts.montserrat(fontSize: 14, color: const Color(0xFF9E8070)),
+              style: GoogleFonts.montserrat(
+                  fontSize: 14, color: const Color(0xFF9E8070)),
               textAlign: TextAlign.center),
         ),
       );
@@ -313,8 +346,10 @@ class _WalletScreenState extends State<WalletScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final successful = _checkouts.where((c) => (c as Map)['is_successful'] == true).toList();
-    final pending = _checkouts.where((c) => (c as Map)['is_successful'] != true).toList();
+    final successful =
+        _checkouts.where((c) => (c as Map)['is_successful'] == true).toList();
+    final pending =
+        _checkouts.where((c) => (c as Map)['is_successful'] != true).toList();
 
     return DefaultTabController(
       length: 2,
@@ -326,7 +361,11 @@ class _WalletScreenState extends State<WalletScreen> {
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF3D1800), Color(0xFF7B3A10), Color(0xFFE87722)],
+                colors: [
+                  Color(0xFF3D1800),
+                  Color(0xFF7B3A10),
+                  Color(0xFFE87722)
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -358,142 +397,204 @@ class _WalletScreenState extends State<WalletScreen> {
           ]),
           centerTitle: true,
         ),
-        body: _isLoading
-            ? const Center(child: KarakanaWaveLoader(color: Color(0xFFE87722)))
-            : Column(children: [
-                // ── BALANCE CARD ──
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF3D1800), Color(0xFF7B3A10), Color(0xFFE87722)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [BoxShadow(color: const Color(0xFFE87722).withValues(alpha: 0.3), blurRadius: 24, offset: const Offset(0, 8))],
-                    ),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text('Salio Linalopatikana',
-                              style: GoogleFonts.montserrat(fontSize: 12, color: Colors.white.withValues(alpha: 0.7))),
-                          const SizedBox(height: 6),
-                          Text(
-                            _balanceVisible
-                                ? 'TZS ${_formatPrice(_wallet?['balance'] ?? 0)}'
-                                : 'TZS ••••••',
-                            style: GoogleFonts.montserrat(fontSize: 28, fontWeight: FontWeight.w700, color: Colors.white),
-                          ),
-                        ]),
-                        GestureDetector(
-                          onTap: () => setState(() => _balanceVisible = !_balanceVisible),
-                          child: Container(
-                            width: 56, height: 56,
-                            decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.12),
-                                shape: BoxShape.circle),
-                            child: Icon(
-                              _balanceVisible
-                                  ? Icons.visibility_outlined
-                                  : Icons.visibility_off_outlined,
-                              color: Colors.white,
-                              size: 24,
-                            ),
-                          ),
-                        ),
-                      ]),
-                      const SizedBox(height: 24),
-                      Row(children: [
-                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text('Mapato Yote',
-                              style: GoogleFonts.montserrat(fontSize: 11, color: Colors.white.withValues(alpha: 0.6))),
-                          const SizedBox(height: 4),
-                          Text(
-                            _balanceVisible
-                                ? 'TZS ${_formatPrice(_wallet?['total_income'] ?? 0)}'
-                                : 'TZS ••••',
-                            style: GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
-                          ),
-                        ])),
-                        Container(width: 1, height: 32, color: Colors.white.withValues(alpha: 0.2)),
-                        Expanded(child: Padding(
-                          padding: const EdgeInsets.only(left: 16),
-                          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                            Text('Iliyotolewa',
-                                style: GoogleFonts.montserrat(fontSize: 11, color: Colors.white.withValues(alpha: 0.6))),
-                            const SizedBox(height: 4),
-                            Text(
-                              _balanceVisible
-                                  ? 'TZS ${_formatPrice(_wallet?['total_disbursed'] ?? 0)}'
-                                  : 'TZS ••••',
-                              style: GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
-                            ),
-                          ]),
-                        )),
-                      ]),
-                      const SizedBox(height: 20),
-                      SizedBox(
+        body: SafeArea(
+            child: _isLoading
+                ? const Center(
+                    child: KarakanaWaveLoader(color: Color(0xFFE87722)))
+                : Column(children: [
+                    // ── BALANCE CARD ──
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                      child: Container(
                         width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: const Color(0xFFE87722),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            minimumSize: const Size(double.infinity, 48),
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFF3D1800),
+                              Color(0xFF7B3A10),
+                              Color(0xFFE87722)
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          onPressed: _showWithdrawSheet,
-                          child: Text('Omba Malipo',
-                              style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFFE87722))),
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                                color: const Color(0xFFE87722)
+                                    .withValues(alpha: 0.3),
+                                blurRadius: 24,
+                                offset: const Offset(0, 8))
+                          ],
+                        ),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('Salio Linalopatikana',
+                                              style: GoogleFonts.montserrat(
+                                                  fontSize: 12,
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.7))),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            _balanceVisible
+                                                ? 'TZS ${_formatPrice(_wallet?['balance'] ?? 0)}'
+                                                : 'TZS ••••••',
+                                            style: GoogleFonts.montserrat(
+                                                fontSize: 28,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.white),
+                                          ),
+                                        ]),
+                                    GestureDetector(
+                                      onTap: () => setState(() =>
+                                          _balanceVisible = !_balanceVisible),
+                                      child: Container(
+                                        width: 56,
+                                        height: 56,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white
+                                                .withValues(alpha: 0.12),
+                                            shape: BoxShape.circle),
+                                        child: Icon(
+                                          _balanceVisible
+                                              ? Icons.visibility_outlined
+                                              : Icons.visibility_off_outlined,
+                                          color: Colors.white,
+                                          size: 24,
+                                        ),
+                                      ),
+                                    ),
+                                  ]),
+                              const SizedBox(height: 24),
+                              Row(children: [
+                                Expanded(
+                                    child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                      Text('Mapato Yote',
+                                          style: GoogleFonts.montserrat(
+                                              fontSize: 11,
+                                              color: Colors.white
+                                                  .withValues(alpha: 0.6))),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        _balanceVisible
+                                            ? 'TZS ${_formatPrice(_wallet?['total_income'] ?? 0)}'
+                                            : 'TZS ••••',
+                                        style: GoogleFonts.montserrat(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white),
+                                      ),
+                                    ])),
+                                Container(
+                                    width: 1,
+                                    height: 32,
+                                    color: Colors.white.withValues(alpha: 0.2)),
+                                Expanded(
+                                    child: Padding(
+                                  padding: const EdgeInsets.only(left: 16),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Iliyotolewa',
+                                            style: GoogleFonts.montserrat(
+                                                fontSize: 11,
+                                                color: Colors.white
+                                                    .withValues(alpha: 0.6))),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          _balanceVisible
+                                              ? 'TZS ${_formatPrice(_wallet?['total_disbursed'] ?? 0)}'
+                                              : 'TZS ••••',
+                                          style: GoogleFonts.montserrat(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.white),
+                                        ),
+                                      ]),
+                                )),
+                              ]),
+                              const SizedBox(height: 20),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    foregroundColor: const Color(0xFFE87722),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    minimumSize:
+                                        const Size(double.infinity, 48),
+                                  ),
+                                  onPressed: _showWithdrawSheet,
+                                  child: Text('Omba Malipo',
+                                      style: GoogleFonts.montserrat(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFFE87722))),
+                                ),
+                              ),
+                            ]),
+                      ),
+                    ),
+
+                    // ── TAB BAR ──
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? const Color(0xFF2A1A0A)
+                              : const Color(0xFFF5E6D8),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: TabBar(
+                          indicator: BoxDecoration(
+                            color: const Color(0xFFE87722),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          indicatorSize: TabBarIndicatorSize.tab,
+                          labelStyle: GoogleFonts.montserrat(
+                              fontSize: 12, fontWeight: FontWeight.w600),
+                          unselectedLabelStyle:
+                              GoogleFonts.montserrat(fontSize: 12),
+                          labelColor: Colors.white,
+                          unselectedLabelColor: const Color(0xFF7B3A10),
+                          dividerColor: Colors.transparent,
+                          tabs: [
+                            Tab(text: 'Zilizokamilika (${successful.length})'),
+                            Tab(text: 'Zinasubiri (${pending.length})'),
+                          ],
                         ),
                       ),
-                    ]),
-                  ),
-                ),
-
-                // ── TAB BAR ──
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
-                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: TabBar(
-                      indicator: BoxDecoration(
-                        color: const Color(0xFFE87722),
-                        borderRadius: BorderRadius.circular(10),
+
+                    // ── TAB CONTENT ──
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          _buildCheckoutList(
+                              successful, 'Hakuna malipo yaliyokamilika bado.'),
+                          _buildCheckoutList(
+                              pending, 'Hakuna maombi yanayosubiri.'),
+                        ],
                       ),
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      labelStyle: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w600),
-                      unselectedLabelStyle: GoogleFonts.montserrat(fontSize: 12),
-                      labelColor: Colors.white,
-                      unselectedLabelColor: const Color(0xFF7B3A10),
-                      dividerColor: Colors.transparent,
-                      tabs: [
-                        Tab(text: 'Zilizokamilika (${successful.length})'),
-                        Tab(text: 'Zinasubiri (${pending.length})'),
-                      ],
                     ),
-                  ),
-                ),
-
-                // ── TAB CONTENT ──
-                Expanded(
-                  child: TabBarView(
-                    children: [
-                      _buildCheckoutList(successful, 'Hakuna malipo yaliyokamilika bado.'),
-                      _buildCheckoutList(pending, 'Hakuna maombi yanayosubiri.'),
-                    ],
-                  ),
-                ),
-              ]),
+                  ])),
       ),
     );
   }
 }
-
-

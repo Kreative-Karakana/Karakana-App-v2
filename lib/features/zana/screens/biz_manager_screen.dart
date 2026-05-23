@@ -71,7 +71,8 @@ class _BizManagerScreenState extends State<BizManagerScreen> {
         ),
         elevation: 0,
       ),
-      body: SingleChildScrollView(
+      body: SafeArea(
+          child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
@@ -326,8 +327,9 @@ class _BizManagerScreenState extends State<BizManagerScreen> {
                                 ),
                               ),
                             ),
-                            validator: (v) =>
-                                v == null || v.isEmpty ? 'Weka jina lako' : null,
+                            validator: (v) => v == null || v.isEmpty
+                                ? 'Weka jina lako'
+                                : null,
                           ),
                           const SizedBox(height: 14),
                           TextFormField(
@@ -355,8 +357,9 @@ class _BizManagerScreenState extends State<BizManagerScreen> {
                                 ),
                               ),
                             ),
-                            validator: (v) =>
-                                v == null || v.isEmpty ? 'Weka nambari ya simu' : null,
+                            validator: (v) => v == null || v.isEmpty
+                                ? 'Weka nambari ya simu'
+                                : null,
                           ),
                           const SizedBox(height: 24),
                           SizedBox(
@@ -461,9 +464,7 @@ class _BizManagerScreenState extends State<BizManagerScreen> {
             ),
           ],
         ),
-      ),
+      )),
     );
   }
 }
-
-

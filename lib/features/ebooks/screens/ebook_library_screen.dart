@@ -25,7 +25,7 @@ class _EbookLibraryScreenState extends State<EbookLibraryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Maktaba Yangu')),
-      body: Consumer<EbookProvider>(
+      body: SafeArea(child: Consumer<EbookProvider>(
         builder: (_, provider, __) {
           if (provider.isLoadingLibrary) {
             return const Center(child: KarakanaWaveLoader());
@@ -64,7 +64,7 @@ class _EbookLibraryScreenState extends State<EbookLibraryScreen> {
             },
           );
         },
-      ),
+      )),
     );
   }
 }

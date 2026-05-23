@@ -57,15 +57,16 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
   Future<void> _loadRegions() async {
     try {
       final response = await ApiClient().dio.get(
-        'https://api.locations.co.tz/v1/regions/?limit=30',
-        options: null,
-      );
+            'https://api.locations.co.tz/v1/regions/?limit=30',
+            options: null,
+          );
       final data = _extractList(response.data);
       if (!mounted) return;
       setState(() {
         _regions = data
             .map((e) => _Region(
-                  code: _asInt(_mapValue(e, const ['region_code', 'code', 'id'])),
+                  code:
+                      _asInt(_mapValue(e, const ['region_code', 'code', 'id'])),
                   name: _asString(_mapValue(e, const ['region_name', 'name'])),
                 ))
             .where((r) => r.code != 0 && r.name.isNotEmpty)
@@ -87,15 +88,17 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
     });
     try {
       final response = await ApiClient().dio.get(
-        'https://api.locations.co.tz/v1/regions/$regionCode/districts/?limit=50',
-      );
+            'https://api.locations.co.tz/v1/regions/$regionCode/districts/?limit=50',
+          );
       final data = _extractList(response.data);
       if (!mounted) return;
       setState(() {
         _districts = data
             .map((e) => _District(
-                  code: _asInt(_mapValue(e, const ['district_code', 'code', 'id'])),
-                  name: _asString(_mapValue(e, const ['district_name', 'name'])),
+                  code: _asInt(
+                      _mapValue(e, const ['district_code', 'code', 'id'])),
+                  name:
+                      _asString(_mapValue(e, const ['district_name', 'name'])),
                 ))
             .where((d) => d.code != 0 && d.name.isNotEmpty)
             .toList();
@@ -140,8 +143,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
       );
 
       if (!mounted) return;
-      _snack('Asante kwa kushiriki, taarifa zimehifadhiwa',
-          success: true);
+      _snack('Asante kwa kushiriki, taarifa zimehifadhiwa', success: true);
 
       if (widget.shouldPop) {
         context.pop();
@@ -188,7 +190,8 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
+      body: SafeArea(
+          child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,8 +247,8 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
               value: _locationType,
-              decoration: _inputDecoration('Chagua aina ya eneo',
-                  Icons.location_city_outlined),
+              decoration: _inputDecoration(
+                  'Chagua aina ya eneo', Icons.location_city_outlined),
               items: _locationTypes
                   .map((o) => DropdownMenuItem(
                       value: o.value,
@@ -259,8 +262,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
             _sectionLabel('Mkoa'),
             const SizedBox(height: 8),
             if (_loadingRegions)
-              const Center(
-                  child: KarakanaWaveLoader(color: AppColors.primary))
+              const Center(child: KarakanaWaveLoader(color: AppColors.primary))
             else
               DropdownButtonFormField<int>(
                 value: _selectedRegionCode,
@@ -292,8 +294,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                     fontSize: 13, color: Colors.grey.shade400),
               )
             else if (_loadingDistricts)
-              const Center(
-                  child: KarakanaWaveLoader(color: AppColors.primary))
+              const Center(child: KarakanaWaveLoader(color: AppColors.primary))
             else
               DropdownButtonFormField<int>(
                 value: _selectedDistrictCode,
@@ -313,9 +314,8 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
             const SizedBox(height: 8),
             DropdownButtonFormField<String>(
               value: _educationLevel,
-              decoration:
-                  _inputDecoration('Chagua kiwango chako cha elimu',
-                      Icons.school_outlined),
+              decoration: _inputDecoration(
+                  'Chagua kiwango chako cha elimu', Icons.school_outlined),
               items: _educationLevels
                   .map((o) => DropdownMenuItem(
                         value: o.value,
@@ -332,8 +332,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(14),
-                border:
-                    Border.all(color: const Color(0xFFE8D5C8)),
+                border: Border.all(color: const Color(0xFFE8D5C8)),
               ),
               child: Column(
                 children: [
@@ -385,7 +384,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
             ),
           ],
         ),
-      ),
+      )),
     );
   }
 
@@ -499,6 +498,3 @@ class _District {
   final String name;
   const _District({required this.code, required this.name});
 }
-
-
-

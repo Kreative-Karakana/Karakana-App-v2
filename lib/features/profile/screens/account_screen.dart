@@ -8,9 +8,10 @@ class AccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: AppColors.background,
-      body: Center(
+      body: SafeArea(
+          child: Center(
         child: Text('Akaunti - Coming Soon'),
-      ),
+      )),
     );
   }
 }

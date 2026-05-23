@@ -73,7 +73,8 @@ class _SplashScreenState extends State<SplashScreen>
       ),
       child: Scaffold(
         backgroundColor: AppColors.primaryDark,
-        body: Stack(
+        body: SafeArea(
+            child: Stack(
           children: [
             // Radial gradient background
             Container(
@@ -216,10 +217,8 @@ class _SplashScreenState extends State<SplashScreen>
               ),
             ),
           ],
-        ),
+        )),
       ),
     );
   }
 }
-
-
