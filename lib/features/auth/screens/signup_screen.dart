@@ -169,9 +169,7 @@ class _SignupScreenState extends State<SignupScreen>
             children: [
               const _AuthBackground(),
               SafeArea(
-                child: SingleChildScrollView(
-                  physics: const ClampingScrollPhysics(),
-                  child: AnimatedPadding(
+                child: AnimatedPadding(
                     duration: const Duration(milliseconds: 180),
                     curve: Curves.easeOut,
                     padding: EdgeInsets.only(
@@ -409,7 +407,6 @@ class _SignupScreenState extends State<SignupScreen>
                       ),
                     ),
                   ),
-                ),
               ),
             ],
           );

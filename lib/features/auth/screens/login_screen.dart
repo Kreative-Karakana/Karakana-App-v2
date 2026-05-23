@@ -326,9 +326,7 @@ class _LoginScreenState extends State<LoginScreen>
                             AppSpacing.md,
                             Responsive.h(context, compact ? 0.01 : 0.018),
                           ),
-                          child: SingleChildScrollView(
-                            physics: const ClampingScrollPhysics(),
-                            child: ConstrainedBox(
+                          child: ConstrainedBox(
                               constraints: BoxConstraints(
                                 minHeight:
                                     constraints.maxHeight - (compact ? 24 : 40),
@@ -684,7 +682,6 @@ class _LoginScreenState extends State<LoginScreen>
                                 ],
                               ),
                             ),
-                          ),
                         ),
                       ),
                     ),
