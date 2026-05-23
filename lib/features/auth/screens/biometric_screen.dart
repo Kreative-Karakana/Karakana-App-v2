@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/buttons/gradient_button.dart';
 import '../providers/auth_provider.dart';
@@ -167,7 +169,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
 
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -215,33 +217,29 @@ class _BiometricScreenState extends State<BiometricScreen> {
                           _failed ? Colors.red.shade400 : AppColors.primaryMid,
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.lg),
 
                     Text(
                       'Ingia Kwa Usalama',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 26,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
+                      style: AppTextStyles.h1.copyWith(color: Colors.white),
                       textAlign: TextAlign.center,
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.sm),
 
                     Text(
                       _hasFaceId
                           ? 'Tumia Face ID kuthibitisha utambulisho wako na kuingia salama'
                           : 'Tumia alama ya kidole kuthibitisha utambulisho wako na kuingia salama',
                       style: GoogleFonts.montserrat(
-                        fontSize: 14,
+                        fontSize: AppTextStyles.bodyMedium.fontSize,
                         color: AppColors.textTertiary,
                         height: 1.5,
                       ),
                       textAlign: TextAlign.center,
                     ),
 
-                    const SizedBox(height: 48),
+                    const SizedBox(height: AppSpacing.xxl),
 
                     if (_isAuthenticating)
                       const KarakanaWaveLoader(
@@ -257,7 +255,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
                               color: Colors.red.shade300,
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: AppSpacing.md),
                           SizedBox(
                             width: double.infinity,
                             child: GradientButton(
@@ -265,7 +263,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
                               onTap: _authenticate,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: AppSpacing.sm),
                           TextButton(
                             onPressed: () => context.go('/login'),
                             child: Text(

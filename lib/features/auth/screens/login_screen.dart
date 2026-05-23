@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/buttons/gradient_button.dart';
 import '../providers/auth_provider.dart';
@@ -361,7 +363,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 12.h),
+                                  SizedBox(height: AppSpacing.sm.h),
                                   Text(
                                     'Karakana',
                                     style: GoogleFonts.poppins(
@@ -370,7 +372,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       color: Colors.white,
                                     ),
                                   ),
-                                  SizedBox(height: 20.h),
+                                  SizedBox(height: AppSpacing.md.h),
                                   Align(
                                     alignment: Alignment.center,
                                     child: ConstrainedBox(
@@ -407,13 +409,16 @@ class _LoginScreenState extends State<LoginScreen>
                                               Text(
                                                 'Karibu Tena',
                                                 style: GoogleFonts.montserrat(
-                                                  fontSize: compact ? 22 : 24,
+                                                  fontSize: compact
+                                                      ? 22
+                                                      : AppTextStyles
+                                                          .h1.fontSize,
                                                   fontWeight: FontWeight.w700,
                                                   color: Colors.white,
                                                   height: 1.02,
                                                 ),
                                               ),
-                                              SizedBox(height: 8.h),
+                                              SizedBox(height: AppSpacing.sm.h),
                                               Text(
                                                 'Ingia kwa akaunti yako na uendelee na masomo yako bila usumbufu.',
                                                 style: GoogleFonts.montserrat(
@@ -501,7 +506,7 @@ class _LoginScreenState extends State<LoginScreen>
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(height: 8.h),
+                                              SizedBox(height: AppSpacing.sm.h),
                                               SizedBox(
                                                 width: double.infinity,
                                                 child: GradientButton(
@@ -531,8 +536,11 @@ class _LoginScreenState extends State<LoginScreen>
                                                       'Njia nyingine',
                                                       style: GoogleFonts
                                                           .montserrat(
-                                                        fontSize:
-                                                            compact ? 11 : 12,
+                                                        fontSize: compact
+                                                            ? 11
+                                                            : AppTextStyles
+                                                                .bodySmall
+                                                                .fontSize,
                                                         color: AppColors
                                                             .textTertiary,
                                                       ),

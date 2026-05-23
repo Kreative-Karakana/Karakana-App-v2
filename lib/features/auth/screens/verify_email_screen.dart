@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/buttons/gradient_button.dart';
 import '../../../widgets/common/terms_dialog.dart';
@@ -132,7 +134,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
-            borderSide: const BorderSide(color: AppColors.primaryMid, width: 2.0),
+            borderSide:
+                const BorderSide(color: AppColors.primaryMid, width: 2.0),
           ),
           contentPadding: EdgeInsets.zero,
         ),
@@ -193,7 +196,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AppSpacing.sm),
                       Text(
                         'Karakana',
                         style: GoogleFonts.poppins(
@@ -202,7 +205,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           color: Colors.white,
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: AppSpacing.md),
                       Container(
                         constraints: const BoxConstraints(maxWidth: 420),
                         padding: EdgeInsets.all(compact ? 18 : 22),
@@ -237,12 +240,14 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                             Text(
                               'Weka msimbo wa tarakimu 6 tuliokutumia kwenye:',
                               style: GoogleFonts.montserrat(
-                                fontSize: compact ? 12.5 : 13,
+                                fontSize: compact
+                                    ? 12.5
+                                    : AppTextStyles.bodySmall.fontSize,
                                 color: Colors.white.withValues(alpha: 0.55),
                                 height: 1.4,
                               ),
                             ),
-                            const SizedBox(height: 6),
+                            const SizedBox(height: AppSpacing.xs),
                             Row(
                               children: [
                                 const Icon(
@@ -302,10 +307,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                           vertical: compact ? 12 : 14,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: Colors.white.withValues(alpha: 0.05),
-                                          borderRadius: BorderRadius.circular(50),
+                                          color: Colors.white
+                                              .withValues(alpha: 0.05),
+                                          borderRadius:
+                                              BorderRadius.circular(50),
                                           border: Border.all(
-                                            color: Colors.white.withValues(alpha: 0.10),
+                                            color: Colors.white
+                                                .withValues(alpha: 0.10),
                                           ),
                                         ),
                                         child: Row(
@@ -317,7 +325,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                                 softWrap: true,
                                                 style: GoogleFonts.montserrat(
                                                   fontSize: compact ? 13 : 14,
-                                                  color: Colors.white.withValues(alpha: 0.74),
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.74),
                                                   height: 1.2,
                                                 ),
                                               ),
@@ -326,25 +335,37 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                             Flexible(
                                               child: FittedBox(
                                                 fit: BoxFit.scaleDown,
-                                                alignment: Alignment.centerRight,
+                                                alignment:
+                                                    Alignment.centerRight,
                                                 child: Container(
                                                   padding: EdgeInsets.symmetric(
-                                                    horizontal: compact ? 12 : 14,
+                                                    horizontal:
+                                                        compact ? 12 : 14,
                                                     vertical: compact ? 5 : 6,
                                                   ),
                                                   decoration: BoxDecoration(
-                                                    gradient: const LinearGradient(
-                                                      colors: [AppColors.primary, Color(0xFFE07A2F)],
+                                                    gradient:
+                                                        const LinearGradient(
+                                                      colors: [
+                                                        AppColors.primary,
+                                                        Color(0xFFE07A2F)
+                                                      ],
                                                       begin: Alignment.topLeft,
-                                                      end: Alignment.bottomRight,
+                                                      end:
+                                                          Alignment.bottomRight,
                                                     ),
-                                                    borderRadius: BorderRadius.circular(50),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
                                                   ),
                                                   child: Text(
                                                     'Tuma tena',
-                                                    style: GoogleFonts.montserrat(
-                                                      fontSize: compact ? 12 : 13,
-                                                      fontWeight: FontWeight.w700,
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      fontSize:
+                                                          compact ? 12 : 13,
+                                                      fontWeight:
+                                                          FontWeight.w700,
                                                       color: Colors.white,
                                                     ),
                                                   ),
@@ -356,7 +377,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                       ),
                                     ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: AppSpacing.sm),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: TextButton.icon(
@@ -440,5 +461,3 @@ class _AuthBackground extends StatelessWidget {
     );
   }
 }
-
-

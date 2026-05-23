@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/buttons/gradient_button.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../providers/auth_provider.dart';
@@ -91,7 +93,8 @@ class _SignupScreenState extends State<SignupScreen>
       controller: controller,
       keyboardType: keyboardType,
       obscureText: obscureText,
-      style: GoogleFonts.montserrat(fontSize: compact ? 13 : 14, color: Colors.white),
+      style: GoogleFonts.montserrat(
+          fontSize: compact ? 13 : 14, color: Colors.white),
       cursorColor: AppColors.primaryMid,
       validator: validator,
       onChanged: onChanged,
@@ -178,41 +181,41 @@ class _SignupScreenState extends State<SignupScreen>
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                        _SignupContent(
-                          compact: compact,
-                          keyboardOpen: keyboardOpen,
-                          shortHeight: shortHeight,
-                          authProvider: authProvider,
-                          formKey: _formKey,
-                          firstNameController: _firstNameController,
-                          emailController: _emailController,
-                          passwordController: _passwordController,
-                          confirmController: _confirmController,
-                          obscurePassword: _obscurePassword,
-                          obscureConfirm: _obscureConfirm,
-                          onTogglePassword: () => setState(
-                            () => _obscurePassword = !_obscurePassword,
+                          _SignupContent(
+                            compact: compact,
+                            keyboardOpen: keyboardOpen,
+                            shortHeight: shortHeight,
+                            authProvider: authProvider,
+                            formKey: _formKey,
+                            firstNameController: _firstNameController,
+                            emailController: _emailController,
+                            passwordController: _passwordController,
+                            confirmController: _confirmController,
+                            obscurePassword: _obscurePassword,
+                            obscureConfirm: _obscureConfirm,
+                            onTogglePassword: () => setState(
+                              () => _obscurePassword = !_obscurePassword,
+                            ),
+                            onToggleConfirm: () => setState(
+                              () => _obscureConfirm = !_obscureConfirm,
+                            ),
+                            onHandleSignup: _handleSignup,
+                            onGoogleSignIn: _handleGoogleSignIn,
+                            onAppleSignIn: _handleAppleSignIn,
+                            buildField: _buildField,
                           ),
-                          onToggleConfirm: () => setState(
-                            () => _obscureConfirm = !_obscureConfirm,
-                          ),
-                          onHandleSignup: _handleSignup,
-                          onGoogleSignIn: _handleGoogleSignIn,
-                          onAppleSignIn: _handleAppleSignIn,
-                          buildField: _buildField,
-                        ),
-                        if (!keyboardOpen) ...[
-                          SizedBox(height: 24.h),
-                          Align(
-                            alignment: Alignment.topCenter,
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
+                          if (!keyboardOpen) ...[
+                            SizedBox(height: 24.h),
+                            Align(
                               alignment: Alignment.topCenter,
-                              child: SizedBox(
-                                width: constraints.maxWidth - 44,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.topCenter,
+                                child: SizedBox(
+                                  width: constraints.maxWidth - 44,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
                                       Padding(
                                         padding: EdgeInsets.fromLTRB(
                                           0,
@@ -224,29 +227,34 @@ class _SignupScreenState extends State<SignupScreen>
                                           children: [
                                             Expanded(
                                               child: Divider(
-                                                color: Colors.white.withValues(alpha: 0.10),
+                                                color: Colors.white
+                                                    .withValues(alpha: 0.10),
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsets.symmetric(horizontal: 10.w),
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10.w),
                                               child: Text(
                                                 'Njia nyingine',
                                                 style: GoogleFonts.montserrat(
-                                                  fontSize: socialCompact ? 11 : 12,
+                                                  fontSize:
+                                                      socialCompact ? 11 : 12,
                                                   color: AppColors.textTertiary,
                                                 ),
                                               ),
                                             ),
                                             Expanded(
                                               child: Divider(
-                                                color: Colors.white.withValues(alpha: 0.10),
+                                                color: Colors.white
+                                                    .withValues(alpha: 0.10),
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.fromLTRB(0, 12.h, 0, 0),
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 12.h, 0, 0),
                                         child: Row(
                                           children: [
                                             Expanded(
@@ -255,19 +263,25 @@ class _SignupScreenState extends State<SignupScreen>
                                                 label: 'Google',
                                                 onTap: _handleGoogleSignIn,
                                                 icon: Container(
-                                                  width: socialCompact ? 20 : 24,
-                                                  height: socialCompact ? 20 : 24,
-                                                  decoration: const BoxDecoration(
+                                                  width:
+                                                      socialCompact ? 20 : 24,
+                                                  height:
+                                                      socialCompact ? 20 : 24,
+                                                  decoration:
+                                                      const BoxDecoration(
                                                     color: Colors.white,
                                                     shape: BoxShape.circle,
                                                   ),
                                                   child: Center(
                                                     child: Text(
                                                       'G',
-                                                      style: GoogleFonts.montserrat(
+                                                      style: GoogleFonts
+                                                          .montserrat(
                                                         fontSize: 12.sp,
-                                                        fontWeight: FontWeight.w700,
-                                                        color: const Color(0xFF4285F4),
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        color: const Color(
+                                                            0xFF4285F4),
                                                       ),
                                                     ),
                                                   ),
@@ -291,20 +305,26 @@ class _SignupScreenState extends State<SignupScreen>
                                         ),
                                       ),
                                       Padding(
-                                        padding: EdgeInsets.fromLTRB(0, 16.h, 0, 16.h),
+                                        padding: EdgeInsets.fromLTRB(
+                                            0, 16.h, 0, 16.h),
                                         child: Center(
                                           child: GestureDetector(
                                             onTap: () => context.go('/login'),
                                             child: Container(
                                               padding: EdgeInsets.symmetric(
-                                                horizontal: socialCompact ? 18 : 24,
-                                                vertical: socialCompact ? 10 : 14,
+                                                horizontal:
+                                                    socialCompact ? 18 : 24,
+                                                vertical:
+                                                    socialCompact ? 10 : 14,
                                               ),
                                               decoration: BoxDecoration(
-                                                color: Colors.white.withValues(alpha: 0.05),
-                                                borderRadius: BorderRadius.circular(50.r),
+                                                color: Colors.white
+                                                    .withValues(alpha: 0.05),
+                                                borderRadius:
+                                                    BorderRadius.circular(50.r),
                                                 border: Border.all(
-                                                  color: Colors.white.withValues(alpha: 0.10),
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.10),
                                                 ),
                                               ),
                                               child: Row(
@@ -312,30 +332,51 @@ class _SignupScreenState extends State<SignupScreen>
                                                 children: [
                                                   Text(
                                                     'Una akaunti?',
-                                                    style: GoogleFonts.montserrat(
-                                                      fontSize: socialCompact ? 12.5 : 14,
-                                                      color: Colors.white.withValues(alpha: 0.74),
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      fontSize: socialCompact
+                                                          ? 12.5
+                                                          : 14,
+                                                      color: Colors.white
+                                                          .withValues(
+                                                              alpha: 0.74),
                                                     ),
                                                   ),
                                                   SizedBox(width: 10.w),
                                                   Container(
-                                                    padding: EdgeInsets.symmetric(
-                                                      horizontal: socialCompact ? 12 : 16,
-                                                      vertical: socialCompact ? 4 : 6,
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                      horizontal: socialCompact
+                                                          ? 12
+                                                          : 16,
+                                                      vertical:
+                                                          socialCompact ? 4 : 6,
                                                     ),
                                                     decoration: BoxDecoration(
-                                                      gradient: const LinearGradient(
-                                                        colors: [AppColors.primary, Color(0xFFE07A2F)],
-                                                        begin: Alignment.topLeft,
-                                                        end: Alignment.bottomRight,
+                                                      gradient:
+                                                          const LinearGradient(
+                                                        colors: [
+                                                          AppColors.primary,
+                                                          Color(0xFFE07A2F)
+                                                        ],
+                                                        begin:
+                                                            Alignment.topLeft,
+                                                        end: Alignment
+                                                            .bottomRight,
                                                       ),
-                                                      borderRadius: BorderRadius.circular(50.r),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50.r),
                                                     ),
                                                     child: Text(
                                                       'Ingia',
-                                                      style: GoogleFonts.montserrat(
-                                                        fontSize: socialCompact ? 12 : 13.5,
-                                                        fontWeight: FontWeight.w700,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        fontSize: socialCompact
+                                                            ? 12
+                                                            : 13.5,
+                                                        fontWeight:
+                                                            FontWeight.w700,
                                                         color: Colors.white,
                                                       ),
                                                     ),
@@ -346,17 +387,17 @@ class _SignupScreenState extends State<SignupScreen>
                                           ),
                                         ),
                                       ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),
-              ),
               ),
             ],
           );
@@ -428,7 +469,10 @@ class _SignupContent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _BrandRow(compact: dense || veryShort),
-            SizedBox(height: keyboardOpen ? (dense ? 4 : 8) : (veryShort ? 4 : (dense ? 8 : 16))),
+            SizedBox(
+                height: keyboardOpen
+                    ? (dense ? 4 : 8)
+                    : (veryShort ? 4 : (dense ? 8 : 16))),
             Container(
               constraints: const BoxConstraints(maxWidth: 420),
               padding: EdgeInsets.all(24.r),
@@ -452,99 +496,107 @@ class _SignupContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                Text(
-                  'Fungua Akaunti',
-                  style: GoogleFonts.montserrat(
-                    fontSize: veryShort ? 17 : (dense ? 18 : 24),
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                    height: 1.02,
-                  ),
-                ),
-                SizedBox(height: 24.h),
-                Text(
-                  'Jenga akaunti yako na uanze safari yako ya kujifunza na kukuza biashara.',
-                  style: GoogleFonts.montserrat(
-                    fontSize: veryShort ? 11 : (dense ? 11.5 : 13.5),
-                    color: Colors.white.withValues(alpha: 0.72),
-                    height: 1.35,
-                  ),
-                ),
-                SizedBox(height: 24.h),
-                buildField(
-                  label: 'Jina la Kwanza',
-                  hint: 'Jina lako',
-                  icon: Icons.person_outline,
-                  controller: firstNameController,
-                  compact: dense || veryShort,
-                  validator: (v) => v!.isEmpty ? 'Weka jina lako' : null,
-                  onChanged: (_) => context.read<AuthProvider>().clearError(),
-                ),
-                SizedBox(height: 16.h),
-                buildField(
-                  label: 'Barua Pepe',
-                  hint: 'jina@mfano.com',
-                  icon: Icons.email_outlined,
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  compact: dense || veryShort,
-                  validator: (v) =>
-                      v!.isEmpty || !v.contains('@') ? 'Barua pepe si sahihi' : null,
-                  onChanged: (_) => context.read<AuthProvider>().clearError(),
-                ),
-                SizedBox(height: 16.h),
-                buildField(
-                  label: 'Neno la Siri',
-                  hint: 'Herufi 8 au zaidi',
-                  icon: Icons.lock_outline,
-                  controller: passwordController,
-                  obscureText: obscurePassword,
-                  compact: dense || veryShort,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      obscurePassword
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
-                      color: AppColors.textTertiary,
-                      size: 18.r,
+                    Text(
+                      'Fungua Akaunti',
+                      style: GoogleFonts.montserrat(
+                        fontSize: veryShort
+                            ? 17
+                            : (dense ? 18 : AppTextStyles.h1.fontSize),
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        height: 1.02,
+                      ),
                     ),
-                    onPressed: onTogglePassword,
-                  ),
-                  validator: (v) =>
-                      v!.length < 8 ? 'Neno la siri lazima liwe na herufi 8+' : null,
-                  onChanged: (_) => context.read<AuthProvider>().clearError(),
-                ),
-                SizedBox(height: 16.h),
-                buildField(
-                  label: 'Thibitisha Neno la Siri',
-                  hint: 'Rudia neno la siri',
-                  icon: Icons.lock_outline,
-                  controller: confirmController,
-                  obscureText: obscureConfirm,
-                  compact: dense || veryShort,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      obscureConfirm
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
-                      color: AppColors.textTertiary,
-                      size: 18.r,
+                    SizedBox(height: 24.h),
+                    Text(
+                      'Jenga akaunti yako na uanze safari yako ya kujifunza na kukuza biashara.',
+                      style: GoogleFonts.montserrat(
+                        fontSize: veryShort ? 11 : (dense ? 11.5 : 13.5),
+                        color: Colors.white.withValues(alpha: 0.72),
+                        height: 1.35,
+                      ),
                     ),
-                    onPressed: onToggleConfirm,
-                  ),
-                  validator: (v) =>
-                      v != passwordController.text ? 'Maneno ya siri hayafanani' : null,
-                ),
-                SizedBox(height: 28.h),
-                SizedBox(
-                  width: double.infinity,
-                  child: GradientButton(
-                    text: 'Jisajili',
-                    height: 56.h,
-                    isLoading: authProvider.isLoading,
-                    onTap: onHandleSignup,
-                  ),
-                ),
+                    SizedBox(height: 24.h),
+                    buildField(
+                      label: 'Jina la Kwanza',
+                      hint: 'Jina lako',
+                      icon: Icons.person_outline,
+                      controller: firstNameController,
+                      compact: dense || veryShort,
+                      validator: (v) => v!.isEmpty ? 'Weka jina lako' : null,
+                      onChanged: (_) =>
+                          context.read<AuthProvider>().clearError(),
+                    ),
+                    SizedBox(height: AppSpacing.md.h),
+                    buildField(
+                      label: 'Barua Pepe',
+                      hint: 'jina@mfano.com',
+                      icon: Icons.email_outlined,
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      compact: dense || veryShort,
+                      validator: (v) => v!.isEmpty || !v.contains('@')
+                          ? 'Barua pepe si sahihi'
+                          : null,
+                      onChanged: (_) =>
+                          context.read<AuthProvider>().clearError(),
+                    ),
+                    SizedBox(height: AppSpacing.md.h),
+                    buildField(
+                      label: 'Neno la Siri',
+                      hint: 'Herufi 8 au zaidi',
+                      icon: Icons.lock_outline,
+                      controller: passwordController,
+                      obscureText: obscurePassword,
+                      compact: dense || veryShort,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscurePassword
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                          color: AppColors.textTertiary,
+                          size: 18.r,
+                        ),
+                        onPressed: onTogglePassword,
+                      ),
+                      validator: (v) => v!.length < 8
+                          ? 'Neno la siri lazima liwe na herufi 8+'
+                          : null,
+                      onChanged: (_) =>
+                          context.read<AuthProvider>().clearError(),
+                    ),
+                    SizedBox(height: AppSpacing.md.h),
+                    buildField(
+                      label: 'Thibitisha Neno la Siri',
+                      hint: 'Rudia neno la siri',
+                      icon: Icons.lock_outline,
+                      controller: confirmController,
+                      obscureText: obscureConfirm,
+                      compact: dense || veryShort,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          obscureConfirm
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                          color: AppColors.textTertiary,
+                          size: 18.r,
+                        ),
+                        onPressed: onToggleConfirm,
+                      ),
+                      validator: (v) => v != passwordController.text
+                          ? 'Maneno ya siri hayafanani'
+                          : null,
+                    ),
+                    SizedBox(height: 28.h),
+                    SizedBox(
+                      width: double.infinity,
+                      child: GradientButton(
+                        text: 'Jisajili',
+                        height: 56.h,
+                        isLoading: authProvider.isLoading,
+                        onTap: onHandleSignup,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -713,5 +765,3 @@ class _MethodButton extends StatelessWidget {
     );
   }
 }
-
-

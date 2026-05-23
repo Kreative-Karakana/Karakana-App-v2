@@ -1,8 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/buttons/gradient_button.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../providers/auth_provider.dart';
@@ -34,7 +36,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     } else if (mounted) {
       showTopPopup(
         context,
-        auth.errorMessage ?? 'Imeshindikana kutuma kiungo. Tafadhali jaribu tena.',
+        auth.errorMessage ??
+            'Imeshindikana kutuma kiungo. Tafadhali jaribu tena.',
       );
     }
   }
@@ -43,7 +46,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return TextFormField(
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
-      style: GoogleFonts.montserrat(fontSize: compact ? 13 : 14, color: Colors.white),
+      style: GoogleFonts.montserrat(
+          fontSize: compact ? 13 : 14, color: Colors.white),
       cursorColor: AppColors.primaryMid,
       onChanged: (_) => context.read<AuthProvider>().clearError(),
       validator: (v) =>
@@ -64,27 +68,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         filled: true,
         fillColor: const Color(0xFF5A3525),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(AppRadius.cardLg),
           borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(AppRadius.cardLg),
           borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(AppRadius.cardLg),
           borderSide: const BorderSide(color: AppColors.primaryMid, width: 1.2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(AppRadius.cardLg),
           borderSide: const BorderSide(color: AppColors.error, width: 1.2),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(AppRadius.cardLg),
           borderSide: const BorderSide(color: AppColors.error, width: 1.2),
         ),
         contentPadding: EdgeInsets.symmetric(
-          horizontal: 16,
+          horizontal: AppSpacing.md,
           vertical: compact ? 14 : 16,
         ),
       ),
@@ -111,7 +115,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   duration: const Duration(milliseconds: 180),
                   curve: Curves.easeOut,
                   padding: EdgeInsets.only(
-                    bottom: keyboardOpen ? MediaQuery.viewInsetsOf(context).bottom : 0,
+                    bottom: keyboardOpen
+                        ? MediaQuery.viewInsetsOf(context).bottom
+                        : 0,
                   ),
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(
@@ -126,7 +132,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           : const NeverScrollableScrollPhysics(),
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight - (compact ? 24 : 40),
+                          minHeight:
+                              constraints.maxHeight - (compact ? 24 : 40),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -159,7 +166,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: AppSpacing.sm),
                             Text(
                               'Karakana',
                               style: GoogleFonts.poppins(
@@ -168,7 +175,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 color: Colors.white,
                               ),
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: AppSpacing.xl),
                             Container(
                               constraints: const BoxConstraints(maxWidth: 420),
                               padding: EdgeInsets.all(compact ? 18 : 22),
@@ -190,13 +197,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   ? Form(
                                       key: _formKey,
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Text(
                                             'Umesahau Neno la Siri?',
                                             style: GoogleFonts.montserrat(
-                                              fontSize: compact ? 22 : 24,
+                                              fontSize: compact
+                                                  ? 22
+                                                  : AppTextStyles.h1.fontSize,
                                               fontWeight: FontWeight.w700,
                                               color: Colors.white,
                                               height: 1.02,
@@ -207,40 +217,52 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                             'Weka barua pepe yako ili upokee kiungo cha kurejesha akaunti yako.',
                                             style: GoogleFonts.montserrat(
                                               fontSize: compact ? 12.5 : 13.5,
-                                              color: Colors.white.withValues(alpha: 0.72),
+                                              color: Colors.white
+                                                  .withValues(alpha: 0.72),
                                               height: 1.35,
                                             ),
                                           ),
                                           SizedBox(height: compact ? 18 : 22),
                                           Container(
-                                            padding: EdgeInsets.all(compact ? 14 : 16),
+                                            padding: EdgeInsets.all(
+                                                compact ? 14 : 16),
                                             decoration: BoxDecoration(
-                                              color: Colors.white.withValues(alpha: 0.04),
-                                              borderRadius: BorderRadius.circular(20),
+                                              color: Colors.white
+                                                  .withValues(alpha: 0.04),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
                                               border: Border.all(
-                                                color: Colors.white.withValues(alpha: 0.08),
+                                                color: Colors.white
+                                                    .withValues(alpha: 0.08),
                                               ),
                                             ),
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Text(
                                                   'Badili neno la siri',
                                                   style: GoogleFonts.montserrat(
-                                                    fontSize: compact ? 16 : 17,
+                                                    fontSize: compact
+                                                        ? 16
+                                                        : AppTextStyles
+                                                            .h3.fontSize,
                                                     fontWeight: FontWeight.w700,
                                                     color: Colors.white,
                                                   ),
                                                 ),
-                                                SizedBox(height: compact ? 12 : 14),
+                                                SizedBox(
+                                                    height: compact ? 12 : 14),
                                                 _buildEmailField(compact),
-                                                SizedBox(height: compact ? 14 : 18),
+                                                SizedBox(
+                                                    height: compact ? 14 : 18),
                                                 SizedBox(
                                                   width: double.infinity,
                                                   child: GradientButton(
                                                     text: 'Tuma Kiungo',
                                                     height: compact ? 50 : 56,
-                                                    isLoading: authProvider.isLoading,
+                                                    isLoading:
+                                                        authProvider.isLoading,
                                                     onTap: _handleSend,
                                                   ),
                                                 ),
@@ -251,9 +273,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                           Align(
                                             alignment: Alignment.centerLeft,
                                             child: TextButton.icon(
-                                              onPressed: () => context.go('/login'),
+                                              onPressed: () =>
+                                                  context.go('/login'),
                                               icon: const Icon(
-                                                Icons.arrow_back_ios_new_rounded,
+                                                Icons
+                                                    .arrow_back_ios_new_rounded,
                                                 size: 16,
                                                 color: AppColors.primaryMid,
                                               ),
@@ -266,9 +290,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                                 ),
                                               ),
                                               style: TextButton.styleFrom(
-                                                visualDensity: VisualDensity.compact,
+                                                visualDensity:
+                                                    VisualDensity.compact,
                                                 tapTargetSize:
-                                                    MaterialTapTargetSize.shrinkWrap,
+                                                    MaterialTapTargetSize
+                                                        .shrinkWrap,
                                               ),
                                             ),
                                           ),
@@ -276,7 +302,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                       ),
                                     )
                                   : Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
@@ -300,12 +327,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                         SizedBox(height: compact ? 18 : 22),
                                         Container(
                                           width: double.infinity,
-                                          padding: EdgeInsets.all(compact ? 16 : 18),
+                                          padding:
+                                              EdgeInsets.all(compact ? 16 : 18),
                                           decoration: BoxDecoration(
-                                            color: AppColors.success.withValues(alpha: 0.14),
-                                            borderRadius: BorderRadius.circular(22),
+                                            color: AppColors.success
+                                                .withValues(alpha: 0.14),
+                                            borderRadius:
+                                                BorderRadius.circular(22),
                                             border: Border.all(
-                                              color: AppColors.success.withValues(alpha: 0.24),
+                                              color: AppColors.success
+                                                  .withValues(alpha: 0.24),
                                             ),
                                           ),
                                           child: Row(
