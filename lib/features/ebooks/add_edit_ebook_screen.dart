@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:file_picker/file_picker.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -41,16 +41,23 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
   }
 
   Future<void> _pickEpub() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['epub', 'pdf'],
-      allowMultiple: false,
+    final file = await openFile(
+      acceptedTypeGroups: [
+        const XTypeGroup(
+          label: 'eBook files',
+          extensions: ['epub', 'pdf'],
+          mimeTypes: [
+            'application/epub+zip',
+            'application/pdf',
+            'application/octet-stream',
+            '*/*',
+          ],
+        ),
+      ],
     );
-    if (result == null || result.files.isEmpty) return;
-    final file = result.files.first;
-    if (file.path == null) return;
+    if (file == null) return;
     setState(() {
-      _epubPath = file.path!;
+      _epubPath = file.path;
       _epubName = file.name;
     });
   }
