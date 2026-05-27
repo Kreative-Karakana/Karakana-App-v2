@@ -982,42 +982,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String? subtitle,
     VoidCallback? onTap,
   }) {
-    return ListTile(
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 2),
-      leading: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: iconColor.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(11),
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 2),
+        leading: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: iconColor.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(11),
+          ),
+          child: Icon(icon, color: iconColor, size: 17),
         ),
-        child: Icon(icon, color: iconColor, size: 17),
-      ),
-      title: Text(
-        label,
-        style: GoogleFonts.montserrat(
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-          color: Theme.of(context).textTheme.bodyLarge?.color ??
-              const Color(0xFF1A0A00),
+        title: Text(
+          label,
+          style: GoogleFonts.montserrat(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).textTheme.bodyLarge?.color ??
+                const Color(0xFF1A0A00),
+          ),
         ),
+        subtitle: subtitle != null
+            ? Text(
+                subtitle,
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
+                  color: const Color(0xFF9E8070),
+                ),
+              )
+            : null,
+        trailing: const Icon(
+          Icons.chevron_right,
+          color: Color(0xFFE8D5C8),
+          size: 18,
+        ),
+        onTap: onTap,
       ),
-      subtitle: subtitle != null
-          ? Text(
-              subtitle,
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                color: const Color(0xFF9E8070),
-              ),
-            )
-          : null,
-      trailing: const Icon(
-        Icons.chevron_right,
-        color: Color(0xFFE8D5C8),
-        size: 18,
-      ),
-      onTap: onTap,
     );
   }
 }
