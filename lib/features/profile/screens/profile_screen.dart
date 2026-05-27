@@ -22,7 +22,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  static const double _accountHeaderHeight = 176;
+  static const double _accountHeaderHeight = 136;
   final LocalAuthentication _localAuth = LocalAuthentication();
   final ScrollController _scrollController = ScrollController();
   bool _biometricEnabled = false;
@@ -337,7 +337,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 AppSpacing.lg - AppSpacing.xs,
                                 AppSpacing.md - AppSpacing.xs / 2,
                                 AppSpacing.lg - AppSpacing.xs,
-                                AppSpacing.lg,
+                                AppSpacing.md,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
