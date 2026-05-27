@@ -22,34 +22,24 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  static const double _accountHeaderHeight = 176;
   final LocalAuthentication _localAuth = LocalAuthentication();
   final ScrollController _scrollController = ScrollController();
   bool _biometricEnabled = false;
   bool _biometricAvailable = false;
   bool _biometricBusy = false;
   String _biometricLabel = 'Biometric';
-  bool _showPinnedTopBar = false;
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_handleScroll);
     _loadBiometricSettings();
   }
 
   @override
   void dispose() {
-    _scrollController.removeListener(_handleScroll);
     _scrollController.dispose();
     super.dispose();
-  }
-
-  void _handleScroll() {
-    if (!_scrollController.hasClients) return;
-    final shouldShow = _scrollController.offset > 8;
-    if (shouldShow != _showPinnedTopBar && mounted) {
-      setState(() => _showPinnedTopBar = shouldShow);
-    }
   }
 
   Future<void> _loadBiometricSettings() async {
@@ -101,7 +91,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ? await _localAuth.getAvailableBiometrics()
             : const <BiometricType>[];
         if (!supported || !enrolled || availableTypes.isEmpty) {
-          if (mounted) showTopPopup(context, 'Tafadhali sanidi Face ID/alama ya kidole kwenye kifaa kwanza.');
+          if (mounted) {
+            showTopPopup(context,
+                'Tafadhali sanidi Face ID/alama ya kidole kwenye kifaa kwanza.');
+          }
           return;
         }
 
@@ -114,7 +107,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         );
         if (!verified) {
-          if (mounted) showTopPopup(context, 'Uthibitishaji umeshindikana. Biometric haijawashwa.');
+          if (mounted) {
+            showTopPopup(
+                context, 'Uthibitishaji umeshindikana. Biometric haijawashwa.');
+          }
           return;
         }
       }
@@ -144,9 +140,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           code.contains('passcodenotenrolled') ||
           code.contains('not_available')) {
         msg = 'Hakuna Face ID/alama ya kidole iliyosajiliwa kwenye kifaa.';
-      } else if (code.contains('lockedout') || code.contains('permanentlylockedout')) {
-        msg = 'Biometric imefungwa kwa muda. Tumia nywila ya kifaa kisha ujaribu tena.';
-      } else if (code.contains('no_biometric_hardware') || code.contains('notavailable')) {
+      } else if (code.contains('lockedout') ||
+          code.contains('permanentlylockedout')) {
+        msg =
+            'Biometric imefungwa kwa muda. Tumia nywila ya kifaa kisha ujaribu tena.';
+      } else if (code.contains('no_biometric_hardware') ||
+          code.contains('notavailable')) {
         msg = 'Kifaa hiki hakina uwezo wa biometric.';
       } else {
         msg = 'Biometric haijapatikana kwa sasa kwenye kifaa hiki.';
@@ -156,7 +155,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } catch (_) {
       if (mounted) {
-        showTopPopup(context, 'Imeshindikana kubadili mipangilio ya biometric.');
+        showTopPopup(
+            context, 'Imeshindikana kubadili mipangilio ya biometric.');
       }
     } finally {
       if (mounted) setState(() => _biometricBusy = false);
@@ -241,8 +241,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, auth, _) {
-        final userName = auth.userFullName.isNotEmpty ? auth.userFullName : 'Mtumiaji wa Karakana';
-        final userEmail = auth.userEmail.isNotEmpty ? auth.userEmail : 'Hakuna barua pepe';
+        final userName = auth.userFullName.isNotEmpty
+            ? auth.userFullName
+            : 'Mtumiaji wa Karakana';
+        final userEmail =
+            auth.userEmail.isNotEmpty ? auth.userEmail : 'Hakuna barua pepe';
         final initial = userName.isNotEmpty ? userName[0].toUpperCase() : 'K';
 
         final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -251,148 +254,114 @@ class _ProfileScreenState extends State<ProfileScreen> {
           body: CustomScrollView(
             controller: _scrollController,
             slivers: [
-              if (_showPinnedTopBar)
-                SliverAppBar(
-                  pinned: true,
-                  automaticallyImplyLeading: false,
-                  backgroundColor: const Color(0xFF3D1800),
-                  elevation: 0,
-                  title: Text(
-                    'Akaunti',
-                    style: GoogleFonts.montserrat(
-                      fontSize: AppTextStyles.h3.fontSize,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
+              SliverAppBar(
+                pinned: true,
+                automaticallyImplyLeading: false,
+                backgroundColor: const Color(0xFF3D1800),
+                expandedHeight: _accountHeaderHeight,
+                elevation: 0,
+                titleSpacing: AppSpacing.lg - AppSpacing.xs,
+                title: Text(
+                  'Akaunti',
+                  style: GoogleFonts.montserrat(
+                    fontSize: AppTextStyles.h3.fontSize,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
                   ),
-                  systemOverlayStyle: const SystemUiOverlayStyle(
-                    statusBarColor: Colors.transparent,
-                    statusBarIconBrightness: Brightness.light,
-                  ),
-                  actions: [
-                    IconButton(
-                      icon: const Icon(Icons.logout, color: Colors.white),
-                      onPressed: () {
-                        showDialog<void>(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                            title: Text(
-                              'Toka',
-                              style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-                            ),
-                            content: Text(
-                              'Una uhakika unataka kutoka?',
-                              style: GoogleFonts.montserrat(),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: Text(
-                                  'Hapana',
-                                  style: GoogleFonts.montserrat(color: const Color(0xFF9E8070)),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  context.read<AuthProvider>().logout();
-                                  context.go('/login');
-                                },
-                                child: Text(
-                                  'Ndiyo, Toka',
-                                  style: GoogleFonts.montserrat(
-                                    color: const Color(0xFFB71C1C),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
                 ),
-              SliverToBoxAdapter(
-                child: AnnotatedRegion<SystemUiOverlayStyle>(
-                  value: const SystemUiOverlayStyle(
-                    statusBarColor: Colors.transparent,
-                    statusBarIconBrightness: Brightness.light,
-                  ),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF2A0F04), Color(0xFF3D1800), Color(0xFF7B3A10)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                systemOverlayStyle: const SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.light,
+                ),
+                actions: [_buildLogoutAction()],
+                flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.pin,
+                  background: AnnotatedRegion<SystemUiOverlayStyle>(
+                    value: const SystemUiOverlayStyle(
+                      statusBarColor: Colors.transparent,
+                      statusBarIconBrightness: Brightness.light,
                     ),
-                    child: Stack(
-                      clipBehavior: Clip.hardEdge,
-                      children: [
-                        Positioned(
-                          top: -40,
-                          right: -30,
-                          child: Container(
-                            width: 180,
-                            height: 180,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: 0.04),
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Color(0xFF2A0F04),
+                            Color(0xFF3D1800),
+                            Color(0xFF7B3A10),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                      child: Stack(
+                        clipBehavior: Clip.hardEdge,
+                        children: [
+                          Positioned(
+                            top: -40,
+                            right: -30,
+                            child: Container(
+                              width: 180,
+                              height: 180,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white.withValues(alpha: 0.04),
+                              ),
                             ),
                           ),
-                        ),
-                        Positioned(
-                          bottom: -30,
-                          left: -20,
-                          child: Container(
-                            width: 120,
-                            height: 120,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: 0.03),
+                          Positioned(
+                            bottom: -30,
+                            left: -20,
+                            child: Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white.withValues(alpha: 0.03),
+                              ),
                             ),
                           ),
-                        ),
-                        SafeArea(
-                          bottom: false,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              AppSpacing.lg - AppSpacing.xs,
-                              AppSpacing.md - AppSpacing.xs / 2,
-                              AppSpacing.lg - AppSpacing.xs,
-                              AppSpacing.lg,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'Akaunti',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize:
-                                        (AppTextStyles.displayLarge.fontSize ??
-                                                32) -
-                                            1,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white,
-                                    height: 1.0,
+                          SafeArea(
+                            bottom: false,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                AppSpacing.lg - AppSpacing.xs,
+                                AppSpacing.md - AppSpacing.xs / 2,
+                                AppSpacing.lg - AppSpacing.xs,
+                                AppSpacing.lg,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'Akaunti',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: (AppTextStyles
+                                                  .displayLarge.fontSize ??
+                                              32) -
+                                          1,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white,
+                                      height: 1.0,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: AppSpacing.xs),
-                                Text(
-                                  'Wasifu na Mipangilio Yako',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: AppTextStyles.bodyMedium.fontSize,
-                                    color: Colors.white.withValues(alpha: 0.65),
-                                    height: 1.35,
+                                  const SizedBox(height: AppSpacing.xs),
+                                  Text(
+                                    'Wasifu na Mipangilio Yako',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize:
+                                          AppTextStyles.bodyMedium.fontSize,
+                                      color:
+                                          Colors.white.withValues(alpha: 0.65),
+                                      height: 1.35,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -400,7 +369,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // Profile card
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(AppSpacing.lg - AppSpacing.xs, AppSpacing.md, AppSpacing.lg - AppSpacing.xs, 0),
+                  padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.lg - AppSpacing.xs,
+                      AppSpacing.md,
+                      AppSpacing.lg - AppSpacing.xs,
+                      0),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                         vertical: AppSpacing.md + 2,
@@ -409,15 +382,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(
-                        color: isDark
-                            ? Colors.white10
-                            : const Color(0xFFECE7E2),
+                        color:
+                            isDark ? Colors.white10 : const Color(0xFFECE7E2),
                       ),
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
-                          color: const Color(0x0A000000),
+                          color: Color(0x0A000000),
                           blurRadius: 10,
-                          offset: const Offset(0, 3),
+                          offset: Offset(0, 3),
                         ),
                       ],
                     ),
@@ -444,7 +416,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     width: 64,
                                     height: 64,
                                     fit: BoxFit.cover,
-                                    errorWidget: (_, __, ___) => _avatarFallback(initial),
+                                    errorWidget: (_, __, ___) =>
+                                        _avatarFallback(initial),
                                   )
                                 : _avatarFallback(initial),
                           ),
@@ -459,7 +432,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w700,
-                                  color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+                                  color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color ??
+                                      const Color(0xFF1A0A00),
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -476,12 +453,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                               const SizedBox(height: AppSpacing.sm),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm + AppSpacing.xs / 2, vertical: AppSpacing.xs),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal:
+                                        AppSpacing.sm + AppSpacing.xs / 2,
+                                    vertical: AppSpacing.xs),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFE87722).withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(AppRadius.cardLg),
+                                  color: const Color(0xFFE87722)
+                                      .withValues(alpha: 0.1),
+                                  borderRadius:
+                                      BorderRadius.circular(AppRadius.cardLg),
                                   border: Border.all(
-                                    color: const Color(0xFFE87722).withValues(alpha: 0.4),
+                                    color: const Color(0xFFE87722)
+                                        .withValues(alpha: 0.4),
                                   ),
                                 ),
                                 child: Text(
@@ -503,7 +486,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(AppSpacing.lg - AppSpacing.xs, AppSpacing.md, AppSpacing.lg - AppSpacing.xs, 0),
+                  padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.lg - AppSpacing.xs,
+                      AppSpacing.md,
+                      AppSpacing.lg - AppSpacing.xs,
+                      0),
                   child: Column(
                     children: [
                       _buildMenuGroup(
@@ -588,7 +575,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   width: 36,
                                   height: 36,
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFE87722).withValues(alpha: 0.1),
+                                    color: const Color(0xFFE87722)
+                                        .withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Icon(
@@ -605,7 +593,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       : 'Hali ya Mwanga',
                                   style: GoogleFonts.montserrat(
                                     fontSize: 14,
-                                    color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        const Color(0xFF1A0A00),
                                   ),
                                 ),
                                 trailing: Switch(
@@ -625,7 +617,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   width: 36,
                                   height: 36,
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFE87722).withValues(alpha: 0.1),
+                                    color: const Color(0xFFE87722)
+                                        .withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Icon(
@@ -640,7 +633,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   'Ingia kwa $_biometricLabel',
                                   style: GoogleFonts.montserrat(
                                     fontSize: 14,
-                                    color: Theme.of(context).textTheme.bodyLarge?.color ??
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
                                         const Color(0xFF1A0A00),
                                   ),
                                 ),
@@ -654,10 +650,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                 ),
                                 trailing: Switch(
-                                  value: _biometricEnabled && _biometricAvailable,
-                                  onChanged: (_biometricAvailable && !_biometricBusy)
-                                      ? _toggleBiometric
-                                      : null,
+                                  value:
+                                      _biometricEnabled && _biometricAvailable,
+                                  onChanged:
+                                      (_biometricAvailable && !_biometricBusy)
+                                          ? _toggleBiometric
+                                          : null,
                                   activeColor: const Color(0xFFE87722),
                                   activeTrackColor: const Color(0xFFE87722)
                                       .withValues(alpha: 0.3),
@@ -682,7 +680,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Icons.add_box_outlined,
                               const Color(0xFFE87722),
                               'Unda Kozi Mpya',
-                              onTap: () => context.push('/trainer/course-builder'),
+                              onTap: () =>
+                                  context.push('/trainer/course-builder'),
                             ),
                           ],
                         ),
@@ -694,14 +693,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             padding: AppSpacing.cardPadding,
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
-                                colors: [Color(0xFF1A0A00), Color(0xFF3D1800), Color(0xFF7B3A10)],
+                                colors: [
+                                  Color(0xFF1A0A00),
+                                  Color(0xFF3D1800),
+                                  Color(0xFF7B3A10)
+                                ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
-                              borderRadius: BorderRadius.circular(AppRadius.modal),
+                              borderRadius:
+                                  BorderRadius.circular(AppRadius.modal),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF3D1800).withValues(alpha: 0.18),
+                                  color: const Color(0xFF3D1800)
+                                      .withValues(alpha: 0.18),
                                   blurRadius: 18,
                                   offset: const Offset(0, 10),
                                 ),
@@ -714,14 +719,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   height: 56,
                                   decoration: BoxDecoration(
                                     color: Colors.white.withValues(alpha: 0.12),
-                                    borderRadius: BorderRadius.circular(AppRadius.card),
+                                    borderRadius:
+                                        BorderRadius.circular(AppRadius.card),
                                   ),
-                                  child: const Icon(Icons.school, color: Colors.white, size: 28),
+                                  child: const Icon(Icons.school,
+                                      color: Colors.white, size: 28),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Kuwa Mkufunzi',
@@ -735,13 +743,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         'Fundisha na upate kipato',
                                         style: GoogleFonts.montserrat(
                                           fontSize: 12,
-                                          color: Colors.white.withValues(alpha: 0.82),
+                                          color: Colors.white
+                                              .withValues(alpha: 0.82),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                                const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 16),
+                                const Icon(Icons.arrow_forward_ios,
+                                    color: Colors.white, size: 16),
                               ],
                             ),
                           ),
@@ -757,12 +767,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 showDialog<void>(
                                   context: context,
                                   builder: (_) => AlertDialog(
-                                    title: Text('Toka', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
-                                    content: Text('Una uhakika unataka kutoka?', style: GoogleFonts.montserrat()),
+                                    title: Text('Toka',
+                                        style: GoogleFonts.montserrat(
+                                            fontWeight: FontWeight.w700)),
+                                    content: Text('Una uhakika unataka kutoka?',
+                                        style: GoogleFonts.montserrat()),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),
-                                        child: Text('Hapana', style: GoogleFonts.montserrat(color: const Color(0xFF9E8070))),
+                                        child: Text('Hapana',
+                                            style: GoogleFonts.montserrat(
+                                                color:
+                                                    const Color(0xFF9E8070))),
                                       ),
                                       TextButton(
                                         onPressed: () {
@@ -770,19 +786,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           context.read<AuthProvider>().logout();
                                           context.go('/login');
                                         },
-                                        child: Text('Ndiyo, Toka', style: GoogleFonts.montserrat(color: const Color(0xFFB71C1C), fontWeight: FontWeight.w600)),
+                                        child: Text('Ndiyo, Toka',
+                                            style: GoogleFonts.montserrat(
+                                                color: const Color(0xFFB71C1C),
+                                                fontWeight: FontWeight.w600)),
                                       ),
                                     ],
                                   ),
                                 );
                               },
-                              icon: const Icon(Icons.logout, color: Color(0xFF1A0A00), size: 18),
-                              label: Text('Toka', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w600, color: const Color(0xFF1A0A00))),
+                              icon: const Icon(Icons.logout,
+                                  color: Color(0xFF1A0A00), size: 18),
+                              label: Text('Toka',
+                                  style: GoogleFonts.montserrat(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFF1A0A00))),
                               style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Color(0xFFE8D5C8), width: 1.5),
+                                side: const BorderSide(
+                                    color: Color(0xFFE8D5C8), width: 1.5),
                                 backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.input)),
-                                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md - AppSpacing.xs / 2),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(AppRadius.input)),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical:
+                                        AppSpacing.md - AppSpacing.xs / 2),
                               ),
                             ),
                           ),
@@ -790,19 +819,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Expanded(
                             child: OutlinedButton.icon(
                               onPressed: () => _deleteAccount(context, auth),
-                              icon: const Icon(Icons.delete_forever_outlined, color: Colors.white, size: 18),
-                              label: Text('Futa Akaunti', style: GoogleFonts.montserrat(fontSize: AppTextStyles.bodyMedium.fontSize, fontWeight: FontWeight.w600, color: Colors.white)),
+                              icon: const Icon(Icons.delete_forever_outlined,
+                                  color: Colors.white, size: 18),
+                              label: Text('Futa Akaunti',
+                                  style: GoogleFonts.montserrat(
+                                      fontSize:
+                                          AppTextStyles.bodyMedium.fontSize,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white)),
                               style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: Color(0xFFB71C1C), width: 1.5),
+                                side: const BorderSide(
+                                    color: Color(0xFFB71C1C), width: 1.5),
                                 backgroundColor: const Color(0xFFB71C1C),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.input)),
-                                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md - AppSpacing.xs / 2),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(AppRadius.input)),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical:
+                                        AppSpacing.md - AppSpacing.xs / 2),
                               ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: MediaQuery.of(context).padding.bottom + AppSpacing.lg),
+                      SizedBox(
+                          height: MediaQuery.of(context).padding.bottom +
+                              AppSpacing.lg),
                     ],
                   ),
                 ),
@@ -814,63 +856,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _headerChip(IconData icon, String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm + AppSpacing.xs, vertical: AppSpacing.sm - 1),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(AppRadius.cardLg),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 13, color: Colors.white.withValues(alpha: 0.85)),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: GoogleFonts.montserrat(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: Colors.white.withValues(alpha: 0.85),
+  Widget _buildLogoutAction() {
+    return IconButton(
+      icon: const Icon(Icons.logout, color: Colors.white),
+      onPressed: () {
+        showDialog<void>(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(
+              'Toka',
+              style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _headerQuickAction({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: onTap,
-      child: Ink(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm + AppSpacing.xs / 2, vertical: AppSpacing.sm + 1),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 13, color: Colors.white.withValues(alpha: 0.9)),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: GoogleFonts.montserrat(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: Colors.white.withValues(alpha: 0.9),
+            content: Text(
+              'Una uhakika unataka kutoka?',
+              style: GoogleFonts.montserrat(),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  'Hapana',
+                  style: GoogleFonts.montserrat(
+                    color: const Color(0xFF9E8070),
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  context.read<AuthProvider>().logout();
+                  context.go('/login');
+                },
+                child: Text(
+                  'Ndiyo, Toka',
+                  style: GoogleFonts.montserrat(
+                    color: const Color(0xFFB71C1C),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -912,7 +940,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm + AppSpacing.xs, AppSpacing.md, AppSpacing.xs),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.md,
+                AppSpacing.sm + AppSpacing.xs, AppSpacing.md, AppSpacing.xs),
             child: Row(
               children: [
                 Text(
@@ -933,7 +962,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     if (entry.key > 0)
                       Divider(
                         height: 1,
-                        color: isDark ? Colors.white10 : const Color(0xFFF0E4DA),
+                        color:
+                            isDark ? Colors.white10 : const Color(0xFFF0E4DA),
                         indent: 56,
                       ),
                     entry.value,
@@ -969,7 +999,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         style: GoogleFonts.montserrat(
           fontSize: 15,
           fontWeight: FontWeight.w500,
-          color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+          color: Theme.of(context).textTheme.bodyLarge?.color ??
+              const Color(0xFF1A0A00),
         ),
       ),
       subtitle: subtitle != null
@@ -990,7 +1021,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
-
-
-
-
