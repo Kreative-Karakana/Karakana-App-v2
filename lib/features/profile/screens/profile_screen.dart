@@ -261,19 +261,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 expandedHeight: _accountHeaderHeight,
                 elevation: 0,
                 titleSpacing: AppSpacing.lg - AppSpacing.xs,
-                title: Text(
-                  'Akaunti',
-                  style: GoogleFonts.montserrat(
-                    fontSize: AppTextStyles.h3.fontSize,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                title: _CollapsedHeaderChrome(
+                  scrollController: _scrollController,
+                  threshold: _accountHeaderHeight - kToolbarHeight - 28,
+                  child: Text(
+                    'Akaunti',
+                    style: GoogleFonts.montserrat(
+                      fontSize: AppTextStyles.h3.fontSize,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 systemOverlayStyle: const SystemUiOverlayStyle(
                   statusBarColor: Colors.transparent,
                   statusBarIconBrightness: Brightness.light,
                 ),
-                actions: [_buildLogoutAction()],
+                actions: [
+                  _CollapsedHeaderChrome(
+                    scrollController: _scrollController,
+                    threshold: _accountHeaderHeight - kToolbarHeight - 28,
+                    child: _buildLogoutAction(),
+                  ),
+                ],
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
                   background: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -1021,6 +1031,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         onTap: onTap,
       ),
+    );
+  }
+}
+
+class _CollapsedHeaderChrome extends StatelessWidget {
+  final ScrollController scrollController;
+  final double threshold;
+  final Widget child;
+
+  const _CollapsedHeaderChrome({
+    required this.scrollController,
+    required this.threshold,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: scrollController,
+      builder: (context, _) {
+        final isVisible =
+            scrollController.hasClients && scrollController.offset > threshold;
+        return IgnorePointer(
+          ignoring: !isVisible,
+          child: AnimatedOpacity(
+            opacity: isVisible ? 1 : 0,
+            duration: const Duration(milliseconds: 140),
+            curve: Curves.easeOut,
+            child: child,
+          ),
+        );
+      },
     );
   }
 }
