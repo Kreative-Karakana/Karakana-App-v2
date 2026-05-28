@@ -446,78 +446,83 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                         ),
                                       ),
                                     ),
-                                    child: ListTile(
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                        vertical: 4,
-                                      ),
-                                      leading: Container(
-                                        width: 40,
-                                        height: 40,
-                                        decoration: BoxDecoration(
-                                          color: lesson.isRead
-                                              ? const Color(0xFFE87722)
-                                                  .withValues(alpha: 0.1)
-                                              : (isDark
-                                                  ? const Color(0xFF2A1A0A)
-                                                  : const Color(0xFFF5E6D8)),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: ListTile(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                          vertical: 4,
                                         ),
-                                        child: Center(
-                                          child: lesson.isRead
-                                              ? const Icon(
-                                                  Icons.check,
-                                                  color: Color(0xFFE87722),
-                                                  size: 20,
-                                                )
-                                              : Text(
-                                                  '${lessonIndex + 1}',
-                                                  style: GoogleFonts.montserrat(
-                                                    fontSize: AppTextStyles
-                                                        .bodyMedium.fontSize,
-                                                    fontWeight: FontWeight.w700,
-                                                    color:
-                                                        const Color(0xFFE87722),
+                                        leading: Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: lesson.isRead
+                                                ? const Color(0xFFE87722)
+                                                    .withValues(alpha: 0.1)
+                                                : (isDark
+                                                    ? const Color(0xFF2A1A0A)
+                                                    : const Color(0xFFF5E6D8)),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: Center(
+                                            child: lesson.isRead
+                                                ? const Icon(
+                                                    Icons.check,
+                                                    color: Color(0xFFE87722),
+                                                    size: 20,
+                                                  )
+                                                : Text(
+                                                    '${lessonIndex + 1}',
+                                                    style:
+                                                        GoogleFonts.montserrat(
+                                                      fontSize: AppTextStyles
+                                                          .bodyMedium.fontSize,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      color: const Color(
+                                                          0xFFE87722),
+                                                    ),
                                                   ),
-                                                ),
+                                          ),
                                         ),
-                                      ),
-                                      title: Text(
-                                        lesson.title,
-                                        style: GoogleFonts.montserrat(
-                                          fontSize:
-                                              AppTextStyles.bodyMedium.fontSize,
-                                          fontWeight: lesson.isRead
-                                              ? FontWeight.w400
-                                              : FontWeight.w600,
-                                          color: lesson.isRead
-                                              ? const Color(0xFF5C3D2E)
-                                              : const Color(0xFF3D1800),
+                                        title: Text(
+                                          lesson.title,
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: AppTextStyles
+                                                .bodyMedium.fontSize,
+                                            fontWeight: lesson.isRead
+                                                ? FontWeight.w400
+                                                : FontWeight.w600,
+                                            color: lesson.isRead
+                                                ? const Color(0xFF5C3D2E)
+                                                : const Color(0xFF3D1800),
+                                          ),
                                         ),
+                                        trailing: lesson.hasVideo
+                                            ? const Icon(
+                                                Icons.play_circle_outline,
+                                                color: Color(0xFFE87722),
+                                                size: 22,
+                                              )
+                                            : const Icon(
+                                                Icons.article_outlined,
+                                                color: Color(0xFF9E8070),
+                                                size: 22,
+                                              ),
+                                        onTap: () => context
+                                            .push('/lesson/${lesson.id}')
+                                            .then((_) {
+                                          if (context.mounted) {
+                                            context
+                                                .read<CourseProvider>()
+                                                .loadCourseDetail(
+                                                    widget.courseId);
+                                          }
+                                        }),
                                       ),
-                                      trailing: lesson.hasVideo
-                                          ? const Icon(
-                                              Icons.play_circle_outline,
-                                              color: Color(0xFFE87722),
-                                              size: 22,
-                                            )
-                                          : const Icon(
-                                              Icons.article_outlined,
-                                              color: Color(0xFF9E8070),
-                                              size: 22,
-                                            ),
-                                      onTap: () => context
-                                          .push('/lesson/${lesson.id}')
-                                          .then((_) {
-                                        if (context.mounted) {
-                                          context
-                                              .read<CourseProvider>()
-                                              .loadCourseDetail(
-                                                  widget.courseId);
-                                        }
-                                      }),
                                     ),
                                   );
                                 }),
