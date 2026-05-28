@@ -79,9 +79,7 @@ class _ExploreScreenState extends State<ExploreScreen>
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark
-          ? Theme.of(context).scaffoldBackgroundColor
-          : AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
           top: false,
           child: Column(
@@ -323,64 +321,57 @@ class _ExploreScreenState extends State<ExploreScreen>
 
               // ── Results list ───────────────────────────────────────
               Expanded(
-                child: ColoredBox(
-                  color: isDark
-                      ? Theme.of(context).scaffoldBackgroundColor
-                      : AppColors.background,
-                  child: provider.isLoading
-                      ? ListView.builder(
-                          itemCount: 6,
-                          padding: EdgeInsets.fromLTRB(
-                            AppSpacing.lg,
-                            AppSpacing.lg,
-                            AppSpacing.lg,
-                            MediaQuery.of(context).padding.bottom +
-                                _floatingNavClearance,
-                          ),
-                          itemBuilder: (_, __) => const Padding(
-                            padding: EdgeInsets.only(bottom: 12),
-                            child:
-                                ShimmerCard(width: double.infinity, height: 96),
-                          ),
-                        )
-                      : displayCourses.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.search_off_rounded,
-                                    size: 64,
-                                    color: AppColors.border,
+                child: provider.isLoading
+                    ? ListView.builder(
+                        itemCount: 6,
+                        padding: EdgeInsets.fromLTRB(
+                          AppSpacing.lg,
+                          AppSpacing.lg,
+                          AppSpacing.lg,
+                          MediaQuery.of(context).padding.bottom +
+                              _floatingNavClearance,
+                        ),
+                        itemBuilder: (_, __) => const Padding(
+                          padding: EdgeInsets.only(bottom: 12),
+                          child:
+                              ShimmerCard(width: double.infinity, height: 96),
+                        ),
+                      )
+                    : displayCourses.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.search_off_rounded,
+                                  size: 64,
+                                  color: AppColors.border,
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                Text(
+                                  'Kozi haikupatikana',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color ??
+                                        const Color(0xFF1A0A00),
                                   ),
-                                  const SizedBox(height: AppSpacing.md),
-                                  Text(
-                                    'Kozi haikupatikana',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      color: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.color ??
-                                          const Color(0xFF1A0A00),
-                                    ),
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                Text(
+                                  'Jaribu maneno mengine ya utafutaji',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: AppTextStyles.bodyMedium.fontSize,
+                                    color: AppColors.textTertiary,
                                   ),
-                                  const SizedBox(height: AppSpacing.sm),
-                                  Text(
-                                    'Jaribu maneno mengine ya utafutaji',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize:
-                                          AppTextStyles.bodyMedium.fontSize,
-                                      color: AppColors.textTertiary,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : _buildResultsList(
-                              context, provider, displayCourses),
-                ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : _buildResultsList(context, provider, displayCourses),
               ),
             ],
           )),
