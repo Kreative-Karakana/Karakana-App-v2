@@ -1,32 +1,13 @@
 import 'dart:convert';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
-import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
 
-import '../providers/course_provider.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../providers/course_provider.dart';
 
 class ClassroomScreen extends StatefulWidget {
   final int courseId;
@@ -60,7 +41,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
           return Scaffold(
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: const _ClassroomAppBarPlaceholder(),
-            body: SafeArea(
+            body: const SafeArea(
                 child: Center(
               child: KarakanaWaveLoader(
                 color: Color(0xFFE87722),
@@ -188,7 +169,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          KarakanaWaveLoader(
+                          CircularProgressIndicator(
                             value: progress,
                             strokeWidth: 5,
                             backgroundColor: const Color(0xFFF5E6D8),
