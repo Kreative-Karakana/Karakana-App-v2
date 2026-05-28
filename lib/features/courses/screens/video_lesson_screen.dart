@@ -1,32 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
-import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
 import 'package:flutter/services.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
+import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:video_player/video_player.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
 
 import '../../../core/network/api_client.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_text_styles.dart';
 
 class VideoLessonScreen extends StatefulWidget {
   final int lessonId;
@@ -377,7 +358,6 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
   bool _isInitialized = false;
   bool _isError = false;
   bool _showControls = true;
-  bool _isFullscreen = false;
 
   @override
   void initState() {
@@ -437,18 +417,16 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
     }
   }
 
-  void _toggleFullscreen() {
-    setState(() => _isFullscreen = !_isFullscreen);
-    if (_isFullscreen) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    } else {
-      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    }
+  Future<void> _openFullscreen() async {
+    setState(() => _showControls = false);
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => _FullscreenVideoPlayer(controller: _controller),
+      ),
+    );
+    if (!mounted) return;
+    setState(() => _showControls = true);
+    _scheduleHideControls();
   }
 
   String _formatDuration(Duration d) {
@@ -529,8 +507,7 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
     final duration = value.duration;
 
     final playerWidget = AspectRatio(
-      aspectRatio:
-          _isFullscreen ? MediaQuery.of(context).size.aspectRatio : 16 / 9,
+      aspectRatio: 16 / 9,
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -620,11 +597,9 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
                               ),
                               const SizedBox(width: 8),
                               GestureDetector(
-                                onTap: _toggleFullscreen,
-                                child: Icon(
-                                  _isFullscreen
-                                      ? Icons.fullscreen_exit
-                                      : Icons.fullscreen,
+                                onTap: _openFullscreen,
+                                child: const Icon(
+                                  Icons.fullscreen,
                                   color: Colors.white,
                                   size: 20,
                                 ),
@@ -650,14 +625,215 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
       ),
     );
 
-    if (_isFullscreen) {
-      return Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(child: playerWidget),
-      );
-    }
-
     return playerWidget;
   }
 }
 
+class _FullscreenVideoPlayer extends StatefulWidget {
+  final VideoPlayerController controller;
+
+  const _FullscreenVideoPlayer({required this.controller});
+
+  @override
+  State<_FullscreenVideoPlayer> createState() => _FullscreenVideoPlayerState();
+}
+
+class _FullscreenVideoPlayerState extends State<_FullscreenVideoPlayer> {
+  bool _showControls = true;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onPlayerChanged);
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    _scheduleHideControls();
+  }
+
+  void _onPlayerChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _scheduleHideControls() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted && widget.controller.value.isPlaying) {
+        setState(() => _showControls = false);
+      }
+    });
+  }
+
+  void _togglePlayPause() {
+    setState(() => _showControls = true);
+    if (widget.controller.value.isPlaying) {
+      widget.controller.pause();
+    } else {
+      widget.controller.play();
+      _scheduleHideControls();
+    }
+  }
+
+  String _formatDuration(Duration d) {
+    final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onPlayerChanged);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final value = widget.controller.value;
+    final aspectRatio = value.aspectRatio == 0 ? 16 / 9 : value.aspectRatio;
+    final padding = MediaQuery.paddingOf(context);
+
+    return PopScope(
+      onPopInvokedWithResult: (_, __) {
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            setState(() => _showControls = !_showControls);
+            if (_showControls && value.isPlaying) _scheduleHideControls();
+          },
+          child: Stack(
+            fit: StackFit.expand,
+            alignment: Alignment.center,
+            children: [
+              Center(
+                child: AspectRatio(
+                  aspectRatio: aspectRatio,
+                  child: VideoPlayer(widget.controller),
+                ),
+              ),
+              AnimatedOpacity(
+                opacity: _showControls ? 1 : 0,
+                duration: const Duration(milliseconds: 180),
+                child: IgnorePointer(
+                  ignoring: !_showControls,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withValues(alpha: 0.55),
+                          Colors.transparent,
+                          Colors.transparent,
+                          Colors.black.withValues(alpha: 0.65),
+                        ],
+                        stops: const [0, 0.24, 0.68, 1],
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: padding.top + 12,
+                          left: padding.left + 16,
+                          child: IconButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            icon: const Icon(
+                              Icons.arrow_back_rounded,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                          ),
+                        ),
+                        Center(
+                          child: GestureDetector(
+                            onTap: _togglePlayPause,
+                            child: Container(
+                              width: 68,
+                              height: 68,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                value.isPlaying
+                                    ? Icons.pause_rounded
+                                    : Icons.play_arrow_rounded,
+                                color: Colors.white,
+                                size: 40,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: padding.left + 24,
+                          right: padding.right + 24,
+                          bottom: padding.bottom + 16,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              VideoProgressIndicator(
+                                widget.controller,
+                                allowScrubbing: true,
+                                colors: const VideoProgressColors(
+                                  playedColor: Color(0xFFE87722),
+                                  bufferedColor: Colors.white38,
+                                  backgroundColor: Colors.white12,
+                                ),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    _formatDuration(value.position),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: AppTextStyles.caption.fontSize,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Text(
+                                    _formatDuration(value.duration),
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: AppTextStyles.caption.fontSize,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  GestureDetector(
+                                    onTap: () => Navigator.of(context).pop(),
+                                    child: const Icon(
+                                      Icons.fullscreen_exit,
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              if (value.isBuffering)
+                const KarakanaWaveLoader(
+                  color: Color(0xFFE87722),
+                  strokeWidth: 2,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
