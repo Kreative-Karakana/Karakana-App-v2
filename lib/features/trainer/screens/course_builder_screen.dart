@@ -421,10 +421,17 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   @override
   Widget build(BuildContext context) {
     final labels = ['Maelezo', 'Sehemu', 'Maswali', 'Ukaguzi'];
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF1A0A00) : const Color(0xFFFFF8F4);
+    final surfaceColor = Theme.of(context).cardColor;
+    final title = _isEditMode ? 'Hariri Kozi' : 'Unda Kozi Mpya';
+    final subtitle = _isEditMode
+        ? 'Safisha maudhui, panga sehemu, na tuma mabadiliko kwa ukaguzi.'
+        : 'Jaza maelezo ya kozi, kisha tuma kwa ukaguzi wa timu ya Kreative Karakana.';
 
     if (_isLoadingCourse) {
       return Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: bgColor,
         appBar: AppBar(
           backgroundColor: const Color(0xFF3D1800),
           elevation: 0,
@@ -441,211 +448,295 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: bgColor,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
-        title: Text(
-          _isEditMode ? 'Hariri Kozi' : 'Unda Kozi Mpya',
-          style: GoogleFonts.montserrat(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-      ),
-      body: Column(
-        children: [
+        title: Text(title,
+            style: GoogleFonts.montserrat(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: Colors.white)),
+        actions: [
           Container(
-            margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.only(right: 12, top: 10, bottom: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFF8F4),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: const Color(0xFFE87722).withValues(alpha: 0.4),
-              ),
+              color: Colors.white.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(999),
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.info_outline,
-                  color: Color(0xFFE87722),
-                  size: 18,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Kozi, sehemu, na masomo yote lazima yapitishwe na timu ya Kreative Karakana kabla ya kuchapishwa.',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 12,
-                      color: const Color(0xFF7B3A10),
-                      height: 1.4,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // ── Step indicator ─────────────────────────────────────────────
-          Container(
-            color: Theme.of(context).cardColor,
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: List.generate(
-                4,
-                (i) => Expanded(
-                  child: Row(
-                    children: [
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: i <= _currentStep
-                                  ? const Color(0xFFE87722)
-                                  : const Color(0xFFF5E6D8),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: i < _currentStep
-                                  ? const Icon(Icons.check,
-                                      color: Colors.white, size: 16)
-                                  : Text(
-                                      '${i + 1}',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w700,
-                                        color: i <= _currentStep
-                                            ? Colors.white
-                                            : const Color(0xFF9E8070),
-                                      ),
-                                    ),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            labels[i],
-                            style: GoogleFonts.montserrat(
-                              fontSize: 9,
-                              color: i <= _currentStep
-                                  ? const Color(0xFFE87722)
-                                  : const Color(0xFF9E8070),
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (i < 3)
-                        Expanded(
-                          child: Container(
-                            height: 2,
-                            margin: const EdgeInsets.only(bottom: 16),
-                            color: i < _currentStep
-                                ? const Color(0xFFE87722)
-                                : const Color(0xFFE8D5C8),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // ── Step content ───────────────────────────────────────────────
-          Expanded(
-            child: IndexedStack(
-              index: _currentStep,
-              children: [
-                _buildStep1(),
-                _buildStep2(),
-                _buildStep3(),
-                _buildStep4(),
-              ],
-            ),
-          ),
-
-          // ── Navigation buttons ─────────────────────────────────────────
-          Container(
-            color: Theme.of(context).cardColor,
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-            child: Row(
-              children: [
-                if (_currentStep > 0)
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: _isSubmitting
-                          ? null
-                          : () => setState(() => _currentStep--),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFFE8D5C8)),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(28),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: Text(
-                        'Nyuma',
-                        style: GoogleFonts.montserrat(
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF9E8070),
-                        ),
-                      ),
-                    ),
-                  ),
-                if (_currentStep > 0) const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _isSubmitting
-                        ? null
-                        : () {
-                            if (_currentStep < 3) {
-                              if (_currentStep == 0 && !_step1Valid) {
-                                _showError('Jaza jina na maelezo ya kozi.');
-                                return;
-                              }
-                              setState(() => _currentStep++);
-                            } else {
-                              _submitCourse();
-                            }
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFE87722),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: _isSubmitting
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: KarakanaWaveLoader(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : Text(
-                            _currentStep < 3
-                                ? 'Endelea'
-                                : (_isEditMode
-                                    ? 'Tuma Mabadiliko'
-                                    : 'Tuma kwa Ukaguzi'),
-                            style: GoogleFonts.montserrat(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                const Icon(Icons.verified_outlined,
+                    size: 16, color: Colors.white),
+                const SizedBox(width: 6),
+                Text(
+                  'Ukaguzi',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ),
               ],
             ),
           ),
         ],
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark ? Colors.white12 : const Color(0xFFE8D5C8),
+                ),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x0FC4620A),
+                    blurRadius: 20,
+                    offset: Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE87722).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(
+                      Icons.school_outlined,
+                      color: Color(0xFFE87722),
+                      size: 26,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF3D1800),
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          subtitle,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 12.5,
+                            color: const Color(0xFF7B3A10),
+                            height: 1.45,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            _buildPill('Kozi', const Color(0xFFE87722)),
+                            _buildPill('Sehemu', const Color(0xFF3D1800)),
+                            _buildPill('Maswali', const Color(0xFF9E8070)),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(
+                    color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+              ),
+              child: Row(
+                children: List.generate(
+                  4,
+                  (i) => Expanded(
+                    child: Row(
+                      children: [
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              width: 34,
+                              height: 34,
+                              decoration: BoxDecoration(
+                                color: i <= _currentStep
+                                    ? const Color(0xFFE87722)
+                                    : const Color(0xFFF5E6D8),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: i < _currentStep
+                                    ? const Icon(Icons.check,
+                                        color: Colors.white, size: 16)
+                                    : Text(
+                                        '${i + 1}',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w700,
+                                          color: i <= _currentStep
+                                              ? Colors.white
+                                              : const Color(0xFF9E8070),
+                                        ),
+                                      ),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              labels[i],
+                              style: GoogleFonts.montserrat(
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.w600,
+                                color: i <= _currentStep
+                                    ? const Color(0xFFE87722)
+                                    : const Color(0xFF9E8070),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (i < 3)
+                          Expanded(
+                            child: Container(
+                              height: 2,
+                              margin: const EdgeInsets.only(bottom: 18),
+                              decoration: BoxDecoration(
+                                color: i < _currentStep
+                                    ? const Color(0xFFE87722)
+                                    : const Color(0xFFE8D5C8),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: surfaceColor,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                      color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: IndexedStack(
+                    index: _currentStep,
+                    children: [
+                      _buildStep1(),
+                      _buildStep2(),
+                      _buildStep3(),
+                      _buildStep4(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              color: surfaceColor,
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+              child: Row(
+                children: [
+                  if (_currentStep > 0)
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _isSubmitting
+                            ? null
+                            : () => setState(() => _currentStep--),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFFE8D5C8)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        icon: const Icon(Icons.arrow_back_rounded, size: 18),
+                        label: Text(
+                          'Nyuma',
+                          style: GoogleFonts.montserrat(
+                            fontWeight: FontWeight.w600,
+                            color: const Color(0xFF9E8070),
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (_currentStep > 0) const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _isSubmitting
+                          ? null
+                          : () {
+                              if (_currentStep < 3) {
+                                if (_currentStep == 0 && !_step1Valid) {
+                                  _showError('Jaza jina na maelezo ya kozi.');
+                                  return;
+                                }
+                                setState(() => _currentStep++);
+                              } else {
+                                _submitCourse();
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFE87722),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: _isSubmitting
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: KarakanaWaveLoader(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              _currentStep < 3
+                                  ? 'Endelea'
+                                  : (_isEditMode
+                                      ? 'Tuma Mabadiliko'
+                                      : 'Tuma kwa Ukaguzi'),
+                              style: GoogleFonts.montserrat(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -665,73 +756,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _sectionTitle('Maelezo ya Kozi'),
-          const SizedBox(height: 16),
-
-          // ── Cover image picker ──
-          GestureDetector(
-            onTap: _pickCoverImage,
-            child: Container(
-              height: 150,
-              decoration: BoxDecoration(
-                color:
-                    isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(
-                  color: _coverImage != null
-                      ? const Color(0xFFE87722)
-                      : const Color(0xFFE8D5C8),
-                  width: _coverImage != null ? 1.5 : 1,
-                ),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: _coverImage != null
-                  ? Stack(fit: StackFit.expand, children: [
-                      Image.file(_coverImage!, fit: BoxFit.cover),
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: GestureDetector(
-                          onTap: () => setState(() => _coverImage = null),
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                                color: Color(0xFF3D1800),
-                                shape: BoxShape.circle),
-                            child: const Icon(Icons.close,
-                                color: Colors.white, size: 14),
-                          ),
-                        ),
-                      ),
-                    ])
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 52,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color:
-                                const Color(0xFFE87722).withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: const Icon(Icons.add_photo_alternate_outlined,
-                              color: Color(0xFFE87722), size: 28),
-                        ),
-                        const SizedBox(height: 8),
-                        Text('Pakia Picha ya Kozi',
-                            style: GoogleFonts.montserrat(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: const Color(0xFF7B3A10))),
-                        const SizedBox(height: 4),
-                        Text('JPG au PNG (hiari)',
-                            style: GoogleFonts.montserrat(
-                                fontSize: 11, color: const Color(0xFFBDA99C))),
-                      ],
-                    ),
-            ),
-          ),
-
+          const SizedBox(height: 14),
+          _buildCoverPicker(isDark),
           const SizedBox(height: 16),
           _field(
             controller: _titleController,
@@ -867,10 +893,11 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         children: [
           _sectionTitle('Maswali ya Kozi'),
           const SizedBox(height: 8),
-          Text(
-            'Ongeza maswali ya mtihani (hiari). Maswali yatahifadhiwa pamoja na kozi itakapotumwa kwa ukaguzi.',
-            style: GoogleFonts.montserrat(
-                fontSize: 13, color: const Color(0xFF9E8070), height: 1.5),
+          _infoCard(
+            icon: Icons.quiz_outlined,
+            title: 'Maswali ya Mtihani',
+            body:
+                'Ongeza maswali ya hiari sasa, kisha yahifadhiwe pamoja na kozi itakapotumwa kwa ukaguzi.',
           ),
           const SizedBox(height: 20),
 
@@ -1038,7 +1065,6 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
 
   // ── Step 4: Review & Publish ───────────────────────────────────────────────
   Widget _buildStep4() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final price = double.tryParse(_priceController.text.trim()) ?? 0;
     final levelLabels = {
       'beginner': 'Mwanzo',
@@ -1077,45 +1103,12 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           _summaryTile('Maswali ya Mtihani',
               _questions.isEmpty ? 'Hakuna' : '${_questions.length} maswali'),
         const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-                color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.info_outline,
-                      color: Color(0xFFE87722), size: 18),
-                  const SizedBox(width: 8),
-                  Text(
-                    _isEditMode ? 'Kuhusu Uhariri' : 'Baada ya Kutuma',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF3D1800),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _isEditMode
-                    ? 'Mabadiliko yatatumwa kwa timu ya Kreative Karakana kwa ukaguzi. Wanafunzi wataona yaliyopitishwa baada ya kuidhinishwa.'
-                    : 'Kozi itatumwa kwa timu ya Kreative Karakana kwa ukaguzi. Baada ya kupitishwa ndipo itaweza kuonekana kwa wanafunzi.',
-                style: GoogleFonts.montserrat(
-                  fontSize: 13,
-                  color: const Color(0xFF9E8070),
-                  height: 1.5,
-                ),
-              ),
-            ],
-          ),
+        _infoCard(
+          icon: Icons.verified_outlined,
+          title: _isEditMode ? 'Kuhusu Uhariri' : 'Baada ya Kutuma',
+          body: _isEditMode
+              ? 'Mabadiliko yatatumwa kwa timu ya Kreative Karakana kwa ukaguzi. Wanafunzi wataona yaliyopitishwa baada ya kuidhinishwa.'
+              : 'Kozi itatumwa kwa timu ya Kreative Karakana kwa ukaguzi. Baada ya kupitishwa ndipo itaweza kuonekana kwa wanafunzi.',
         ),
       ],
     );
@@ -1173,6 +1166,122 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           color: const Color(0xFF3D1800),
         ),
       );
+
+  Widget _buildPill(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: color.withValues(alpha: 0.16)),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.montserrat(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCoverPicker(bool isDark) {
+    return GestureDetector(
+      onTap: _pickCoverImage,
+      child: Container(
+        width: double.infinity,
+        constraints: const BoxConstraints(minHeight: 180),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFFFF8F4),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: _coverImage != null
+                ? const Color(0xFFE87722)
+                : const Color(0xFFE8D5C8),
+            width: _coverImage != null ? 1.5 : 1,
+          ),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: _coverImage != null
+            ? Stack(
+                children: [
+                  Positioned.fill(
+                    child: Image.file(_coverImage!, fit: BoxFit.cover),
+                  ),
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: GestureDetector(
+                      onTap: () => setState(() => _coverImage = null),
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color:
+                              const Color(0xFF3D1800).withValues(alpha: 0.88),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.close,
+                            color: Colors.white, size: 14),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 14,
+                    right: 14,
+                    bottom: 14,
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.45),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        'Gusa kubadilisha picha ya kozi',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE87722).withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: const Icon(Icons.add_photo_alternate_outlined,
+                          color: Color(0xFFE87722), size: 30),
+                    ),
+                    const SizedBox(height: 14),
+                    Text('Pakia Picha ya Kozi',
+                        style: GoogleFonts.montserrat(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF7B3A10))),
+                    const SizedBox(height: 6),
+                    Text(
+                      'JPG au PNG, hiari lakini inapendeza zaidi kwa wanafunzi.',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.montserrat(
+                          fontSize: 12, color: const Color(0xFFBDA99C)),
+                    ),
+                  ],
+                ),
+              ),
+      ),
+    );
+  }
 
   Widget _field({
     required TextEditingController controller,
