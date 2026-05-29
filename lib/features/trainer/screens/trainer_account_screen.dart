@@ -414,12 +414,6 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                           onTap: () => context.push('/profile/edit'),
                         ),
                         _buildMenuItem(
-                          Icons.payment_outlined,
-                          const Color(0xFFE87722),
-                          'Historia ya Malipo',
-                          onTap: () => context.push('/payment/history'),
-                        ),
-                        _buildMenuItem(
                           Icons.account_balance_wallet_outlined,
                           const Color(0xFF6A1B9A),
                           'Mkoba Wangu',
