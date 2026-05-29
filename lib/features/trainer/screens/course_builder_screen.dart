@@ -744,6 +744,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   // ── Step 1: Details + Thumbnail ────────────────────────────────────────────
   Widget _buildStep1() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom + 150;
     const levels = [
       ('beginner', 'Mwanzo'),
       ('intermediate', 'Kati'),
@@ -751,7 +752,10 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     ];
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      physics:
+          const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      padding: EdgeInsets.fromLTRB(20, 20, 20, bottomPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -847,8 +851,12 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
 
   // ── Step 2: Sections info ──────────────────────────────────────────────────
   Widget _buildStep2() {
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom + 150;
     return ListView(
-      padding: const EdgeInsets.all(20),
+      physics:
+          const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      padding: EdgeInsets.fromLTRB(20, 20, 20, bottomPadding),
       children: [
         _sectionTitle('Sehemu na Masomo'),
         const SizedBox(height: 8),
@@ -886,8 +894,12 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   // ── Step 3: Inline quiz builder ────────────────────────────────────────────
   Widget _buildStep3() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom + 150;
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      physics:
+          const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      padding: EdgeInsets.fromLTRB(20, 20, 20, bottomPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1066,6 +1078,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   // ── Step 4: Review & Publish ───────────────────────────────────────────────
   Widget _buildStep4() {
     final price = double.tryParse(_priceController.text.trim()) ?? 0;
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom + 150;
     final levelLabels = {
       'beginner': 'Mwanzo',
       'intermediate': 'Kati',
@@ -1078,7 +1091,10 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         '—';
 
     return ListView(
-      padding: const EdgeInsets.all(20),
+      physics:
+          const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      padding: EdgeInsets.fromLTRB(20, 20, 20, bottomPadding),
       children: [
         _sectionTitle(_isEditMode ? 'Pitia Mabadiliko' : 'Pitia na Tuma'),
         const SizedBox(height: 16),
