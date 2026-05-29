@@ -254,16 +254,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   Future<void> _deleteCourse(Map course) async {
     final id = course['id'];
     final title = course['title']?.toString() ?? 'Kozi';
-    final shouldDelete = await showDialog<bool>(
+    final shouldRequestDeletion = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          'Futa Kozi?',
+          'Omba Kufuta Kozi?',
           style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
         ),
         content: Text(
-          'Una uhakika unataka kufuta "$title"? Hii haiwezi kurejeshwa.',
+          'Ombi lako la kufuta "$title" litatumwa kwa timu ya Kreative Karakana kwa ukaguzi kabla kozi haijafutwa.',
           style: GoogleFonts.montserrat(fontSize: 13, height: 1.5),
         ),
         actions: [
@@ -277,20 +277,25 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               backgroundColor: const Color(0xFFB71C1C),
               foregroundColor: Colors.white,
             ),
-            child: Text('Ndiyo, Futa', style: GoogleFonts.montserrat()),
+            child: Text('Tuma Ombi', style: GoogleFonts.montserrat()),
           ),
         ],
       ),
     );
-    if (shouldDelete != true) return;
+    if (shouldRequestDeletion != true) return;
     try {
-      await ApiClient().dio.delete('/api/v1/courses/$id/');
+      await ApiClient().dio.post('/api/v1/courses/$id/deletion-request/');
       if (!mounted) return;
-      showTopPopup(context, 'Kozi imefutwa kikamilifu.', isError: false);
+      showTopPopup(
+        context,
+        'Ombi lako la kufuta kozi limepokelewa na lipo kwenye ukaguzi.',
+        isError: false,
+      );
       _loadAll();
     } catch (_) {
       if (!mounted) return;
-      showTopPopup(context, 'Imeshindikana kufuta kozi. Jaribu tena.');
+      showTopPopup(
+          context, 'Imeshindikana kutuma ombi la kufuta kozi. Jaribu tena.');
     }
   }
 

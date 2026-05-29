@@ -51,6 +51,7 @@ Goal: review the whole Flutter app against consistent industry-standard patterns
 - [x] Tighten profile/account header spacing.
 - [x] Align trainer account page UI with the improved student account page.
 - [x] Require trainer course publishing and edited course content to go through Kreative Karakana review.
+- [x] Add trainer course deletion request flow with backend team approval.
 - [ ] Audit every screen for keyboard-open behavior.
 - [ ] Audit every screen for safe-area and bottom navigation spacing.
 - [ ] Audit every screen for portrait/landscape layout failures.
@@ -125,5 +126,5 @@ Goal: review the whole Flutter app against consistent industry-standard patterns
 - [ ] Fursa page placeholder content.
 - [ ] Mkoba wangu card gradient should match Zana card dark gradient.
 - [ ] Trainer video upload directly to Mux from app.
-- [ ] Trainer requests course deletion flow.
+- [x] Trainer requests course deletion flow.
 - [ ] Trainer dashboard text and badge polish from pending tasks.

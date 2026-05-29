@@ -60,7 +60,7 @@ Review notes to include:
 - Mkoba wangu card gradient — match Zana card dark gradient
 - Trainer video upload directly to Mux from app
 - Drop shadow after next card in trainer kozi tab
-- Trainer requests course deletion flow
+- Trainer requests course deletion flow — done via backend approval request
 - Sign in with Apple (required — app has Google Sign-In)
 
 ### UI Fixes (Trainer Dashboard)
