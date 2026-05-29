@@ -272,25 +272,6 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
     );
   }
 
-  Widget _statusChip(String label, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: color.withValues(alpha: 0.16)),
-      ),
-      child: Text(
-        label,
-        style: GoogleFonts.montserrat(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: color,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     const bgColor = Color(0xFFFFF8F4);
@@ -316,31 +297,6 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
               color: Colors.white, size: 20),
           onPressed: () => context.pop(),
         ),
-        actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 12, top: 10, bottom: 10),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.menu_book_outlined,
-                    size: 16, color: Colors.white),
-                const SizedBox(width: 6),
-                Text(
-                  'eBook',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
       body: Form(
         key: _formKey,
@@ -407,19 +363,6 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
                             color: const Color(0xFF7B3A10),
                             height: 1.4,
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            _statusChip(
-                              _isEdit ? 'Hariri' : 'Mpya',
-                              const Color(0xFFE87722),
-                            ),
-                            _statusChip('Jalada', const Color(0xFF3D1800)),
-                            _statusChip('EPUB / PDF', const Color(0xFF9E8070)),
-                          ],
                         ),
                       ],
                     ),

@@ -36,6 +36,7 @@ Use this list as the QA queue. We are building and fixing now; later we will tes
 - [ ] Backend admin can approve a course deletion request and delete the course.
 - [ ] Backend admin can reject a course deletion request without deleting the course.
 - [ ] Profile, classroom, and notifications `ListTile` Material assertions no longer appear.
+- [ ] Trainer eBook upload works end-to-end from the new editor screen.
 
 ## Full App Codebase Quality Audit
 
