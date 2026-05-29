@@ -1,13 +1,12 @@
 import 'dart:io';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/network/api_client.dart';
-import '../services/ebook_service.dart';
+import 'services/ebook_service.dart';
 
 class AddEditEbookScreen extends StatefulWidget {
   final int? ebookId;
@@ -29,10 +28,10 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
   String? _coverName;
   String? _epubName;
   bool _saving = false;
-  double _uploadProgress = 0;
 
   Future<void> _pickCover() async {
-    final x = await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 90);
+    final x = await ImagePicker()
+        .pickImage(source: ImageSource.gallery, imageQuality: 90);
     if (x == null) return;
     setState(() {
       _coverPath = x.path;
@@ -67,22 +66,25 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
     if (widget.ebookId == null && (_coverPath == null || _epubPath == null)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Picha ya jalada na faili la EPUB vinahitajika.', style: GoogleFonts.montserrat()),
+          content: Text('Picha ya jalada na faili la EPUB vinahitajika.',
+              style: GoogleFonts.montserrat()),
           backgroundColor: const Color(0xFFB71C1C),
         ),
       );
       return;
     }
 
-    setState(() { _saving = true; _uploadProgress = 0; });
+    setState(() {
+      _saving = true;
+    });
     try {
       if (widget.ebookId == null) {
         await _service.createEbook(
           title: _title.text.trim(),
           description: _description.text.trim(),
           price: _price.text.trim(),
-          coverImagePath: _coverPath!,
-          epubFilePath: _epubPath!,
+          coverImagePath: _coverPath ?? '',
+          epubFilePath: _epubPath ?? '',
         );
       } else {
         await _service.updateEbook(
@@ -97,7 +99,8 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('eBook imehifadhiwa kikamilifu!', style: GoogleFonts.montserrat()),
+            content: Text('eBook imehifadhiwa kikamilifu!',
+                style: GoogleFonts.montserrat()),
             backgroundColor: const Color(0xFF2E7D32),
           ),
         );
@@ -107,7 +110,8 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(ApiClient().parseError(e), style: GoogleFonts.montserrat()),
+            content: Text(ApiClient().parseError(e),
+                style: GoogleFonts.montserrat()),
             backgroundColor: const Color(0xFFB71C1C),
           ),
         );
@@ -128,7 +132,8 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
   InputDecoration _inputDecoration(String label, IconData icon) {
     return InputDecoration(
       labelText: label,
-      labelStyle: GoogleFonts.montserrat(fontSize: 13, color: const Color(0xFF9E8070)),
+      labelStyle:
+          GoogleFonts.montserrat(fontSize: 13, color: const Color(0xFF9E8070)),
       prefixIcon: Icon(icon, color: const Color(0xFFE87722), size: 20),
       filled: true,
       fillColor: const Color(0xFFFFF8F4),
@@ -149,6 +154,25 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: Color(0xFFB71C1C)),
       ),
+    );
+  }
+
+  Widget _sectionCard({required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE8D5C8)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFE87722).withValues(alpha: 0.06),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: child,
     );
   }
 
@@ -190,7 +214,9 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
               ),
               child: Icon(
                 isSelected ? Icons.check_circle_outline : icon,
-                color: isSelected ? const Color(0xFFE87722) : const Color(0xFF9E8070),
+                color: isSelected
+                    ? const Color(0xFFE87722)
+                    : const Color(0xFF9E8070),
                 size: 22,
               ),
             ),
@@ -209,7 +235,7 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    isSelected ? selectedName! : hint,
+                    selectedName ?? hint,
                     style: GoogleFonts.montserrat(
                       fontSize: 11,
                       color: isSelected
@@ -225,7 +251,9 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
             Icon(
               Icons.arrow_forward_ios_rounded,
               size: 14,
-              color: isSelected ? const Color(0xFFE87722) : const Color(0xFFBDA99C),
+              color: isSelected
+                  ? const Color(0xFFE87722)
+                  : const Color(0xFFBDA99C),
             ),
           ],
         ),
@@ -236,9 +264,12 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
   @override
   Widget build(BuildContext context) {
     final isEdit = widget.ebookId != null;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF1A0A00) : const Color(0xFFFFF8F4);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F4),
+      backgroundColor: bgColor,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: const Color(0xFF3D1800),
         foregroundColor: Colors.white,
@@ -252,96 +283,154 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_rounded,
+              color: Colors.white, size: 20),
           onPressed: () => context.pop(),
         ),
       ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
+          physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics()),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: EdgeInsets.fromLTRB(
+            20,
+            18,
+            20,
+            MediaQuery.of(context).viewPadding.bottom + 24,
+          ),
           children: [
-            Text(
-              'Maelezo ya eBook',
-              style: GoogleFonts.montserrat(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF9E8070),
-                letterSpacing: 0.5,
-              ),
-            ),
-            const SizedBox(height: 12),
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(color: const Color(0xFFE8D5C8)),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFFE87722).withValues(alpha: 0.07),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
+                    color: const Color(0xFFE87722).withValues(alpha: 0.06),
+                    blurRadius: 18,
+                    offset: const Offset(0, 6),
                   ),
                 ],
               ),
-              child: Column(
+              child: Row(
                 children: [
+                  Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE87722).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(Icons.menu_book_outlined,
+                        color: Color(0xFFE87722), size: 26),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          isEdit ? 'Hariri eBook' : 'Ongeza eBook Mpya',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF3D1800),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          isEdit
+                              ? 'Sasisha maelezo na uandae eBook kwa ukaguzi.'
+                              : 'Jaza maelezo, kisha pakia jalada na faili la eBook.',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 12.5,
+                            color: const Color(0xFF7B3A10),
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            _sectionCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Maelezo ya eBook',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF9E8070),
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   TextFormField(
                     controller: _title,
-                    style: GoogleFonts.montserrat(fontSize: 14, color: const Color(0xFF1A0A00)),
-                    decoration: _inputDecoration('Jina la eBook', Icons.title_rounded),
-                    validator: (v) => (v == null || v.trim().isEmpty) ? 'Jina linahitajika' : null,
+                    style: GoogleFonts.montserrat(
+                        fontSize: 14, color: const Color(0xFF1A0A00)),
+                    decoration:
+                        _inputDecoration('Jina la eBook', Icons.title_rounded),
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? 'Jina linahitajika'
+                        : null,
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: _description,
                     maxLines: 4,
-                    style: GoogleFonts.montserrat(fontSize: 14, color: const Color(0xFF1A0A00)),
-                    decoration: _inputDecoration('Maelezo', Icons.description_outlined),
-                    validator: (v) => (v == null || v.trim().isEmpty) ? 'Maelezo yanahitajika' : null,
+                    style: GoogleFonts.montserrat(
+                        fontSize: 14, color: const Color(0xFF1A0A00)),
+                    decoration:
+                        _inputDecoration('Maelezo', Icons.description_outlined),
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? 'Maelezo yanahitajika'
+                        : null,
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: _price,
                     keyboardType: TextInputType.number,
-                    style: GoogleFonts.montserrat(fontSize: 14, color: const Color(0xFF1A0A00)),
-                    decoration: _inputDecoration('Bei (TZS)', Icons.sell_outlined),
+                    style: GoogleFonts.montserrat(
+                        fontSize: 14, color: const Color(0xFF1A0A00)),
+                    decoration:
+                        _inputDecoration('Bei (TZS)', Icons.sell_outlined),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) return 'Bei inahitajika';
+                      if (v == null || v.trim().isEmpty) {
+                        return 'Bei inahitajika';
+                      }
                       final p = int.tryParse(v.trim());
-                      if (p == null || p < 0) return 'Ingiza nambari sahihi';
+                      if (p == null || p < 0) {
+                        return 'Ingiza nambari sahihi';
+                      }
                       return null;
                     },
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            Text(
-              'Faili za eBook',
-              style: GoogleFonts.montserrat(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF9E8070),
-                letterSpacing: 0.5,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFE87722).withValues(alpha: 0.07),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
+            const SizedBox(height: 16),
+            _sectionCard(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    'Faili za eBook',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF9E8070),
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   _buildFilePicker(
                     label: 'Picha ya Jalada',
                     hint: 'Bonyeza kuchagua picha (JPG/PNG)',
@@ -363,16 +452,16 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
             if (_coverPath != null) ...[
               const SizedBox(height: 16),
               ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 child: Image.file(
                   File(_coverPath!),
-                  height: 160,
+                  height: 180,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
               ),
             ],
-            const SizedBox(height: 32),
+            const SizedBox(height: 20),
             if (_saving) ...[
               const LinearProgressIndicator(
                 color: Color(0xFFE87722),
@@ -394,17 +483,27 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: _saving ? null : _save,
-                icon: Icon(_saving ? Icons.hourglass_top_rounded : Icons.cloud_upload_outlined, size: 20),
+                icon: Icon(
+                  _saving
+                      ? Icons.hourglass_top_rounded
+                      : Icons.cloud_upload_outlined,
+                  size: 20,
+                ),
                 label: Text(
-                  _saving ? 'Inapakia...' : (isEdit ? 'Hifadhi Mabadiliko' : 'Pakia eBook'),
-                  style: GoogleFonts.montserrat(fontSize: 15, fontWeight: FontWeight.w700),
+                  _saving
+                      ? 'Inapakia...'
+                      : (isEdit ? 'Hifadhi Mabadiliko' : 'Pakia eBook'),
+                  style: GoogleFonts.montserrat(
+                      fontSize: 15, fontWeight: FontWeight.w700),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFE87722),
                   foregroundColor: Colors.white,
-                  disabledBackgroundColor: const Color(0xFFE87722).withValues(alpha: 0.5),
+                  disabledBackgroundColor:
+                      const Color(0xFFE87722).withValues(alpha: 0.5),
                   elevation: 0,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
               ),
