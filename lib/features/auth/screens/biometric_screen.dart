@@ -23,7 +23,6 @@ class _BiometricScreenState extends State<BiometricScreen> {
   bool _isAuthenticating = false;
   bool _failed = false;
   bool _hasFaceId = false;
-  bool _hasFingerprint = false;
   String? _statusMessage;
 
   @override
@@ -35,8 +34,13 @@ class _BiometricScreenState extends State<BiometricScreen> {
 
   Future<void> _prepareAndAuthenticate() async {
     try {
-      final enabled = await SecureStorage().isBiometricEnabled();
-      final hasSession = await SecureStorage().hasBiometricToken();
+      final accountId = await SecureStorage().getActiveBiometricAccountId();
+      final enabled = accountId == null
+          ? false
+          : await SecureStorage().isBiometricEnabledForAccount(accountId);
+      final hasSession = accountId == null
+          ? false
+          : await SecureStorage().hasBiometricTokenForAccount(accountId);
       final supported = await _localAuth.isDeviceSupported();
       final enrolled = await _localAuth.canCheckBiometrics;
       final biometrics = (supported && enrolled)
@@ -50,7 +54,6 @@ class _BiometricScreenState extends State<BiometricScreen> {
       if (!mounted) return;
       setState(() {
         _hasFaceId = hasFace;
-        _hasFingerprint = hasFingerprint;
       });
 
       if (!enabled || !hasSession || (!hasFace && !hasFingerprint)) {

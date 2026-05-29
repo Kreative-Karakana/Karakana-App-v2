@@ -5,7 +5,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:dio/dio.dart';
 
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
@@ -27,10 +26,10 @@ class AuthProvider extends ChangeNotifier {
 
   String get userFullName {
     if (_user == null) return '';
-    final firstName = _user!['first_name'] as String? ??
-                      _user!['firstName'] as String? ?? '';
-    final lastName = _user!['last_name'] as String? ??
-                     _user!['lastName'] as String? ?? '';
+    final firstName =
+        _user!['first_name'] as String? ?? _user!['firstName'] as String? ?? '';
+    final lastName =
+        _user!['last_name'] as String? ?? _user!['lastName'] as String? ?? '';
     return '$firstName $lastName'.trim();
   }
 
@@ -42,10 +41,11 @@ class AuthProvider extends ChangeNotifier {
   String? get userAvatar {
     if (_user == null) return null;
     return _user!['avatar'] as String? ??
-           _user!['profile_picture'] as String? ??
-           _user!['photo'] as String? ??
-           _user!['image'] as String?;
+        _user!['profile_picture'] as String? ??
+        _user!['photo'] as String? ??
+        _user!['image'] as String?;
   }
+
   int? get userId => _user?['id'];
 
   bool get isTrainer {
@@ -69,6 +69,19 @@ class AuthProvider extends ChangeNotifier {
 
   String get homeRoute => isTrainer ? '/trainer/dashboard' : '/home';
 
+  Future<void> _syncBiometricSessionForCurrentUser() async {
+    final accountId = userId?.toString();
+    if (accountId == null || accountId.isEmpty) return;
+    final storage = SecureStorage();
+    if (await storage.isBiometricEnabledForAccount(accountId)) {
+      final token = await storage.getToken();
+      if (token != null && token.isNotEmpty) {
+        await storage.saveBiometricTokenForAccount(accountId, token);
+        await storage.setActiveBiometricAccountId(accountId);
+      }
+    }
+  }
+
   Future<void> initialize() async {
     _isOnboardingComplete = await SecureStorage().isOnboardingComplete();
     final hasToken = await SecureStorage().hasToken();
@@ -90,7 +103,8 @@ class AuthProvider extends ChangeNotifier {
       await SecureStorage().deleteToken();
       String? deviceToken;
       try {
-        deviceToken = await FirebaseMessaging.instance.getToken()
+        deviceToken = await FirebaseMessaging.instance
+            .getToken()
             .timeout(const Duration(seconds: 5));
       } catch (e) {
         debugPrint('[AUTH] FCM token fetch failed (non-fatal): $e');
@@ -109,13 +123,11 @@ class AuthProvider extends ChangeNotifier {
       final token = response.data['token'] ?? response.data['key'];
       if (token != null) {
         await SecureStorage().saveToken(token.toString());
-        if (await SecureStorage().isBiometricEnabled()) {
-          await SecureStorage().saveBiometricToken(token.toString());
-        }
         _roles = _extractRoles(response.data);
         debugPrint('[AUTH] Signin roles: $_roles');
         if (_roles != null) await SecureStorage().saveRoles(_roles!);
         await getCurrentUser();
+        await _syncBiometricSessionForCurrentUser();
         _isAuthenticated = true;
         _isLoading = false;
         notifyListeners();
@@ -189,12 +201,10 @@ class AuthProvider extends ChangeNotifier {
       final token = response.data['token'] ?? response.data['key'];
       if (token != null) {
         await SecureStorage().saveToken(token.toString());
-        if (await SecureStorage().isBiometricEnabled()) {
-          await SecureStorage().saveBiometricToken(token.toString());
-        }
         _roles = _extractRoles(response.data);
         if (_roles != null) await SecureStorage().saveRoles(_roles!);
         await getCurrentUser();
+        await _syncBiometricSessionForCurrentUser();
         _isAuthenticated = true;
         _isLoading = false;
         notifyListeners();
@@ -314,7 +324,8 @@ class AuthProvider extends ChangeNotifier {
       }
       String? deviceToken;
       try {
-        deviceToken = await FirebaseMessaging.instance.getToken()
+        deviceToken = await FirebaseMessaging.instance
+            .getToken()
             .timeout(const Duration(seconds: 5));
       } catch (e) {
         debugPrint('[AUTH] FCM token fetch failed (non-fatal): $e');
@@ -353,7 +364,8 @@ class AuthProvider extends ChangeNotifier {
       final errorStr = e.toString().toLowerCase();
       if (errorStr.contains('network_error') ||
           errorStr.contains('network error')) {
-        _errorMessage = 'Hitilafu ya mtandao. Angalia muunganiko wako.$debugMessage';
+        _errorMessage =
+            'Hitilafu ya mtandao. Angalia muunganiko wako.$debugMessage';
       } else if (errorStr.contains('sign_in_cancelled') ||
           errorStr.contains('cancelled')) {
         _errorMessage = 'Umeghairi kuingia kwa Google.$debugMessage';
@@ -365,7 +377,8 @@ class AuthProvider extends ChangeNotifier {
         _errorMessage = 'Dirisha la Google lilifungwa.$debugMessage';
       } else if (errorStr.contains('10:') ||
           errorStr.contains('error code: 10')) {
-        _errorMessage = 'Hitilafu ya usanidi wa Google (Code 10). SHA-1 haijasajiliwa.$debugMessage';
+        _errorMessage =
+            'Hitilafu ya usanidi wa Google (Code 10). SHA-1 haijasajiliwa.$debugMessage';
       } else {
         _errorMessage = 'Imeshindikana kuingia kwa Google.$debugMessage';
       }
@@ -423,12 +436,10 @@ class AuthProvider extends ChangeNotifier {
     final token = data['token'] ?? data['key'];
     if (token != null) {
       await SecureStorage().saveToken(token.toString());
-      if (await SecureStorage().isBiometricEnabled()) {
-        await SecureStorage().saveBiometricToken(token.toString());
-      }
       _roles = _extractRoles(data);
       if (_roles != null) await SecureStorage().saveRoles(_roles!);
       await getCurrentUser();
+      await _syncBiometricSessionForCurrentUser();
       _isAuthenticated = true;
       _isLoading = false;
       notifyListeners();
@@ -459,10 +470,19 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> loginWithBiometricSession() async {
     try {
-      final token = await SecureStorage().getBiometricToken();
+      final storage = SecureStorage();
+      final accountId = await storage.getActiveBiometricAccountId();
+      if (accountId == null || accountId.isEmpty) return false;
+      final token = await storage.getBiometricTokenForAccount(accountId);
       if (token == null || token.isEmpty) return false;
-      await SecureStorage().saveToken(token);
+      await storage.saveToken(token);
       await getCurrentUser();
+      final currentUserId = userId?.toString();
+      if (currentUserId == null || currentUserId != accountId) {
+        _isAuthenticated = false;
+        notifyListeners();
+        return false;
+      }
       notifyListeners();
       return _isAuthenticated;
     } catch (_) {
@@ -470,4 +490,3 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 }
-

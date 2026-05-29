@@ -47,8 +47,13 @@ class _LoginScreenState extends State<LoginScreen>
         return const _BiometricState();
       }
       final biometrics = await _localAuth.getAvailableBiometrics();
-      final enabled = await SecureStorage().isBiometricEnabled();
-      final hasSession = await SecureStorage().hasBiometricToken();
+      final accountId = await SecureStorage().getActiveBiometricAccountId();
+      final enabled = accountId == null
+          ? false
+          : await SecureStorage().isBiometricEnabledForAccount(accountId);
+      final hasSession = accountId == null
+          ? false
+          : await SecureStorage().hasBiometricTokenForAccount(accountId);
       final hasFaceId = biometrics.contains(BiometricType.face);
       final hasFingerprint = biometrics.contains(BiometricType.fingerprint) ||
           biometrics.contains(BiometricType.strong) ||

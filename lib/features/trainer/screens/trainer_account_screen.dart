@@ -42,6 +42,11 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
     super.dispose();
   }
 
+  Future<String?> _currentAccountId() async {
+    final auth = context.read<AuthProvider>();
+    return auth.userId?.toString() ?? await SecureStorage().getUserId();
+  }
+
   Future<void> _loadBiometricSettings() async {
     try {
       final supported = await _localAuth.isDeviceSupported();
@@ -53,7 +58,10 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
       final hasFingerprint = types.contains(BiometricType.fingerprint) ||
           types.contains(BiometricType.strong) ||
           types.contains(BiometricType.weak);
-      final enabled = await SecureStorage().isBiometricEnabled();
+      final accountId = await _currentAccountId();
+      final enabled = accountId == null
+          ? false
+          : await SecureStorage().isBiometricEnabledForAccount(accountId);
 
       if (!mounted) return;
       setState(() {
@@ -114,14 +122,21 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
         }
       }
 
-      await SecureStorage().setBiometricEnabled(next);
+      final accountId = await _currentAccountId();
+      if (accountId == null || accountId.isEmpty) {
+        if (mounted) {
+          showTopPopup(context, 'Akaunti haijatambuliwa. Ingia tena kwanza.');
+        }
+        return;
+      }
+
+      await SecureStorage().setBiometricEnabledForAccount(accountId, next);
       if (next) {
         final token = await SecureStorage().getToken();
         if (token != null && token.isNotEmpty) {
-          await SecureStorage().saveBiometricToken(token);
+          await SecureStorage().saveBiometricTokenForAccount(accountId, token);
+          await SecureStorage().setActiveBiometricAccountId(accountId);
         }
-      } else {
-        await SecureStorage().clearBiometricToken();
       }
 
       if (!mounted) return;

@@ -42,6 +42,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
+  Future<String?> _currentAccountId() async {
+    final auth = context.read<AuthProvider>();
+    return auth.userId?.toString() ?? await SecureStorage().getUserId();
+  }
+
   Future<void> _loadBiometricSettings() async {
     try {
       final supported = await _localAuth.isDeviceSupported();
@@ -53,7 +58,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final hasFingerprint = types.contains(BiometricType.fingerprint) ||
           types.contains(BiometricType.strong) ||
           types.contains(BiometricType.weak);
-      final enabled = await SecureStorage().isBiometricEnabled();
+      final accountId = await _currentAccountId();
+      final enabled = accountId == null
+          ? false
+          : await SecureStorage().isBiometricEnabledForAccount(accountId);
 
       if (!mounted) return;
       setState(() {
@@ -115,14 +123,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
       }
 
-      await SecureStorage().setBiometricEnabled(next);
+      final accountId = await _currentAccountId();
+      if (accountId == null || accountId.isEmpty) {
+        if (mounted) {
+          showTopPopup(context, 'Akaunti haijatambuliwa. Ingia tena kwanza.');
+        }
+        return;
+      }
+
+      await SecureStorage().setBiometricEnabledForAccount(accountId, next);
       if (next) {
         final token = await SecureStorage().getToken();
         if (token != null && token.isNotEmpty) {
-          await SecureStorage().saveBiometricToken(token);
+          await SecureStorage().saveBiometricTokenForAccount(accountId, token);
+          await SecureStorage().setActiveBiometricAccountId(accountId);
         }
-      } else {
-        await SecureStorage().clearBiometricToken();
       }
       if (!mounted) return;
       setState(() => _biometricEnabled = next);
@@ -230,6 +245,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (!context.mounted) return;
       await auth.logout();
+      if (!context.mounted) return;
       context.go('/login');
     } catch (_) {
       if (!context.mounted) return;
@@ -613,7 +629,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 trailing: Switch(
                                   value: themeProvider.isDark,
                                   onChanged: (_) => themeProvider.toggleTheme(),
-                                  activeColor: const Color(0xFFE87722),
+                                  activeThumbColor: const Color(0xFFE87722),
                                   activeTrackColor: const Color(0xFFE87722)
                                       .withValues(alpha: 0.3),
                                 ),
@@ -666,7 +682,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       (_biometricAvailable && !_biometricBusy)
                                           ? _toggleBiometric
                                           : null,
-                                  activeColor: const Color(0xFFE87722),
+                                  activeThumbColor: const Color(0xFFE87722),
                                   activeTrackColor: const Color(0xFFE87722)
                                       .withValues(alpha: 0.3),
                                 ),

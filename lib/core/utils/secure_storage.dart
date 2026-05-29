@@ -4,7 +4,7 @@ import '../constants/app_constants.dart';
 
 class SecureStorage {
   static final SecureStorage _instance = SecureStorage._internal();
-  static const String _biometricTokenKey = 'biometric_token';
+  static const String _biometricAccountIdKey = 'biometric_account_id';
   factory SecureStorage() => _instance;
   SecureStorage._internal();
 
@@ -85,40 +85,103 @@ class SecureStorage {
   }
 
   Future<void> setBiometricEnabled(bool enabled) async {
-    final prefs = await _prefs;
-    await prefs.setBool(AppConstants.biometricKey, enabled);
-    if (!enabled) {
-      await clearBiometricToken();
-    }
+    final accountId = await getActiveBiometricAccountId();
+    if (accountId == null) return;
+    await setBiometricEnabledForAccount(accountId, enabled);
   }
 
   Future<bool> isBiometricEnabled() async {
-    final prefs = await _prefs;
-    return prefs.getBool(AppConstants.biometricKey) ?? false;
+    final accountId = await getActiveBiometricAccountId();
+    if (accountId == null) return false;
+    return isBiometricEnabledForAccount(accountId);
   }
 
   Future<void> saveBiometricToken(String token) async {
-    try {
-      await _storage.write(key: _biometricTokenKey, value: token);
-    } catch (_) {}
+    final accountId = await getActiveBiometricAccountId();
+    if (accountId == null) return;
+    await saveBiometricTokenForAccount(accountId, token);
   }
 
   Future<String?> getBiometricToken() async {
+    final accountId = await getActiveBiometricAccountId();
+    if (accountId == null) return null;
+    return getBiometricTokenForAccount(accountId);
+  }
+
+  Future<bool> hasBiometricToken() async {
+    final accountId = await getActiveBiometricAccountId();
+    if (accountId == null) return false;
+    return hasBiometricTokenForAccount(accountId);
+  }
+
+  Future<void> clearBiometricToken() async {
+    final accountId = await getActiveBiometricAccountId();
+    if (accountId == null) return;
+    await clearBiometricTokenForAccount(accountId);
+  }
+
+  Future<String?> getActiveBiometricAccountId() async {
+    final prefs = await _prefs;
+    return prefs.getString(_biometricAccountIdKey);
+  }
+
+  Future<void> setActiveBiometricAccountId(String? accountId) async {
+    final prefs = await _prefs;
+    if (accountId == null || accountId.isEmpty) {
+      await prefs.remove(_biometricAccountIdKey);
+    } else {
+      await prefs.setString(_biometricAccountIdKey, accountId);
+    }
+  }
+
+  String _biometricEnabledKey(String accountId) =>
+      'biometric_enabled_$accountId';
+
+  String _biometricTokenKey(String accountId) => 'biometric_token_$accountId';
+
+  Future<void> setBiometricEnabledForAccount(
+      String accountId, bool enabled) async {
+    final prefs = await _prefs;
+    await prefs.setBool(_biometricEnabledKey(accountId), enabled);
+    if (!enabled) {
+      await clearBiometricTokenForAccount(accountId);
+      final activeAccountId = await getActiveBiometricAccountId();
+      if (activeAccountId == accountId) {
+        await setActiveBiometricAccountId(null);
+      }
+    } else {
+      await setActiveBiometricAccountId(accountId);
+    }
+  }
+
+  Future<bool> isBiometricEnabledForAccount(String accountId) async {
+    final prefs = await _prefs;
+    return prefs.getBool(_biometricEnabledKey(accountId)) ?? false;
+  }
+
+  Future<void> saveBiometricTokenForAccount(
+      String accountId, String token) async {
     try {
-      return await _storage.read(key: _biometricTokenKey);
+      await _storage.write(key: _biometricTokenKey(accountId), value: token);
+    } catch (_) {}
+  }
+
+  Future<String?> getBiometricTokenForAccount(String accountId) async {
+    try {
+      return await _storage.read(key: _biometricTokenKey(accountId));
     } catch (_) {
       return null;
     }
   }
 
-  Future<bool> hasBiometricToken() async {
-    final token = await getBiometricToken();
+  Future<bool> hasBiometricTokenForAccount(String accountId) async {
+    final token = await getBiometricTokenForAccount(accountId);
     return token != null && token.isNotEmpty;
   }
 
-  Future<void> clearBiometricToken() async {
+  Future<void> clearBiometricTokenForAccount(String accountId) async {
     try {
-      await _storage.delete(key: _biometricTokenKey);
+      await _storage.delete(key: _biometricTokenKey(accountId));
     } catch (_) {}
   }
 
