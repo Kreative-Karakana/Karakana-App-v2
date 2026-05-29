@@ -17,6 +17,26 @@
 - [ ] Fix high-impact user-facing bugs first, especially issues visible during onboarding, course playback, purchases, and profile/account flows.
 - [ ] Keep GitHub commits detailed so each fix explains the problem, approach, and verification.
 
+## For Testing
+
+Use this list as the QA queue. We are building and fixing now; later we will test these items one by one and check them off only after device/API verification.
+
+- [ ] Login screen remains intact when the keyboard opens.
+- [ ] Registration screen remains intact when the keyboard opens.
+- [ ] Tafuta navbar backdrop matches the transparent/smooth home navbar.
+- [ ] Classroom landscape video opens fullscreen with nothing blocking it.
+- [ ] Classroom progress area no longer shows the unintended loader.
+- [ ] Trainer Akaunti page matches the improved student Akaunti UI.
+- [ ] Trainer Akaunti page no longer shows `Historia ya Malipo`.
+- [ ] Trainer course publish action sends course to `pending_review`, not directly to production.
+- [ ] Edited trainer course content is submitted for Kreative Karakana review before students see it.
+- [ ] New sections and lessons show Swahili review messaging and stay under review until approved.
+- [ ] Trainer course deletion opens a Swahili request popup instead of deleting immediately.
+- [ ] Trainer course deletion request reaches the backend admin review section.
+- [ ] Backend admin can approve a course deletion request and delete the course.
+- [ ] Backend admin can reject a course deletion request without deleting the course.
+- [ ] Profile, classroom, and notifications `ListTile` Material assertions no longer appear.
+
 ## Full App Codebase Quality Audit
 
 Goal: review the whole Flutter app against consistent industry-standard patterns for UI, state, API logic, responsiveness, accessibility, performance, and release safety.
