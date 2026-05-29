@@ -803,6 +803,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           ],
           // Price + Level
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: _field(
@@ -814,32 +815,19 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Kiwango',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF3D1800),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    _dropdown<String>(
-                      value: _selectedLevel.isEmpty ? null : _selectedLevel,
-                      items: levels
-                          .map((l) => DropdownMenuItem<String>(
-                                value: l.$1,
-                                child: Text(l.$2,
-                                    style:
-                                        GoogleFonts.montserrat(fontSize: 14)),
-                              ))
-                          .toList(),
-                      onChanged: (v) =>
-                          setState(() => _selectedLevel = v ?? 'beginner'),
-                    ),
-                  ],
+                child: _dropdownField<String>(
+                  label: 'Kiwango',
+                  value: _selectedLevel.isEmpty ? null : _selectedLevel,
+                  hint: 'Chagua...',
+                  items: levels
+                      .map((l) => DropdownMenuItem<String>(
+                            value: l.$1,
+                            child: Text(l.$2,
+                                style: GoogleFonts.montserrat(fontSize: 14)),
+                          ))
+                      .toList(),
+                  onChanged: (v) =>
+                      setState(() => _selectedLevel = v ?? 'beginner'),
                 ),
               ),
             ],
@@ -1170,6 +1158,81 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 const Color(0xFF3D1800)),
         dropdownColor: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(14),
+      ),
+    );
+  }
+
+  Widget _dropdownField<T>({
+    required String label,
+    required T? value,
+    required String hint,
+    required List<DropdownMenuItem<T>> items,
+    required ValueChanged<T?> onChanged,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final dedupedItems = <DropdownMenuItem<T>>[];
+    final seenValues = <T?>{};
+    for (final item in items) {
+      if (seenValues.add(item.value)) {
+        dedupedItems.add(item);
+      }
+    }
+    final safeValue =
+        dedupedItems.any((item) => item.value == value) ? value : null;
+
+    return DropdownButtonHideUnderline(
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          floatingLabelStyle: GoogleFonts.montserrat(
+            color: const Color(0xFFE87722),
+            fontWeight: FontWeight.w600,
+          ),
+          labelStyle: GoogleFonts.montserrat(
+            color: const Color(0xFF9E8070),
+            fontSize: 13,
+          ),
+          filled: true,
+          fillColor: Theme.of(context).cardColor,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide(
+                color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide(
+                color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(14)),
+            borderSide: BorderSide(color: Color(0xFFE87722), width: 1.5),
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        ),
+        child: DropdownButton<T>(
+          value: safeValue,
+          isExpanded: true,
+          underline: const SizedBox(),
+          items: dedupedItems,
+          onChanged: onChanged,
+          hint: Text(
+            hint,
+            style: GoogleFonts.montserrat(
+              fontSize: 14,
+              color: const Color(0xFFBDA99C),
+            ),
+          ),
+          style: GoogleFonts.montserrat(
+            fontSize: 14,
+            color: Theme.of(context).textTheme.bodyLarge?.color ??
+                const Color(0xFF3D1800),
+          ),
+          dropdownColor: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(14),
+        ),
       ),
     );
   }
