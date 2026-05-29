@@ -47,6 +47,10 @@ Review notes to include:
 
 ##  Post-Launch Tasks
 
+### App Quality Roadmap
+- Use `docs/APP_QUALITY_ROADMAP.md` as the living todo list for frontend/backend audit work, UI consistency, API logic review, testing, and release-readiness improvements.
+- Update the roadmap after each relevant fix so discovered issues and completed work stay traceable.
+
 ### Courses
 - Add remaining 18 courses with apple_iap_product_id values
 - Format: com.kreativekarakana.karakana.course.{slug}
