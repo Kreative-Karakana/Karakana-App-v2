@@ -49,6 +49,7 @@ Goal: review the whole Flutter app against consistent industry-standard patterns
 - [x] Remove unintended loading animation from classroom progress area.
 - [x] Refine signup screen spacing and density.
 - [x] Tighten profile/account header spacing.
+- [x] Align trainer account page UI with the improved student account page.
 - [ ] Audit every screen for keyboard-open behavior.
 - [ ] Audit every screen for safe-area and bottom navigation spacing.
 - [ ] Audit every screen for portrait/landscape layout failures.
