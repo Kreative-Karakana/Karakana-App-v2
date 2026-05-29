@@ -744,7 +744,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   // ── Step 1: Details + Thumbnail ────────────────────────────────────────────
   Widget _buildStep1() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bottomPadding = MediaQuery.of(context).viewPadding.bottom + 150;
+    final bottomPadding = MediaQuery.of(context).viewPadding.bottom + 24;
     const levels = [
       ('beginner', 'Mwanzo'),
       ('intermediate', 'Kati'),
