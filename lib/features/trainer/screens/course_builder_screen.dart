@@ -201,7 +201,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               .patch('/api/v1/courses/${widget.courseId}/', data: formData);
           if (!mounted) return;
           _showSuccess(
-            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Karakana.',
+            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.',
           );
           context.pop();
         } else {
@@ -211,7 +211,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           if (createdId != null) await _saveQuiz(createdId);
           if (!mounted) return;
           _showSuccess(
-            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Karakana.',
+            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.',
           );
           if (createdId != null) {
             context.pushReplacement('/trainer/course/$createdId/sections',
@@ -237,7 +237,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               .patch('/api/v1/courses/${widget.courseId}/', data: body);
           if (!mounted) return;
           _showSuccess(
-            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Karakana.',
+            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.',
           );
           context.pop();
         } else {
@@ -247,7 +247,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           if (createdId != null) await _saveQuiz(createdId);
           if (!mounted) return;
           _showSuccess(
-            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Karakana.',
+            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.',
           );
           if (createdId != null) {
             context.pushReplacement('/trainer/course/$createdId/sections',
@@ -420,7 +420,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final labels = ['Maelezo', 'Sehemu', 'Maswali', 'Chapisha'];
+    final labels = ['Maelezo', 'Sehemu', 'Maswali', 'Ukaguzi'];
 
     if (_isLoadingCourse) {
       return Scaffold(
@@ -435,9 +435,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                   fontWeight: FontWeight.w600,
                   color: Colors.white)),
         ),
-        body: SafeArea(
-            child: const Center(
-                child: KarakanaWaveLoader(color: Color(0xFFE87722)))),
+        body: const SafeArea(
+            child: Center(child: KarakanaWaveLoader(color: Color(0xFFE87722)))),
       );
     }
 
@@ -478,7 +477,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Kozi, sehemu, na masomo yote lazima yapitishwe na timu ya Karakana kabla ya kuchapishwa.',
+                    'Kozi, sehemu, na masomo yote lazima yapitishwe na timu ya Kreative Karakana kabla ya kuchapishwa.',
                     style: GoogleFonts.montserrat(
                       fontSize: 12,
                       color: const Color(0xFF7B3A10),
@@ -634,8 +633,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                             _currentStep < 3
                                 ? 'Endelea'
                                 : (_isEditMode
-                                    ? 'Hifadhi Mabadiliko'
-                                    : 'Chapisha Kozi'),
+                                    ? 'Tuma Mabadiliko'
+                                    : 'Tuma kwa Ukaguzi'),
                             style: GoogleFonts.montserrat(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
@@ -828,7 +827,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         _sectionTitle('Sehemu na Masomo'),
         const SizedBox(height: 8),
         Text(
-          'Sehemu na masomo yanaweza kuongezwa baada ya kozi kuchapishwa kutoka kwenye dashibodi.',
+          'Sehemu na masomo yanaweza kuongezwa kutoka kwenye dashibodi. Kila kilichoongezwa au kuhaririwa kitatumwa kwa ukaguzi kabla ya kuchapishwa.',
           style: GoogleFonts.montserrat(
             fontSize: 13,
             color: const Color(0xFF9E8070),
@@ -840,7 +839,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           icon: Icons.info_outline,
           title: 'Jinsi ya Kuongeza Masomo',
           body:
-              '1. Chapisha kozi kwanza\n2. Fungua kozi kutoka dashibodi\n3. Ongeza sehemu na video za masomo',
+              '1. Tuma kozi kwa ukaguzi\n2. Fungua kozi kutoka dashibodi\n3. Ongeza sehemu na video za masomo kwa ukaguzi',
         ),
         const SizedBox(height: 16),
         _placeholderCard(
@@ -852,7 +851,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         _placeholderCard(
           icon: Icons.play_lesson_outlined,
           title: 'Video na Maandishi',
-          subtitle: 'Pakia video za masomo baada ya kuchapisha',
+          subtitle: 'Pakia video za masomo kwa ukaguzi',
         ),
       ],
     );
@@ -869,7 +868,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           _sectionTitle('Maswali ya Kozi'),
           const SizedBox(height: 8),
           Text(
-            'Ongeza maswali ya mtihani (hiari). Maswali yatahifadhiwa mara baada ya kozi kuchapishwa.',
+            'Ongeza maswali ya mtihani (hiari). Maswali yatahifadhiwa pamoja na kozi itakapotumwa kwa ukaguzi.',
             style: GoogleFonts.montserrat(
                 fontSize: 13, color: const Color(0xFF9E8070), height: 1.5),
           ),
@@ -1055,7 +1054,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        _sectionTitle(_isEditMode ? 'Pitia Mabadiliko' : 'Pitia na Chapisha'),
+        _sectionTitle(_isEditMode ? 'Pitia Mabadiliko' : 'Pitia na Tuma'),
         const SizedBox(height: 16),
         if (_coverImage != null) ...[
           ClipRRect(
@@ -1095,7 +1094,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                       color: Color(0xFFE87722), size: 18),
                   const SizedBox(width: 8),
                   Text(
-                    _isEditMode ? 'Kuhusu Uhariri' : 'Baada ya Kuchapisha',
+                    _isEditMode ? 'Kuhusu Uhariri' : 'Baada ya Kutuma',
                     style: GoogleFonts.montserrat(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -1107,8 +1106,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               const SizedBox(height: 8),
               Text(
                 _isEditMode
-                    ? 'Mabadiliko yatahifadhiwa mara moja. Wanafunzi wataona mabadiliko baada ya kurasa kusasishwa.'
-                    : 'Kozi itahifadhiwa kama rasimu. Unaweza kuongeza sehemu, masomo, na maswali kutoka dashibodi kabla ya kuiruhusu wanafunzi kuisajili.',
+                    ? 'Mabadiliko yatatumwa kwa timu ya Kreative Karakana kwa ukaguzi. Wanafunzi wataona yaliyopitishwa baada ya kuidhinishwa.'
+                    : 'Kozi itatumwa kwa timu ya Kreative Karakana kwa ukaguzi. Baada ya kupitishwa ndipo itaweza kuonekana kwa wanafunzi.',
                 style: GoogleFonts.montserrat(
                   fontSize: 13,
                   color: const Color(0xFF9E8070),

@@ -140,7 +140,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                       nav.pop();
                       showTopPopup(
                         context,
-                        'Sehemu imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Karakana.',
+                        'Sehemu imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.',
                         isError: false,
                       );
                       _loadSections();
@@ -285,7 +285,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                       nav.pop();
                       showTopPopup(
                         context,
-                        'Somo limetumwa kwa ukaguzi. Litachapishwa baada ya kupitishwa na timu ya Karakana.',
+                        'Somo limetumwa kwa ukaguzi. Litachapishwa baada ya kupitishwa na timu ya Kreative Karakana.',
                         isError: false,
                       );
                       _loadSections();

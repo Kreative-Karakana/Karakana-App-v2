@@ -121,13 +121,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final isPublished = course['status'] == 'published';
     try {
       await ApiClient().dio.patch('/api/v1/courses/$id/',
-          data: {'status': isPublished ? 'draft' : 'published'});
+          data: {'status': isPublished ? 'draft' : 'pending_review'});
       if (!mounted) return;
       showTopPopup(
         context,
         isPublished
             ? 'Kozi imefichwa kutoka kwa wanafunzi'
-            : 'Kozi imechapishwa kikamilifu!',
+            : 'Kozi imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.',
         isError: false,
       );
       _loadAll();
@@ -888,7 +888,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 Expanded(
                     child: _buildStatCard(
                         'Ukadiriaji',
-                        '${(_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1)}',
+                        (_stats['avg_rating'] as double? ?? 0.0)
+                            .toStringAsFixed(1),
                         Icons.star_outline,
                         const Color(0xFFFFA726),
                         'kwa kozi',
@@ -1184,13 +1185,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           onPressed: () {
                             final controller =
                                 PrimaryScrollController.of(context);
-                            if (controller != null) {
-                              controller.animateTo(
-                                0,
-                                duration: const Duration(milliseconds: 350),
-                                curve: Curves.easeOutCubic,
-                              );
-                            }
+                            controller.animateTo(
+                              0,
+                              duration: const Duration(milliseconds: 350),
+                              curve: Curves.easeOutCubic,
+                            );
                           },
                           child: const Icon(Icons.keyboard_arrow_up_rounded),
                         ),
@@ -1237,7 +1236,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         ? 'Imechapishwa'
         : isPendingReview
             ? 'Inasubiri Ukaguzi'
-            : 'Chapisha Sasa';
+            : 'Tuma kwa Ukaguzi';
     final title = course['title'] as String? ?? '';
     final thumbnail = course['cover_photo'] as String?;
     final students = course['student_count'] as int? ?? 0;
@@ -1509,14 +1508,15 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         builder: (_) => AlertDialog(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
-                title: Text(isPublished ? 'Ficha Kozi?' : 'Chapisha Kozi?',
+                title: Text(
+                    isPublished ? 'Ficha Kozi?' : 'Tuma Kozi kwa Ukaguzi?',
                     style: GoogleFonts.montserrat(
                         fontWeight: FontWeight.w700,
                         color: const Color(0xFF1A0A00))),
                 content: Text(
                     isPublished
                         ? 'Kozi itafichwa na wanafunzi hawataweza kuiona tena.'
-                        : 'Kozi itaonekana kwa wanafunzi wote. Tayari?',
+                        : 'Kozi haitachapishwa moja kwa moja. Timu ya Kreative Karakana itaipitia kwanza kabla haijaonekana kwa wanafunzi.',
                     style: GoogleFonts.montserrat(
                         fontSize: 13,
                         color: const Color(0xFF7B3A10),
@@ -1541,7 +1541,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12))),
                       child: Text(
-                          isPublished ? 'Ndiyo, Ficha' : 'Ndiyo, Chapisha',
+                          isPublished ? 'Ndiyo, Ficha' : 'Tuma kwa Ukaguzi',
                           style: GoogleFonts.montserrat(
                               fontWeight: FontWeight.w700,
                               color: Colors.white))),
@@ -1560,7 +1560,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       onRefresh: () async => _loadAll(),
       child: _courses.isEmpty
           ? _buildEmptyState(
-              'Huna wanafunzi bado.\nChapisha kozi ili wanafunzi waweze kujiunga.',
+              'Huna wanafunzi bado.\nTuma kozi kwa ukaguzi ili iweze kuchapishwa baada ya kupitishwa.',
               Icons.people_outline,
               surfaceColor)
           : SingleChildScrollView(
@@ -2394,7 +2394,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                       color:
                                           Colors.white.withValues(alpha: 0.2)),
                                   _buildHeroStat(
-                                      '${(_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1)}',
+                                      (_stats['avg_rating'] as double? ?? 0.0)
+                                          .toStringAsFixed(1),
                                       'Ukadiriaji',
                                       Icons.star_outline),
                                 ]),
