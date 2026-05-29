@@ -169,60 +169,64 @@ class _SignupScreenState extends State<SignupScreen>
             children: [
               const _AuthBackground(),
               SafeArea(
-                child: AnimatedPadding(
-                  duration: const Duration(milliseconds: 180),
-                  curve: Curves.easeOut,
-                  padding: EdgeInsets.only(
-                    bottom: keyboardOpen
-                        ? MediaQuery.viewInsetsOf(context).bottom
-                        : 0,
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      AppSpacing.md,
-                      Responsive.h(context, compact ? 0.012 : 0.02),
-                      AppSpacing.md,
-                      Responsive.h(context, compact ? 0.008 : 0.012),
-                    ),
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.topCenter,
-                        child: SizedBox(
-                          width: constraints.maxWidth - (AppSpacing.md * 2),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              _SignupContent(
-                                compact: compact,
-                                keyboardOpen: keyboardOpen,
-                                shortHeight: shortHeight,
-                                authProvider: authProvider,
-                                formKey: _formKey,
-                                firstNameController: _firstNameController,
-                                emailController: _emailController,
-                                passwordController: _passwordController,
-                                confirmController: _confirmController,
-                                obscurePassword: _obscurePassword,
-                                obscureConfirm: _obscureConfirm,
-                                onTogglePassword: () => setState(
-                                  () => _obscurePassword = !_obscurePassword,
-                                ),
-                                onToggleConfirm: () => setState(
-                                  () => _obscureConfirm = !_obscureConfirm,
-                                ),
-                                onHandleSignup: _handleSignup,
-                                onGoogleSignIn: _handleGoogleSignIn,
-                                onAppleSignIn: _handleAppleSignIn,
-                                buildField: _buildField,
+                child: LayoutBuilder(
+                  builder: (context, safeConstraints) {
+                    final keyboardInset =
+                        MediaQuery.viewInsetsOf(context).bottom;
+                    final verticalPadding =
+                        Responsive.h(context, compact ? 0.012 : 0.02);
+
+                    return SingleChildScrollView(
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      padding: EdgeInsets.fromLTRB(
+                        AppSpacing.md,
+                        verticalPadding,
+                        AppSpacing.md,
+                        verticalPadding + keyboardInset,
+                      ),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: keyboardOpen
+                              ? 0
+                              : safeConstraints.maxHeight -
+                                  (verticalPadding * 2),
+                        ),
+                        child: Align(
+                          alignment: keyboardOpen
+                              ? Alignment.topCenter
+                              : Alignment.center,
+                          child: SizedBox(
+                            width:
+                                safeConstraints.maxWidth - (AppSpacing.md * 2),
+                            child: _SignupContent(
+                              compact: compact,
+                              keyboardOpen: keyboardOpen,
+                              shortHeight: shortHeight,
+                              authProvider: authProvider,
+                              formKey: _formKey,
+                              firstNameController: _firstNameController,
+                              emailController: _emailController,
+                              passwordController: _passwordController,
+                              confirmController: _confirmController,
+                              obscurePassword: _obscurePassword,
+                              obscureConfirm: _obscureConfirm,
+                              onTogglePassword: () => setState(
+                                () => _obscurePassword = !_obscurePassword,
                               ),
-                            ],
+                              onToggleConfirm: () => setState(
+                                () => _obscureConfirm = !_obscureConfirm,
+                              ),
+                              onHandleSignup: _handleSignup,
+                              onGoogleSignIn: _handleGoogleSignIn,
+                              onAppleSignIn: _handleAppleSignIn,
+                              buildField: _buildField,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ),
             ],
