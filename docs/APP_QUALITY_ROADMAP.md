@@ -59,6 +59,7 @@ Goal: review the whole Flutter app against consistent industry-standard patterns
 
 - [x] Fix profile menu `ListTile` Material assertion.
 - [x] Fix classroom lesson `ListTile` Material assertion.
+- [x] Fix notifications unread row `ListTile` Material assertion.
 - [ ] Create or document standard patterns for cards, list rows, buttons, form fields, app bars, and bottom nav surfaces.
 - [ ] Replace one-off fragile widgets with shared components where duplication causes inconsistent behavior.
 - [ ] Review icon buttons and tappable controls for clear hit areas and disabled/loading states.

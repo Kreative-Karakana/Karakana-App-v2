@@ -74,82 +74,86 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         ? const Color(0xFF2A1A0A).withValues(alpha: 0.5)
                         : const Color(0xFFF5E6D8).withValues(alpha: 0.5))
                     : Colors.transparent,
-                child: ListTile(
-                  contentPadding: const EdgeInsets.fromLTRB(
-                    AppSpacing.lg - AppSpacing.xs,
-                    AppSpacing.sm,
-                    AppSpacing.lg - AppSpacing.xs,
-                    AppSpacing.sm,
-                  ),
-                  leading: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: isUnread
-                          ? const Color(0xFFE87722).withValues(alpha: 0.14)
-                          : const Color(0xFF9E8070).withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(AppRadius.input),
-                      border: Border.all(
+                child: Material(
+                  color: Colors.transparent,
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.fromLTRB(
+                      AppSpacing.lg - AppSpacing.xs,
+                      AppSpacing.sm,
+                      AppSpacing.lg - AppSpacing.xs,
+                      AppSpacing.sm,
+                    ),
+                    leading: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
                         color: isUnread
-                            ? const Color(0xFFE87722).withValues(alpha: 0.3)
-                            : const Color(0xFFBDA99C).withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Icon(
-                      _getNotificationIcon(notif.type),
-                      color: isUnread
-                          ? const Color(0xFFE87722)
-                          : const Color(0xFF9E8070),
-                      size: 24,
-                    ),
-                  ),
-                  title: Text(
-                    notif.title,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      fontWeight: isUnread ? FontWeight.w600 : FontWeight.w400,
-                      color: Theme.of(context).textTheme.bodyLarge?.color ??
-                          const Color(0xFF1A0A00),
-                    ),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        notif.message,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: const Color(0xFF9E8070),
-                          height: 1.4,
+                            ? const Color(0xFFE87722).withValues(alpha: 0.14)
+                            : const Color(0xFF9E8070).withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(AppRadius.input),
+                        border: Border.all(
+                          color: isUnread
+                              ? const Color(0xFFE87722).withValues(alpha: 0.3)
+                              : const Color(0xFFBDA99C).withValues(alpha: 0.3),
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        _timeAgo(notif.createdAt),
-                        style: AppTextStyles.caption.copyWith(
-                          color: const Color(0xFFBDA99C),
-                        ),
+                      child: Icon(
+                        _getNotificationIcon(notif.type),
+                        color: isUnread
+                            ? const Color(0xFFE87722)
+                            : const Color(0xFF9E8070),
+                        size: 24,
                       ),
-                    ],
-                  ),
-                  trailing: isUnread
-                      ? Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFE87722),
-                            shape: BoxShape.circle,
+                    ),
+                    title: Text(
+                      notif.title,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        fontWeight:
+                            isUnread ? FontWeight.w600 : FontWeight.w400,
+                        color: Theme.of(context).textTheme.bodyLarge?.color ??
+                            const Color(0xFF1A0A00),
+                      ),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          notif.message,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: const Color(0xFF9E8070),
+                            height: 1.4,
                           ),
-                        )
-                      : null,
-                  onTap: () {
-                    context.read<NotificationProvider>().markRead(notif.id);
-                    final route = _resolveRoute(notif);
-                    if (route != null && route.isNotEmpty) {
-                      context.push(route);
-                    }
-                  },
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          _timeAgo(notif.createdAt),
+                          style: AppTextStyles.caption.copyWith(
+                            color: const Color(0xFFBDA99C),
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: isUnread
+                        ? Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFE87722),
+                              shape: BoxShape.circle,
+                            ),
+                          )
+                        : null,
+                    onTap: () {
+                      context.read<NotificationProvider>().markRead(notif.id);
+                      final route = _resolveRoute(notif);
+                      if (route != null && route.isNotEmpty) {
+                        context.push(route);
+                      }
+                    },
+                  ),
                 ),
               );
             },
