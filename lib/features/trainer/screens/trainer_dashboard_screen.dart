@@ -386,7 +386,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               ),
               const SizedBox(height: 20),
               Text(
-                'Unataka Kuongeza Nini?',
+                'Ongeza Kozi au Kitabu cha Kidijitali',
                 style: GoogleFonts.montserrat(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
@@ -395,7 +395,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               ),
               const SizedBox(height: 6),
               Text(
-                'Chagua aina ya maudhui unayotaka kuunda.',
+                'Chagua kama unataka kuunda kozi au kupakia kitabu cha kidijitali.',
                 style: GoogleFonts.montserrat(
                   fontSize: 13,
                   color: const Color(0xFF9E8070),
@@ -1142,15 +1142,15 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                'Ongeza Kozi',
+                                                'Ongeza Kozi au Kitabu cha Kidijitali',
                                                 style: GoogleFonts.montserrat(
-                                                  fontSize: 14,
+                                                  fontSize: 13,
                                                   fontWeight: FontWeight.w800,
                                                   color: Colors.white,
                                                 ),
                                               ),
                                               Text(
-                                                'Unda kozi mpya kwa wanafunzi wako',
+                                                'Unda kozi mpya au pakia kitabu cha kidijitali',
                                                 style: GoogleFonts.montserrat(
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.w500,
