@@ -180,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Text(
                                   'Karakana',
                                   style: GoogleFonts.montserrat(
-                                    fontSize: 19,
+                                    fontSize: 20,
                                     fontWeight: FontWeight.w700,
                                     color: Colors.white,
                                   ),
