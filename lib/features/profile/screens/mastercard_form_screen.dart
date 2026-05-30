@@ -245,7 +245,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
             _sectionLabel('Aina ya makao yako'),
             const SizedBox(height: AppSpacing.sm),
             DropdownButtonFormField<String>(
-              value: _locationType,
+              initialValue: _locationType,
               decoration: _inputDecoration(
                   'Chagua aina ya eneo', Icons.location_city_outlined),
               items: _locationTypes
@@ -264,7 +264,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
               const Center(child: KarakanaWaveLoader(color: AppColors.primary))
             else
               DropdownButtonFormField<int>(
-                value: _selectedRegionCode,
+                initialValue: _selectedRegionCode,
                 decoration:
                     _inputDecoration('Chagua jina la mkoa', Icons.map_outlined),
                 items: _regions
@@ -294,7 +294,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
               const Center(child: KarakanaWaveLoader(color: AppColors.primary))
             else
               DropdownButtonFormField<int>(
-                value: _selectedDistrictCode,
+                initialValue: _selectedDistrictCode,
                 decoration: _inputDecoration(
                     'Chagua jina la wilaya', Icons.location_on_outlined),
                 items: _districts
@@ -310,7 +310,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
             _sectionLabel('Kiwango cha Elimu'),
             const SizedBox(height: AppSpacing.sm),
             DropdownButtonFormField<String>(
-              value: _educationLevel,
+              initialValue: _educationLevel,
               decoration: _inputDecoration(
                   'Chagua kiwango chako cha elimu', Icons.school_outlined),
               items: _educationLevels
@@ -433,7 +433,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: AppColors.primary,
+            activeThumbColor: AppColors.primary,
           ),
         ],
       ),

@@ -193,6 +193,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     subjectController.dispose();
     descriptionController.dispose();
 
+    if (!mounted) return;
     if (shouldSave != true) return;
     if (subject.isEmpty) {
       showTopPopup(context, 'Kichwa cha tiketi kinahitajika.');
@@ -375,11 +376,13 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
             child: Row(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AppSpacing.sm + AppSpacing.xs / 2, vertical: AppSpacing.xs),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm + AppSpacing.xs / 2,
+                      vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF5E6D8),
-                    borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
+                    borderRadius: BorderRadius.circular(
+                        AppSpacing.sm + AppSpacing.xs / 2),
                   ),
                   child: Text(
                     'Msaada',
@@ -391,13 +394,15 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AppSpacing.sm + AppSpacing.xs / 2, vertical: AppSpacing.xs),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm + AppSpacing.xs / 2,
+                      vertical: AppSpacing.xs),
                   decoration: BoxDecoration(
                     color: isResolved
                         ? const Color(0xFFF5E6D8)
                         : const Color(0xFFFFF8F4),
-                    borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
+                    borderRadius: BorderRadius.circular(
+                        AppSpacing.sm + AppSpacing.xs / 2),
                     border: Border.all(
                       color: isResolved
                           ? const Color(0xFFE87722)
@@ -434,7 +439,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       foregroundColor: const Color(0xFFE87722),
                       side: const BorderSide(color: Color(0xFFE87722)),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
+                        borderRadius: BorderRadius.circular(
+                            AppSpacing.sm + AppSpacing.xs),
                       ),
                     ),
                     icon: _isUpdatingTicket
@@ -460,7 +466,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                       foregroundColor: const Color(0xFFC62828),
                       side: const BorderSide(color: Color(0xFFC62828)),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
+                        borderRadius: BorderRadius.circular(
+                            AppSpacing.sm + AppSpacing.xs),
                       ),
                     ),
                     icon: const Icon(Icons.delete_outline, size: 18),
@@ -613,8 +620,10 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                                 0.72,
                                       ),
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: AppSpacing.md - AppSpacing.xs / 2,
-                                        vertical: AppSpacing.sm + AppSpacing.xs / 2,
+                                        horizontal:
+                                            AppSpacing.md - AppSpacing.xs / 2,
+                                        vertical:
+                                            AppSpacing.sm + AppSpacing.xs / 2,
                                       ),
                                       decoration: BoxDecoration(
                                         color: isUser
@@ -645,16 +654,19 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                             Text(
                                               'Msaada wa Karakana',
                                               style: GoogleFonts.montserrat(
-                                                fontSize: AppTextStyles.caption.fontSize,
+                                                fontSize: AppTextStyles
+                                                    .caption.fontSize,
                                                 fontWeight: FontWeight.w600,
                                                 color: const Color(0xFFE87722),
                                               ),
                                             ),
-                                            const SizedBox(height: AppSpacing.xs),
+                                            const SizedBox(
+                                                height: AppSpacing.xs),
                                           ],
                                           Text(
                                             msg['message'] as String? ?? '',
-                                            style: AppTextStyles.bodyMedium.copyWith(
+                                            style: AppTextStyles.bodyMedium
+                                                .copyWith(
                                               height: 1.4,
                                               color: isUser
                                                   ? Colors.white
@@ -679,7 +691,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                                   child: Text(
                                     ts,
                                     style: GoogleFonts.montserrat(
-                                      fontSize: AppTextStyles.labelSmall.fontSize,
+                                      fontSize:
+                                          AppTextStyles.labelSmall.fontSize,
                                       color: const Color(0xFFBDA99C),
                                     ),
                                   ),

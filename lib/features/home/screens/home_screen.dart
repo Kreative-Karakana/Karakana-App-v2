@@ -231,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           await context
                                               .read<NotificationProvider>()
                                               .loadNotifications();
-                                          if (!mounted) return;
+                                          if (!context.mounted) return;
                                           context.push('/notifications');
                                         },
                                         padding: const EdgeInsets.all(5),

@@ -50,6 +50,7 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
 
   Future<void> _purchase() async {
     final phoneCtrl = TextEditingController();
+    final ebookProvider = context.read<EbookProvider>();
     String provider = 'Mpesa';
     final confirmed = await showDialog<bool>(
       context: context,
@@ -65,7 +66,7 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
             ),
             const SizedBox(height: AppSpacing.sm),
             DropdownButtonFormField<String>(
-              value: provider,
+              initialValue: provider,
               items: const ['Mpesa', 'Airtel', 'Tigo', 'Halopesa']
                   .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                   .toList(),
@@ -89,15 +90,15 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
 
     setState(() => _processing = true);
     try {
-      final result = await context.read<EbookProvider>().purchaseEbook(
-            ebookId: widget.ebookId,
-            accountNumber: phoneCtrl.text.trim(),
-            provider: provider,
-          );
+      final result = await ebookProvider.purchaseEbook(
+        ebookId: widget.ebookId,
+        accountNumber: phoneCtrl.text.trim(),
+        provider: provider,
+      );
 
       if (result == null) {
         throw Exception(
-          context.read<EbookProvider>().purchaseError ??
+          ebookProvider.purchaseError ??
               'Ununuzi umeshindikana. Tafadhali jaribu tena.',
         );
       }
@@ -117,8 +118,8 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
           final statusRes =
               await ApiClient().dio.get('/api/v1/payments/$externalId/');
           if ((statusRes.data['is_successful'] == true) && mounted) {
-            await context.read<EbookProvider>().fetchLibrary();
-            await context.read<EbookProvider>().fetchStore();
+            await ebookProvider.fetchLibrary();
+            await ebookProvider.fetchStore();
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -172,8 +173,7 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
                       child: const Icon(Icons.menu_book_outlined, size: 48)),
             ),
             const SizedBox(height: AppSpacing.md),
-            Text((d['title'] ?? '').toString(),
-                style: AppTextStyles.h1),
+            Text((d['title'] ?? '').toString(), style: AppTextStyles.h1),
             const SizedBox(height: AppSpacing.sm),
             Text((d['author_name'] ?? '').toString(),
                 style: AppTextStyles.bodyMedium),

@@ -19,6 +19,8 @@ class Responsive {
   static double bottomPadding(BuildContext context) =>
       MediaQuery.of(context).padding.bottom;
 
-  static double sp(BuildContext context, double size) =>
-      size * MediaQuery.of(context).textScaleFactor.clamp(0.85, 1.2);
+  static double sp(BuildContext context, double size) {
+    final scaled = MediaQuery.textScalerOf(context).scale(size);
+    return scaled.clamp(size * 0.85, size * 1.2);
+  }
 }
