@@ -159,10 +159,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     shape: BoxShape.circle,
                                   ),
                                   child: Padding(
-                                    padding: const EdgeInsets.all(4),
+                                    padding: const EdgeInsets.all(3),
                                     child: Image.asset(
                                       'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                                      fit: BoxFit.cover,
+                                      fit: BoxFit.contain,
                                       errorBuilder: (_, __, ___) => Center(
                                         child: Text(
                                           'K',
