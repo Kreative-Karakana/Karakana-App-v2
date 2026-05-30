@@ -103,7 +103,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       context: context,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.cardLg)),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(AppRadius.cardLg)),
       ),
       builder: (sheetContext) => Padding(
         padding: EdgeInsets.only(
@@ -125,14 +126,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               const SizedBox(height: AppSpacing.md),
               ListTile(
                 leading: const Icon(Icons.photo_library_outlined),
-                title: Text('Chagua kutoka Matunzio',
-                    style: AppTextStyles.h4),
+                title: Text('Chagua kutoka Matunzio', style: AppTextStyles.h4),
                 onTap: () => Navigator.pop(context, ImageSource.gallery),
               ),
               ListTile(
                 leading: const Icon(Icons.camera_alt_outlined),
-                title: Text('Piga Picha',
-                    style: AppTextStyles.h4),
+                title: Text('Piga Picha', style: AppTextStyles.h4),
                 onTap: () => Navigator.pop(context, ImageSource.camera),
               ),
               const SizedBox(height: AppSpacing.sm),
@@ -261,6 +260,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     setState(() => _isSaving = false);
 
     showTopPopup(context, 'Wasifu umesasishwa kikamilifu!', isError: false);
+    if (auth.isTrainer) {
+      context.go('/trainer/account');
+      return;
+    }
     context.go('/account');
   }
 
@@ -293,7 +296,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   )
                 : Text(
                     'Hifadhi',
-                    style: AppTextStyles.buttonMedium.copyWith(color: Colors.white),
+                    style: AppTextStyles.buttonMedium
+                        .copyWith(color: Colors.white),
                   ),
           ),
         ],
@@ -316,7 +320,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
 
               Padding(
-                padding: const EdgeInsets.fromLTRB(AppSpacing.lg - AppSpacing.xs, AppSpacing.lg, AppSpacing.lg - AppSpacing.xs, AppSpacing.xl),
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.lg - AppSpacing.xs,
+                    AppSpacing.lg,
+                    AppSpacing.lg - AppSpacing.xs,
+                    AppSpacing.xl),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -449,7 +457,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           foregroundColor: Colors.white,
                           minimumSize: const Size(double.infinity, 54),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.button),
+                            borderRadius:
+                                BorderRadius.circular(AppRadius.button),
                           ),
                         ),
                         child: _isSaving
@@ -670,4 +679,3 @@ class _CoverAvatarHeader extends StatelessWidget {
     );
   }
 }
-
