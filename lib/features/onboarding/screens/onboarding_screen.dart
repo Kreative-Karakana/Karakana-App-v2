@@ -343,7 +343,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                   child: Container(
                                     width: 64,
                                     height: 64,
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       color: AppColors.primary,
                                       shape: BoxShape.circle,
                                     ),

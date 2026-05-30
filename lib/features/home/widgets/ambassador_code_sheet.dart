@@ -184,11 +184,11 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
               Container(
                 width: 80,
                 height: 80,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.primaryLight,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.people_alt_outlined,
                   size: 40,
                   color: AppColors.primary,
@@ -256,7 +256,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
                   ),
                 ),
                 child: _isLoading
-                    ? SizedBox(
+                    ? const SizedBox(
                         width: 20,
                         height: 20,
                         child: KarakanaWaveLoader(
@@ -286,11 +286,11 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
           child: Container(
             width: 64,
             height: 64,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.primaryLight,
               shape: BoxShape.circle,
             ),
-            child: Icon(
+            child: const Icon(
               Icons.badge_outlined,
               size: 32,
               color: AppColors.primary,
@@ -326,7 +326,8 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
               fontSize: 14,
               color: Colors.grey.shade400,
             ),
-            prefixIcon: Icon(Icons.tag, color: AppColors.primary, size: 20),
+            prefixIcon:
+                const Icon(Icons.tag, color: AppColors.primary, size: 20),
             filled: true,
             fillColor: AppColors.primaryLight.withValues(alpha: 0.4),
             border: OutlineInputBorder(

@@ -202,27 +202,27 @@ class _PopupStyle {
 _PopupStyle _styleForType(TopPopupType type) {
   switch (type) {
     case TopPopupType.success:
-      return _PopupStyle(
-        accentColor: const Color(0xFF71E59B),
-        gradientColors: const [Color(0xFF1E5133), Color(0xFF2A7C4D)],
+      return const _PopupStyle(
+        accentColor: Color(0xFF71E59B),
+        gradientColors: [Color(0xFF1E5133), Color(0xFF2A7C4D)],
         icon: Icons.check_circle_outline,
       );
     case TopPopupType.warning:
-      return _PopupStyle(
-        accentColor: const Color(0xFFFFD86B),
-        gradientColors: const [Color(0xFF5A4114), Color(0xFF7B5A19)],
+      return const _PopupStyle(
+        accentColor: Color(0xFFFFD86B),
+        gradientColors: [Color(0xFF5A4114), Color(0xFF7B5A19)],
         icon: Icons.warning_amber_rounded,
       );
     case TopPopupType.info:
-      return _PopupStyle(
-        accentColor: const Color(0xFF8FCCFF),
-        gradientColors: const [Color(0xFF1A3B63), Color(0xFF255A93)],
+      return const _PopupStyle(
+        accentColor: Color(0xFF8FCCFF),
+        gradientColors: [Color(0xFF1A3B63), Color(0xFF255A93)],
         icon: Icons.info_outline,
       );
     case TopPopupType.error:
-      return _PopupStyle(
-        accentColor: const Color(0xFFFF8A7A),
-        gradientColors: const [Color(0xFF5A2118), Color(0xFF7A2D1F)],
+      return const _PopupStyle(
+        accentColor: Color(0xFFFF8A7A),
+        gradientColors: [Color(0xFF5A2118), Color(0xFF7A2D1F)],
         icon: Icons.error_outline,
       );
   }
