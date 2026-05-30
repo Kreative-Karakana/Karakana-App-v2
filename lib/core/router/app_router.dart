@@ -407,7 +407,10 @@ class AppRouter {
         ),
         GoRoute(
           path: '/trainer/account',
-          builder: (context, state) => const TrainerAccountScreen(),
+          builder: (context, state) => Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            body: const TrainerAccountScreen(),
+          ),
         ),
         GoRoute(
           path: AppRoutes.courseBuilder,
