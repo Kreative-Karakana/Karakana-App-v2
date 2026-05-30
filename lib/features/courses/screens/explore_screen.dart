@@ -78,10 +78,12 @@ class _ExploreScreenState extends State<ExploreScreen>
     final displayCourses = _sortedCourses(provider);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final deviceBottomInset = MediaQuery.viewPaddingOf(context).bottom;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
           top: false,
+          bottom: false,
           child: Column(
             children: [
               // ── Gradient header ────────────────────────────────────
@@ -328,8 +330,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                           AppSpacing.lg,
                           AppSpacing.lg,
                           AppSpacing.lg,
-                          MediaQuery.of(context).padding.bottom +
-                              _floatingNavClearance,
+                          deviceBottomInset + _floatingNavClearance,
                         ),
                         itemBuilder: (_, __) => const Padding(
                           padding: EdgeInsets.only(bottom: 12),
@@ -371,7 +372,12 @@ class _ExploreScreenState extends State<ExploreScreen>
                               ],
                             ),
                           )
-                        : _buildResultsList(context, provider, displayCourses),
+                        : _buildResultsList(
+                            context,
+                            provider,
+                            displayCourses,
+                            deviceBottomInset,
+                          ),
               ),
             ],
           )),
@@ -384,6 +390,7 @@ class _ExploreScreenState extends State<ExploreScreen>
     BuildContext context,
     CourseProvider provider,
     List displayCourses,
+    double deviceBottomInset,
   ) {
     final popular = provider.popularCourses;
     final showCarousel = _isIdle && popular.isNotEmpty;
@@ -392,7 +399,7 @@ class _ExploreScreenState extends State<ExploreScreen>
     return ListView.builder(
       physics: const BouncingScrollPhysics(),
       padding: EdgeInsets.fromLTRB(20, showCarousel ? 0 : 20, 20,
-          MediaQuery.of(context).padding.bottom + _floatingNavClearance),
+          deviceBottomInset + _floatingNavClearance),
       itemCount: itemCount,
       itemBuilder: (_, i) {
         if (showCarousel && i == 0) {
