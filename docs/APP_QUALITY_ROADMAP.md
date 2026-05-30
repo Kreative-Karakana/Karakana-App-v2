@@ -12,8 +12,8 @@
 
 ## Active Priority
 
-- [ ] Run a full app codebase quality audit.
-- [ ] Convert audit findings into grouped frontend, backend/API, state, navigation, performance, and release tasks.
+- [x] Run a full app codebase quality audit. (`docs/AUDIT_2026-05-30.md`)
+- [x] Convert audit findings into grouped frontend, backend/API, state, navigation, performance, and release tasks. (`docs/AUDIT_2026-05-30.md`)
 - [ ] Fix high-impact user-facing bugs first, especially issues visible during onboarding, course playback, purchases, and profile/account flows.
 - [ ] Keep GitHub commits detailed so each fix explains the problem, approach, and verification.
 
@@ -37,6 +37,7 @@ Use this list as the QA queue. We are building and fixing now; later we will tes
 - [ ] Backend admin can reject a course deletion request without deleting the course.
 - [ ] Profile, classroom, and notifications `ListTile` Material assertions no longer appear.
 - [ ] Trainer eBook upload works end-to-end from the new editor screen.
+- [ ] Biometric login stays bound to the correct account (Apple vs Google isolation test).
 
 ## Full App Codebase Quality Audit
 
