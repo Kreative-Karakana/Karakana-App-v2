@@ -24,7 +24,6 @@ class MastercardFormScreen extends StatefulWidget {
 class _MastercardFormScreenState extends State<MastercardFormScreen> {
   String? _locationType;
   int? _selectedRegionCode;
-  String? _selectedRegionName;
   int? _selectedDistrictCode;
   String? _educationLevel;
   bool _isDisabled = false;
@@ -213,7 +212,8 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
               padding: const EdgeInsets.all(AppSpacing.md - AppSpacing.xs / 2),
               decoration: BoxDecoration(
                 color: AppColors.primaryLight,
-                borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
+                borderRadius:
+                    BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,7 +236,8 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
             const SizedBox(height: AppSpacing.sm),
             Text(
               'Tafadhali jaza maelezo yote kwa ukamilifu',
-              style: AppTextStyles.bodyMedium.copyWith(color: Colors.grey.shade600),
+              style: AppTextStyles.bodyMedium
+                  .copyWith(color: Colors.grey.shade600),
             ),
             const SizedBox(height: AppSpacing.xl - AppSpacing.xs),
 
@@ -274,8 +275,6 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                 onChanged: (v) {
                   setState(() {
                     _selectedRegionCode = v;
-                    _selectedRegionName =
-                        _regions.firstWhere((r) => r.code == v).name;
                   });
                   if (v != null) _loadDistricts(v);
                 },
@@ -288,7 +287,8 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
             if (_selectedRegionCode == null)
               Text(
                 'Chagua mkoa kwanza',
-                style: AppTextStyles.bodyMedium.copyWith(color: Colors.grey.shade400),
+                style: AppTextStyles.bodyMedium
+                    .copyWith(color: Colors.grey.shade400),
               )
             else if (_loadingDistricts)
               const Center(child: KarakanaWaveLoader(color: AppColors.primary))
@@ -316,8 +316,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
               items: _educationLevels
                   .map((o) => DropdownMenuItem(
                         value: o.value,
-                        child: Text(o.label,
-                            style: AppTextStyles.bodyMedium),
+                        child: Text(o.label, style: AppTextStyles.bodyMedium),
                       ))
                   .toList(),
               onChanged: (v) => setState(() => _educationLevel = v),
@@ -418,7 +417,8 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md, vertical: AppSpacing.md - AppSpacing.xs / 2),
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md - AppSpacing.xs / 2),
       child: Row(
         children: [
           Expanded(
@@ -490,5 +490,3 @@ class _District {
   final String name;
   const _District({required this.code, required this.name});
 }
-
-

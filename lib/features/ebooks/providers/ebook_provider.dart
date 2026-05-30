@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'dart:typed_data';
 
 import '../models/ebook.dart';
 import '../services/ebook_service.dart';
@@ -111,7 +110,8 @@ class EbookProvider extends ChangeNotifier {
       return pageCache[pageNumber];
     }
     try {
-      final payload = await _service.fetchPage(ebookId: ebookId, pageNumber: pageNumber);
+      final payload =
+          await _service.fetchPage(ebookId: ebookId, pageNumber: pageNumber);
       final bytes = payload['bytes'] as Uint8List;
       totalPages = payload['total_pages'] as int? ?? totalPages;
       watermarkText = payload['watermark_text'] as String?;

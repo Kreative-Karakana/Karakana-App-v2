@@ -15,7 +15,6 @@ class CertificatePdfGenerator {
     final doc = pw.Document();
     final montserratRegular = await PdfGoogleFonts.montserratRegular();
     final montserratBold = await PdfGoogleFonts.montserratBold();
-    final montserratItalic = await PdfGoogleFonts.montserratItalic();
 
     final logoData = await rootBundle.load(
       'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
@@ -28,10 +27,8 @@ class CertificatePdfGenerator {
     const cream = PdfColors.white;
 
     final dateStr = DateFormat('d MMMM yyyy').format(issuedAt.toLocal());
-    final shortCertNum = certificateNumber
-        .toUpperCase()
-        .replaceAll('-', '')
-        .substring(0, 10);
+    final shortCertNum =
+        certificateNumber.toUpperCase().replaceAll('-', '').substring(0, 10);
     final excerpt = courseExcerpt.length > 190
         ? '${courseExcerpt.substring(0, 190)}...'
         : courseExcerpt;
@@ -265,11 +262,13 @@ class CertificatePdfGenerator {
                               height: 72,
                               decoration: pw.BoxDecoration(
                                 shape: pw.BoxShape.circle,
-                                border: pw.Border.all(color: darkBrown, width: 1.4),
+                                border:
+                                    pw.Border.all(color: darkBrown, width: 1.4),
                               ),
                               child: pw.Center(
                                 child: pw.Column(
-                                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      pw.MainAxisAlignment.center,
                                   children: [
                                     pw.Text(
                                       'IME',
@@ -316,5 +315,4 @@ class CertificatePdfGenerator {
 
     return doc;
   }
-
 }

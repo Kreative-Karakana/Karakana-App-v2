@@ -17,7 +17,6 @@ import '../../auth/providers/auth_provider.dart';
 import '../../courses/models/course_model.dart';
 import '../../courses/providers/course_provider.dart';
 import '../../notifications/providers/notification_provider.dart';
-import '../../../core/utils/profile_completeness.dart';
 import '../../../providers/theme_provider.dart';
 import '../widgets/ambassador_code_sheet.dart';
 
@@ -122,316 +121,470 @@ class _HomeScreenState extends State<HomeScreen> {
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
-                  SliverToBoxAdapter(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color(0xFF2A1106),
-                            Color(0xFF5C2208),
-                            Color(0xFFB5540A)
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          stops: [0.0, 0.5, 1.0],
-                        ),
+                SliverToBoxAdapter(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Color(0xFF2A1106),
+                          Color(0xFF5C2208),
+                          Color(0xFFB5540A)
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        stops: [0.0, 0.5, 1.0],
                       ),
-                      padding: EdgeInsets.only(
-                        top: Responsive.topPadding(context) + AppSpacing.sm,
-                        left: AppSpacing.md,
-                        right: AppSpacing.md,
-                        bottom: AppSpacing.lg,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: 34,
-                                    height: 34,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(4),
-                                      child: Image.asset(
-                                        'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) => Center(
-                                          child: Text(
-                                            'K',
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w700,
-                                              color: AppColors.primary,
-                                            ),
+                    ),
+                    padding: EdgeInsets.only(
+                      top: Responsive.topPadding(context) + AppSpacing.sm,
+                      left: AppSpacing.md,
+                      right: AppSpacing.md,
+                      bottom: AppSpacing.lg,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 34,
+                                  height: 34,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Image.asset(
+                                      'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) => Center(
+                                        child: Text(
+                                          'K',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.primary,
                                           ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    'Karakana',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 19,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.white,
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  'Karakana',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Consumer<ThemeProvider>(
+                                  builder: (_, theme, __) => Container(
+                                    margin: const EdgeInsets.only(right: 3),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Colors.white.withValues(alpha: 0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: IconButton(
+                                      icon: Icon(
+                                        theme.isDark
+                                            ? Icons.light_mode_outlined
+                                            : Icons.dark_mode_outlined,
+                                        color: Colors.white,
+                                        size: 19,
+                                      ),
+                                      onPressed: () => theme.toggleTheme(),
+                                      padding: const EdgeInsets.all(5),
+                                      constraints: const BoxConstraints(),
                                     ),
                                   ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Consumer<ThemeProvider>(
-                                    builder: (_, theme, __) => Container(
+                                ),
+                                Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    Container(
                                       margin: const EdgeInsets.only(right: 3),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withValues(alpha: 0.1),
+                                        color:
+                                            Colors.white.withValues(alpha: 0.1),
                                         shape: BoxShape.circle,
                                       ),
                                       child: IconButton(
-                                        icon: Icon(
-                                          theme.isDark
-                                              ? Icons.light_mode_outlined
-                                              : Icons.dark_mode_outlined,
+                                        icon: const Icon(
+                                          Icons.notifications_outlined,
                                           color: Colors.white,
                                           size: 19,
                                         ),
-                                        onPressed: () => theme.toggleTheme(),
+                                        onPressed: () async {
+                                          await context
+                                              .read<NotificationProvider>()
+                                              .loadNotifications();
+                                          if (!mounted) return;
+                                          context.push('/notifications');
+                                        },
                                         padding: const EdgeInsets.all(5),
                                         constraints: const BoxConstraints(),
                                       ),
                                     ),
-                                  ),
-                                  Stack(
-                                    clipBehavior: Clip.none,
-                                    children: [
-                                      Container(
-                                        margin: const EdgeInsets.only(right: 3),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withValues(alpha: 0.1),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: IconButton(
-                                          icon: const Icon(
-                                            Icons.notifications_outlined,
-                                            color: Colors.white,
-                                            size: 19,
-                                          ),
-                                          onPressed: () async {
-                                            await context
-                                                .read<NotificationProvider>()
-                                                .loadNotifications();
-                                            if (!mounted) return;
-                                            context.push('/notifications');
-                                          },
-                                          padding: const EdgeInsets.all(5),
-                                          constraints: const BoxConstraints(),
-                                        ),
-                                      ),
-                                      if (notifications.unreadCount > 0)
-                                        Positioned(
-                                          right: 1,
-                                          top: -1,
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 5, vertical: 2),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFFE53935),
-                                              borderRadius:
-                                                  BorderRadius.circular(999),
-                                              border: Border.all(
-                                                  color: Colors.white, width: 1.2),
-                                            ),
-                                            constraints:
-                                                const BoxConstraints(minWidth: 16),
-                                            child: Text(
-                                              notifications.unreadCount > 99
-                                                  ? '99+'
-                                                  : '${notifications.unreadCount}',
-                                              textAlign: TextAlign.center,
-                                              style: GoogleFonts.montserrat(
-                                                fontSize: 9,
-                                                fontWeight: FontWeight.w700,
+                                    if (notifications.unreadCount > 0)
+                                      Positioned(
+                                        right: 1,
+                                        top: -1,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 5, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFE53935),
+                                            borderRadius:
+                                                BorderRadius.circular(999),
+                                            border: Border.all(
                                                 color: Colors.white,
-                                                height: 1.1,
-                                              ),
+                                                width: 1.2),
+                                          ),
+                                          constraints: const BoxConstraints(
+                                              minWidth: 16),
+                                          child: Text(
+                                            notifications.unreadCount > 99
+                                                ? '99+'
+                                                : '${notifications.unreadCount}',
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.montserrat(
+                                              fontSize: 9,
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.white,
+                                              height: 1.1,
                                             ),
                                           ),
                                         ),
-                                    ],
-                                  ),
-                                  GestureDetector(
-                                    onTap: () => context.go('/account'),
-                                    child: Container(
-                                      width: 32,
-                                      height: 32,
-                                      margin: const EdgeInsets.only(right: 12),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                            color: AppColors.primary, width: 1.6),
                                       ),
-                                      child: ClipOval(
-                                        child: auth.userAvatar != null
-                                            ? CachedNetworkImage(
-                                                imageUrl: auth.userAvatar!,
-                                                fit: BoxFit.cover,
-                                                width: 32,
-                                                height: 32,
-                                              )
-                                            : Container(
-                                                color: AppColors.primary,
-                                                child: Center(
-                                                  child: Text(
-                                                    _getFirstName(auth).isNotEmpty
-                                                        ? _getFirstName(auth)[0]
-                                                            .toUpperCase()
-                                                        : 'K',
-                                                    style:
-                                                        GoogleFonts.montserrat(
-                                                      fontSize: 12.5,
-                                                      fontWeight: FontWeight.w700,
-                                                      color: Colors.white,
-                                                    ),
+                                  ],
+                                ),
+                                GestureDetector(
+                                  onTap: () => context.go('/account'),
+                                  child: Container(
+                                    width: 32,
+                                    height: 32,
+                                    margin: const EdgeInsets.only(right: 12),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                          color: AppColors.primary, width: 1.6),
+                                    ),
+                                    child: ClipOval(
+                                      child: auth.userAvatar != null
+                                          ? CachedNetworkImage(
+                                              imageUrl: auth.userAvatar!,
+                                              fit: BoxFit.cover,
+                                              width: 32,
+                                              height: 32,
+                                            )
+                                          : Container(
+                                              color: AppColors.primary,
+                                              child: Center(
+                                                child: Text(
+                                                  _getFirstName(auth).isNotEmpty
+                                                      ? _getFirstName(auth)[0]
+                                                          .toUpperCase()
+                                                      : 'K',
+                                                  style: GoogleFonts.montserrat(
+                                                    fontSize: 12.5,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Colors.white,
                                                   ),
                                                 ),
                                               ),
-                                      ),
+                                            ),
                                     ),
                                   ),
-                                ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: Responsive.h(context, 0.03)),
+                        Row(
+                          children: [
+                            Icon(
+                              _getTimeIcon(),
+                              color: Colors.white.withValues(alpha: 0.5),
+                              size: 13,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              _getGreeting(),
+                              style: GoogleFonts.montserrat(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white.withValues(alpha: 0.55),
+                                letterSpacing: 0.2,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          _getFirstName(auth),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            height: 1.1,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withValues(alpha: 0.2),
+                                blurRadius: 10,
+                                offset: const Offset(0, 2),
                               ),
                             ],
                           ),
-                          SizedBox(height: Responsive.h(context, 0.03)),
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          _getTagline(),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 12,
+                            color: Colors.white.withValues(alpha: 0.42),
+                            letterSpacing: 0.1,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        GestureDetector(
+                          onTap: () => context.push('/explore'),
+                          child: Container(
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                const SizedBox(width: 14),
+                                Icon(
+                                  Icons.search_rounded,
+                                  color: Colors.white.withValues(alpha: 0.65),
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    'Tafuta kozi, mada, Mkufunzi...',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 13,
+                                      color:
+                                          Colors.white.withValues(alpha: 0.5),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.only(right: 8),
+                                  padding: const EdgeInsets.all(7),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary
+                                        .withValues(alpha: 0.35),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Icon(
+                                    Icons.tune_rounded,
+                                    color: Colors.white,
+                                    size: 15,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                if (_banners.isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: _BannerCarousel(banners: _banners),
+                  ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
+                    child: GestureDetector(
+                      onTap: () => context.push('/zana'),
+                      child: Container(
+                        padding: const EdgeInsets.all(18),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFF1A0A00),
+                              Color(0xFF3D1800),
+                              Color(0xFF7B3A10)
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF3D1800)
+                                  .withValues(alpha: 0.18),
+                              blurRadius: 18,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 62,
+                              height: 62,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              child: const Icon(Icons.construction_outlined,
+                                  color: Colors.white, size: 30),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                                   Row(
                                     children: [
-                                      Icon(
-                                        _getTimeIcon(),
-                                        color:
-                                            Colors.white.withValues(alpha: 0.5),
-                                        size: 13,
-                                      ),
-                                      const SizedBox(width: 6),
                                       Text(
-                                        _getGreeting(),
+                                        'ZANA',
                                         style: GoogleFonts.montserrat(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.white
-                                              .withValues(alpha: 0.55),
-                                          letterSpacing: 0.2,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.white),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 3),
+                                        decoration: BoxDecoration(
+                                            color: AppColors.primary,
+                                            borderRadius:
+                                                BorderRadius.circular(999)),
+                                        child: Text(
+                                          'MPYA',
+                                          style: GoogleFonts.montserrat(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.white),
                                         ),
                                       ),
                                     ],
                                   ),
-                          const SizedBox(height: AppSpacing.xs),
+                                  const SizedBox(height: 6),
                                   Text(
-                                    _getFirstName(auth),
+                                    'POS, biashara, bima, na huduma zinazokuja hivi karibuni kwa mjasiriamali wa Tanzania.',
                                     style: GoogleFonts.montserrat(
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.w800,
-                                      color: Colors.white,
-                                      height: 1.1,
-                                      shadows: [
-                                        Shadow(
-                                          color:
-                                              Colors.black.withValues(alpha: 0.2),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
+                                        fontSize: 13,
+                                        height: 1.45,
+                                        color: Colors.white
+                                            .withValues(alpha: 0.82)),
                                   ),
-                          const SizedBox(height: AppSpacing.xs),
-                                  Text(
-                                    _getTagline(),
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 12,
-                                      color:
-                                          Colors.white.withValues(alpha: 0.42),
-                                      letterSpacing: 0.1,
-                                    ),
-                                  ),
-                          const SizedBox(height: AppSpacing.md),
-                                  GestureDetector(
-                                    onTap: () => context.push('/explore'),
-                                    child: Container(
-                                      height: 48,
-                                      decoration: BoxDecoration(
-                                        color:
-                                            Colors.white.withValues(alpha: 0.1),
-                                        borderRadius: BorderRadius.circular(14),
-                                        border: Border.all(
-                                          color: Colors.white
-                                              .withValues(alpha: 0.2),
-                                          width: 1.5,
-                                        ),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          const SizedBox(width: 14),
-                                          Icon(
-                                            Icons.search_rounded,
-                                            color: Colors.white
-                                                .withValues(alpha: 0.65),
-                                            size: 20,
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Text(
-                                              'Tafuta kozi, mada, Mkufunzi...',
-                                              style: GoogleFonts.montserrat(
-                                                fontSize: 13,
-                                                color: Colors.white
-                                                    .withValues(alpha: 0.5),
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            margin:
-                                                const EdgeInsets.only(right: 8),
-                                            padding: const EdgeInsets.all(7),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.primary
-                                                  .withValues(alpha: 0.35),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: const Icon(
-                                              Icons.tune_rounded,
-                                              color: Colors.white,
-                                              size: 15,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                        ],
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            const Icon(Icons.arrow_forward_rounded,
+                                color: Colors.white),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  if (_banners.isNotEmpty)
-                    SliverToBoxAdapter(
-                      child: _BannerCarousel(banners: _banners),
-                    ),
+                ),
+                if (courses.isLoading) ...[
                   SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
-                      child: GestureDetector(
-                        onTap: () => context.push('/zana'),
+                      child: Padding(
+                          padding: const EdgeInsets.only(top: AppSpacing.lg),
+                          child: _shimmer())),
+                  SliverToBoxAdapter(child: _shimmer()),
+                ] else ...[
+                  SliverToBoxAdapter(
+                      child: _SectionHeader(
+                          title: 'Kwako',
+                          subtitle: 'Mapendekezo ya leo',
+                          onTapAll: () => context.push('/courses/list', extra: {
+                                'type': 'recommended',
+                                'title': 'Kwako'
+                              }))),
+                  SliverToBoxAdapter(
+                      child: _courseStrip(courses.recommendedCourses,
+                          'Hakuna kozi zilizopendekezwa kwa sasa')),
+                  SliverToBoxAdapter(
+                      child: _SectionHeader(
+                          title: 'Maarufu Sasa',
+                          subtitle: 'Kozi zinazovuma',
+                          onTapAll: () => context.push('/courses/list', extra: {
+                                'type': 'popular',
+                                'title': 'Maarufu Sasa'
+                              }))),
+                  SliverToBoxAdapter(
+                      child: _courseStrip(courses.popularCourses,
+                          'Hakuna kozi maarufu kwa sasa')),
+                  SliverToBoxAdapter(
+                      child: _SectionHeader(
+                          title: 'Kozi Bure',
+                          subtitle: 'Anza bila gharama',
+                          onTapAll: () => context.push('/courses/list',
+                              extra: {'type': 'free', 'title': 'Kozi Bure'}))),
+                  if (courses.freeCourses.isEmpty)
+                    SliverToBoxAdapter(
+                        child: _empty('Hakuna kozi bure kwa sasa'))
+                  else
+                    SliverPadding(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                      sliver: SliverGrid(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childAspectRatio: 0.72,
+                        ),
+                        delegate: SliverChildBuilderDelegate(
+                          (_, i) => CourseCardHorizontal(
+                            course: courses.freeCourses[i],
+                            onTap: () => context
+                                .push('/course/${courses.freeCourses[i].id}'),
+                            onWishlistTap: () => context
+                                .read<CourseProvider>()
+                                .toggleWishlist(courses.freeCourses[i].id),
+                          ),
+                          childCount: courses.freeCourses.length > 4
+                              ? 4
+                              : courses.freeCourses.length,
+                        ),
+                      ),
+                    ),
+                  if (!auth.isTrainer)
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          20,
+                          AppSpacing.lg,
+                          20,
+                          AppSpacing.sm,
+                        ),
                         child: Container(
-                          padding: const EdgeInsets.all(18),
+                          padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
                               colors: [
@@ -454,239 +607,72 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           child: Row(
                             children: [
-                              Container(
-                                width: 62,
-                                height: 62,
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                child: const Icon(Icons.construction_outlined,
-                                    color: Colors.white, size: 30),
-                              ),
-                              const SizedBox(width: 16),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'ZANA',
-                                          style: GoogleFonts.montserrat(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.white),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 3),
-                                          decoration: BoxDecoration(
-                                              color: AppColors.primary,
-                                              borderRadius:
-                                                  BorderRadius.circular(999)),
-                                          child: Text(
-                                            'MPYA',
-                                            style: GoogleFonts.montserrat(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w700,
-                                                color: Colors.white),
-                                          ),
-                                        ),
-                                      ],
+                                    Text(
+                                      'Fundisha Ulichonacho',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                     const SizedBox(height: 6),
                                     Text(
-                                      'POS, biashara, bima, na huduma zinazokuja hivi karibuni kwa mjasiriamali wa Tanzania.',
+                                      'Geuza uzoefu wako wa biashara kuwa kozi na ufikie wanafunzi wengi zaidi kupitia Karakana.',
                                       style: GoogleFonts.montserrat(
-                                          fontSize: 13,
-                                          height: 1.45,
-                                          color: Colors.white
-                                              .withValues(alpha: 0.82)),
+                                        fontSize: 13,
+                                        height: 1.45,
+                                        color: Colors.white
+                                            .withValues(alpha: 0.82),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 14),
+                                    FilledButton(
+                                      onPressed: () =>
+                                          context.push('/trainer/apply'),
+                                      style: FilledButton.styleFrom(
+                                        backgroundColor: AppColors.primary,
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(14)),
+                                      ),
+                                      child: Text('Jiunge Kama Mkufunzi',
+                                          style: GoogleFonts.montserrat(
+                                              fontWeight: FontWeight.w600)),
                                     ),
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 10),
-                              const Icon(Icons.arrow_forward_rounded,
-                                  color: Colors.white),
+                              const SizedBox(width: 12),
+                              Container(
+                                width: 84,
+                                height: 84,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(22),
+                                ),
+                                child: const Icon(
+                                  Icons.school_rounded,
+                                  size: 42,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ],
                           ),
                         ),
                       ),
                     ),
+                ],
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height:
+                        MediaQuery.of(context).padding.bottom + AppSpacing.md,
                   ),
-                  if (courses.isLoading) ...[
-                    SliverToBoxAdapter(
-                        child: Padding(
-                            padding: const EdgeInsets.only(top: AppSpacing.lg),
-                            child: _shimmer())),
-                    SliverToBoxAdapter(child: _shimmer()),
-                  ] else ...[
-                    SliverToBoxAdapter(
-                        child: _SectionHeader(
-                            title: 'Kwako',
-                            subtitle: 'Mapendekezo ya leo',
-                            onTapAll: () => context.push('/courses/list',
-                                    extra: {
-                                      'type': 'recommended',
-                                      'title': 'Kwako'
-                                    }))),
-                    SliverToBoxAdapter(
-                        child: _courseStrip(courses.recommendedCourses,
-                            'Hakuna kozi zilizopendekezwa kwa sasa')),
-                    SliverToBoxAdapter(
-                        child: _SectionHeader(
-                            title: 'Maarufu Sasa',
-                            subtitle: 'Kozi zinazovuma',
-                            onTapAll: () => context.push('/courses/list',
-                                    extra: {
-                                      'type': 'popular',
-                                      'title': 'Maarufu Sasa'
-                                    }))),
-                    SliverToBoxAdapter(
-                        child: _courseStrip(courses.popularCourses,
-                            'Hakuna kozi maarufu kwa sasa')),
-                    SliverToBoxAdapter(
-                        child: _SectionHeader(
-                            title: 'Kozi Bure',
-                            subtitle: 'Anza bila gharama',
-                            onTapAll: () => context.push('/courses/list',
-                                    extra: {
-                                      'type': 'free',
-                                      'title': 'Kozi Bure'
-                                    }))),
-                    if (courses.freeCourses.isEmpty)
-                      SliverToBoxAdapter(
-                          child: _empty('Hakuna kozi bure kwa sasa'))
-                    else
-                      SliverPadding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.md),
-                        sliver: SliverGrid(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 12,
-                            crossAxisSpacing: 12,
-                            childAspectRatio: 0.72,
-                          ),
-                          delegate: SliverChildBuilderDelegate(
-                            (_, i) => CourseCardHorizontal(
-                              course: courses.freeCourses[i],
-                              onTap: () => context
-                                  .push('/course/${courses.freeCourses[i].id}'),
-                              onWishlistTap: () => context
-                                  .read<CourseProvider>()
-                                  .toggleWishlist(courses.freeCourses[i].id),
-                            ),
-                            childCount: courses.freeCourses.length > 4
-                                ? 4
-                                : courses.freeCourses.length,
-                          ),
-                        ),
-                      ),
-                    if (!auth.isTrainer)
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(
-                            20,
-                            AppSpacing.lg,
-                            20,
-                            AppSpacing.sm,
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFF1A0A00),
-                                  Color(0xFF3D1800),
-                                  Color(0xFF7B3A10)
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(24),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF3D1800)
-                                      .withValues(alpha: 0.18),
-                                  blurRadius: 18,
-                                  offset: const Offset(0, 10),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Fundisha Ulichonacho',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        'Geuza uzoefu wako wa biashara kuwa kozi na ufikie wanafunzi wengi zaidi kupitia Karakana.',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: 13,
-                                          height: 1.45,
-                                          color: Colors.white
-                                              .withValues(alpha: 0.82),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 14),
-                                      FilledButton(
-                                        onPressed: () =>
-                                            context.push('/trainer/apply'),
-                                        style: FilledButton.styleFrom(
-                                          backgroundColor: AppColors.primary,
-                                          foregroundColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(14)),
-                                        ),
-                                        child: Text('Jiunge Kama Mkufunzi',
-                                            style: GoogleFonts.montserrat(
-                                                fontWeight: FontWeight.w600)),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Container(
-                                  width: 84,
-                                  height: 84,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.12),
-                                    borderRadius: BorderRadius.circular(22),
-                                  ),
-                                  child: const Icon(
-                                    Icons.school_rounded,
-                                    size: 42,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                  SliverToBoxAdapter(
-                    child: SizedBox(
-                      height:
-                          MediaQuery.of(context).padding.bottom + AppSpacing.md,
-                    ),
-                  ),
+                ),
               ],
             ),
           );

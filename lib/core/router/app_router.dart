@@ -86,18 +86,6 @@ class AppRoutes {
   static const String terms = '/terms';
 }
 
-Widget _placeholder(String routeName) {
-  return Scaffold(
-    backgroundColor: Colors.white,
-    body: Center(
-      child: Text(
-        routeName,
-        style: const TextStyle(fontSize: 18, color: Colors.black54),
-      ),
-    ),
-  );
-}
-
 class AppRouter {
   static CustomTransitionPage<void> _buildAuthTransitionPage({
     required GoRouterState state,
@@ -169,7 +157,9 @@ class AppRouter {
 
         // Already logged in: redirect away from auth screens
         if (isAuth && authRoutes.contains(location)) {
-          return authProvider.isTrainer ? AppRoutes.trainerDashboard : AppRoutes.home;
+          return authProvider.isTrainer
+              ? AppRoutes.trainerDashboard
+              : AppRoutes.home;
         }
 
         return null;
@@ -272,7 +262,8 @@ class AppRouter {
           path: '/zana/ebooks/read/:ebookId',
           builder: (context, state) => SecureEbookReaderScreen(
             ebookId: int.tryParse(state.pathParameters['ebookId'] ?? '') ?? 0,
-            ebookTitle: (state.extra as Map?)?['ebookTitle']?.toString() ?? 'eBook',
+            ebookTitle:
+                (state.extra as Map?)?['ebookTitle']?.toString() ?? 'eBook',
           ),
         ),
         GoRoute(
@@ -361,8 +352,10 @@ class AppRouter {
                 ? Map<String, dynamic>.from(state.extra as Map)
                 : <String, dynamic>{};
             return PaymentScreen(
-              courseId: int.tryParse(state.pathParameters['courseId'] ?? '') ?? 0,
-              courseTitle: (extra['courseTitle'] as String?) ?? 'Kozi ya Karakana',
+              courseId:
+                  int.tryParse(state.pathParameters['courseId'] ?? '') ?? 0,
+              courseTitle:
+                  (extra['courseTitle'] as String?) ?? 'Kozi ya Karakana',
               coursePrice: (extra['coursePrice'] as num?)?.toDouble() ?? 0,
               courseThumbnail: extra['courseThumbnail'] as String?,
             );
@@ -385,7 +378,8 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.mastercardForm,
           builder: (context, state) {
-            final shouldPop = (state.extra as Map?)?['shouldPop'] as bool? ?? false;
+            final shouldPop =
+                (state.extra as Map?)?['shouldPop'] as bool? ?? false;
             return MastercardFormScreen(shouldPop: shouldPop);
           },
         ),
@@ -436,14 +430,16 @@ class AppRouter {
         GoRoute(
           path: '/trainer/quiz/:courseId',
           builder: (context, state) {
-            final courseId = int.tryParse(state.pathParameters['courseId'] ?? '') ?? 0;
+            final courseId =
+                int.tryParse(state.pathParameters['courseId'] ?? '') ?? 0;
             return QuizManagerScreen(courseId: courseId);
           },
         ),
         GoRoute(
           path: '/trainer/course/:courseId/sections',
           builder: (context, state) {
-            final courseId = int.tryParse(state.pathParameters['courseId'] ?? '') ?? 0;
+            final courseId =
+                int.tryParse(state.pathParameters['courseId'] ?? '') ?? 0;
             final extra = state.extra as Map?;
             return LessonManagerScreen(
               courseId: courseId,
@@ -468,8 +464,7 @@ class AppRouter {
         GoRoute(
           path: '/support/:ticketId',
           builder: (context, state) => TicketDetailScreen(
-            ticketId:
-                int.tryParse(state.pathParameters['ticketId'] ?? '') ?? 0,
+            ticketId: int.tryParse(state.pathParameters['ticketId'] ?? '') ?? 0,
           ),
         ),
       ],

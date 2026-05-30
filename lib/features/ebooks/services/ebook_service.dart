@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import '../../../core/network/api_client.dart';
 import '../models/ebook.dart';

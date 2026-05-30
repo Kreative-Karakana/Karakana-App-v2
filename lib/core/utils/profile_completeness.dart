@@ -1,11 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../constants/api_endpoints.dart';
 import '../network/api_client.dart';
-import '../theme/app_colors.dart';
 import '../../widgets/common/top_popup.dart';
 import 'secure_storage.dart';
 
@@ -21,9 +19,10 @@ Future<void> checkAndPromptMastercard(BuildContext context) async {
 
   try {
     final response = await ApiClient().dio.get(
-      ApiEndpoints.masterCard,
-      options: Options(validateStatus: (code) => code != null && code < 500),
-    );
+          ApiEndpoints.masterCard,
+          options:
+              Options(validateStatus: (code) => code != null && code < 500),
+        );
     final statusCode = response.statusCode ?? 0;
 
     if (statusCode == 200) {
