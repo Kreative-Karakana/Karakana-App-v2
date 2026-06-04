@@ -1,4 +1,4 @@
-package com.kreativekarakana.karakana_app
+package com.kreativekarakana.karakana
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine

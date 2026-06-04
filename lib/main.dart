@@ -58,19 +58,32 @@ class _KarakanaAppState extends State<KarakanaApp> {
 
   Future<void> _initFCM() async {
     final messaging = FirebaseMessaging.instance;
-    // Request permission after first frame so app startup is not blocked.
-    await messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    final token = await messaging.getToken();
-    if (token != null) {
-      _registerToken(token);
+    try {
+      // Request permission after first frame so app startup is not blocked.
+      await messaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+    } catch (e) {
+      debugPrint('[FCM] Permission request failed: $e');
     }
 
-    messaging.onTokenRefresh.listen(_registerToken);
+    try {
+      final token = await messaging.getToken();
+      if (token != null) {
+        _registerToken(token);
+      }
+    } catch (e) {
+      debugPrint('[FCM] Token retrieval skipped: $e');
+    }
+
+    messaging.onTokenRefresh.listen(
+      _registerToken,
+      onError: (Object error) {
+        debugPrint('[FCM] Token refresh listener error: $error');
+      },
+    );
 
     FirebaseMessaging.onMessage.listen((_) {});
   }

@@ -6,11 +6,22 @@ plugins {
 }
 
 import java.util.Properties
+import org.gradle.api.GradleException
 
 val keyPropertiesFile = rootProject.file("key.properties")
 val keyProperties = Properties()
 if (keyPropertiesFile.exists()) {
     keyProperties.load(keyPropertiesFile.inputStream())
+}
+
+val requiredSigningKeys = listOf("storeFile", "storePassword", "keyAlias", "keyPassword")
+val hasReleaseSigning = keyPropertiesFile.exists() &&
+    requiredSigningKeys.all { keyProperties[it] != null && keyProperties[it].toString().isNotBlank() }
+
+if (gradle.startParameter.taskNames.any { it.contains("release", ignoreCase = true) } && !hasReleaseSigning) {
+    throw GradleException(
+        "Android release signing is not configured. Create android/key.properties and add a local upload keystore before building release artifacts."
+    )
 }
 
 android {
@@ -36,18 +47,21 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            keyAlias = keyProperties["keyAlias"] as String? ?: ""
-            keyPassword = keyProperties["keyPassword"] as String? ?: ""
-            storeFile = if (keyProperties["storeFile"] != null)
-                file(keyProperties["storeFile"] as String) else null
-            storePassword = keyProperties["storePassword"] as String? ?: ""
+        if (hasReleaseSigning) {
+            create("release") {
+                keyAlias = keyProperties["keyAlias"] as String
+                keyPassword = keyProperties["keyPassword"] as String
+                storeFile = rootProject.file(keyProperties["storeFile"] as String)
+                storePassword = keyProperties["storePassword"] as String
+            }
         }
     }
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             isMinifyEnabled = false
             isShrinkResources = false
         }

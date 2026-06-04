@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "466490006316-crhltfq0mrto8pg46tk84ifvdjh9qsps.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kreativekarakana.karakana",
+            "certificate_hash": "9bbcd5722e5f55fc60173a61ef5bffdf142ba177"
+          }
+        },
+        {
           "client_id": "466490006316-cugim0jcoplcgpok53gbn217btv5boul.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

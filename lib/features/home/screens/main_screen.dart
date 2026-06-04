@@ -2,8 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../../../core/theme/app_spacing.dart';
 
+import '../../courses/providers/course_provider.dart';
 import '../../courses/screens/explore_screen.dart';
 import '../../fursa/screens/fursa_screen.dart';
 import '../../profile/screens/profile_screen.dart';
@@ -170,6 +172,9 @@ class _MainScreenState extends State<MainScreen> {
       behavior: HitTestBehavior.opaque,
       onTap: () {
         HapticFeedback.lightImpact();
+        if (index == 0 && _currentIndex != 0) {
+          context.read<CourseProvider>().loadHomeData();
+        }
         setState(() => _currentIndex = index);
       },
       child: Container(

@@ -74,7 +74,7 @@ class CourseProvider extends ChangeNotifier {
   Future<void> loadRecommended() async {
     try {
       _recommendedCourses =
-          await _service.getCourses(recommended: true);
+          _shuffled(await _service.getCourses(recommended: true));
       notifyListeners();
     } catch (e) {
       if (kDebugMode) debugPrint('[CourseProvider] loadRecommended: $e');
@@ -83,7 +83,7 @@ class CourseProvider extends ChangeNotifier {
 
   Future<void> loadPopular() async {
     try {
-      _popularCourses = await _service.getCourses(popular: true);
+      _popularCourses = _shuffled(await _service.getCourses(popular: true));
       notifyListeners();
     } catch (e) {
       if (kDebugMode) debugPrint('[CourseProvider] loadPopular: $e');
@@ -92,7 +92,7 @@ class CourseProvider extends ChangeNotifier {
 
   Future<void> loadFree() async {
     try {
-      _freeCourses = await _service.getCourses(free: true);
+      _freeCourses = _shuffled(await _service.getCourses(free: true));
       notifyListeners();
     } catch (e) {
       if (kDebugMode) debugPrint('[CourseProvider] loadFree: $e');
@@ -102,7 +102,7 @@ class CourseProvider extends ChangeNotifier {
   Future<void> loadWeeklyChoice() async {
     try {
       _weeklyChoiceCourses =
-          await _service.getCourses(weeklyChoice: true);
+          _shuffled(await _service.getCourses(weeklyChoice: true));
       notifyListeners();
     } catch (e) {
       if (kDebugMode) debugPrint('[CourseProvider] loadWeeklyChoice: $e');
@@ -313,5 +313,11 @@ class CourseProvider extends ChangeNotifier {
   void clearError() {
     _errorMessage = null;
     notifyListeners();
+  }
+
+  List<CourseModel> _shuffled(List<CourseModel> courses) {
+    final shuffled = List<CourseModel>.from(courses);
+    shuffled.shuffle();
+    return shuffled;
   }
 }

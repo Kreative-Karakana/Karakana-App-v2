@@ -25,6 +25,8 @@ class AppStrings {
   static const String createAccount = 'Fungua Akaunti';
   static const String continueWithGoogle = 'Endelea na Google';
   static const String continueWithApple = 'Endelea na Apple';
+  static const String zanaCardDescription =
+      'e-Kikoba, Usimamizi wa Biashara, Vitabu vya kidigitali, na huduma nyingine nyingi kwaajili yako.';
 
   // Onboarding
   static const String onboardingTitle1 = 'Jifunze Ujasiriamali';

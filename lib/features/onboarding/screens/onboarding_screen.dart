@@ -38,12 +38,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   final List<_SlideData> _slides = const [
     _SlideData(
-      title: 'Jenga Ujuzi wa Biashara\nna Ubunifu',
-      subtitle:
-          'Mafunzo ya vitendo kwa mbinu za kisasa yatakayokusaidia kukuza biashara yako kutoka kwa wataalamu waliobobea.',
-      imagePath: 'assets/onboarding/slide_1.png',
-    ),
-    _SlideData(
       title: 'Zana Bora na Miongozo ya\nKukuza Biashara',
       subtitle:
           'Huduma za usajili, nembo na mitandao ya kijamii zinazokuokoa muda na kukuwezesha kuzingatia ukuaji wa biashara yako.',
@@ -54,6 +48,12 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       subtitle:
           'Simamia biashara yako kwa ufanisi wa zana na mipango bora, pamoja na ushauri wa kitaalamu kupitia warsha na mikutano ya moja kwa moja.',
       imagePath: 'assets/onboarding/slide_3.png',
+    ),
+    _SlideData(
+      title: 'Jenga Ujuzi wa Biashara\nna Ubunifu',
+      subtitle:
+          'Mafunzo ya vitendo kwa mbinu za kisasa yatakayokusaidia kukuza biashara yako kutoka kwa wataalamu waliobobea.',
+      imagePath: 'assets/onboarding/slide_1.png',
     ),
   ];
 
@@ -86,94 +86,68 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   // ---------------------------------------------------------------------------
-  // Concentric decorative circles — mimics the pattern in the screenshots
-  // ---------------------------------------------------------------------------
-  Widget _decorativeRings({required double size, double opacity = 0.12}) {
-    return SizedBox(
-      width: size,
-      height: size,
-      child: Stack(
-        alignment: Alignment.center,
-        children: List.generate(5, (i) {
-          final ratio = 1.0 - i * 0.18;
-          return Container(
-            width: size * ratio,
-            height: size * ratio,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.white.withValues(alpha: opacity - i * 0.018),
-                width: 1.2,
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
-
-  // ---------------------------------------------------------------------------
   // Individual slide
   // ---------------------------------------------------------------------------
   Widget _buildSlide(_SlideData slide) {
     return LayoutBuilder(builder: (context, constraints) {
       final h = constraints.maxHeight;
-      final imageHeight = h * 0.60;
+      final topSectionHeight = h * 0.54;
+      final heroOverlap = h * 0.035;
+      final imageBottomOverlap = (h * 0.018).clamp(8.0, 16.0);
+      final cardTop = topSectionHeight - heroOverlap;
 
-      return Column(
+      return Stack(
+        clipBehavior: Clip.none,
         children: [
-          // TOP: Orange image area
-          SizedBox(
-            height: imageHeight,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                // Solid orange background
-                Container(color: const Color(0xFFE8920A)),
-
-                // Decorative concentric rings
-                Positioned(
-                  top: -imageHeight * 0.28,
-                  right: -imageHeight * 0.28,
-                  child: _decorativeRings(size: imageHeight * 0.85),
-                ),
-                Positioned(
-                  bottom: -imageHeight * 0.2,
-                  left: -imageHeight * 0.2,
-                  child: _decorativeRings(
-                    size: imageHeight * 0.6,
-                    opacity: 0.08,
-                  ),
-                ),
-
-                // Person image - no shader mask, show cleanly
-                Positioned.fill(
-                  child: Image.asset(
-                    slide.imagePath,
-                    fit: BoxFit.contain,
-                    alignment: Alignment.bottomCenter,
-                    errorBuilder: (_, __, ___) => Center(
-                      child: Icon(
-                        Icons.person_rounded,
-                        size: 140,
-                        color: Colors.white.withValues(alpha: 0.45),
-                      ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: topSectionHeight,
+            child: Container(color: const Color(0xFFE8920A)),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: topSectionHeight + heroOverlap + imageBottomOverlap,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: SizedBox(
+                width: constraints.maxWidth,
+                height: topSectionHeight + heroOverlap + imageBottomOverlap,
+                child: Image.asset(
+                  slide.imagePath,
+                  fit: BoxFit.contain,
+                  alignment: Alignment.bottomCenter,
+                  errorBuilder: (_, __, ___) => Center(
+                    child: Icon(
+                      Icons.person_rounded,
+                      size: 140,
+                      color: Colors.white.withValues(alpha: 0.45),
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
           ),
-
-          // BOTTOM: White text panel
-          Expanded(
+          Positioned(
+            top: cardTop,
+            left: 0,
+            right: 0,
+            bottom: 0,
             child: Container(
-              color: Colors.white,
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(28, 20, 28, 0),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              ),
+              padding: const EdgeInsets.fromLTRB(28, 18, 28, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  _buildDots(),
+                  const SizedBox(height: 18),
                   Text(
                     slide.title,
                     style: GoogleFonts.montserrat(
@@ -193,10 +167,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                       height: 1.6,
                     ),
                     textAlign: TextAlign.center,
-                    maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 120),
+                  const Spacer(),
+                  const SizedBox(height: 96),
                 ],
               ),
             ),
@@ -300,12 +273,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               child: SafeArea(
                 child: Container(
                   color: Colors.white,
-                  padding: const EdgeInsets.fromLTRB(32, 12, 32, 28),
+                  padding: const EdgeInsets.fromLTRB(32, 8, 32, 24),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _buildDots(),
-                      const SizedBox(height: 24),
                       AnimatedSwitcher(
                         duration: const Duration(milliseconds: 300),
                         transitionBuilder: (child, anim) =>
