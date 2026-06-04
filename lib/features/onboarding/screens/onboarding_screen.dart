@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -92,23 +93,23 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       final h = constraints.maxHeight;
       final bottomInset = MediaQuery.of(context).padding.bottom;
       final cardHeight = (h * 0.36).clamp(290.0, 332.0);
-      final titleStyle = Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: const Color(0xFF1A0A00),
-            height: 1.2,
-          );
-      final bodyStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-            color: const Color(0xFF6B5040),
-            height: 1.55,
-          );
-      final buttonStyle = Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          );
+      final titleStyle = GoogleFonts.montserrat(
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        color: const Color(0xFF1A0A00),
+        height: 1.2,
+      );
+      final bodyStyle = GoogleFonts.montserrat(
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
+        color: const Color(0xFF6B5040),
+        height: 1.55,
+      );
+      final buttonStyle = GoogleFonts.montserrat(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        color: Colors.white,
+      );
       final isLastSlide = index == _slides.length - 1;
 
       return Stack(
@@ -169,8 +170,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           foregroundColor: Colors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(26),
+                            borderRadius: BorderRadius.circular(16),
                           ),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
                         ),
                         child: Text('Anza Sasa', style: buttonStyle),
                       ),
@@ -179,16 +181,16 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     GestureDetector(
                       onTap: _nextPage,
                       child: Container(
-                        width: 56,
-                        height: 56,
+                        width: 50,
+                        height: 50,
                         decoration: const BoxDecoration(
                           color: AppColors.primary,
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
-                          Icons.arrow_forward_rounded,
+                          Icons.arrow_forward_sharp,
                           color: Colors.white,
-                          size: 26,
+                          size: 24,
                         ),
                       ),
                     ),
@@ -272,14 +274,14 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         ),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      child: Text('Ruka',
-                          style:
-                              Theme.of(context).textTheme.labelLarge?.copyWith(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                    color: const Color(0xFF1A0A00)
-                                        .withValues(alpha: 0.8),
-                                  )),
+                      child: Text(
+                        'Ruka',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF1A0A00).withValues(alpha: 0.8),
+                        ),
+                      ),
                     ),
                   ),
                 ),
