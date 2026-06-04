@@ -17,3 +17,5 @@
 - Android Google Sign-In verified successfully.
 - Course randomization verified successfully.
 - Zana card description verified, with shorter text correction applied.
+- Welcome screen layout ported from V1 reference into V2.
+- Welcome screen code verification passed with `flutter analyze` and `flutter build apk --debug`.

@@ -1,6 +1,6 @@
 # Active
 
-- Welcome screens redesign/update using new reference images. Platform: Android and iOS. Priority: High.
+- Welcome screens manual emulator/iOS verification pending after V1-style layout port. Platform: Android and iOS. Priority: High.
 - Firebase cleanup: remove the legacy Android app entry/package typo from the Firebase project.
   Current incorrect package:
   com.kreativekarkana.karakana

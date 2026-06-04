@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -88,51 +87,51 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   // ---------------------------------------------------------------------------
   // Individual slide
   // ---------------------------------------------------------------------------
-  Widget _buildSlide(_SlideData slide) {
+  Widget _buildSlide(int index, _SlideData slide) {
     return LayoutBuilder(builder: (context, constraints) {
       final h = constraints.maxHeight;
-      final topSectionHeight = h * 0.54;
-      final heroOverlap = h * 0.035;
-      final imageBottomOverlap = (h * 0.018).clamp(8.0, 16.0);
-      final cardTop = topSectionHeight - heroOverlap;
+      final bottomInset = MediaQuery.of(context).padding.bottom;
+      final cardHeight = (h * 0.36).clamp(290.0, 332.0);
+      final titleStyle = Theme.of(context).textTheme.headlineSmall?.copyWith(
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            color: const Color(0xFF1A0A00),
+            height: 1.2,
+          );
+      final bodyStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: const Color(0xFF6B5040),
+            height: 1.55,
+          );
+      final buttonStyle = Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          );
+      final isLastSlide = index == _slides.length - 1;
 
       return Stack(
-        clipBehavior: Clip.none,
+        fit: StackFit.expand,
         children: [
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: topSectionHeight,
-            child: Container(color: const Color(0xFFE8920A)),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: topSectionHeight + heroOverlap + imageBottomOverlap,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                width: constraints.maxWidth,
-                height: topSectionHeight + heroOverlap + imageBottomOverlap,
-                child: Image.asset(
-                  slide.imagePath,
-                  fit: BoxFit.contain,
-                  alignment: Alignment.bottomCenter,
-                  errorBuilder: (_, __, ___) => Center(
-                    child: Icon(
-                      Icons.person_rounded,
-                      size: 140,
-                      color: Colors.white.withValues(alpha: 0.45),
-                    ),
-                  ),
-                ),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: const Color(0xFFE8920A),
+              image: DecorationImage(
+                image: AssetImage(slide.imagePath),
+                fit: BoxFit.fitHeight,
+                alignment: Alignment.topCenter,
+                onError: (_, __) {},
               ),
             ),
           ),
           Positioned(
-            top: cardTop,
+            left: 0,
+            right: 0,
+            bottom: cardHeight - 14,
+            child: _buildDots(),
+          ),
+          Positioned(
             left: 0,
             right: 0,
             bottom: 0,
@@ -142,34 +141,57 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
               ),
-              padding: const EdgeInsets.fromLTRB(28, 18, 28, 0),
+              height: cardHeight,
+              padding: EdgeInsets.fromLTRB(28, 28, 28, 20 + bottomInset),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildDots(),
-                  const SizedBox(height: 18),
                   Text(
                     slide.title,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF1A0A00),
-                      height: 1.3,
-                    ),
+                    style: titleStyle,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 12),
                   Text(
                     slide.subtitle,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: const Color(0xFF6B5040),
-                      height: 1.6,
-                    ),
+                    style: bodyStyle,
                     textAlign: TextAlign.center,
                   ),
-                  const Spacer(),
-                  const SizedBox(height: 96),
+                  const SizedBox(height: 14),
+                  if (isLastSlide)
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: () => _completeOnboardingAndGo('/signup'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(26),
+                          ),
+                        ),
+                        child: Text('Anza Sasa', style: buttonStyle),
+                      ),
+                    )
+                  else
+                    GestureDetector(
+                      onTap: _nextPage,
+                      child: Container(
+                        width: 56,
+                        height: 56,
+                        decoration: const BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.arrow_forward_rounded,
+                          color: Colors.white,
+                          size: 26,
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -210,7 +232,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final isLast = _currentPage == 2;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -222,26 +243,26 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         backgroundColor: const Color(0xFFE8920A),
         body: Stack(
           children: [
-            // ── PageView ──────────────────────────────────────────────────────
             PageView(
               controller: _pageController,
               physics: const BouncingScrollPhysics(),
               onPageChanged: (i) => setState(() => _currentPage = i),
-              children: _slides.map(_buildSlide).toList(),
+              children: [
+                for (final entry in _slides.asMap().entries)
+                  _buildSlide(entry.key, entry.value),
+              ],
             ),
-
-            // ── "Ruka" skip button — top right, slides 0 & 1 only ────────────
             Positioned(
               top: 0,
               right: 0,
               child: SafeArea(
                 child: AnimatedOpacity(
-                  opacity: isLast ? 0 : 1,
+                  opacity: _currentPage == _slides.length - 1 ? 0 : 1,
                   duration: const Duration(milliseconds: 200),
                   child: Padding(
                     padding: const EdgeInsets.only(right: 16, top: 4),
                     child: TextButton(
-                      onPressed: isLast
+                      onPressed: _currentPage == _slides.length - 1
                           ? null
                           : () => _completeOnboardingAndGo('/login'),
                       style: TextButton.styleFrom(
@@ -251,83 +272,15 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         ),
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      child: Text(
-                        'Ruka',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFF1A0A00).withValues(alpha: 0.8),
-                        ),
-                      ),
+                      child: Text('Ruka',
+                          style:
+                              Theme.of(context).textTheme.labelLarge?.copyWith(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: const Color(0xFF1A0A00)
+                                        .withValues(alpha: 0.8),
+                                  )),
                     ),
-                  ),
-                ),
-              ),
-            ),
-
-            // ── Bottom controls ───────────────────────────────────────────────
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: SafeArea(
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.fromLTRB(32, 8, 32, 24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        transitionBuilder: (child, anim) =>
-                            FadeTransition(opacity: anim, child: child),
-                        child: isLast
-                            ? SizedBox(
-                                key: const ValueKey('last'),
-                                width: double.infinity,
-                                height: 56,
-                                child: ElevatedButton(
-                                  onPressed: () =>
-                                      _completeOnboardingAndGo('/signup'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.primary,
-                                    foregroundColor: Colors.white,
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(28),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Anza Sasa',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 0.3,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : Center(
-                                key: const ValueKey('next'),
-                                child: GestureDetector(
-                                  onTap: _nextPage,
-                                  child: Container(
-                                    width: 64,
-                                    height: 64,
-                                    decoration: const BoxDecoration(
-                                      color: AppColors.primary,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.arrow_forward_rounded,
-                                      color: Colors.white,
-                                      size: 28,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                      ),
-                    ],
                   ),
                 ),
               ),
