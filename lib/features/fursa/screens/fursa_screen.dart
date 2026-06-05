@@ -169,24 +169,6 @@ class _FursaScreenState extends State<FursaScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 10,
-                                        vertical: 4,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFE87722),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Text(
-                                        'FURSA',
-                                        style: AppTextStyles.labelSmall.copyWith(
-                                          color: Colors.white,
-                                          letterSpacing: 1.2,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
                                     Text(
                                       'Fursa',
                                       style: AppTextStyles.displayMedium.copyWith(
