@@ -290,6 +290,7 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: const BackButton(color: Colors.white),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -392,34 +393,16 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
                             ),
                           ),
                           const SizedBox(height: 18),
-                          Text(
-                            'Bei',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: Colors.black54,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            price <= 0
-                                ? 'Bure'
-                                : 'TZS ${_currency.format(price)}',
-                            textAlign: TextAlign.right,
-                            style: AppTextStyles.price.copyWith(
-                              fontSize: 24,
-                              color: const Color(0xFFE87722),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 10,
+                              horizontal: 14,
+                              vertical: 14,
                             ),
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
                                 colors: [
-                                  Color(0xFFFFF4EC),
+                                  Color(0xFFFFF8F2),
                                   Color(0xFFFFE8D6),
                                 ],
                               ),
@@ -429,21 +412,28 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
                                     .withValues(alpha: 0.18),
                               ),
                             ),
-                            child: const Row(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                                Icon(
-                                  Icons.download_for_offline_outlined,
-                                  size: 16,
-                                  color: Color(0xFF7B3A10),
+                                Text(
+                                  price <= 0
+                                      ? 'Bure'
+                                      : 'TZS ${_currency.format(price)}',
+                                  textAlign: TextAlign.right,
+                                  style: AppTextStyles.price.copyWith(
+                                    fontSize: 24,
+                                    color: const Color(0xFFE87722),
+                                  ),
                                 ),
-                                SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    'Pakua baada ya ununuzi',
-                                    style: TextStyle(
-                                      color: Color(0xFF7B3A10),
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  isPurchased
+                                      ? 'Tayari ipo kwenye maktaba yako'
+                                      : 'Fungua kwenye maktaba yako ukishanunua',
+                                  textAlign: TextAlign.right,
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    color: const Color(0xFF7B3A10),
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ],
