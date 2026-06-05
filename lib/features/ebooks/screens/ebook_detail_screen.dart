@@ -356,77 +356,38 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
                         ),
                       ),
                       const SizedBox(height: 14),
-                      Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 10,
-                        runSpacing: 10,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF4F4F6),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.picture_as_pdf_outlined,
-                                  size: 16,
-                                  color: Color(0xFF1A1A1A),
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  'PDF',
-                                  style: AppTextStyles.labelLarge.copyWith(
-                                    color: const Color(0xFF1A1A1A),
-                                  ),
-                                ),
-                              ],
-                            ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 18,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFFFF4EC),
+                              Color(0xFFFFE6D3),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 8,
+                          borderRadius: BorderRadius.circular(18),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFE87722)
+                                  .withValues(alpha: 0.10),
+                              blurRadius: 14,
+                              offset: const Offset(0, 6),
                             ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFFF3EA),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Text(
-                              price <= 0
-                                  ? 'Bure'
-                                  : 'TZS ${_currency.format(price)}',
-                              style: AppTextStyles.labelLarge.copyWith(
-                                color: const Color(0xFFE87722),
-                              ),
-                            ),
+                          ],
+                        ),
+                        child: Text(
+                          price <= 0 ? 'Bure' : 'TZS ${_currency.format(price)}',
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.h2.copyWith(
+                            color: const Color(0xFFE87722),
+                            fontWeight: FontWeight.w700,
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isPurchased
-                                  ? const Color(0xFFEAF8EE)
-                                  : const Color(0xFFF4F4F6),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Text(
-                              isPurchased ? 'Ipo maktabani' : 'Nunua kusoma',
-                              style: AppTextStyles.labelLarge.copyWith(
-                                color: isPurchased
-                                    ? const Color(0xFF2E7D32)
-                                    : const Color(0xFF1A1A1A),
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                       const SizedBox(height: 18),
                       SizedBox(
