@@ -165,8 +165,9 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: const Color(0xFFF7F2ED),
       appBar: AppBar(
         backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
@@ -175,156 +176,268 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
           'Omba Kuwa Mkufunzi',
           style: AppTextStyles.h3.copyWith(color: Colors.white),
         ),
+        centerTitle: true,
       ),
       body: SafeArea(
           child: _isLoading
               ? const Center(
                   child: KarakanaWaveLoader(color: Color(0xFFE87722)),
                 )
-              : SingleChildScrollView(
-                  padding: AppSpacing.sectionPadding,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: AppSpacing.sectionPadding,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFF1A0A00),
-                              Color(0xFF3D1800),
-                              Color(0xFF7B3A10)
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                          borderRadius: BorderRadius.circular(AppRadius.card),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Kuwa Mkufunzi Karakana',
-                                    style: AppTextStyles.h3
-                                        .copyWith(color: Colors.white),
-                                  ),
-                                  const SizedBox(height: AppSpacing.sm),
-                                  Text(
-                                    'Shiriki ujuzi wako na upate kipato kwa kufundisha wengine.',
-                                    style: AppTextStyles.bodyMedium.copyWith(
+              : Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFFF7F2ED),
+                        Color(0xFFFFF8F4),
+                        Color(0xFFF7F2ED),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    padding: AppSpacing.sectionPadding,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildHeroCard(),
+                        const SizedBox(height: AppSpacing.md),
+                        if (_profileData != null && !_isProfileComplete)
+                          _buildProfileGate()
+                        else if (_existingApplication != null)
+                          _buildStatusCard(_existingApplication!)
+                        else
+                          Form(
+                            key: _formKey,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _sectionHeading(
+                                  'Maelezo ya Kitaaluma',
+                                  'Taarifa hizi zinasaidia timu yetu kutathmini ombi lako kwa haraka.',
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                _buildField(
+                                  'Cheo cha Kitaaluma',
+                                  _titleController,
+                                  hint: 'Mfano: Mjasiriamali, Mhasibu, Meneja',
+                                  icon: Icons.badge_outlined,
+                                  validator: (v) => v == null || v.isEmpty
+                                      ? 'Weka cheo chako'
+                                      : null,
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                _buildField(
+                                  'Wasifu wa Kitaaluma',
+                                  _bioController,
+                                  hint: 'Elezea ujuzi wako na uzoefu...',
+                                  icon: Icons.person_outline,
+                                  maxLines: 4,
+                                  validator: (v) => v == null || v.isEmpty
+                                      ? 'Weka wasifu wako'
+                                      : null,
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                _buildField(
+                                  'Uzoefu wa Kufundisha',
+                                  _experienceController,
+                                  hint:
+                                      'Je, umewahi kufundisha kabla? Elezea...',
+                                  icon: Icons.school_outlined,
+                                  maxLines: 3,
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                _sectionHeading(
+                                  'Motisha ya Kufundisha',
+                                  'Tueleze kwa nini unaona ni muhimu kufundisha Karakana.',
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                _buildField(
+                                  'Kwa Nini Unataka Kufundisha?',
+                                  _whyController,
+                                  hint: 'Shiriki sababu yako...',
+                                  icon: Icons.auto_awesome_outlined,
+                                  maxLines: 3,
+                                  validator: (v) => v == null || v.isEmpty
+                                      ? 'Weka sababu yako'
+                                      : null,
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                _buildField(
+                                  'Mada za Kufundisha',
+                                  _topicsController,
+                                  hint: 'Mfano: Ujasiriamali, Fedha, Uongozi',
+                                  icon: Icons.topic_outlined,
+                                  validator: (v) => v == null || v.isEmpty
+                                      ? 'Weka mada zako'
+                                      : null,
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                _buildField(
+                                  'Nchi Unayoishi',
+                                  _countryController,
+                                  hint: 'Mfano: Tanzania, Kenya, Uganda',
+                                  icon: Icons.public_outlined,
+                                  validator: (v) => v == null || v.isEmpty
+                                      ? 'Weka nchi unayoishi'
+                                      : null,
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                _sectionHeading(
+                                  'CV / Portfolio',
+                                  'Pakia PDF ili timu iweze kuona historia yako ya kitaaluma.',
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                GestureDetector(
+                                  onTap: _isPickingFile ? null : _pickCV,
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    padding: AppSpacing.cardPadding,
+                                    decoration: BoxDecoration(
+                                      gradient: _cvFile != null
+                                          ? const LinearGradient(
+                                              colors: [
+                                                Color(0xFFFBF2E8),
+                                                Color(0xFFFFF8F4),
+                                              ],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                            )
+                                          : null,
                                       color:
-                                          Colors.white.withValues(alpha: 0.85),
-                                      height: 1.4,
+                                          _cvFile == null ? Colors.white : null,
+                                      borderRadius:
+                                          BorderRadius.circular(AppRadius.card),
+                                      border: Border.all(
+                                        color: _cvFile != null
+                                            ? const Color(0xFFE87722)
+                                            : const Color(0xFFE8D5C8),
+                                        width: _cvFile != null ? 1.5 : 1,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.04,
+                                          ),
+                                          blurRadius: 16,
+                                          offset: const Offset(0, 8),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 52,
+                                          height: 52,
+                                          decoration: BoxDecoration(
+                                            color: _cvFile != null
+                                                ? const Color(0xFFE87722)
+                                                    .withValues(alpha: 0.12)
+                                                : const Color(0xFFF3E7DC),
+                                            borderRadius: BorderRadius.circular(
+                                              AppSpacing.sm + AppSpacing.xs,
+                                            ),
+                                          ),
+                                          child: _isPickingFile
+                                              ? const Center(
+                                                  child: SizedBox(
+                                                    width: 20,
+                                                    height: 20,
+                                                    child: KarakanaWaveLoader(
+                                                      strokeWidth: 2,
+                                                      color: Color(0xFFE87722),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Icon(
+                                                  _cvFile != null
+                                                      ? Icons
+                                                          .check_circle_outline
+                                                      : Icons
+                                                          .upload_file_outlined,
+                                                  color: _cvFile != null
+                                                      ? const Color(0xFFE87722)
+                                                      : const Color(0xFF7B3A10),
+                                                  size: 26,
+                                                ),
+                                        ),
+                                        const SizedBox(width: 14),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                _cvFile != null
+                                                    ? (_cvFileName ??
+                                                        'Faili limechaguliwa')
+                                                    : 'Pakia CV / Portfolio',
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: AppTextStyles
+                                                      .bodyMedium.fontSize,
+                                                  fontWeight: FontWeight.w700,
+                                                  color:
+                                                      const Color(0xFF1A0A00),
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                height: AppSpacing.xs / 2,
+                                              ),
+                                              Text(
+                                                _cvFile != null
+                                                    ? 'Bonyeza kubadilisha faili'
+                                                    : 'PDF pekee. Ukipakia hapa, timu itaona haraka taarifa zako.',
+                                                style: GoogleFonts.montserrat(
+                                                  fontSize: AppTextStyles
+                                                      .caption.fontSize,
+                                                  color: AppColors.textTertiary,
+                                                  height: 1.35,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        if (_cvFile != null)
+                                          GestureDetector(
+                                            onTap: () => setState(() {
+                                              _cvFile = null;
+                                              _cvFileName = null;
+                                            }),
+                                            child: Container(
+                                              width: 30,
+                                              height: 30,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(999),
+                                                border: Border.all(
+                                                  color: const Color(
+                                                    0xFFE8D5C8,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: const Icon(
+                                                Icons.close,
+                                                color: AppColors.textTertiary,
+                                                size: 18,
+                                              ),
+                                            ),
+                                          ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                            Icon(
-                              Icons.school,
-                              color: Colors.white.withValues(alpha: 0.3),
-                              size: 56,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xl - AppSpacing.xs),
-                      if (_profileData != null && !_isProfileComplete)
-                        _buildProfileGate()
-                      else if (_existingApplication != null)
-                        _buildStatusCard(_existingApplication!)
-                      else
-                        Form(
-                          key: _formKey,
-                          child: Column(
-                            children: [
-                              _buildField(
-                                'Cheo cha Kitaaluma',
-                                _titleController,
-                                hint: 'Mfano: Mjasiriamali, Mhasibu, Meneja',
-                                validator: (v) => v == null || v.isEmpty
-                                    ? 'Weka cheo chako'
-                                    : null,
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-                              _buildField(
-                                'Wasifu wa Kitaaluma',
-                                _bioController,
-                                hint: 'Elezea ujuzi wako na uzoefu...',
-                                maxLines: 4,
-                                validator: (v) => v == null || v.isEmpty
-                                    ? 'Weka wasifu wako'
-                                    : null,
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-                              _buildField(
-                                'Uzoefu wa Kufundisha',
-                                _experienceController,
-                                hint: 'Je, umewahi kufundisha kabla? Elezea...',
-                                maxLines: 3,
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-                              _buildField(
-                                'Kwa Nini Unataka Kufundisha?',
-                                _whyController,
-                                hint: 'Shiriki sababu yako...',
-                                maxLines: 3,
-                                validator: (v) => v == null || v.isEmpty
-                                    ? 'Weka sababu yako'
-                                    : null,
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-                              _buildField(
-                                'Mada za Kufundisha',
-                                _topicsController,
-                                hint: 'Mfano: Ujasiriamali, Fedha, Uongozi',
-                                validator: (v) => v == null || v.isEmpty
-                                    ? 'Weka mada zako'
-                                    : null,
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-                              _buildField(
-                                'Nchi Unayoishi *',
-                                _countryController,
-                                hint: 'Mfano: Tanzania, Kenya, Uganda',
-                                validator: (v) => v == null || v.isEmpty
-                                    ? 'Weka nchi unayoishi'
-                                    : null,
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-                              Text(
-                                'CV / Portfolio',
-                                style: AppTextStyles.labelLarge.copyWith(
-                                  color: AppColors.textPrimary,
                                 ),
-                              ),
-                              const SizedBox(height: AppSpacing.xs),
-                              Text(
-                                'Pakia CV yako kwa PDF ili tuweze kukutathmini vizuri zaidi.',
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textTertiary,
-                                ),
-                              ),
-                              const SizedBox(height: AppSpacing.sm),
-                              GestureDetector(
-                                onTap: _isPickingFile ? null : _pickCV,
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  padding: AppSpacing.cardPadding,
+                                const SizedBox(
+                                    height: AppSpacing.xl - AppSpacing.xs),
+                                Container(
+                                  padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
-                                    color: _cvFile != null
-                                        ? AppColors.successLight
-                                        : Colors.white,
-                                    borderRadius:
-                                        BorderRadius.circular(AppRadius.input),
+                                    color: theme.cardColor,
+                                    borderRadius: BorderRadius.circular(
+                                      AppRadius.cardLg,
+                                    ),
                                     border: Border.all(
-                                      color: _cvFile != null
-                                          ? AppColors.success
-                                          : AppColors.inputBorder,
-                                      width: _cvFile != null ? 1.5 : 1,
+                                      color: const Color(0xFFE8D5C8),
                                     ),
                                   ),
                                   child: Row(
@@ -333,128 +446,175 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                         width: 44,
                                         height: 44,
                                         decoration: BoxDecoration(
-                                          color: _cvFile != null
-                                              ? AppColors.success
-                                                  .withValues(alpha: 0.1)
-                                              : AppColors.primaryLight,
+                                          color: const Color(0xFFE87722)
+                                              .withValues(alpha: 0.12),
                                           borderRadius: BorderRadius.circular(
-                                              AppSpacing.sm + AppSpacing.xs),
-                                        ),
-                                        child: _isPickingFile
-                                            ? const Center(
-                                                child: SizedBox(
-                                                  width: 20,
-                                                  height: 20,
-                                                  child: KarakanaWaveLoader(
-                                                    strokeWidth: 2,
-                                                    color: AppColors.primary,
-                                                  ),
-                                                ),
-                                              )
-                                            : Icon(
-                                                _cvFile != null
-                                                    ? Icons.check_circle_outline
-                                                    : Icons
-                                                        .upload_file_outlined,
-                                                color: _cvFile != null
-                                                    ? AppColors.success
-                                                    : AppColors.primary,
-                                                size: 24,
-                                              ),
-                                      ),
-                                      const SizedBox(width: 14),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              _cvFile != null
-                                                  ? (_cvFileName ??
-                                                      'Faili limechaguliwa')
-                                                  : 'Pakia CV / Portfolio',
-                                              style: GoogleFonts.inter(
-                                                fontSize: AppTextStyles
-                                                    .bodyMedium.fontSize,
-                                                fontWeight: FontWeight.w600,
-                                                color: _cvFile != null
-                                                    ? AppColors.success
-                                                    : AppColors.textPrimary,
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                                height: AppSpacing.xs / 2),
-                                            Text(
-                                              _cvFile != null
-                                                  ? 'Bonyeza kubadilisha faili'
-                                                  : 'PDF pekee (max 5MB)',
-                                              style: GoogleFonts.inter(
-                                                fontSize: AppTextStyles
-                                                    .caption.fontSize,
-                                                color: AppColors.textTertiary,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      if (_cvFile != null)
-                                        GestureDetector(
-                                          onTap: () => setState(() {
-                                            _cvFile = null;
-                                            _cvFileName = null;
-                                          }),
-                                          child: const Icon(
-                                            Icons.close,
-                                            color: AppColors.textTertiary,
-                                            size: 18,
+                                            AppRadius.card,
                                           ),
                                         ),
+                                        child: const Icon(
+                                          Icons.privacy_tip_outlined,
+                                          color: Color(0xFFE87722),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Text(
+                                          'Taarifa zako zitapitiwa na timu ya Karakana kabla ya kuidhinishwa.',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: AppTextStyles
+                                                .bodySmall.fontSize,
+                                            color: AppColors.textSecondary,
+                                            height: 1.4,
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                              ),
-                              const SizedBox(
-                                  height: AppSpacing.xl - AppSpacing.xs),
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFE87722),
-                                    foregroundColor: Colors.white,
-                                    minimumSize:
-                                        const Size(double.infinity, 54),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(
-                                          AppRadius.button),
-                                    ),
-                                  ),
-                                  onPressed:
-                                      _isSubmitting ? null : _submitApplication,
-                                  child: _isSubmitting
-                                      ? const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: KarakanaWaveLoader(
-                                            color: Colors.white,
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : Text(
-                                          'Tuma Ombi',
-                                          style: AppTextStyles.buttonLarge
-                                              .copyWith(
-                                            color: Colors.white,
-                                          ),
+                                const SizedBox(
+                                    height: AppSpacing.xl - AppSpacing.xs),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFFE87722),
+                                      foregroundColor: Colors.white,
+                                      minimumSize:
+                                          const Size(double.infinity, 56),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          AppRadius.button,
                                         ),
+                                      ),
+                                      elevation: 0,
+                                    ),
+                                    onPressed: _isSubmitting
+                                        ? null
+                                        : _submitApplication,
+                                    child: _isSubmitting
+                                        ? const SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: KarakanaWaveLoader(
+                                              color: Colors.white,
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                        : Text(
+                                            'Tuma Ombi',
+                                            style: AppTextStyles.buttonLarge
+                                                .copyWith(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      const SizedBox(height: AppSpacing.xl + AppSpacing.sm),
-                    ],
+                        const SizedBox(height: AppSpacing.xl + AppSpacing.sm),
+                      ],
+                    ),
                   ),
                 )),
+    );
+  }
+
+  Widget _buildHeroCard() {
+    return Container(
+      padding: AppSpacing.sectionPadding,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF1A0A00),
+            Color(0xFF3D1800),
+            Color(0xFF7B3A10),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(AppRadius.cardLg),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF3D1800).withValues(alpha: 0.22),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Shiriki ujuzi wako na uunde kipato kwa kufundisha wengine.',
+                      style: AppTextStyles.h3.copyWith(
+                        color: Colors.white,
+                        height: 1.25,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Jaza wasifu wako wa kitaaluma, pakia CV, na tuma ombi lako kwa timu ya Karakana.',
+                      style: GoogleFonts.montserrat(
+                        fontSize: AppTextStyles.bodyMedium.fontSize,
+                        color: Colors.white.withValues(alpha: 0.84),
+                        height: 1.45,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Icon(
+                  Icons.school_rounded,
+                  color: Colors.white,
+                  size: 34,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionHeading(String title, String subtitle) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: GoogleFonts.montserrat(
+            fontSize: 14,
+            fontWeight: FontWeight.w800,
+            color: const Color(0xFF3D1800),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          subtitle,
+          style: GoogleFonts.montserrat(
+            fontSize: 12,
+            color: const Color(0xFF7B3A10),
+            height: 1.4,
+          ),
+        ),
+      ],
     );
   }
 
@@ -474,20 +634,48 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
     return Container(
       padding: AppSpacing.sectionPadding,
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF0E6),
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFFF4EA), Color(0xFFFFFCF8)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(AppRadius.cardLg),
         border:
-            Border.all(color: const Color(0xFFE87722).withValues(alpha: 0.4)),
+            Border.all(color: const Color(0xFFE87722).withValues(alpha: 0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          const Icon(Icons.info_outline, color: Color(0xFFE87722), size: 20),
-          const SizedBox(width: 8),
-          Text('Kamili Wasifu Wako Kwanza',
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE87722).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(
+              Icons.info_outline,
+              color: Color(0xFFE87722),
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Kamili Wasifu Wako Kwanza',
               style: GoogleFonts.montserrat(
-                  fontSize: AppTextStyles.h4.fontSize,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF3D1800))),
+                fontSize: AppTextStyles.h4.fontSize,
+                fontWeight: FontWeight.w800,
+                color: const Color(0xFF3D1800),
+              ),
+            ),
+          ),
         ]),
         const SizedBox(height: AppSpacing.sm),
         Text(
@@ -530,11 +718,14 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                     fontSize: AppTextStyles.buttonMedium.fontSize,
                     fontWeight: FontWeight.w600)),
             style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE87722),
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AppRadius.button))),
+              backgroundColor: const Color(0xFFE87722),
+              foregroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 52),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.button),
+              ),
+              elevation: 0,
+            ),
           ),
         ),
       ]),
@@ -567,13 +758,35 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
     return Container(
       padding: AppSpacing.sectionPadding,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        gradient: LinearGradient(
+          colors: [
+            color.withValues(alpha: 0.11),
+            Colors.white,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(AppRadius.cardLg),
         border: Border.all(color: color, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          Icon(icon, color: color, size: 48),
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(icon, color: color, size: 36),
+          ),
           const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
           Text(
             title,
@@ -601,6 +814,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
   Widget _buildField(
     String label,
     TextEditingController controller, {
+    required IconData icon,
     String? hint,
     int maxLines = 1,
     String? Function(String?)? validator,
@@ -614,6 +828,10 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
         hintText: hint,
         filled: true,
         fillColor: Theme.of(context).cardColor,
+        prefixIcon: Icon(
+          icon,
+          color: const Color(0xFFE87722),
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.input),
           borderSide: const BorderSide(color: Color(0xFFE8D5C8)),

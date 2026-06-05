@@ -30,3 +30,8 @@
 - Trainer eBook analytics backend support added with buyers, purchases, and revenue fields.
 - Trainer eBook list and detail UI now displays analytics metrics for each eBook.
 - Trainer eBook PDF picker/upload manual verification completed successfully.
+- Firebase initialization and FCM startup manual iOS verification completed and passed.
+- Firebase cleanup for the legacy Android app entry/package typo completed yesterday.
+- Fursa page manual verification completed and passed.
+- Trainer application screen UI refresh on `/trainer/apply` completed and passed review.
+- Trainer application screen hero simplification and CV upload UX refresh completed and passed review.
