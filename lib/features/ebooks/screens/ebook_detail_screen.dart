@@ -62,33 +62,154 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Nunua eBook'),
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28),
+        ),
+        titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        contentPadding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+        actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        title: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE87722).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Icon(
+                Icons.account_balance_wallet_outlined,
+                color: Color(0xFFE87722),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Malipo ya eBook',
+                    style: AppTextStyles.h3.copyWith(
+                      color: const Color(0xFF1A0A00),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Weka namba ya simu na chagua mtandao wa malipo.',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: Colors.black54,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 12,
+              ),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFFF5ED), Color(0xFFFFE8D6)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.receipt_long_outlined,
+                    color: Color(0xFF7B3A10),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Malipo yatafungua PDF hii kwenye maktaba yako ya kidigitali.',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: const Color(0xFF7B3A10),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
             TextField(
               controller: phoneCtrl,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(labelText: 'Namba ya simu'),
+              decoration: InputDecoration(
+                labelText: 'Namba ya simu',
+                hintText: 'Mfano 07XXXXXXXX',
+                prefixIcon: const Icon(Icons.phone_android_outlined),
+                filled: true,
+                fillColor: const Color(0xFFF7F7F8),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide.none,
+                ),
+              ),
             ),
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.sm + 2),
             DropdownButtonFormField<String>(
               initialValue: provider,
               items: const ['Mpesa', 'Airtel', 'Tigo', 'Halopesa']
                   .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                   .toList(),
               onChanged: (v) => provider = v ?? 'Mpesa',
-              decoration: const InputDecoration(labelText: 'Mtandao'),
+              decoration: InputDecoration(
+                labelText: 'Mtandao',
+                prefixIcon: const Icon(Icons.sim_card_outlined),
+                filled: true,
+                fillColor: const Color(0xFFF7F7F8),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide.none,
+                ),
+              ),
             ),
           ],
         ),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Ghairi')),
-          FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Endelea')),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: const Text('Ghairi'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: const Text('Endelea'),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
