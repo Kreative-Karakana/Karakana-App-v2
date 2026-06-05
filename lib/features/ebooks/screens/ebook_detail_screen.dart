@@ -362,29 +362,14 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFFFF4EC),
-                              Color(0xFFFFE6D3),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
+                          color: const Color(0xFFF4F4F6),
                           borderRadius: BorderRadius.circular(18),
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color(0xFFE87722)
-                                  .withValues(alpha: 0.10),
-                              blurRadius: 14,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
                         ),
                         child: Text(
                           price <= 0 ? 'Bure' : 'TZS ${_currency.format(price)}',
                           textAlign: TextAlign.center,
                           style: AppTextStyles.h2.copyWith(
-                            color: const Color(0xFFE87722),
+                            color: const Color(0xFF1A1A1A),
                             fontWeight: FontWeight.w700,
                           ),
                         ),
