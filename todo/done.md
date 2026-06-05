@@ -21,3 +21,7 @@
 - Welcome screen code verification passed with `flutter analyze` and `flutter build apk --debug`.
 - T&C copyright and last-updated year changed to 2026.
 - T&C year update verified with `flutter analyze`.
+- Fursa backend content pipeline added through the communications app.
+- Django Admin can now create and manage Fursa items dynamically.
+- V2 Fursa page replaced with a content-driven student UI.
+- Fursa code verification passed with `flutter analyze` and `flutter build apk --debug`.

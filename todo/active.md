@@ -30,3 +30,8 @@
     `com.kreativekarakana.karakana`
   - Re-test Android Google Sign-In after Firebase cleanup.
 - Android release build after final verified fixes.
+- Fursa page manual verification pending. Platform: Android and iOS. Priority: High.
+  Notes:
+  - V2 Fursa placeholder has been replaced with a content-driven page.
+  - Backend now exposes admin-managed Fursa items through communications.
+  - Seed records currently use the provided Instagram links with placeholder editorial copy because source captions/media could not be fetched automatically from this environment.

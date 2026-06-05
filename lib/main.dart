@@ -9,6 +9,7 @@ import 'features/auth/providers/auth_provider.dart';
 import 'features/notifications/providers/notification_provider.dart';
 import 'features/courses/providers/course_provider.dart';
 import 'features/ebooks/providers/ebook_provider.dart';
+import 'features/fursa/providers/fursa_provider.dart';
 import 'features/payments/providers/iap_provider.dart';
 import 'providers/theme_provider.dart';
 
@@ -142,6 +143,7 @@ class _KarakanaAppState extends State<KarakanaApp> {
             ChangeNotifierProvider(create: (_) => CourseProvider()),
             ChangeNotifierProvider(create: (_) => NotificationProvider()),
             ChangeNotifierProvider(create: (_) => EbookProvider()),
+            ChangeNotifierProvider(create: (_) => FursaProvider()),
             ChangeNotifierProvider(create: (_) => IAPProvider()),
             ChangeNotifierProvider(create: (_) => ThemeProvider()),
           ],
