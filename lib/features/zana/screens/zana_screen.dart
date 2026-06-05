@@ -23,7 +23,6 @@ class _ZanaScreenState extends State<ZanaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
@@ -311,61 +310,6 @@ class _ZanaScreenState extends State<ZanaScreen> {
                   );
                 },
                 childCount: ZanaData.tools.length,
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.add_circle_outline,
-                        color: Color(0xFFE87722),
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Zaidi Zinakuja!',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Tunaendelea kuongeza zana mpya. Shikilia!',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 12,
-                              color: const Color(0xFF9E8070),
-                              height: 1.4,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
               ),
             ),
           ),
