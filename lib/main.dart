@@ -15,19 +15,35 @@ import 'providers/theme_provider.dart';
 /// Must be a top-level function — called by FCM for background messages.
 @pragma('vm:entry-point')
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    debugPrint('[FCM] Background Firebase init skipped: $e');
+  }
 }
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  bool firebaseReady = false;
   try {
     await Firebase.initializeApp();
+    firebaseReady = true;
   } catch (e) {
-    debugPrint('Firebase already initialized: $e');
+    try {
+      Firebase.app();
+      firebaseReady = true;
+    } catch (_) {
+      debugPrint('[Firebase] Initialization failed: $e');
+    }
   }
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
+  if (firebaseReady) {
+    FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
+  } else {
+    debugPrint(
+        '[FCM] Background handler not registered because Firebase is unavailable.');
+  }
 
   final authProvider = AuthProvider();
   try {
@@ -36,12 +52,20 @@ Future<void> main() async {
     debugPrint('AuthProvider init error: $e');
   }
 
-  runApp(KarakanaApp(authProvider: authProvider));
+  runApp(KarakanaApp(
+    authProvider: authProvider,
+    firebaseReady: firebaseReady,
+  ));
 }
 
 class KarakanaApp extends StatefulWidget {
   final AuthProvider authProvider;
-  const KarakanaApp({super.key, required this.authProvider});
+  final bool firebaseReady;
+  const KarakanaApp({
+    super.key,
+    required this.authProvider,
+    required this.firebaseReady,
+  });
 
   @override
   State<KarakanaApp> createState() => _KarakanaAppState();
@@ -53,10 +77,21 @@ class _KarakanaAppState extends State<KarakanaApp> {
   @override
   void initState() {
     super.initState();
-    _initFCM();
+    if (widget.firebaseReady) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _initFCM());
+    } else {
+      debugPrint('[FCM] Startup setup skipped because Firebase is not ready.');
+    }
   }
 
   Future<void> _initFCM() async {
+    try {
+      Firebase.app();
+    } catch (e) {
+      debugPrint('[FCM] Startup setup skipped: no Firebase app available ($e)');
+      return;
+    }
+
     final messaging = FirebaseMessaging.instance;
     try {
       // Request permission after first frame so app startup is not blocked.

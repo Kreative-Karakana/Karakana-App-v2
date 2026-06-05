@@ -101,6 +101,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
         label: 'PDF',
         extensions: ['pdf'],
         mimeTypes: ['application/pdf'],
+        uniformTypeIdentifiers: ['com.adobe.pdf'],
       );
       final picked = await openFile(acceptedTypeGroups: [typeGroup]);
       if (picked != null && picked.path.isNotEmpty) {
@@ -207,13 +208,15 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                 children: [
                                   Text(
                                     'Kuwa Mkufunzi Karakana',
-                                    style: AppTextStyles.h3.copyWith(color: Colors.white),
+                                    style: AppTextStyles.h3
+                                        .copyWith(color: Colors.white),
                                   ),
                                   const SizedBox(height: AppSpacing.sm),
                                   Text(
                                     'Shiriki ujuzi wako na upate kipato kwa kufundisha wengine.',
                                     style: AppTextStyles.bodyMedium.copyWith(
-                                      color: Colors.white.withValues(alpha: 0.85),
+                                      color:
+                                          Colors.white.withValues(alpha: 0.85),
                                       height: 1.4,
                                     ),
                                   ),
@@ -315,7 +318,8 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                     color: _cvFile != null
                                         ? AppColors.successLight
                                         : Colors.white,
-                                    borderRadius: BorderRadius.circular(AppRadius.input),
+                                    borderRadius:
+                                        BorderRadius.circular(AppRadius.input),
                                     border: Border.all(
                                       color: _cvFile != null
                                           ? AppColors.success
@@ -333,8 +337,8 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                               ? AppColors.success
                                                   .withValues(alpha: 0.1)
                                               : AppColors.primaryLight,
-                                          borderRadius:
-                                              BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
+                                          borderRadius: BorderRadius.circular(
+                                              AppSpacing.sm + AppSpacing.xs),
                                         ),
                                         child: _isPickingFile
                                             ? const Center(
@@ -370,20 +374,23 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                                       'Faili limechaguliwa')
                                                   : 'Pakia CV / Portfolio',
                                               style: GoogleFonts.inter(
-                                                fontSize: AppTextStyles.bodyMedium.fontSize,
+                                                fontSize: AppTextStyles
+                                                    .bodyMedium.fontSize,
                                                 fontWeight: FontWeight.w600,
                                                 color: _cvFile != null
                                                     ? AppColors.success
                                                     : AppColors.textPrimary,
                                               ),
                                             ),
-                                            const SizedBox(height: AppSpacing.xs / 2),
+                                            const SizedBox(
+                                                height: AppSpacing.xs / 2),
                                             Text(
                                               _cvFile != null
                                                   ? 'Bonyeza kubadilisha faili'
                                                   : 'PDF pekee (max 5MB)',
                                               style: GoogleFonts.inter(
-                                                fontSize: AppTextStyles.caption.fontSize,
+                                                fontSize: AppTextStyles
+                                                    .caption.fontSize,
                                                 color: AppColors.textTertiary,
                                               ),
                                             ),
@@ -406,7 +413,8 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: AppSpacing.xl - AppSpacing.xs),
+                              const SizedBox(
+                                  height: AppSpacing.xl - AppSpacing.xs),
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
@@ -416,7 +424,8 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                     minimumSize:
                                         const Size(double.infinity, 54),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(AppRadius.button),
+                                      borderRadius: BorderRadius.circular(
+                                          AppRadius.button),
                                     ),
                                   ),
                                   onPressed:
@@ -432,7 +441,8 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                         )
                                       : Text(
                                           'Tuma Ombi',
-                                          style: AppTextStyles.buttonLarge.copyWith(
+                                          style: AppTextStyles.buttonLarge
+                                              .copyWith(
                                             color: Colors.white,
                                           ),
                                         ),
@@ -483,10 +493,13 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
         Text(
             'Kabla ya kuomba kuwa Mkufunzi, hakikisha wasifu wako umekamilika:',
             style: GoogleFonts.montserrat(
-                fontSize: AppTextStyles.bodyMedium.fontSize, color: const Color(0xFF7B3A10), height: 1.4)),
+                fontSize: AppTextStyles.bodyMedium.fontSize,
+                color: const Color(0xFF7B3A10),
+                height: 1.4)),
         const SizedBox(height: AppSpacing.md),
         ...checks.map((check) => Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.sm + AppSpacing.xs / 2),
+              padding: const EdgeInsets.only(
+                  bottom: AppSpacing.sm + AppSpacing.xs / 2),
               child: Row(children: [
                 Icon(
                   check.$2 ? Icons.check_circle : Icons.radio_button_unchecked,
@@ -514,7 +527,8 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
             icon: const Icon(Icons.edit_outlined, size: 18),
             label: Text('Kamili Wasifu Wako',
                 style: GoogleFonts.montserrat(
-                    fontSize: AppTextStyles.buttonMedium.fontSize, fontWeight: FontWeight.w600)),
+                    fontSize: AppTextStyles.buttonMedium.fontSize,
+                    fontWeight: FontWeight.w600)),
             style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFE87722),
                 foregroundColor: Colors.white,

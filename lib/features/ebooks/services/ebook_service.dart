@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'dart:typed_data';
 import 'dart:convert';
 
 import '../../../core/network/api_client.dart';
@@ -84,14 +85,18 @@ class EbookService {
     required String description,
     required String price,
     required String coverImagePath,
-    required String epubFilePath,
+    required Uint8List ebookFileBytes,
+    required String ebookFileName,
   }) async {
     final form = FormData.fromMap({
       'title': title,
       'description': description,
       'price': price,
       'cover_image': await MultipartFile.fromFile(coverImagePath),
-      'epub_file': await MultipartFile.fromFile(epubFilePath),
+      'epub_file': MultipartFile.fromBytes(
+        ebookFileBytes,
+        filename: ebookFileName,
+      ),
       'status': 'published',
     });
     final res = await _dio.post('/api/v1/ebooks/', data: form);

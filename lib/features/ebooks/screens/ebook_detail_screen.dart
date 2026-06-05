@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,7 +20,13 @@ class EbookDetailScreen extends StatefulWidget {
 }
 
 class _EbookDetailScreenState extends State<EbookDetailScreen> {
+  static const _headerGradient = [
+    Color(0xFF1A0A00),
+    Color(0xFF3D1800),
+    Color(0xFF7B3A10),
+  ];
   final _service = EbookService();
+  final _currency = NumberFormat('#,###');
   Map<String, dynamic>? _detail;
   bool _loading = true;
   bool _processing = false;
@@ -158,50 +165,228 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
     final price = (d['price'] as num?)?.toInt() ?? 0;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Maelezo ya Kitabu')),
+      backgroundColor: const Color(0xFFFFF8F2),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: _headerGradient,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.picture_as_pdf_outlined,
+                color: Colors.white, size: 18),
+            const SizedBox(width: 8),
+            Text(
+              'Maelezo ya eBook',
+              style: AppTextStyles.h3.copyWith(color: Colors.white),
+            ),
+          ],
+        ),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: ListView(
-          padding: AppSpacing.cardPadding,
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
           children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: d['cover_image'] != null
-                  ? Image.network(d['cover_image'].toString(),
-                      fit: BoxFit.cover)
-                  : Container(
-                      color: const Color(0xFFF5E6D8),
-                      child: const Icon(Icons.menu_book_outlined, size: 48)),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF3D1800).withValues(alpha: 0.08),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 5,
+                    child: AspectRatio(
+                      aspectRatio: 0.74,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(18),
+                        child: d['cover_image'] != null
+                            ? Image.network(
+                                d['cover_image'].toString(),
+                                fit: BoxFit.cover,
+                              )
+                            : Container(
+                                color: const Color(0xFFF5E6D8),
+                                child: const Icon(
+                                  Icons.menu_book_outlined,
+                                  size: 48,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    flex: 4,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 7,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE87722)
+                                  .withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.picture_as_pdf_outlined,
+                                  size: 16,
+                                  color: Color(0xFFE87722),
+                                ),
+                                SizedBox(width: 6),
+                                Text(
+                                  'PDF',
+                                  style: TextStyle(
+                                    color: Color(0xFFE87722),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 18),
+                          Text(
+                            'Bei',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: Colors.black54,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            price <= 0
+                                ? 'Bure'
+                                : 'TZS ${_currency.format(price)}',
+                            textAlign: TextAlign.right,
+                            style: AppTextStyles.price.copyWith(
+                              fontSize: 24,
+                              color: const Color(0xFFE87722),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFFFFF4EC),
+                                  Color(0xFFFFE8D6),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: const Color(0xFFE87722)
+                                    .withValues(alpha: 0.18),
+                              ),
+                            ),
+                            child: const Row(
+                              children: [
+                                Icon(
+                                  Icons.download_for_offline_outlined,
+                                  size: 16,
+                                  color: Color(0xFF7B3A10),
+                                ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Pakua baada ya ununuzi',
+                                    style: TextStyle(
+                                      color: Color(0xFF7B3A10),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
-            Text((d['title'] ?? '').toString(), style: AppTextStyles.h1),
-            const SizedBox(height: AppSpacing.sm),
-            Text((d['author_name'] ?? '').toString(),
-                style: AppTextStyles.bodyMedium),
-            const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
-            Text((d['description'] ?? '').toString(),
-                style: AppTextStyles.bodyMedium),
-            const SizedBox(height: AppSpacing.md + AppSpacing.xs / 2),
-            Text(price <= 0 ? 'Bure' : 'TZS $price',
-                style: AppTextStyles.price),
-            const SizedBox(height: AppSpacing.md - AppSpacing.xs / 2),
-            FilledButton(
-              onPressed: _processing
-                  ? null
-                  : () {
-                      if (isPurchased) {
-                        context.push(
-                          '/zana/ebooks/read/${widget.ebookId}',
-                          extra: {
-                            'ebookTitle': (d['title'] ?? 'eBook').toString()
-                          },
-                        );
-                      } else {
-                        _purchase();
-                      }
-                    },
-              child: _processing
-                  ? const KarakanaWaveLoader(color: Colors.white, size: 12)
-                  : Text(isPurchased ? 'Soma' : 'Nunua'),
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text((d['title'] ?? '').toString(), style: AppTextStyles.h1),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    (d['author_name'] ?? '').toString(),
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: Colors.black54,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    (d['description'] ?? '').toString(),
+                    style: AppTextStyles.bodyMedium,
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: _processing
+                          ? null
+                          : () {
+                              if (isPurchased) {
+                                context.push(
+                                  '/zana/ebooks/read/${widget.ebookId}',
+                                  extra: {
+                                    'ebookTitle':
+                                        (d['title'] ?? 'eBook').toString()
+                                  },
+                                );
+                              } else {
+                                _purchase();
+                              }
+                            },
+                      child: _processing
+                          ? const KarakanaWaveLoader(
+                              color: Colors.white,
+                              size: 12,
+                            )
+                          : Text(isPurchased ? 'Soma' : 'Nunua'),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

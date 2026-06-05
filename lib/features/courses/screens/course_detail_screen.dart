@@ -31,6 +31,7 @@ class CourseDetailScreen extends StatefulWidget {
 class _CourseDetailScreenState extends State<CourseDetailScreen> {
   bool _isEnrolling = false;
   bool _wishlistBusy = false;
+  IAPProvider? _iapProvider;
 
   @override
   void initState() {
@@ -48,19 +49,29 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       if (productId.isEmpty) return;
       await context.read<IAPProvider>().initializeForCourse(productId);
     });
+  }
 
-    context.read<IAPProvider>().addListener(_onIAPStateChange);
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final nextIapProvider = context.read<IAPProvider>();
+    if (!identical(_iapProvider, nextIapProvider)) {
+      _iapProvider?.removeListener(_onIAPStateChange);
+      _iapProvider = nextIapProvider;
+      _iapProvider?.addListener(_onIAPStateChange);
+    }
   }
 
   @override
   void dispose() {
-    context.read<IAPProvider>().removeListener(_onIAPStateChange);
+    _iapProvider?.removeListener(_onIAPStateChange);
     super.dispose();
   }
 
   void _onIAPStateChange() {
-    final iap = context.read<IAPProvider>();
     if (!mounted) return;
+    final iap = _iapProvider;
+    if (iap == null) return;
 
     if (iap.purchaseSuccess) {
       iap.reset();

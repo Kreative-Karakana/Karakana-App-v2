@@ -214,7 +214,10 @@ class AppRouter {
         // ── Main shell ───────────────────────────────────────────
         GoRoute(
           path: AppRoutes.home,
-          builder: (context, state) => const MainScreen(),
+          builder: (context, state) {
+            final tab = int.tryParse(state.uri.queryParameters['tab'] ?? '');
+            return MainScreen(initialIndex: tab ?? 0);
+          },
         ),
         GoRoute(
           path: AppRoutes.explore,

@@ -422,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
                     child: GestureDetector(
-                      onTap: () => context.push('/zana'),
+                      onTap: () => context.go('/home?tab=2'),
                       child: Container(
                         padding: const EdgeInsets.all(18),
                         decoration: BoxDecoration(

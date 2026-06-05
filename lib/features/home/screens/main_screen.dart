@@ -37,9 +37,23 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initialIndex < 0
-        ? 0
-        : (widget.initialIndex > 4 ? 4 : widget.initialIndex);
+    _currentIndex = _clampTabIndex(widget.initialIndex);
+  }
+
+  @override
+  void didUpdateWidget(covariant MainScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final nextIndex = _clampTabIndex(widget.initialIndex);
+    if (oldWidget.initialIndex != widget.initialIndex &&
+        _currentIndex != nextIndex) {
+      setState(() => _currentIndex = nextIndex);
+    }
+  }
+
+  int _clampTabIndex(int index) {
+    if (index < 0) return 0;
+    if (index > 4) return 4;
+    return index;
   }
 
   @override

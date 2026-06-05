@@ -28,14 +28,14 @@ class _TermsScreenState extends State<TermsScreen> {
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.sm + AppSpacing.xs),
+            padding:
+                const EdgeInsets.only(right: AppSpacing.sm + AppSpacing.xs),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: _lang,
                 dropdownColor: const Color(0xFF3D1800),
                 icon: const Icon(Icons.language, color: Colors.white, size: 18),
-                style:
-                    AppTextStyles.bodyMedium.copyWith(color: Colors.white),
+                style: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
                 items: const [
                   DropdownMenuItem(value: 'sw', child: Text('Kiswahili')),
                   DropdownMenuItem(value: 'en', child: Text('English')),
@@ -61,18 +61,20 @@ class _TermsScreenState extends State<TermsScreen> {
                   Text(
                     isSw ? 'Masharti na Vigezo' : 'Terms and Conditions',
                     textAlign: TextAlign.center,
-                    style: AppTextStyles.h1.copyWith(color: const Color(0xFF1A0A00)),
+                    style: AppTextStyles.h1
+                        .copyWith(color: const Color(0xFF1A0A00)),
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
                     'Kreative Karakana',
-                    style: AppTextStyles.h4.copyWith(color: const Color(0xFFE87722)),
+                    style: AppTextStyles.h4
+                        .copyWith(color: const Color(0xFFE87722)),
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
                     isSw
-                        ? 'Ilisasishwa: 12 Agosti 2025'
-                        : 'Last Updated: 12 August 2025',
+                        ? 'Ilisasishwa: 12 Agosti 2026'
+                        : 'Last Updated: 12 August 2026',
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: const Color(0xFF9E8070),
                     ),
@@ -197,7 +199,8 @@ class _TermsScreenState extends State<TermsScreen> {
               padding: AppSpacing.cardPadding,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
+                borderRadius:
+                    BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
                 border: Border.all(color: const Color(0xFFE8D5C8)),
               ),
               child: Column(
@@ -221,7 +224,7 @@ class _TermsScreenState extends State<TermsScreen> {
             const SizedBox(height: AppSpacing.md),
             Center(
               child: Text(
-                '©️ 2025 Kreative Karakana. All Rights Reserved.',
+                '©️ 2026 Kreative Karakana. All Rights Reserved.',
                 textAlign: TextAlign.center,
                 style: AppTextStyles.bodySmall.copyWith(
                   color: const Color(0xFF9E8070),
@@ -268,5 +271,3 @@ class _TermsScreenState extends State<TermsScreen> {
     );
   }
 }
-
-

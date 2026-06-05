@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/network/api_client.dart';
 import '../services/ebook_service.dart';
@@ -18,6 +20,27 @@ class AddEditEbookScreen extends StatefulWidget {
   State<AddEditEbookScreen> createState() => _AddEditEbookScreenState();
 }
 
+class _ThousandsSeparatorInputFormatter extends TextInputFormatter {
+  static final NumberFormat _formatter = NumberFormat.decimalPattern('en_US');
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final digitsOnly = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digitsOnly.isEmpty) {
+      return const TextEditingValue(text: '');
+    }
+
+    final formatted = _formatter.format(int.parse(digitsOnly));
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
+}
+
 class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
   final _service = EbookService();
   final _formKey = GlobalKey<FormState>();
@@ -26,12 +49,13 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
   final _price = TextEditingController();
 
   String? _coverPath;
-  String? _epubPath;
+  Uint8List? _ebookBytes;
   String? _coverName;
-  String? _epubName;
+  String? _ebookName;
   bool _saving = false;
 
   bool get _isEdit => widget.ebookId != null;
+  String get _normalizedPrice => _price.text.replaceAll(',', '').trim();
 
   Future<void> _pickCover() async {
     final x = await ImagePicker().pickImage(
@@ -45,35 +69,77 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
     });
   }
 
-  Future<void> _pickEpub() async {
-    final file = await openFile(
-      acceptedTypeGroups: [
-        const XTypeGroup(
-          label: 'eBook files',
-          extensions: ['epub', 'pdf'],
-          mimeTypes: [
-            'application/epub+zip',
-            'application/pdf',
-            'application/octet-stream',
-            '*/*',
-          ],
+  Future<void> _pickPdf() async {
+    try {
+      const typeGroup = XTypeGroup(
+        label: 'PDF',
+        extensions: ['pdf'],
+        mimeTypes: ['application/pdf'],
+        uniformTypeIdentifiers: ['com.adobe.pdf'],
+      );
+      final file = await openFile(acceptedTypeGroups: [typeGroup]);
+      if (file == null) return;
+      final fileName = file.name;
+      if (!fileName.toLowerCase().endsWith('.pdf')) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Tafadhali chagua faili la PDF pekee.',
+              style: GoogleFonts.montserrat(),
+            ),
+            backgroundColor: const Color(0xFFB71C1C),
+          ),
+        );
+        return;
+      }
+      Uint8List bytes;
+      try {
+        bytes = await file.readAsBytes();
+      } catch (_) {
+        if (file.path.isEmpty) rethrow;
+        bytes = await File(file.path).readAsBytes();
+      }
+      if (bytes.isEmpty) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Faili lililochaguliwa haliwezi kusomwa. Jaribu tena.',
+              style: GoogleFonts.montserrat(),
+            ),
+            backgroundColor: const Color(0xFFB71C1C),
+          ),
+        );
+        return;
+      }
+      setState(() {
+        _ebookBytes = bytes;
+        _ebookName = fileName;
+      });
+    } catch (e) {
+      debugPrint('[eBook PDF] Picker failed: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Hitilafu ya kuchagua PDF. Jaribu tena.',
+            style: GoogleFonts.montserrat(),
+          ),
+          backgroundColor: const Color(0xFFB71C1C),
         ),
-      ],
-    );
-    if (file == null) return;
-    setState(() {
-      _epubPath = file.path;
-      _epubName = file.name;
-    });
+      );
+    }
   }
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    if (!_isEdit && (_coverPath == null || _epubPath == null)) {
+    if (!_isEdit &&
+        (_coverPath == null || _ebookBytes == null || _ebookName == null)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Picha ya jalada na faili la eBook vinahitajika.',
+            'Picha ya jalada na faili la PDF vinahitajika.',
             style: GoogleFonts.montserrat(),
           ),
           backgroundColor: const Color(0xFFB71C1C),
@@ -90,16 +156,17 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
           data: {
             'title': _title.text.trim(),
             'description': _description.text.trim(),
-            'price': _price.text.trim(),
+            'price': _normalizedPrice,
           },
         );
       } else {
         await _service.createEbook(
           title: _title.text.trim(),
           description: _description.text.trim(),
-          price: _price.text.trim(),
+          price: _normalizedPrice,
           coverImagePath: _coverPath ?? '',
-          epubFilePath: _epubPath ?? '',
+          ebookFileBytes: _ebookBytes!,
+          ebookFileName: _ebookName!,
         );
       }
 
@@ -417,6 +484,10 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
                   TextFormField(
                     controller: _price,
                     keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      _ThousandsSeparatorInputFormatter(),
+                    ],
                     style: GoogleFonts.montserrat(
                       fontSize: 14,
                       color: const Color(0xFF1A0A00),
@@ -424,10 +495,11 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
                     decoration:
                         _inputDecoration('Bei (TZS)', Icons.sell_outlined),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty) {
+                      final normalized = (v ?? '').replaceAll(',', '').trim();
+                      if (normalized.isEmpty) {
                         return 'Bei inahitajika';
                       }
-                      final p = int.tryParse(v.trim());
+                      final p = int.tryParse(normalized);
                       if (p == null || p < 0) {
                         return 'Ingiza nambari sahihi';
                       }
@@ -461,11 +533,11 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
                   ),
                   const SizedBox(height: 12),
                   _buildFilePicker(
-                    label: 'Faili la EPUB / PDF',
-                    hint: 'Bonyeza kuchagua faili la eBook',
+                    label: 'Faili la PDF',
+                    hint: 'Bonyeza kuchagua faili la PDF',
                     icon: Icons.file_open_outlined,
-                    selectedName: _epubName,
-                    onTap: _pickEpub,
+                    selectedName: _ebookName,
+                    onTap: _pickPdf,
                   ),
                 ],
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_spacing.dart';
@@ -15,6 +16,13 @@ class EbookStoreScreen extends StatefulWidget {
 }
 
 class _EbookStoreScreenState extends State<EbookStoreScreen> {
+  static const _headerGradient = [
+    Color(0xFF1A0A00),
+    Color(0xFF3D1800),
+    Color(0xFF7B3A10),
+  ];
+  final _currency = NumberFormat('#,###');
+
   @override
   void initState() {
     super.initState();
@@ -34,7 +42,7 @@ class _EbookStoreScreenState extends State<EbookStoreScreen> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF3D1800), Color(0xFF7B3A10), Color(0xFFE87722)],
+              colors: _headerGradient,
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -116,10 +124,12 @@ class _EbookStoreScreenState extends State<EbookStoreScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 style: AppTextStyles.bodyMedium),
                             const SizedBox(height: AppSpacing.xs),
-                            Text(ebook.isFree
-                                ? 'Bure'
-                                : 'TZS ${ebook.priceInTzs}',
-                                style: AppTextStyles.bodyMedium),
+                            Text(
+                              ebook.isFree
+                                  ? 'Bure'
+                                  : 'TZS ${_currency.format(ebook.priceInTzs)}',
+                              style: AppTextStyles.bodyMedium,
+                            ),
                             const SizedBox(height: AppSpacing.sm),
                             SizedBox(
                               width: double.infinity,
