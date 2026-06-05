@@ -16,7 +16,9 @@ class FursaScreen extends StatefulWidget {
 }
 
 class _FursaScreenState extends State<FursaScreen> {
+  static const double _expandedHeight = 170;
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   String _query = '';
   String _selectedCategory = 'Yote';
 
@@ -31,6 +33,7 @@ class _FursaScreenState extends State<FursaScreen> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _searchController
       ..removeListener(_onSearchChanged)
       ..dispose();
@@ -68,7 +71,7 @@ class _FursaScreenState extends State<FursaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F4EF),
+      backgroundColor: const Color(0xFFF7F2ED),
       body: SafeArea(
         top: false,
         child: Consumer<FursaProvider>(
@@ -85,75 +88,175 @@ class _FursaScreenState extends State<FursaScreen> {
             return RefreshIndicator(
               onRefresh: provider.loadItems,
               child: CustomScrollView(
+                controller: _scrollController,
                 physics: const BouncingScrollPhysics(),
                 slivers: [
-                  SliverToBoxAdapter(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color(0xFFF4F0E8),
-                            Color(0xFFF7F5F0),
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
-                      ),
-                      padding: const EdgeInsets.fromLTRB(20, 56, 20, 18),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
+                  SliverAppBar(
+                    expandedHeight: _expandedHeight,
+                    pinned: true,
+                    backgroundColor: const Color(0xFF3D1800),
+                    title: AnimatedBuilder(
+                      animation: _scrollController,
+                      builder: (context, _) {
+                        final show = _scrollController.hasClients &&
+                            _scrollController.offset >
+                                (_expandedHeight - kToolbarHeight);
+                        return AnimatedOpacity(
+                          opacity: show ? 1.0 : 0.0,
+                          duration: const Duration(milliseconds: 200),
+                          child: Text(
                             'Fursa',
-                            style: AppTextStyles.displayMedium.copyWith(
-                              color: const Color(0xFF1E1E1E),
-                              fontSize: 30,
+                            style: AppTextStyles.h3.copyWith(
+                              color: Colors.white,
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Fuatilia nafasi, matangazo, na maudhui ya nje yanayoweza kukuza biashara yako.',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              color: const Color(0xFF707070),
-                            ),
+                        );
+                      },
+                    ),
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Color(0xFF1A0A00),
+                              Color(0xFF3D1800),
+                              Color(0xFF7B3A10),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          const SizedBox(height: 18),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(18),
-                                  ),
-                                  child: TextField(
-                                    controller: _searchController,
-                                    decoration: const InputDecoration(
-                                      hintText: 'Tafuta fursa...',
-                                      prefixIcon: Icon(Icons.search),
-                                      border: InputBorder.none,
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 16,
+                        ),
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              top: -40,
+                              right: -40,
+                              child: Container(
+                                width: 200,
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white.withValues(alpha: 0.04),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: -30,
+                              left: -30,
+                              child: Container(
+                                width: 140,
+                                height: 140,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: const Color(0xFFE87722)
+                                      .withValues(alpha: 0.18),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 28,
+                              right: 18,
+                              child: Icon(
+                                Icons.campaign_outlined,
+                                size: 108,
+                                color: Colors.white.withValues(alpha: 0.05),
+                              ),
+                            ),
+                            SafeArea(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFE87722),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Text(
+                                        'FURSA',
+                                        style: AppTextStyles.labelSmall.copyWith(
+                                          color: Colors.white,
+                                          letterSpacing: 1.2,
+                                        ),
                                       ),
                                     ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      'Fursa',
+                                      style: AppTextStyles.displayMedium.copyWith(
+                                        color: Colors.white,
+                                        fontSize: 34,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      'Nafasi, matangazo, na maudhui ya nje yanayoweza kukuza biashara yako.',
+                                      style: AppTextStyles.bodyMedium.copyWith(
+                                        color: Colors.white
+                                            .withValues(alpha: 0.78),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 14, 20, 10),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(18),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF1A0A00)
+                                        .withValues(alpha: 0.04),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: TextField(
+                                controller: _searchController,
+                                decoration: const InputDecoration(
+                                  hintText: 'Tafuta fursa...',
+                                  prefixIcon: Icon(Icons.search),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              Container(
-                                width: 56,
-                                height: 56,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF5A641E),
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                child: const Icon(
-                                  Icons.tune,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE87722),
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: const Icon(
+                              Icons.tune,
+                              color: Colors.white,
+                            ),
                           ),
                         ],
                       ),
@@ -181,7 +284,7 @@ class _FursaScreenState extends State<FursaScreen> {
                                   ? Colors.white
                                   : const Color(0xFF3A3A3A),
                             ),
-                            selectedColor: const Color(0xFF5A641E),
+                            selectedColor: const Color(0xFFE87722),
                             backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18),
@@ -214,11 +317,11 @@ class _FursaScreenState extends State<FursaScreen> {
                   else ...[
                     if (featuredItems.isNotEmpty)
                       SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 6, 20, 8),
-                          child: _FeaturedFursaCard(
-                            item: featuredItems.first,
-                            onTap: () => _openItem(featuredItems.first),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 6, 20, 8),
+                      child: _FeaturedFursaCard(
+                        item: featuredItems.first,
+                        onTap: () => _openItem(featuredItems.first),
                           ),
                         ),
                       ),
@@ -395,8 +498,8 @@ class _FeaturedFursaCard extends StatelessWidget {
                   FilledButton(
                     onPressed: onTap,
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFFD7F200),
-                      foregroundColor: const Color(0xFF222222),
+                      backgroundColor: const Color(0xFFE87722),
+                      foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(999),
                       ),
@@ -467,10 +570,10 @@ class _FursaListCard extends StatelessWidget {
                               color: const Color(0xFFF0EEE8),
                               borderRadius: BorderRadius.circular(999),
                             ),
-                            child: Text(
+                              child: Text(
                               item.badgeText,
                               style: AppTextStyles.labelSmall.copyWith(
-                                color: const Color(0xFF5A641E),
+                                color: const Color(0xFFE87722),
                               ),
                             ),
                           ),
@@ -479,7 +582,7 @@ class _FursaListCard extends StatelessWidget {
                           Text(
                             item.amountText,
                             style: AppTextStyles.h4.copyWith(
-                              color: const Color(0xFF5A641E),
+                              color: const Color(0xFFE87722),
                             ),
                           ),
                         ],
@@ -554,7 +657,7 @@ class _FursaPlaceholder extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF5A641E), Color(0xFF828F2B)],
+          colors: [Color(0xFF3D1800), Color(0xFF7B3A10)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
