@@ -35,3 +35,14 @@
 - Fursa page manual verification completed and passed.
 - Trainer application screen UI refresh on `/trainer/apply` completed and passed review.
 - Trainer application screen hero simplification and CV upload UX refresh completed and passed review.
+- Trainer dashboard home redesign completed and passed analysis.
+- Trainer dashboard header simplified into a slim top bar with the hero card moved below it.
+- Trainer dashboard header and hero blended into a single top area, with the top bar appearing only after scrolling.
+- Trainer dashboard hero card height trimmed and expanded sliver height increased to prevent bottom overflow on smaller devices.
+- Trainer dashboard hero now switches to a compact mode while scrolling so it no longer overflows on smaller devices.
+- Trainer dashboard compact hero now drops the badge and tagline while collapsed to avoid overflow on smaller devices.
+- Trainer dashboard compact hero now uses a single-line row in the collapsed state to eliminate the last overflow on smaller devices.
+- Firebase initialization now uses explicit Android and iOS options, and the trainer dashboard hero has been simplified to avoid bottom overflow.
+- Trainer dashboard home page cleaned up to remove the course review card and restyle the four quick menus with a more polished industry-style treatment.
+- Trainer dashboard collapsed header now switches immediately to the Karakana logo/title bar instead of the greeting text.
+- Trainer dashboard collapsed state now shows only the Karakana app-bar brand row on scroll, with the duplicate greeting removed.

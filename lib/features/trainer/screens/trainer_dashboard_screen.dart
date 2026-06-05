@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +27,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   late TabController _tabController;
   List _courses = [];
   bool _isLoading = true;
-  bool _balanceVisible = true;
   bool _showCoursesBackToTop = false;
   // ignore: unused_field
   Map _wallet = {};
@@ -42,7 +40,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   };
 
   List _certs = [];
-
   @override
   void initState() {
     super.initState();
@@ -137,105 +134,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     }
   }
 
-  Future<void> _openTrainerReviews() async {
-    if (_courses.isEmpty) {
-      showTopPopup(context, 'Bado huna kozi za kuonyesha tathmini.');
-      return;
-    }
-    if (_courses.length == 1) {
-      final courseId = (_courses.first as Map)['id'] as int? ?? 0;
-      if (courseId > 0) {
-        context.push('/course/$courseId/reviews');
-      }
-      return;
-    }
-
-    final selectedCourseId = await showModalBottomSheet<int>(
-      context: context,
-      backgroundColor: Theme.of(context).cardColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 10),
-              Container(
-                width: 42,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE8D5C8),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 14),
-              Text(
-                'Chagua Kozi ya Tathmini',
-                style: GoogleFonts.montserrat(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: const Color(0xFF3D1800),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Flexible(
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: _courses.length,
-                  separatorBuilder: (_, __) =>
-                      const Divider(height: 1, color: Color(0xFFF0E4DA)),
-                  itemBuilder: (_, i) {
-                    final course = _courses[i] as Map;
-                    final courseId = course['id'] as int? ?? 0;
-                    final title = course['title'] as String? ?? 'Kozi';
-                    final reviews = course['review_count'] as int? ?? 0;
-                    final rating =
-                        (course['average_rating'] as num? ?? 0).toDouble();
-                    return ListTile(
-                      onTap: () => Navigator.pop(ctx, courseId),
-                      leading: const Icon(
-                        Icons.rate_review_outlined,
-                        color: Color(0xFFE87722),
-                      ),
-                      title: Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF3D1800),
-                        ),
-                      ),
-                      subtitle: Text(
-                        '$reviews tathmini • ${rating.toStringAsFixed(1)}★',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 11,
-                          color: const Color(0xFF7B3A10),
-                        ),
-                      ),
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        size: 14,
-                        color: Color(0xFFE87722),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-
-    if (!mounted || selectedCourseId == null || selectedCourseId <= 0) return;
-    context.push('/course/$selectedCourseId/reviews');
-  }
-
   String _formatNumber(dynamic n) {
     final num = int.tryParse(n.toString()) ?? 0;
     if (num >= 1000) return '${(num / 1000).toStringAsFixed(1)}K';
@@ -249,6 +147,38 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     } catch (_) {
       return 'TZS $p';
     }
+  }
+
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Habari za Asubuhi';
+    if (hour < 17) return 'Habari za Mchana';
+    if (hour < 21) return 'Habari za Jioni';
+    return 'Habari za Usiku';
+  }
+
+  IconData _getTimeIcon() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return Icons.light_mode_outlined;
+    if (hour < 17) return Icons.wb_sunny_outlined;
+    if (hour < 21) return Icons.wb_twilight_outlined;
+    return Icons.bedtime_outlined;
+  }
+
+  String _getTagline() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Siku nzuri ya kufundisha na kukua';
+    if (hour < 17) return 'Endelea kusukuma mafanikio yako leo';
+    if (hour < 21) return 'Angalia maendeleo ya kozi zako';
+    return 'Pitia takwimu zako kabla ya kesho';
+  }
+
+  String _getFirstName(AuthProvider auth) {
+    final fullName = auth.userFullName.trim();
+    if (fullName.isNotEmpty) return fullName.split(' ').first;
+    final email = auth.userEmail;
+    if (email.isNotEmpty) return email.split('@').first;
+    return 'Mwalimu';
   }
 
   Future<void> _deleteCourse(Map course) async {
@@ -561,7 +491,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         bottomNavigationBar: _buildTrainerNavBar(),
         body: NestedScrollView(
             headerSliverBuilder: (_, innerBoxIsScrolled) => [
-                  _buildHeroAppBar(innerBoxIsScrolled),
+                  _buildHeroAppBar(context, innerBoxIsScrolled),
                 ],
             body: _isLoading
                 ? const Center(
@@ -571,7 +501,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
                         _buildOverviewTab(
-                            bgColor, surfaceColor, textPrimary, textSecondary),
+                            surfaceColor, textPrimary, textSecondary),
                         _buildCoursesTab(
                             bgColor, surfaceColor, textPrimary, textSecondary),
                         _buildStudentsTab(
@@ -761,207 +691,276 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   // ── OVERVIEW TAB ──────────────────────────────────────────────────────────
 
-  Widget _buildOverviewTab(Color bgColor, Color surfaceColor, Color textPrimary,
-      Color textSecondary) {
+  Widget _buildOverviewTab(
+      Color surfaceColor, Color textPrimary, Color textSecondary) {
     return RefreshIndicator(
         color: const Color(0xFFE87722),
         onRefresh: () async => _loadAll(),
         child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 120),
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              // ── QUICK ACTIONS ──
-              Row(children: [
-                _buildQuickAction(Icons.school_outlined, 'Kozi',
-                    const Color(0xFFE87722), () => _tabController.animateTo(1)),
-                const SizedBox(width: 10),
-                _buildQuickAction(Icons.workspace_premium_outlined, 'Vyeti',
-                    const Color(0xFF7B3A10), () => _tabController.animateTo(3)),
-                const SizedBox(width: 10),
-                _buildQuickAction(Icons.person_outline_rounded, 'Akaunti',
-                    const Color(0xFF3D1800), () => _tabController.animateTo(4)),
-                const SizedBox(width: 10),
-                _buildQuickAction(
-                    Icons.account_balance_wallet_outlined,
-                    'Mkoba',
-                    const Color(0xFF7B3A10),
-                    () => context.push('/wallet')),
-              ]),
-              const SizedBox(height: 12),
-              GestureDetector(
-                onTap: _openTrainerReviews,
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFE87722).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color(0xFFE87722).withValues(alpha: 0.25),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.rate_review_outlined,
-                        color: Color(0xFFE87722),
-                        size: 18,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Tathmini za Kozi',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF7B3A10),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        'Fungua',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFFE87722),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      const Icon(
-                        Icons.arrow_forward_ios,
-                        size: 12,
-                        color: Color(0xFFE87722),
-                      ),
-                    ],
-                  ),
+              _buildQuickActionsRow(),
+              const SizedBox(height: 22),
+              Text(
+                'Takwimu za Jumla',
+                style: GoogleFonts.montserrat(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: textPrimary,
                 ),
               ),
-
-              const SizedBox(height: 28),
-
-              Text('Takwimu za Jumla',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: textPrimary)),
-
-              const SizedBox(height: 14),
-
-              // ── STATS 2x2 GRID ──
-              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Expanded(
-                    child: _buildStatCard(
-                        'Wanafunzi Wote',
-                        _formatNumber(_stats['total_students'] ?? 0),
-                        Icons.people_outlined,
-                        const Color(0xFF3D1800),
-                        '${_stats['total_courses'] ?? 0} kozi',
-                        true,
-                        surfaceColor,
-                        textPrimary)),
-                const SizedBox(width: 12),
-                Expanded(
-                    child: _buildStatCard(
-                        'Kozi Zilizochapishwa',
-                        _formatNumber(_stats['published_courses'] ?? 0),
-                        Icons.check_circle_outline,
-                        const Color(0xFFE87722),
-                        'hai',
-                        true,
-                        surfaceColor,
-                        textPrimary)),
-              ]),
-
               const SizedBox(height: 12),
-
-              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Expanded(
-                    child: _buildStatCard(
-                        'Kozi Rasimu',
-                        _formatNumber(_stats['draft_courses'] ?? 0),
-                        Icons.edit_outlined,
-                        const Color(0xFF7B3A10),
-                        'zinasubiri',
-                        true,
-                        surfaceColor,
-                        textPrimary)),
-                const SizedBox(width: 12),
-                Expanded(
-                    child: _buildStatCard(
-                        'Ukadiriaji',
-                        (_stats['avg_rating'] as double? ?? 0.0)
-                            .toStringAsFixed(1),
-                        Icons.star_outline,
-                        const Color(0xFFFFA726),
-                        'kwa kozi',
-                        true,
-                        surfaceColor,
-                        textPrimary)),
-              ]),
-
-              const SizedBox(height: 28),
-
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text('Kozi Zangu',
-                    style: GoogleFonts.montserrat(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: textPrimary)),
-                GestureDetector(
-                    onTap: () => _tabController.animateTo(1),
-                    child: Text('Zote →',
-                        style: GoogleFonts.montserrat(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: const Color(0xFFE87722)))),
-              ]),
-
-              const SizedBox(height: 14),
-
+              _buildStatsGrid(surfaceColor, textPrimary),
+              const SizedBox(height: 24),
+              _sectionHeader(
+                'Kozi Zangu',
+                'Angalia hali ya kozi zako na uendelee kuziboresha.',
+                onTap: () => _tabController.animateTo(1),
+                actionLabel: 'Zote',
+                textPrimary: textPrimary,
+              ),
+              const SizedBox(height: 12),
               if (_courses.isEmpty)
                 _buildEmptyState(
-                    'Huna kozi bado.\nBonyeza + kuunda kozi yako ya kwanza!',
-                    Icons.school_outlined,
-                    surfaceColor)
+                  'Huna kozi bado.\nBonyeza + kuunda kozi yako ya kwanza!',
+                  Icons.school_outlined,
+                  surfaceColor,
+                )
               else
-                ..._courses.take(3).map((c) => _buildCourseCard(
-                    c as Map, surfaceColor, textPrimary, textSecondary)),
-
+                ..._courses.take(3).map(
+                      (c) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _buildCourseCard(
+                          c as Map,
+                          surfaceColor,
+                          textPrimary,
+                          textSecondary,
+                        ),
+                      ),
+                    ),
               const SizedBox(height: 100),
             ])));
   }
 
-  Widget _buildQuickAction(
-      IconData icon, String label, Color color, VoidCallback onTap) {
-    return Expanded(
-        child: GestureDetector(
+  Widget _buildQuickActionsRow() {
+    return Row(
+      children: [
+        _buildQuickAction(
+          Icons.school_outlined,
+          'Kozi',
+          'Boresha maudhui',
+          const Color(0xFFE87722),
+          () => _tabController.animateTo(1),
+        ),
+        const SizedBox(width: 10),
+        _buildQuickAction(
+          Icons.workspace_premium_outlined,
+          'Vyeti',
+          'Pitia vyeti',
+          const Color(0xFF7B3A10),
+          () => _tabController.animateTo(3),
+        ),
+        const SizedBox(width: 10),
+        _buildQuickAction(
+          Icons.person_outline_rounded,
+          'Akaunti',
+          'Mipangilio',
+          const Color(0xFF3D1800),
+          () => _tabController.animateTo(4),
+        ),
+        const SizedBox(width: 10),
+        _buildQuickAction(
+          Icons.account_balance_wallet_outlined,
+          'Mkoba',
+          'Mapato',
+          const Color(0xFF7B3A10),
+          () => context.push('/wallet'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatsGrid(Color surfaceColor, Color textPrimary) {
+    return Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _buildStatCard(
+                'Wanafunzi Wote',
+                _formatNumber(_stats['total_students'] ?? 0),
+                Icons.people_outlined,
+                const Color(0xFF3D1800),
+                '${_stats['total_courses'] ?? 0} kozi',
+                true,
+                surfaceColor,
+                textPrimary,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildStatCard(
+                'Kozi Zilizochapishwa',
+                _formatNumber(_stats['published_courses'] ?? 0),
+                Icons.check_circle_outline,
+                const Color(0xFFE87722),
+                'hai',
+                true,
+                surfaceColor,
+                textPrimary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _buildStatCard(
+                'Kozi Rasimu',
+                _formatNumber(_stats['draft_courses'] ?? 0),
+                Icons.edit_outlined,
+                const Color(0xFF7B3A10),
+                'zinasubiri',
+                true,
+                surfaceColor,
+                textPrimary,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildStatCard(
+                'Ukadiriaji',
+                (_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1),
+                Icons.star_outline,
+                const Color(0xFFFFA726),
+                'kwa kozi',
+                true,
+                surfaceColor,
+                textPrimary,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _sectionHeader(
+    String title,
+    String subtitle, {
+    required Color textPrimary,
+    String? actionLabel,
+    VoidCallback? onTap,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.montserrat(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: textPrimary,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: GoogleFonts.montserrat(
+                  fontSize: 11.5,
+                  color: const Color(0xFF7B3A10),
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (actionLabel != null && onTap != null)
+          GestureDetector(
             onTap: onTap,
-            child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 14),
+            child: Text(
+              '$actionLabel →',
+              style: GoogleFonts.montserrat(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFFE87722),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildQuickAction(IconData icon, String label, String subtitle,
+      Color color, VoidCallback onTap) {
+    return Expanded(
+        child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(22),
+        child: Container(
+          height: 116,
+          padding: const EdgeInsets.fromLTRB(12, 13, 12, 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: color.withValues(alpha: 0.14)),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF3D1800).withValues(alpha: 0.06),
+                blurRadius: 16,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 38,
+                height: 38,
                 decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: color.withValues(alpha: 0.2))),
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                          color: color.withValues(alpha: 0.12),
-                          shape: BoxShape.circle),
-                      child: Icon(icon, color: color, size: 18)),
-                  const SizedBox(height: 6),
-                  Text(label,
-                      style: GoogleFonts.montserrat(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: color),
-                      textAlign: TextAlign.center),
-                ]))));
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: 19),
+              ),
+              const Spacer(),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF1A0A00),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.montserrat(
+                  fontSize: 10.5,
+                  height: 1.15,
+                  color: const Color(0xFF7B3A10),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ));
   }
 
   Widget _buildStatCard(String title, String value, IconData icon, Color color,
@@ -2237,259 +2236,315 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   // ── HERO APP BAR ──────────────────────────────────────────────────────────
 
-  Widget _buildHeroAppBar(bool innerBoxIsScrolled) {
+  Widget _buildHeroAppBar(BuildContext context, bool innerBoxIsScrolled) {
     final bool isAccountTab = _tabController.index == 4;
     if (isAccountTab) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }
-    String pageTitle;
-    switch (_tabController.index) {
-      case 1:
-        pageTitle = 'Kozi';
-        break;
-      case 2:
-        pageTitle = 'Wanafunzi';
-        break;
-      case 3:
-        pageTitle = 'Vyeti';
-        break;
-      case 4:
-        pageTitle = 'Akaunti';
-        break;
-      default:
-        pageTitle = 'Muhtasari';
-    }
     return SliverAppBar(
-        expandedHeight: 196,
+        toolbarHeight: 72,
+        expandedHeight: 336,
         pinned: true,
+        floating: false,
         forceElevated: innerBoxIsScrolled,
         automaticallyImplyLeading: false,
-        backgroundColor: const Color(0xFF3D1800),
-        actions: const [],
-        title: innerBoxIsScrolled
-            ? Text(
-                pageTitle,
-                style: GoogleFonts.montserrat(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
+        titleSpacing: 0,
+        title: AnimatedOpacity(
+          opacity: innerBoxIsScrolled ? 1 : 0,
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOut,
+          child: IgnorePointer(
+            ignoring: !innerBoxIsScrolled,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: Image.asset(
+                      'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => Center(
+                        child: Text(
+                          'K',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              )
-            : null,
-        flexibleSpace: FlexibleSpaceBar(
-            title: null,
-            background: Container(
-                decoration: const BoxDecoration(
-                    gradient: LinearGradient(colors: [
-                  Color(0xFF3D1800),
-                  Color(0xFF7B3A10),
-                  Color(0xFFE87722)
-                ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
-                child: Stack(clipBehavior: Clip.hardEdge, children: [
-                  Positioned(
-                      top: -50,
-                      right: -30,
-                      child: Container(
-                          width: 200,
-                          height: 200,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: 0.04)))),
-                  Positioned(
-                      bottom: 20,
-                      left: -40,
-                      child: Container(
-                          width: 140,
-                          height: 140,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: const Color(0xFFFFA726)
-                                  .withValues(alpha: 0.08)))),
-                  SafeArea(
-                      child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Consumer<AuthProvider>(builder: (_, auth, __) {
-                                  final firstName = auth.userFullName.isNotEmpty
-                                      ? auth.userFullName.split(' ').first
-                                      : 'Mkufunzi';
-                                  final avatarUrl = auth.userAvatar;
-                                  final hasAvatar =
-                                      avatarUrl != null && avatarUrl.isNotEmpty;
-                                  return Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 20.r,
-                                        backgroundColor: AppColors.primary,
-                                        backgroundImage: hasAvatar
-                                            ? NetworkImage(avatarUrl)
-                                            : null,
-                                        child: !hasAvatar
-                                            ? Text(
-                                                firstName.isNotEmpty
-                                                    ? firstName[0].toUpperCase()
-                                                    : 'M',
-                                                style: GoogleFonts.montserrat(
-                                                  fontSize: 16.sp,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Colors.white,
-                                                ),
-                                              )
-                                            : null,
-                                      ),
-                                      SizedBox(width: 12.w),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text('Habari, $firstName!',
-                                                style: GoogleFonts.montserrat(
-                                                  fontSize: 18.sp,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Colors.white,
-                                                )),
-                                            Text('Mkufunzi wa Karakana',
-                                                style: GoogleFonts.montserrat(
-                                                  fontSize: 12.sp,
-                                                  color: Colors.white70,
-                                                )),
-                                          ],
-                                        ),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.notifications_outlined,
-                                            color: Colors.white, size: 24.r),
-                                        onPressed: () =>
-                                            context.push('/notifications'),
-                                        tooltip: 'Arifa',
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.settings_outlined,
-                                            color: Colors.white, size: 24.r),
-                                        onPressed: () =>
-                                            _tabController.animateTo(4),
-                                        tooltip: 'Mipangilio',
-                                      ),
-                                    ],
-                                  );
-                                }),
-                                SizedBox(height: 8.h),
-                                Row(children: [
-                                  _buildHeroStat('${_stats['total_courses']}',
-                                      'Kozi', Icons.school_outlined),
-                                  Container(
-                                      width: 1,
-                                      height: 36,
-                                      color:
-                                          Colors.white.withValues(alpha: 0.2)),
-                                  _buildHeroStat(
-                                      _formatNumber(
-                                          _stats['total_students'] ?? 0),
-                                      'Wanafunzi',
-                                      Icons.people_outlined),
-                                  Container(
-                                      width: 1,
-                                      height: 36,
-                                      color:
-                                          Colors.white.withValues(alpha: 0.2)),
-                                  _buildHeroStat(
-                                      (_stats['avg_rating'] as double? ?? 0.0)
-                                          .toStringAsFixed(1),
-                                      'Ukadiriaji',
-                                      Icons.star_outline),
-                                ]),
-                                SizedBox(height: 8.h),
-                                Builder(builder: (context) {
-                                  final balance =
-                                      (_stats['balance'] as num?) ?? 0;
-                                  return GestureDetector(
-                                    onTap: () => context.push('/wallet'),
-                                    child: Container(
-                                      width: double.infinity,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 16.w, vertical: 8.h),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white
-                                            .withValues(alpha: 0.12),
-                                        borderRadius:
-                                            BorderRadius.circular(12.r),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                  Icons
-                                                      .account_balance_wallet_outlined,
-                                                  color: AppColors.primary,
-                                                  size: 18.r),
-                                              SizedBox(width: 8.w),
-                                              Text('Mapato wa Mwezi',
-                                                  style: GoogleFonts.montserrat(
-                                                    fontSize: 12.sp,
-                                                    color: Colors.white70,
-                                                  )),
-                                            ],
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                _balanceVisible
-                                                    ? 'TSh ${balance.toStringAsFixed(0)}'
-                                                    : 'TSh ••••••',
-                                                style: GoogleFonts.montserrat(
-                                                  fontSize: 15.sp,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              SizedBox(width: 8.w),
-                                              GestureDetector(
-                                                onTap: () => setState(() =>
-                                                    _balanceVisible =
-                                                        !_balanceVisible),
-                                                child: Icon(
-                                                  _balanceVisible
-                                                      ? Icons
-                                                          .visibility_outlined
-                                                      : Icons
-                                                          .visibility_off_outlined,
-                                                  color: Colors.white70,
-                                                  size: 18.r,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                }),
-                              ])))
-                ]))));
+                const SizedBox(width: 10),
+                Text(
+                  'Karakana',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          AnimatedOpacity(
+            opacity: innerBoxIsScrolled ? 1 : 0,
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOut,
+            child: IgnorePointer(
+              ignoring: !innerBoxIsScrolled,
+              child: IconButton(
+                icon: const Icon(Icons.notifications_outlined,
+                    color: Colors.white),
+                onPressed: () => context.push('/notifications'),
+                tooltip: 'Arifa',
+              ),
+            ),
+          ),
+          AnimatedOpacity(
+            opacity: innerBoxIsScrolled ? 1 : 0,
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOut,
+            child: IgnorePointer(
+              ignoring: !innerBoxIsScrolled,
+              child: IconButton(
+                icon: const Icon(Icons.settings_outlined, color: Colors.white),
+                onPressed: () => _tabController.animateTo(4),
+                tooltip: 'Mipangilio',
+              ),
+            ),
+          ),
+        ],
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF2A1106), Color(0xFF5C2208), Color(0xFFB5540A)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              stops: [0.0, 0.48, 1.0],
+            ),
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final compact = constraints.maxHeight < 260;
+              if (compact) {
+                return Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFF2A1106),
+                        Color(0xFF5C2208),
+                        Color(0xFFB5540A)
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      stops: [0.0, 0.48, 1.0],
+                    ),
+                  ),
+                );
+              }
+              return SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    18,
+                    compact ? 6 : 8,
+                    18,
+                    compact ? 6 : 12,
+                  ),
+                  child: Align(
+                    alignment:
+                        compact ? Alignment.topCenter : Alignment.bottomCenter,
+                    child: _buildDashboardHero(compact: compact),
+                  ),
+                ),
+              );
+            },
+          ),
+        ));
   }
 
-  Widget _buildHeroStat(String value, String label, IconData icon) {
-    return Expanded(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Icon(icon, color: Colors.white.withValues(alpha: 0.6), size: 14),
-      const SizedBox(height: 4),
-      Text(value,
-          style: GoogleFonts.montserrat(
-              fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white)),
-      Text(label,
-          style: GoogleFonts.montserrat(
-              fontSize: 10,
-              fontWeight: FontWeight.w400,
-              color: Colors.white.withValues(alpha: 0.6))),
-    ]));
+  Widget _buildDashboardHero({required bool compact}) {
+    final firstName = _getFirstName(context.read<AuthProvider>());
+    if (compact) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF2A1106), Color(0xFF5C2208), Color(0xFFB5540A)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            stops: [0.0, 0.48, 1.0],
+          ),
+          borderRadius: BorderRadius.circular(26),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF3D1800).withValues(alpha: 0.16),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 30,
+              height: 30,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(3),
+                child: Image.asset(
+                  'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Center(
+                    child: Text(
+                      'K',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'Karakana',
+              style: GoogleFonts.montserrat(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+                letterSpacing: 0.2,
+              ),
+            ),
+            const Spacer(),
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(
+                _getTimeIcon(),
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return Container(
+      padding: EdgeInsets.all(compact ? 10 : 14),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF2A1106), Color(0xFF5C2208), Color(0xFFB5540A)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: [0.0, 0.48, 1.0],
+        ),
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF3D1800).withValues(alpha: 0.18),
+            blurRadius: 26,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (!compact)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          'Dashibodi ya Mkufunzi',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ),
+                    SizedBox(height: compact ? 4 : 10),
+                    Text(
+                      '${_getGreeting()}, $firstName',
+                      style: GoogleFonts.montserrat(
+                        fontSize: compact ? 18 : 22,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        height: 0.95,
+                      ),
+                    ),
+                    if (!compact) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        _getTagline(),
+                        style: GoogleFonts.montserrat(
+                          fontSize: 12,
+                          color: Colors.white.withValues(alpha: 0.85),
+                          height: 1.2,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              Container(
+                width: compact ? 42 : 54,
+                height: compact ? 42 : 54,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(compact ? 14 : 18),
+                ),
+                child: Icon(
+                  _getTimeIcon(),
+                  color: Colors.white,
+                  size: compact ? 20 : 26,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 2),
+        ],
+      ),
+    );
   }
 }
