@@ -366,7 +366,9 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
                           borderRadius: BorderRadius.circular(18),
                         ),
                         child: Text(
-                          price <= 0 ? 'Bure' : 'TZS ${_currency.format(price)}',
+                          price <= 0
+                              ? 'Bure'
+                              : 'TZS ${_currency.format(price)}',
                           textAlign: TextAlign.center,
                           style: AppTextStyles.h2.copyWith(
                             color: const Color(0xFF1A1A1A),

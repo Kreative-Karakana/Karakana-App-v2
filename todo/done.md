@@ -18,6 +18,7 @@
 - Course randomization verified successfully.
 - Zana card description verified, with shorter text correction applied.
 - Welcome screen layout ported from V1 reference into V2.
+- Welcome screens manual emulator/iOS verification completed and approved.
 - Welcome screen code verification passed with `flutter analyze` and `flutter build apk --debug`.
 - T&C copyright and last-updated year changed to 2026.
 - T&C year update verified with `flutter analyze`.
@@ -25,3 +26,7 @@
 - Django Admin can now create and manage Fursa items dynamically.
 - V2 Fursa page replaced with a content-driven student UI.
 - Fursa code verification passed with `flutter analyze` and `flutter build apk --debug`.
+- Android release build after final verified fixes completed and resolved.
+- Trainer eBook analytics backend support added with buyers, purchases, and revenue fields.
+- Trainer eBook list and detail UI now displays analytics metrics for each eBook.
+- Trainer eBook PDF picker/upload manual verification completed successfully.

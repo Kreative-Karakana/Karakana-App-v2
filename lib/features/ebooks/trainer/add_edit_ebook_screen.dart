@@ -57,6 +57,14 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
   bool get _isEdit => widget.ebookId != null;
   String get _normalizedPrice => _price.text.replaceAll(',', '').trim();
 
+  @override
+  void initState() {
+    super.initState();
+    _title.addListener(_onFieldChanged);
+    _description.addListener(_onFieldChanged);
+    _price.addListener(_onFieldChanged);
+  }
+
   Future<void> _pickCover() async {
     final x = await ImagePicker().pickImage(
       source: ImageSource.gallery,
@@ -132,6 +140,10 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
     }
   }
 
+  void _onFieldChanged() {
+    if (mounted) setState(() {});
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     if (!_isEdit &&
@@ -199,6 +211,9 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
 
   @override
   void dispose() {
+    _title.removeListener(_onFieldChanged);
+    _description.removeListener(_onFieldChanged);
+    _price.removeListener(_onFieldChanged);
     _title.dispose();
     _description.dispose();
     _price.dispose();
@@ -251,6 +266,185 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
         ],
       ),
       child: child,
+    );
+  }
+
+  Widget _infoPill({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF8F4),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFE8D5C8)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE87722).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: const Color(0xFFE87722), size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF9E8070),
+                    letterSpacing: 0.4,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF3D1800),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReviewSection() {
+    final title = _title.text.trim();
+    final description = _description.text.trim();
+    final priceValue = int.tryParse(_normalizedPrice) ?? 0;
+    final priceLabel = priceValue <= 0
+        ? 'Bure'
+        : 'TZS ${NumberFormat('#,###').format(priceValue)}';
+    final coverLabel = _coverName ?? 'Bado haijachaguliwa';
+    final ebookLabel = _ebookName ?? 'Bado haijachaguliwa';
+
+    return _sectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Pitia Taarifa',
+            style: GoogleFonts.montserrat(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF9E8070),
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF3D1800), Color(0xFFE87722)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 54,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: _coverPath != null
+                      ? Image.file(File(_coverPath!), fit: BoxFit.cover)
+                      : const Icon(
+                          Icons.menu_book_outlined,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title.isEmpty
+                            ? 'Jina la eBook litaonekana hapa'
+                            : title,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        description.isEmpty
+                            ? 'Maelezo ya eBook yataonekana hapa unapoyaandika.'
+                            : description,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 12.5,
+                          color: Colors.white.withValues(alpha: 0.9),
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 1.9,
+            children: [
+              _infoPill(
+                icon: Icons.sell_outlined,
+                label: 'Bei',
+                value: priceLabel,
+              ),
+              _infoPill(
+                icon: Icons.image_outlined,
+                label: 'Jalada',
+                value: coverLabel,
+              ),
+              _infoPill(
+                icon: Icons.file_open_outlined,
+                label: 'Faili la eBook',
+                value: ebookLabel,
+              ),
+              _infoPill(
+                icon: Icons.lock_outline,
+                label: 'Hali',
+                value: _isEdit ? 'Hariri yaliyopo' : 'Mpya',
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -542,6 +736,8 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
                 ],
               ),
             ),
+            const SizedBox(height: 16),
+            _buildReviewSection(),
             if (_coverPath != null) ...[
               const SizedBox(height: 16),
               ClipRRect(

@@ -46,6 +46,7 @@ import '../../features/ebooks/screens/ebook_store_screen.dart';
 import '../../features/ebooks/screens/ebook_detail_screen.dart';
 import '../../features/ebooks/screens/ebook_library_screen.dart';
 import '../../features/ebooks/screens/secure_ebook_reader_screen.dart';
+import '../../features/ebooks/trainer/trainer_ebook_detail_screen.dart';
 import '../../features/ebooks/trainer/trainer_ebooks_screen.dart';
 import '../../features/ebooks/trainer/add_edit_ebook_screen.dart';
 
@@ -272,6 +273,12 @@ class AppRouter {
         GoRoute(
           path: '/trainer/ebooks',
           builder: (context, state) => const TrainerEbooksScreen(),
+        ),
+        GoRoute(
+          path: '/trainer/ebooks/:id',
+          builder: (context, state) => TrainerEbookDetailScreen(
+            ebookId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+          ),
         ),
         GoRoute(
           path: '/trainer/ebooks/add',

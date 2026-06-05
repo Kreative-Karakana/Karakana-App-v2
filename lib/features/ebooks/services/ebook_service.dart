@@ -30,6 +30,11 @@ class EbookService {
     return Ebook.fromJson((res.data as Map).cast<String, dynamic>());
   }
 
+  Future<Ebook> fetchTrainerEbook(int id) async {
+    final res = await _dio.get('/api/v1/ebooks/manage/$id/');
+    return Ebook.fromJson((res.data as Map).cast<String, dynamic>());
+  }
+
   Future<List<EbookPurchase>> fetchLibrary() async {
     final res = await _dio.get('/api/v1/ebooks/library/');
     final data = res.data;
