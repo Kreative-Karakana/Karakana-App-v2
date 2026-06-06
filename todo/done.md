@@ -61,3 +61,4 @@
 - Trainer dashboard dense hero state and stats rail were reduced to eliminate the remaining bottom overflow on small scroll heights.
 - Trainer dashboard dense hero state was simplified further so the last remaining overflow on small heights is removed.
 - Trainer dashboard settings button on the collapsed home header now opens the Akaunti tab.
+- Trainer dashboard hero spacing was tightened and the Kozi page now uses a compact independent topbar.

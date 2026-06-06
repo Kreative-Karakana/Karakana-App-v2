@@ -2251,12 +2251,48 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   Widget _buildHeroAppBar(BuildContext context, bool innerBoxIsScrolled) {
     final bool isAccountTab = _tabController.index == 4;
+    final bool isCoursesTab = _tabController.index == 1;
     if (isAccountTab) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }
+    if (isCoursesTab) {
+      return SliverAppBar(
+        toolbarHeight: 66,
+        expandedHeight: 118,
+        pinned: true,
+        floating: false,
+        forceElevated: innerBoxIsScrolled,
+        automaticallyImplyLeading: false,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF2A1106), Color(0xFF5C2208), Color(0xFFB5540A)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              stops: [0.0, 0.48, 1.0],
+            ),
+          ),
+          child: SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: _buildKoziHeaderChrome(),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
     return SliverAppBar(
-        toolbarHeight: 72,
-        expandedHeight: 268,
+        toolbarHeight: 68,
+        expandedHeight: 214,
         pinned: true,
         floating: false,
         forceElevated: innerBoxIsScrolled,
@@ -2277,9 +2313,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxHeight < 190;
-              final dense = constraints.maxHeight < 246;
-              final veryCompact = constraints.maxHeight < 160;
+              final compact = constraints.maxHeight < 150;
+              final dense = constraints.maxHeight < 186;
+              final veryCompact = constraints.maxHeight < 150;
               return Stack(
                 fit: StackFit.expand,
                 children: [
@@ -2315,12 +2351,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     SafeArea(
                       bottom: false,
                       child: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                          14,
-                          veryCompact ? 8 : 10,
-                          14,
-                          8,
-                        ),
+                        padding:
+                            EdgeInsets.fromLTRB(14, veryCompact ? 6 : 8, 14, 6),
                         child: Align(
                           alignment: Alignment.topCenter,
                           child: _buildCollapsedDashboardChrome(
@@ -2333,7 +2365,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     SafeArea(
                       bottom: false,
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
+                        padding: const EdgeInsets.fromLTRB(18, 6, 18, 6),
                         child: Align(
                           alignment: Alignment.topCenter,
                           child: _buildDashboardHero(
@@ -2425,6 +2457,84 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 Icons.settings_outlined,
                 _openAccountTab,
                 veryCompact: veryCompact,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildKoziHeaderChrome() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(22),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.12),
+              width: 0.8,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF3D1800).withValues(alpha: 0.16),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 30,
+                height: 30,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(3),
+                  child: Image.asset(
+                    'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) => Center(
+                      child: Text(
+                        'K',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'Kozi',
+                style: GoogleFonts.montserrat(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  letterSpacing: 0.2,
+                ),
+              ),
+              const Spacer(),
+              _buildHeaderIconButton(
+                Icons.notifications_outlined,
+                () => context.push('/notifications'),
+                veryCompact: false,
+              ),
+              const SizedBox(width: 4),
+              _buildHeaderIconButton(
+                Icons.settings_outlined,
+                _openAccountTab,
+                veryCompact: false,
               ),
             ],
           ),
