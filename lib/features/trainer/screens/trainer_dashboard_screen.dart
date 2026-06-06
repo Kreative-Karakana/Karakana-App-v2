@@ -2341,19 +2341,31 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxHeight < 176;
+              final compact = constraints.maxHeight < 190;
+              final veryCompact = constraints.maxHeight < 150;
+              if (veryCompact) {
+                return SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: _buildDashboardHero(
+                        compact: true,
+                        veryCompact: true,
+                      ),
+                    ),
+                  ),
+                );
+              }
               if (compact) {
-                return Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color(0xFF2A1106),
-                        Color(0xFF5C2208),
-                        Color(0xFFB5540A)
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      stops: [0.0, 0.48, 1.0],
+                return SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: _buildDashboardHero(compact: true),
                     ),
                   ),
                 );
@@ -2392,10 +2404,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   SafeArea(
                     bottom: false,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(18, 12, 18, 10),
+                      padding: const EdgeInsets.fromLTRB(18, 10, 18, 8),
                       child: Align(
                         alignment: Alignment.topCenter,
-                        child: _buildDashboardHero(compact: compact),
+                        child: _buildDashboardHero(compact: false),
                       ),
                     ),
                   ),
@@ -2406,11 +2418,17 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         ));
   }
 
-  Widget _buildDashboardHero({required bool compact}) {
+  Widget _buildDashboardHero({
+    required bool compact,
+    bool veryCompact = false,
+  }) {
     final firstName = _getFirstName(context.read<AuthProvider>());
     if (compact) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: EdgeInsets.symmetric(
+          horizontal: veryCompact ? 12 : 14,
+          vertical: veryCompact ? 8 : 10,
+        ),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [Color(0xFF2A1106), Color(0xFF5C2208), Color(0xFFB5540A)],
@@ -2418,20 +2436,20 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             end: Alignment.bottomRight,
             stops: [0.0, 0.48, 1.0],
           ),
-          borderRadius: BorderRadius.circular(26),
+          borderRadius: BorderRadius.circular(veryCompact ? 22 : 26),
           boxShadow: [
             BoxShadow(
               color: const Color(0xFF3D1800).withValues(alpha: 0.16),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
+              blurRadius: veryCompact ? 12 : 18,
+              offset: Offset(0, veryCompact ? 6 : 8),
             ),
           ],
         ),
         child: Row(
           children: [
             Container(
-              width: 30,
-              height: 30,
+              width: veryCompact ? 28 : 30,
+              height: veryCompact ? 28 : 30,
               decoration: const BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
@@ -2454,11 +2472,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 ),
               ),
             ),
-            const SizedBox(width: 10),
+            SizedBox(width: veryCompact ? 8 : 10),
             Text(
               'Karakana',
               style: GoogleFonts.montserrat(
-                fontSize: 16,
+                fontSize: veryCompact ? 15 : 16,
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
                 letterSpacing: 0.2,
@@ -2466,16 +2484,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             ),
             const Spacer(),
             Container(
-              width: 40,
-              height: 40,
+              width: veryCompact ? 36 : 40,
+              height: veryCompact ? 36 : 40,
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(veryCompact ? 12 : 14),
               ),
               child: Icon(
                 _getTimeIcon(),
                 color: Colors.white,
-                size: 20,
+                size: veryCompact ? 18 : 20,
               ),
             ),
           ],
@@ -2496,12 +2514,12 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 children: [
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.10),
+                      color: Colors.white.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.14),
+                        color: Colors.white.withValues(alpha: 0.12),
                         width: 0.8,
                       ),
                     ),
@@ -2515,34 +2533,34 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
                     '${_getGreeting()}, $firstName',
                     style: GoogleFonts.montserrat(
-                      fontSize: 18.5,
+                      fontSize: 17.5,
                       fontWeight: FontWeight.w800,
                       color: Colors.white,
                       height: 1.0,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 3),
                   Text(
                     _getTagline(),
                     style: GoogleFonts.montserrat(
-                      fontSize: 11,
+                      fontSize: 10.5,
                       color: Colors.white.withValues(alpha: 0.85),
-                      height: 1.16,
+                      height: 1.12,
                     ),
                   ),
                 ],
               ),
             ),
             Container(
-              width: 42,
-              height: 42,
+              width: 38,
+              height: 38,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.10),
-                borderRadius: BorderRadius.circular(14),
+                color: Colors.white.withValues(alpha: 0.09),
+                borderRadius: BorderRadius.circular(13),
                 border: Border.all(
                   color: Colors.white.withValues(alpha: 0.12),
                   width: 0.8,
@@ -2551,12 +2569,12 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               child: Icon(
                 _getTimeIcon(),
                 color: Colors.white,
-                size: 20,
+                size: 18,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 10),
         _buildHeroSummaryRail(),
       ],
     );
