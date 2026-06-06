@@ -2327,8 +2327,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxHeight < 124;
-              final veryCompact = constraints.maxHeight < 124;
+              final compact = constraints.maxHeight < 132;
+              final veryCompact = constraints.maxHeight < 132;
               return Stack(
                 fit: StackFit.expand,
                 children: [
@@ -2382,7 +2382,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         child: LayoutBuilder(
                           builder: (context, contentConstraints) {
                             final useCollapsed =
-                                contentConstraints.maxHeight < 124;
+                                contentConstraints.maxHeight < 132;
                             return Align(
                               alignment: Alignment.topCenter,
                               child: useCollapsed
@@ -2763,7 +2763,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             letterSpacing: 0,
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 7),
         _buildHeroSummaryRail(compact: false),
       ],
     );
@@ -2811,7 +2811,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         child: Container(
           padding: EdgeInsets.symmetric(
             horizontal: compact ? 8 : 10,
-            vertical: compact ? 5 : 7,
+            vertical: compact ? 5 : 5,
           ),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.11),
@@ -2866,15 +2866,15 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: compact ? 22 : 24,
-          height: compact ? 22 : 24,
+          width: compact ? 22 : 22,
+          height: compact ? 22 : 22,
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.10),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             icon,
-            size: compact ? 12 : 13,
+            size: compact ? 12 : 12,
             color: Colors.white,
           ),
         ),
@@ -2884,7 +2884,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.montserrat(
-            fontSize: compact ? 11.5 : 12.5,
+            fontSize: compact ? 11.5 : 12,
             fontWeight: FontWeight.w800,
             color: Colors.white,
             height: 1.0,
@@ -2896,7 +2896,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.montserrat(
-            fontSize: compact ? 8 : 8.5,
+            fontSize: compact ? 8 : 8.2,
             fontWeight: FontWeight.w600,
             color: Colors.white.withValues(alpha: 0.78),
             height: 1.0,
@@ -2909,7 +2909,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   Widget _buildHeroSummaryDivider() {
     return Container(
       width: 1,
-      height: 22,
+      height: 20,
       margin: const EdgeInsets.symmetric(horizontal: 7),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.14),
