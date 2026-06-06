@@ -2523,7 +2523,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             children: [
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(999),
@@ -2556,27 +2556,29 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 6),
           Text(
             '${_getGreeting()}, $firstName',
             style: GoogleFonts.montserrat(
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.w800,
               color: Colors.white,
               height: 1.0,
             ),
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: 2),
           Text(
-            _getTagline(),
+            'Endelea kusukuma mafanikio yako leo',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: GoogleFonts.montserrat(
-              fontSize: 9.8,
-              color: Colors.white.withValues(alpha: 0.84),
-              height: 1.05,
+              fontSize: 9.2,
+              color: Colors.white.withValues(alpha: 0.82),
+              height: 1.0,
             ),
           ),
-          const SizedBox(height: 10),
-          _buildHeroSummaryRail(),
+          const SizedBox(height: 8),
+          _buildHeroSummaryRail(compact: true),
         ],
       );
     }
@@ -2640,8 +2642,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             height: 1.08,
           ),
         ),
-        const SizedBox(height: 12),
-        _buildHeroSummaryRail(),
+        const SizedBox(height: 10),
+        _buildHeroSummaryRail(compact: false),
       ],
     );
   }
@@ -2677,18 +2679,22 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     );
   }
 
-  Widget _buildHeroSummaryRail() {
+  Widget _buildHeroSummaryRail({required bool compact}) {
     final avgRating =
         (_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1);
     return ClipRRect(
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(compact ? 18 : 22),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        filter: ImageFilter.blur(
+            sigmaX: compact ? 10 : 12, sigmaY: compact ? 10 : 12),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          padding: EdgeInsets.symmetric(
+            horizontal: compact ? 8 : 10,
+            vertical: compact ? 6 : 8,
+          ),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(compact ? 18 : 22),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.12),
               width: 0.8,
@@ -2701,6 +2707,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   Icons.school_outlined,
                   'Kozi',
                   '${_stats['total_courses'] ?? 0}',
+                  compact: compact,
                 ),
               ),
               _buildHeroSummaryDivider(),
@@ -2709,6 +2716,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   Icons.people_outline_rounded,
                   'Wanafunzi',
                   '${_stats['total_students'] ?? 0}',
+                  compact: compact,
                 ),
               ),
               _buildHeroSummaryDivider(),
@@ -2717,6 +2725,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   Icons.star_outline_rounded,
                   'Ukadiriaji',
                   avgRating,
+                  compact: compact,
                 ),
               ),
             ],
@@ -2726,42 +2735,47 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     );
   }
 
-  Widget _buildHeroSummaryItem(IconData icon, String label, String value) {
+  Widget _buildHeroSummaryItem(
+    IconData icon,
+    String label,
+    String value, {
+    required bool compact,
+  }) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 28,
-          height: 28,
+          width: compact ? 24 : 28,
+          height: compact ? 24 : 28,
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(9),
+            borderRadius: BorderRadius.circular(compact ? 8 : 9),
           ),
           child: Icon(
             icon,
-            size: 15,
+            size: compact ? 13 : 15,
             color: Colors.white,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         Text(
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.montserrat(
-            fontSize: 13,
+            fontSize: compact ? 12 : 13,
             fontWeight: FontWeight.w800,
             color: Colors.white,
             height: 1.0,
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 1),
         Text(
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.montserrat(
-            fontSize: 9,
+            fontSize: compact ? 8.5 : 9,
             fontWeight: FontWeight.w600,
             color: Colors.white.withValues(alpha: 0.78),
             height: 1.0,
@@ -2774,7 +2788,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   Widget _buildHeroSummaryDivider() {
     return Container(
       width: 1,
-      height: 30,
+      height: 24,
       margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.14),
