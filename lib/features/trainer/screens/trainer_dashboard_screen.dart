@@ -2243,7 +2243,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     }
     return SliverAppBar(
         toolbarHeight: 72,
-        expandedHeight: 228,
+        expandedHeight: 252,
         pinned: true,
         floating: false,
         forceElevated: innerBoxIsScrolled,
@@ -2341,7 +2341,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxHeight < 190;
+              final compact = constraints.maxHeight < 170;
+              final dense = constraints.maxHeight < 240;
               final veryCompact = constraints.maxHeight < 150;
               if (veryCompact) {
                 return SafeArea(
@@ -2407,7 +2408,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
                       child: Align(
                         alignment: Alignment.topCenter,
-                        child: _buildDashboardHero(compact: false),
+                        child: _buildDashboardHero(
+                          compact: false,
+                          dense: dense,
+                        ),
                       ),
                     ),
                   ),
@@ -2420,6 +2424,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   Widget _buildDashboardHero({
     required bool compact,
+    bool dense = false,
     bool veryCompact = false,
   }) {
     final firstName = _getFirstName(context.read<AuthProvider>());
@@ -2498,6 +2503,98 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             ),
           ],
         ),
+      );
+    }
+    if (dense) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.12),
+                          width: 0.8,
+                        ),
+                      ),
+                      child: Text(
+                        'Dashibodi ya Mkufunzi',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          letterSpacing: 0.4,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      '${_getGreeting()}, $firstName',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        height: 1.0,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      _getTagline(),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 9.8,
+                        color: Colors.white.withValues(alpha: 0.84),
+                        height: 1.05,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.09),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.12),
+                    width: 0.8,
+                  ),
+                ),
+                child: Icon(
+                  _getTimeIcon(),
+                  color: Colors.white,
+                  size: 17,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Takwimu muhimu za kozi zako zitaonekana hapa.',
+            style: GoogleFonts.montserrat(
+              fontSize: 9.5,
+              fontWeight: FontWeight.w600,
+              color: Colors.white.withValues(alpha: 0.68),
+              height: 1.0,
+            ),
+          ),
+        ],
       );
     }
     return Column(
