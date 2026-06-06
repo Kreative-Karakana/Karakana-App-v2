@@ -65,3 +65,4 @@
 - Trainer dashboard hero spacing was tightened again to remove the last small overflow while keeping Kozi independent.
 - Trainer dashboard bottom navbar spacing was relaxed to feel less congested.
 - Trainer dashboard Vyeti tab now uses the compact independent page topbar instead of the full dashboard hero.
+- Trainer dashboard header now switches to compact chrome based on real available height to prevent scroll overflow.

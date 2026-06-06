@@ -2304,7 +2304,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     }
     return SliverAppBar(
         toolbarHeight: 66,
-        expandedHeight: 206,
+        expandedHeight: 226,
         pinned: true,
         floating: false,
         forceElevated: innerBoxIsScrolled,
@@ -2326,7 +2326,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           child: LayoutBuilder(
             builder: (context, constraints) {
               final compact = constraints.maxHeight < 146;
-              final dense = constraints.maxHeight < 176;
               final veryCompact = constraints.maxHeight < 146;
               return Stack(
                 fit: StackFit.expand,
@@ -2378,12 +2377,22 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       bottom: false,
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(18, 4, 18, 4),
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: _buildDashboardHero(
-                            compact: false,
-                            dense: dense,
-                          ),
+                        child: LayoutBuilder(
+                          builder: (context, contentConstraints) {
+                            final useCollapsed =
+                                contentConstraints.maxHeight < 166;
+                            return Align(
+                              alignment: Alignment.topCenter,
+                              child: useCollapsed
+                                  ? _buildCollapsedDashboardChrome(
+                                      veryCompact: true,
+                                    )
+                                  : _buildDashboardHero(
+                                      compact: false,
+                                      dense: false,
+                                    ),
+                            );
+                          },
                         ),
                       ),
                     ),
