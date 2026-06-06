@@ -2243,7 +2243,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     }
     return SliverAppBar(
         toolbarHeight: 72,
-        expandedHeight: 280,
+        expandedHeight: 220,
         pinned: true,
         floating: false,
         forceElevated: innerBoxIsScrolled,
@@ -2341,7 +2341,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxHeight < 300;
+              final compact = constraints.maxHeight < 240;
               if (compact) {
                 return Container(
                   decoration: const BoxDecoration(
@@ -2361,15 +2361,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               return SafeArea(
                 bottom: false,
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    18,
-                    compact ? 6 : 8,
-                    18,
-                    compact ? 6 : 12,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(18, 8, 18, 10),
                   child: Align(
-                    alignment:
-                        compact ? Alignment.topCenter : Alignment.bottomCenter,
+                    alignment: Alignment.topCenter,
                     child: _buildDashboardHero(compact: compact),
                   ),
                 ),
@@ -2455,153 +2449,113 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         ),
       );
     }
-    return Container(
-      padding: EdgeInsets.all(compact ? 10 : 12),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF2A1106), Color(0xFF5C2208), Color(0xFFB5540A)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          stops: [0.0, 0.48, 1.0],
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      'Dashibodi ya Mkufunzi',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${_getGreeting()}, $firstName',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      height: 1.0,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    _getTagline(),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 11,
+                      color: Colors.white.withValues(alpha: 0.85),
+                      height: 1.15,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 54,
+              height: 54,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Icon(
+                _getTimeIcon(),
+                color: Colors.white,
+                size: 26,
+              ),
+            ),
+          ],
         ),
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF3D1800).withValues(alpha: 0.18),
-            blurRadius: 26,
-            offset: const Offset(0, 12),
-          ),
-        ],
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _buildHeroMiniChip(
+              'Kozi',
+              '${_stats['total_courses'] ?? 0}',
+            ),
+            _buildHeroMiniChip(
+              'Wanafunzi',
+              '${_stats['total_students'] ?? 0}',
+            ),
+            _buildHeroMiniChip(
+              'Ukadiriaji',
+              (_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeroMiniChip(String label, String value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (!compact)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 9,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          'Dashibodi ya Mkufunzi',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                            letterSpacing: 0.4,
-                          ),
-                        ),
-                      ),
-                    SizedBox(height: compact ? 4 : 8),
-                    Text(
-                      '${_getGreeting()}, $firstName',
-                      style: GoogleFonts.montserrat(
-                        fontSize: compact ? 18 : 20,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        height: 1.0,
-                      ),
-                    ),
-                    if (!compact) ...[
-                      const SizedBox(height: 5),
-                      Text(
-                        _getTagline(),
-                        style: GoogleFonts.montserrat(
-                          fontSize: 11,
-                          color: Colors.white.withValues(alpha: 0.85),
-                          height: 1.15,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.10),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.10),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            _buildHeroMiniStat(
-                              'Kozi',
-                              '${_stats['total_courses'] ?? 0}',
-                            ),
-                            Container(
-                              width: 1,
-                              height: 26,
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              color: Colors.white.withValues(alpha: 0.12),
-                            ),
-                            _buildHeroMiniStat(
-                              'Wanafunzi',
-                              '${_stats['total_students'] ?? 0}',
-                            ),
-                            Container(
-                              width: 1,
-                              height: 26,
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              color: Colors.white.withValues(alpha: 0.12),
-                            ),
-                            _buildHeroMiniStat(
-                              'Ukadiriaji',
-                              (_stats['avg_rating'] as double? ?? 0.0)
-                                  .toStringAsFixed(1),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              Container(
-                width: compact ? 42 : 54,
-                height: compact ? 42 : 54,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(compact ? 14 : 18),
-                ),
-                child: Icon(
-                  _getTimeIcon(),
-                  color: Colors.white,
-                  size: compact ? 20 : 26,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 0),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeroMiniStat(String label, String value) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
           Text(
             label,
             style: GoogleFonts.montserrat(
-              fontSize: 10,
+              fontSize: 9.5,
               fontWeight: FontWeight.w600,
               color: Colors.white.withValues(alpha: 0.72),
             ),
@@ -2612,7 +2566,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.montserrat(
-              fontSize: 15,
+              fontSize: 14,
               fontWeight: FontWeight.w800,
               color: Colors.white,
             ),
