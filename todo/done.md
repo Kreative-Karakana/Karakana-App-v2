@@ -47,3 +47,4 @@
 - Trainer dashboard collapsed header now switches immediately to the Karakana logo/title bar instead of the greeting text.
 - Trainer dashboard collapsed state now shows only the Karakana app-bar brand row on scroll, with the duplicate greeting removed.
 - Trainer dashboard hero has been restyled with a more welcoming expanded summary band instead of a large empty gradient block.
+- Trainer dashboard hero spacing has been tightened so the welcoming summary band no longer overflows during scroll collapse.

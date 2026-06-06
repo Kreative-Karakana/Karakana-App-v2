@@ -2456,7 +2456,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       );
     }
     return Container(
-      padding: EdgeInsets.all(compact ? 10 : 14),
+      padding: EdgeInsets.all(compact ? 10 : 12),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF2A1106), Color(0xFF5C2208), Color(0xFFB5540A)],
@@ -2474,6 +2474,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -2481,13 +2482,14 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             children: [
               Expanded(
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (!compact)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
+                          horizontal: 9,
+                          vertical: 3,
                         ),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.12),
@@ -2496,40 +2498,40 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         child: Text(
                           'Dashibodi ya Mkufunzi',
                           style: GoogleFonts.montserrat(
-                            fontSize: 10.5,
+                            fontSize: 10,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
                             letterSpacing: 0.4,
                           ),
                         ),
                       ),
-                    SizedBox(height: compact ? 4 : 10),
+                    SizedBox(height: compact ? 4 : 8),
                     Text(
                       '${_getGreeting()}, $firstName',
                       style: GoogleFonts.montserrat(
-                        fontSize: compact ? 18 : 22,
+                        fontSize: compact ? 18 : 20,
                         fontWeight: FontWeight.w800,
                         color: Colors.white,
-                        height: 0.95,
+                        height: 1.0,
                       ),
                     ),
                     if (!compact) ...[
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 5),
                       Text(
                         _getTagline(),
                         style: GoogleFonts.montserrat(
-                          fontSize: 12,
+                          fontSize: 11,
                           color: Colors.white.withValues(alpha: 0.85),
-                          height: 1.2,
+                          height: 1.15,
                         ),
                       ),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 12),
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.10),
-                          borderRadius: BorderRadius.circular(18),
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: Colors.white.withValues(alpha: 0.10),
                           ),
@@ -2542,7 +2544,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                             ),
                             Container(
                               width: 1,
-                              height: 32,
+                              height: 26,
                               margin:
                                   const EdgeInsets.symmetric(horizontal: 10),
                               color: Colors.white.withValues(alpha: 0.12),
@@ -2553,7 +2555,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                             ),
                             Container(
                               width: 1,
-                              height: 32,
+                              height: 26,
                               margin:
                                   const EdgeInsets.symmetric(horizontal: 10),
                               color: Colors.white.withValues(alpha: 0.12),
@@ -2585,7 +2587,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               ),
             ],
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 0),
         ],
       ),
     );
