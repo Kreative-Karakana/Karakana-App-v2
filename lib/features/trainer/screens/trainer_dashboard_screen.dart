@@ -2243,7 +2243,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     }
     return SliverAppBar(
         toolbarHeight: 72,
-        expandedHeight: 220,
+        expandedHeight: 208,
         pinned: true,
         floating: false,
         forceElevated: innerBoxIsScrolled,
@@ -2341,7 +2341,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxHeight < 170;
+              final compact = constraints.maxHeight < 176;
               if (compact) {
                 return Container(
                   decoration: const BoxDecoration(
@@ -2358,15 +2358,48 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   ),
                 );
               }
-              return SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(18, 6, 18, 8),
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: _buildDashboardHero(compact: compact),
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  Positioned(
+                    top: -22,
+                    left: -18,
+                    child: _buildHeroGlow(
+                      130,
+                      Colors.white.withValues(alpha: 0.12),
+                    ),
                   ),
-                ),
+                  Positioned(
+                    right: -36,
+                    bottom: -44,
+                    child: _buildHeroGlow(
+                      170,
+                      const Color(0xFFFFD1A1).withValues(alpha: 0.10),
+                    ),
+                  ),
+                  Positioned(
+                    right: 22,
+                    top: 80,
+                    child: Opacity(
+                      opacity: 0.08,
+                      child: Image.asset(
+                        'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                        width: 128,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  SafeArea(
+                    bottom: false,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(18, 12, 18, 10),
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: _buildDashboardHero(compact: compact),
+                      ),
+                    ),
+                  ),
+                ],
               );
             },
           ),
@@ -2462,18 +2495,20 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 9,
-                      vertical: 3,
-                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.12),
+                      color: Colors.white.withValues(alpha: 0.10),
                       borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.14),
+                        width: 0.8,
+                      ),
                     ),
                     child: Text(
                       'Dashibodi ya Mkufunzi',
                       style: GoogleFonts.montserrat(
-                        fontSize: 10,
+                        fontSize: 9.5,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
                         letterSpacing: 0.4,
@@ -2484,7 +2519,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   Text(
                     '${_getGreeting()}, $firstName',
                     style: GoogleFonts.montserrat(
-                      fontSize: 18,
+                      fontSize: 18.5,
                       fontWeight: FontWeight.w800,
                       color: Colors.white,
                       height: 1.0,
@@ -2494,84 +2529,158 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   Text(
                     _getTagline(),
                     style: GoogleFonts.montserrat(
-                      fontSize: 10.5,
+                      fontSize: 11,
                       color: Colors.white.withValues(alpha: 0.85),
-                      height: 1.12,
+                      height: 1.16,
                     ),
                   ),
                 ],
               ),
             ),
             Container(
-              width: 50,
-              height: 50,
+              width: 42,
+              height: 42,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(16),
+                color: Colors.white.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  width: 0.8,
+                ),
               ),
               child: Icon(
                 _getTimeIcon(),
                 color: Colors.white,
-                size: 24,
+                size: 20,
               ),
             ),
           ],
         ),
+        const SizedBox(height: 14),
+        _buildHeroSummaryRail(),
+      ],
+    );
+  }
+
+  Widget _buildHeroSummaryRail() {
+    final avgRating =
+        (_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1);
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.12),
+              width: 0.8,
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildHeroSummaryItem(
+                  Icons.school_outlined,
+                  'Kozi',
+                  '${_stats['total_courses'] ?? 0}',
+                ),
+              ),
+              _buildHeroSummaryDivider(),
+              Expanded(
+                child: _buildHeroSummaryItem(
+                  Icons.people_outline_rounded,
+                  'Wanafunzi',
+                  '${_stats['total_students'] ?? 0}',
+                ),
+              ),
+              _buildHeroSummaryDivider(),
+              Expanded(
+                child: _buildHeroSummaryItem(
+                  Icons.star_outline_rounded,
+                  'Ukadiriaji',
+                  avgRating,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeroSummaryItem(IconData icon, String label, String value) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(
+            icon,
+            size: 16,
+            color: Colors.white,
+          ),
+        ),
         const SizedBox(height: 8),
-        Wrap(
-          spacing: 6,
-          runSpacing: 6,
-          children: [
-            _buildHeroMiniChip(
-              'Kozi',
-              '${_stats['total_courses'] ?? 0}',
-            ),
-            _buildHeroMiniChip(
-              'Wanafunzi',
-              '${_stats['total_students'] ?? 0}',
-            ),
-            _buildHeroMiniChip(
-              'Ukadiriaji',
-              (_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1),
-            ),
-          ],
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.montserrat(
+            fontSize: 14,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            height: 1.0,
+          ),
+        ),
+        const SizedBox(height: 3),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.montserrat(
+            fontSize: 9.5,
+            fontWeight: FontWeight.w600,
+            color: Colors.white.withValues(alpha: 0.78),
+            height: 1.0,
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildHeroMiniChip(String label, String value) {
+  Widget _buildHeroSummaryDivider() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
+      width: 1,
+      height: 38,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(999),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: GoogleFonts.montserrat(
-              fontSize: 9.5,
-              fontWeight: FontWeight.w600,
-              color: Colors.white.withValues(alpha: 0.72),
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.montserrat(
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-            ),
-          ),
-        ],
+    );
+  }
+
+  Widget _buildHeroGlow(double size, Color color) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          colors: [
+            color,
+            color.withValues(alpha: 0.0),
+          ],
+          stops: const [0.0, 1.0],
+        ),
       ),
     );
   }
