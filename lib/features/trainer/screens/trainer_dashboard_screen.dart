@@ -908,8 +908,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         onTap: onTap,
         borderRadius: BorderRadius.circular(24),
         child: Container(
-          height: 120,
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+          height: 114,
+          padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(24),
@@ -928,13 +928,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               Row(
                 children: [
                   Container(
-                    width: 38,
-                    height: 38,
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: color.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(13),
                     ),
-                    child: Icon(icon, color: color, size: 19),
+                    child: Icon(icon, color: color, size: 18),
                   ),
                   const Spacer(),
                   Icon(
@@ -944,7 +944,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Text(
                 label,
                 maxLines: 1,
@@ -958,11 +958,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               const SizedBox(height: 2),
               Text(
                 subtitle,
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.montserrat(
-                  fontSize: 10.5,
-                  height: 1.15,
+                  fontSize: 9.8,
+                  height: 1.1,
                   color: const Color(0xFF7B3A10),
                 ),
               ),
