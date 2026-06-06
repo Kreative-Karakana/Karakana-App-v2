@@ -69,3 +69,4 @@
 - Trainer dashboard Akaunti tab transition now uses the same parent compact topbar flow as Kozi and Vyeti.
 - Trainer dashboard headers were visually refined to reduce orange weight and make content more prominent.
 - Trainer dashboard hero breakpoint and stats rail were tightened to clear the remaining small scroll overflow.
+- Replaced remaining Mwalimu fallback text with Mkufunzi across the app.

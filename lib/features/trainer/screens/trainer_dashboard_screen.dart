@@ -182,7 +182,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     if (fullName.isNotEmpty) return fullName.split(' ').first;
     final email = auth.userEmail;
     if (email.isNotEmpty) return email.split('@').first;
-    return 'Mwalimu';
+    return 'Mkufunzi';
   }
 
   Future<void> _deleteCourse(Map course) async {
