@@ -2341,7 +2341,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxHeight < 240;
+              final compact = constraints.maxHeight < 170;
               if (compact) {
                 return Container(
                   decoration: const BoxDecoration(
@@ -2361,7 +2361,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               return SafeArea(
                 bottom: false,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(18, 8, 18, 10),
+                  padding: const EdgeInsets.fromLTRB(18, 6, 18, 8),
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: _buildDashboardHero(compact: compact),
@@ -2484,43 +2484,43 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   Text(
                     '${_getGreeting()}, $firstName',
                     style: GoogleFonts.montserrat(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color: Colors.white,
                       height: 1.0,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 4),
                   Text(
                     _getTagline(),
                     style: GoogleFonts.montserrat(
-                      fontSize: 11,
+                      fontSize: 10.5,
                       color: Colors.white.withValues(alpha: 0.85),
-                      height: 1.15,
+                      height: 1.12,
                     ),
                   ),
                 ],
               ),
             ),
             Container(
-              width: 54,
-              height: 54,
+              width: 50,
+              height: 50,
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(
                 _getTimeIcon(),
                 color: Colors.white,
-                size: 26,
+                size: 24,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: 6,
+          runSpacing: 6,
           children: [
             _buildHeroMiniChip(
               'Kozi',
@@ -2542,10 +2542,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   Widget _buildHeroMiniChip(String label, String value) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
       ),
       child: Column(

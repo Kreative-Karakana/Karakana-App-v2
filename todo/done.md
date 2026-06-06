@@ -49,3 +49,4 @@
 - Trainer dashboard hero has been restyled with a more welcoming expanded summary band instead of a large empty gradient block.
 - Trainer dashboard hero spacing has been tightened so the welcoming summary band no longer overflows during scroll collapse.
 - Trainer dashboard hero height has been reduced so the compact Karakana brand bar reveals sooner during scroll.
+- Trainer dashboard hero layout has been rebalanced so the expanded state fits the section cleanly and the compact bar appears at the right scroll point.
