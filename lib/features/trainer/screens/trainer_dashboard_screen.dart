@@ -2261,10 +2261,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   Widget _buildHeroAppBar(BuildContext context, bool innerBoxIsScrolled) {
     final bool isAccountTab = _tabController.index == 4;
     final bool isCoursesTab = _tabController.index == 1;
+    final bool isCertificatesTab = _tabController.index == 3;
     if (isAccountTab) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }
-    if (isCoursesTab) {
+    if (isCoursesTab || isCertificatesTab) {
       return SliverAppBar(
         toolbarHeight: 66,
         expandedHeight: 118,
@@ -2292,7 +2293,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
               child: Align(
                 alignment: Alignment.topCenter,
-                child: _buildKoziHeaderChrome(),
+                child: _buildPageHeaderChrome(
+                  title: isCertificatesTab ? 'Vyeti' : 'Kozi',
+                ),
               ),
             ),
           ),
@@ -2474,7 +2477,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     );
   }
 
-  Widget _buildKoziHeaderChrome() {
+  Widget _buildPageHeaderChrome({required String title}) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(22),
       child: BackdropFilter(
@@ -2525,7 +2528,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               ),
               const SizedBox(width: 10),
               Text(
-                'Kozi',
+                title,
                 style: GoogleFonts.montserrat(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
