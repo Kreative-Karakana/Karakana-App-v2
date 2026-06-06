@@ -52,3 +52,4 @@
 - Trainer dashboard hero layout has been rebalanced so the expanded state fits the section cleanly and the compact bar appears at the right scroll point.
 - Trainer dashboard hero section was refined into a premium glass-style layout with a connected summary rail and a smaller aligned theme icon.
 - Trainer dashboard collapsed hero now uses compact and ultra-compact layouts to prevent overflow on small scroll states.
+- Trainer dashboard hero and summary rail were tightened further to fit both expanded and collapsed scroll states without overflow.

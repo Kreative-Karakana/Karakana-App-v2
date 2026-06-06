@@ -2243,7 +2243,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     }
     return SliverAppBar(
         toolbarHeight: 72,
-        expandedHeight: 208,
+        expandedHeight: 228,
         pinned: true,
         floating: false,
         forceElevated: innerBoxIsScrolled,
@@ -2404,7 +2404,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   SafeArea(
                     bottom: false,
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(18, 10, 18, 8),
+                      padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
                       child: Align(
                         alignment: Alignment.topCenter,
                         child: _buildDashboardHero(compact: false),
@@ -2514,7 +2514,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 children: [
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(999),
@@ -2537,30 +2537,30 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   Text(
                     '${_getGreeting()}, $firstName',
                     style: GoogleFonts.montserrat(
-                      fontSize: 17.5,
+                      fontSize: 16.5,
                       fontWeight: FontWeight.w800,
                       color: Colors.white,
                       height: 1.0,
                     ),
                   ),
-                  const SizedBox(height: 3),
+                  const SizedBox(height: 2),
                   Text(
                     _getTagline(),
                     style: GoogleFonts.montserrat(
-                      fontSize: 10.5,
+                      fontSize: 10,
                       color: Colors.white.withValues(alpha: 0.85),
-                      height: 1.12,
+                      height: 1.08,
                     ),
                   ),
                 ],
               ),
             ),
             Container(
-              width: 38,
-              height: 38,
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.09),
-                borderRadius: BorderRadius.circular(13),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: Colors.white.withValues(alpha: 0.12),
                   width: 0.8,
@@ -2569,12 +2569,12 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               child: Icon(
                 _getTimeIcon(),
                 color: Colors.white,
-                size: 18,
+                size: 17,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 8),
         _buildHeroSummaryRail(),
       ],
     );
@@ -2584,14 +2584,14 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final avgRating =
         (_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1);
     return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(22),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(22),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.12),
               width: 0.8,
@@ -2634,37 +2634,37 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: 30,
-          height: 30,
+          width: 28,
+          height: 28,
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(9),
           ),
           child: Icon(
             icon,
-            size: 16,
+            size: 15,
             color: Colors.white,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Text(
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.montserrat(
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: FontWeight.w800,
             color: Colors.white,
             height: 1.0,
           ),
         ),
-        const SizedBox(height: 3),
+        const SizedBox(height: 2),
         Text(
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.montserrat(
-            fontSize: 9.5,
+            fontSize: 9,
             fontWeight: FontWeight.w600,
             color: Colors.white.withValues(alpha: 0.78),
             height: 1.0,
@@ -2677,7 +2677,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   Widget _buildHeroSummaryDivider() {
     return Container(
       width: 1,
-      height: 38,
+      height: 30,
       margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.14),
