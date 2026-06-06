@@ -2243,7 +2243,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     }
     return SliverAppBar(
         toolbarHeight: 72,
-        expandedHeight: 336,
+        expandedHeight: 280,
         pinned: true,
         floating: false,
         forceElevated: innerBoxIsScrolled,
@@ -2341,7 +2341,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxHeight < 260;
+              final compact = constraints.maxHeight < 300;
               if (compact) {
                 return Container(
                   decoration: const BoxDecoration(
