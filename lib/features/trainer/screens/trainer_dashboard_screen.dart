@@ -113,6 +113,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     await _loadAll();
   }
 
+  void _openAccountTab() {
+    _tabController.animateTo(4);
+  }
+
   Future<void> _togglePublish(Map course) async {
     final id = course['id'];
     final isPublished = course['status'] == 'published';
@@ -563,8 +567,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           child: _buildNavAction(
                             index: 4,
                             icon: Icons.person_outline_rounded,
-                            onTap: () =>
-                                setState(() => _tabController.animateTo(4)),
+                            onTap: () => setState(_openAccountTab),
                           ),
                         ),
                       ],
@@ -768,7 +771,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           'Akaunti',
           'Mipangilio',
           const Color(0xFF3D1800),
-          () => _tabController.animateTo(4),
+          _openAccountTab,
         ),
         const SizedBox(width: 10),
         _buildQuickAction(
@@ -2420,7 +2423,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               const SizedBox(width: 4),
               _buildHeaderIconButton(
                 Icons.settings_outlined,
-                () => _tabController.animateTo(4),
+                _openAccountTab,
                 veryCompact: veryCompact,
               ),
             ],
@@ -2551,7 +2554,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               const SizedBox(width: 4),
               _buildHeaderIconButton(
                 Icons.settings_outlined,
-                () => _tabController.animateTo(4),
+                _openAccountTab,
                 veryCompact: false,
               ),
             ],
@@ -2616,7 +2619,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             const SizedBox(width: 4),
             _buildHeaderIconButton(
               Icons.settings_outlined,
-              () => _tabController.animateTo(4),
+              _openAccountTab,
               veryCompact: false,
             ),
           ],
