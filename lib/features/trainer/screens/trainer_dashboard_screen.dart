@@ -906,35 +906,45 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(24),
         child: Container(
-          height: 116,
-          padding: const EdgeInsets.fromLTRB(12, 13, 12, 12),
+          height: 120,
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: color.withValues(alpha: 0.14)),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: color.withValues(alpha: 0.12)),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF3D1800).withValues(alpha: 0.06),
-                blurRadius: 16,
-                offset: const Offset(0, 8),
+                color: const Color(0xFF3D1800).withValues(alpha: 0.07),
+                blurRadius: 18,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: color, size: 19),
+              Row(
+                children: [
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(13),
+                    ),
+                    child: Icon(icon, color: color, size: 19),
+                  ),
+                  const Spacer(),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: color.withValues(alpha: 0.55),
+                    size: 20,
+                  ),
+                ],
               ),
-              const Spacer(),
+              const SizedBox(height: 16),
               Text(
                 label,
                 maxLines: 1,
@@ -2243,7 +2253,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     }
     return SliverAppBar(
         toolbarHeight: 72,
-        expandedHeight: 252,
+        expandedHeight: 268,
         pinned: true,
         floating: false,
         forceElevated: innerBoxIsScrolled,
@@ -2264,9 +2274,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxHeight < 170;
-              final dense = constraints.maxHeight < 240;
-              final veryCompact = constraints.maxHeight < 150;
+              final compact = constraints.maxHeight < 190;
+              final dense = constraints.maxHeight < 246;
+              final veryCompact = constraints.maxHeight < 160;
               return Stack(
                 fit: StackFit.expand,
                 children: [
@@ -2340,67 +2350,83 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   Widget _buildCollapsedDashboardChrome({
     required bool veryCompact,
   }) {
-    return Row(
-      children: [
-        Container(
-          width: veryCompact ? 28 : 30,
-          height: veryCompact ? 28 : 30,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(veryCompact ? 20 : 24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: veryCompact ? 12 : 14,
+            vertical: veryCompact ? 8 : 10,
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(3),
-            child: Image.asset(
-              'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-              fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) => Center(
-                child: Text(
-                  'K',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primary,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(veryCompact ? 20 : 24),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.12),
+              width: 0.8,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF3D1800).withValues(alpha: 0.16),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: veryCompact ? 28 : 30,
+                height: veryCompact ? 28 : 30,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(3),
+                  child: Image.asset(
+                    'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) => Center(
+                      child: Text(
+                        'K',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+              SizedBox(width: veryCompact ? 8 : 10),
+              Text(
+                'Karakana',
+                style: GoogleFonts.montserrat(
+                  fontSize: veryCompact ? 15 : 16,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  letterSpacing: 0.2,
+                ),
+              ),
+              const Spacer(),
+              _buildHeaderIconButton(
+                Icons.notifications_outlined,
+                () => context.push('/notifications'),
+                veryCompact: veryCompact,
+              ),
+              const SizedBox(width: 4),
+              _buildHeaderIconButton(
+                Icons.settings_outlined,
+                () => _tabController.animateTo(4),
+                veryCompact: veryCompact,
+              ),
+            ],
           ),
         ),
-        SizedBox(width: veryCompact ? 8 : 10),
-        Text(
-          'Karakana',
-          style: GoogleFonts.montserrat(
-            fontSize: veryCompact ? 15 : 16,
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-            letterSpacing: 0.2,
-          ),
-        ),
-        const Spacer(),
-        IconButton(
-          visualDensity: VisualDensity.compact,
-          padding: EdgeInsets.zero,
-          constraints: BoxConstraints.tightFor(
-            width: veryCompact ? 34 : 38,
-            height: veryCompact ? 34 : 38,
-          ),
-          icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-          onPressed: () => context.push('/notifications'),
-          tooltip: 'Arifa',
-        ),
-        IconButton(
-          visualDensity: VisualDensity.compact,
-          padding: EdgeInsets.zero,
-          constraints: BoxConstraints.tightFor(
-            width: veryCompact ? 34 : 38,
-            height: veryCompact ? 34 : 38,
-          ),
-          icon: const Icon(Icons.settings_outlined, color: Colors.white),
-          onPressed: () => _tabController.animateTo(4),
-          tooltip: 'Mipangilio',
-        ),
-      ],
+      ),
     );
   }
 
@@ -2493,89 +2519,64 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(999),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.12),
-                          width: 0.8,
-                        ),
-                      ),
-                      child: Text(
-                        'Dashibodi ya Mkufunzi',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          letterSpacing: 0.4,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      '${_getGreeting()}, $firstName',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        height: 1.0,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      _getTagline(),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 9.8,
-                        color: Colors.white.withValues(alpha: 0.84),
-                        height: 1.05,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               Container(
-                width: 34,
-                height: 34,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.09),
-                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.white.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(999),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.12),
                     width: 0.8,
                   ),
                 ),
-                child: Icon(
-                  _getTimeIcon(),
-                  color: Colors.white,
-                  size: 17,
+                child: Text(
+                  'Dashibodi ya Mkufunzi',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    letterSpacing: 0.4,
+                  ),
                 ),
+              ),
+              const Spacer(),
+              _buildHeaderIconButton(
+                Icons.notifications_outlined,
+                () => context.push('/notifications'),
+                veryCompact: false,
+              ),
+              const SizedBox(width: 4),
+              _buildHeaderIconButton(
+                Icons.settings_outlined,
+                () => _tabController.animateTo(4),
+                veryCompact: false,
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 10),
           Text(
-            'Takwimu muhimu za kozi zako zitaonekana hapa.',
+            '${_getGreeting()}, $firstName',
             style: GoogleFonts.montserrat(
-              fontSize: 9.5,
-              fontWeight: FontWeight.w600,
-              color: Colors.white.withValues(alpha: 0.68),
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
               height: 1.0,
             ),
           ),
+          const SizedBox(height: 3),
+          Text(
+            _getTagline(),
+            style: GoogleFonts.montserrat(
+              fontSize: 9.8,
+              color: Colors.white.withValues(alpha: 0.84),
+              height: 1.05,
+            ),
+          ),
+          const SizedBox(height: 10),
+          _buildHeroSummaryRail(),
         ],
       );
     }
@@ -2584,78 +2585,95 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(999),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.12),
-                        width: 0.8,
-                      ),
-                    ),
-                    child: Text(
-                      'Dashibodi ya Mkufunzi',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 9.5,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                        letterSpacing: 0.4,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    '${_getGreeting()}, $firstName',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 16.5,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                      height: 1.0,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    _getTagline(),
-                    style: GoogleFonts.montserrat(
-                      fontSize: 10,
-                      color: Colors.white.withValues(alpha: 0.85),
-                      height: 1.08,
-                    ),
-                  ),
-                ],
-              ),
-            ),
             Container(
-              width: 36,
-              height: 36,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.09),
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.white.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(999),
                 border: Border.all(
                   color: Colors.white.withValues(alpha: 0.12),
                   width: 0.8,
                 ),
               ),
-              child: Icon(
-                _getTimeIcon(),
-                color: Colors.white,
-                size: 17,
+              child: Text(
+                'Dashibodi ya Mkufunzi',
+                style: GoogleFonts.montserrat(
+                  fontSize: 9.5,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  letterSpacing: 0.4,
+                ),
               ),
+            ),
+            const Spacer(),
+            _buildHeaderIconButton(
+              Icons.notifications_outlined,
+              () => context.push('/notifications'),
+              veryCompact: false,
+            ),
+            const SizedBox(width: 4),
+            _buildHeaderIconButton(
+              Icons.settings_outlined,
+              () => _tabController.animateTo(4),
+              veryCompact: false,
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
+        Text(
+          '${_getGreeting()}, $firstName',
+          style: GoogleFonts.montserrat(
+            fontSize: 17.5,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            height: 1.0,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          _getTagline(),
+          style: GoogleFonts.montserrat(
+            fontSize: 10.5,
+            color: Colors.white.withValues(alpha: 0.85),
+            height: 1.08,
+          ),
+        ),
+        const SizedBox(height: 12),
         _buildHeroSummaryRail(),
       ],
+    );
+  }
+
+  Widget _buildHeaderIconButton(
+    IconData icon,
+    VoidCallback onTap, {
+    required bool veryCompact,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          width: veryCompact ? 34 : 36,
+          height: veryCompact ? 34 : 36,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.10),
+              width: 0.8,
+            ),
+          ),
+          child: Icon(
+            icon,
+            size: veryCompact ? 18 : 19,
+            color: Colors.white,
+          ),
+        ),
+      ),
     );
   }
 

@@ -56,3 +56,4 @@
 - Trainer dashboard hero now uses a dense middle state and a compact fallback so the scroll header does not overflow on smaller visible heights.
 - Trainer dashboard Kozi tab now uses a slim scroll-aware top bar instead of the large dashboard hero.
 - Trainer dashboard header now uses a single flexible SliverAppBar pattern with collapsed chrome rendered inside the same header instead of a separate Kozi branch.
+- Trainer dashboard header and quick action cards were refined to match the approved warm hero and glass topbar mockup.
