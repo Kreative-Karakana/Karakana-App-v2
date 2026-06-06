@@ -67,3 +67,4 @@
 - Trainer dashboard Vyeti tab now uses the compact independent page topbar instead of the full dashboard hero.
 - Trainer dashboard header now switches to compact chrome based on real available height to prevent scroll overflow.
 - Trainer dashboard Akaunti tab transition now uses the same parent compact topbar flow as Kozi and Vyeti.
+- Trainer dashboard headers were visually refined to reduce orange weight and make content more prominent.

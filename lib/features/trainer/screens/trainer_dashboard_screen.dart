@@ -2265,8 +2265,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final bool isCertificatesTab = _tabController.index == 3;
     if (isAccountTab || isCoursesTab || isCertificatesTab) {
       return SliverAppBar(
-        toolbarHeight: 66,
-        expandedHeight: 118,
+        toolbarHeight: 56,
+        expandedHeight: 88,
         pinned: true,
         floating: false,
         forceElevated: innerBoxIsScrolled,
@@ -2279,7 +2279,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF2A1106), Color(0xFF5C2208), Color(0xFFB5540A)],
+              colors: [Color(0xFF1F0F08), Color(0xFF4A2110), Color(0xFF8A4218)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               stops: [0.0, 0.48, 1.0],
@@ -2288,7 +2288,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           child: SafeArea(
             bottom: false,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+              padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
               child: Align(
                 alignment: Alignment.topCenter,
                 child: _buildPageHeaderChrome(
@@ -2305,8 +2305,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       );
     }
     return SliverAppBar(
-        toolbarHeight: 66,
-        expandedHeight: 226,
+        toolbarHeight: 60,
+        expandedHeight: 166,
         pinned: true,
         floating: false,
         forceElevated: innerBoxIsScrolled,
@@ -2319,7 +2319,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF2A1106), Color(0xFF5C2208), Color(0xFFB5540A)],
+              colors: [Color(0xFF201008), Color(0xFF4B2412), Color(0xFF9A4E1D)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               stops: [0.0, 0.48, 1.0],
@@ -2327,17 +2327,17 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxHeight < 146;
-              final veryCompact = constraints.maxHeight < 146;
+              final compact = constraints.maxHeight < 124;
+              final veryCompact = constraints.maxHeight < 124;
               return Stack(
                 fit: StackFit.expand,
                 children: [
                   Positioned(
-                    top: -22,
+                    top: -36,
                     left: -18,
                     child: _buildHeroGlow(
                       130,
-                      Colors.white.withValues(alpha: 0.12),
+                      Colors.white.withValues(alpha: 0.08),
                     ),
                   ),
                   Positioned(
@@ -2345,17 +2345,17 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     bottom: -44,
                     child: _buildHeroGlow(
                       170,
-                      const Color(0xFFFFD1A1).withValues(alpha: 0.10),
+                      const Color(0xFFFFD1A1).withValues(alpha: 0.06),
                     ),
                   ),
                   Positioned(
                     right: 22,
                     top: 80,
                     child: Opacity(
-                      opacity: 0.08,
+                      opacity: 0.04,
                       child: Image.asset(
                         'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                        width: 128,
+                        width: 116,
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -2365,7 +2365,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       bottom: false,
                       child: Padding(
                         padding:
-                            EdgeInsets.fromLTRB(14, veryCompact ? 6 : 8, 14, 6),
+                            EdgeInsets.fromLTRB(16, veryCompact ? 5 : 6, 16, 5),
                         child: Align(
                           alignment: Alignment.topCenter,
                           child: _buildCollapsedDashboardChrome(
@@ -2378,11 +2378,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     SafeArea(
                       bottom: false,
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(18, 4, 18, 4),
+                        padding: const EdgeInsets.fromLTRB(18, 2, 18, 4),
                         child: LayoutBuilder(
                           builder: (context, contentConstraints) {
                             final useCollapsed =
-                                contentConstraints.maxHeight < 166;
+                                contentConstraints.maxHeight < 124;
                             return Align(
                               alignment: Alignment.topCenter,
                               child: useCollapsed
@@ -2409,26 +2409,26 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     required bool veryCompact,
   }) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(veryCompact ? 20 : 24),
+      borderRadius: BorderRadius.circular(18),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: veryCompact ? 12 : 14,
-            vertical: veryCompact ? 8 : 10,
+            horizontal: veryCompact ? 11 : 12,
+            vertical: veryCompact ? 7 : 8,
           ),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(veryCompact ? 20 : 24),
+            color: Colors.white.withValues(alpha: 0.11),
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.12),
+              color: Colors.white.withValues(alpha: 0.14),
               width: 0.8,
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF3D1800).withValues(alpha: 0.16),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
+                color: Colors.black.withValues(alpha: 0.12),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
@@ -2490,31 +2490,31 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   Widget _buildPageHeaderChrome({required String title}) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(18),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+          padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.12),
+              color: Colors.white.withValues(alpha: 0.14),
               width: 0.8,
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF3D1800).withValues(alpha: 0.16),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
+                color: Colors.black.withValues(alpha: 0.12),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
           child: Row(
             children: [
               Container(
-                width: 30,
-                height: 30,
+                width: 28,
+                height: 28,
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -2541,10 +2541,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               Text(
                 title,
                 style: GoogleFonts.montserrat(
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
-                  letterSpacing: 0.2,
+                  letterSpacing: 0,
                 ),
               ),
               const Spacer(),
@@ -2723,27 +2723,21 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.12),
-                  width: 0.8,
-                ),
-              ),
+            Expanded(
               child: Text(
-                'Dashibodi ya Mkufunzi',
+                '${_getGreeting()}, $firstName',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.montserrat(
-                  fontSize: 9.5,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w800,
                   color: Colors.white,
-                  letterSpacing: 0.4,
+                  height: 1.0,
+                  letterSpacing: 0,
                 ),
               ),
             ),
-            const Spacer(),
+            const SizedBox(width: 10),
             _buildHeaderIconButton(
               Icons.notifications_outlined,
               () => context.push('/notifications'),
@@ -2757,26 +2751,19 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             ),
           ],
         ),
-        const SizedBox(height: 9),
-        Text(
-          '${_getGreeting()}, $firstName',
-          style: GoogleFonts.montserrat(
-            fontSize: 16.5,
-            fontWeight: FontWeight.w800,
-            color: Colors.white,
-            height: 1.0,
-          ),
-        ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 6),
         Text(
           _getTagline(),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: GoogleFonts.montserrat(
-            fontSize: 10,
-            color: Colors.white.withValues(alpha: 0.85),
-            height: 1.0,
+            fontSize: 11,
+            color: Colors.white.withValues(alpha: 0.74),
+            height: 1.1,
+            letterSpacing: 0,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 10),
         _buildHeroSummaryRail(compact: false),
       ],
     );
@@ -2793,13 +2780,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          width: veryCompact ? 34 : 36,
-          height: veryCompact ? 34 : 36,
+          width: veryCompact ? 32 : 34,
+          height: veryCompact ? 32 : 34,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(12),
+            color: Colors.white.withValues(alpha: 0.09),
+            borderRadius: BorderRadius.circular(11),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.10),
+              color: Colors.white.withValues(alpha: 0.12),
               width: 0.8,
             ),
           ),
@@ -2817,20 +2804,20 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final avgRating =
         (_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1);
     return ClipRRect(
-      borderRadius: BorderRadius.circular(compact ? 18 : 22),
+      borderRadius: BorderRadius.circular(compact ? 16 : 18),
       child: BackdropFilter(
         filter: ImageFilter.blur(
-            sigmaX: compact ? 10 : 12, sigmaY: compact ? 10 : 12),
+            sigmaX: compact ? 14 : 18, sigmaY: compact ? 14 : 18),
         child: Container(
           padding: EdgeInsets.symmetric(
             horizontal: compact ? 8 : 10,
-            vertical: compact ? 6 : 8,
+            vertical: compact ? 5 : 7,
           ),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(compact ? 18 : 22),
+            color: Colors.white.withValues(alpha: 0.11),
+            borderRadius: BorderRadius.circular(compact ? 16 : 18),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.12),
+              color: Colors.white.withValues(alpha: 0.16),
               width: 0.8,
             ),
           ),
@@ -2879,25 +2866,25 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: compact ? 24 : 28,
-          height: compact ? 24 : 28,
+          width: compact ? 22 : 24,
+          height: compact ? 22 : 24,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(compact ? 8 : 9),
+            color: Colors.white.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
             icon,
-            size: compact ? 13 : 15,
+            size: compact ? 12 : 13,
             color: Colors.white,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 3),
         Text(
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.montserrat(
-            fontSize: compact ? 12 : 13,
+            fontSize: compact ? 11.5 : 12.5,
             fontWeight: FontWeight.w800,
             color: Colors.white,
             height: 1.0,
@@ -2909,7 +2896,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.montserrat(
-            fontSize: compact ? 8.5 : 9,
+            fontSize: compact ? 8 : 8.5,
             fontWeight: FontWeight.w600,
             color: Colors.white.withValues(alpha: 0.78),
             height: 1.0,
@@ -2922,8 +2909,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   Widget _buildHeroSummaryDivider() {
     return Container(
       width: 1,
-      height: 24,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
+      height: 22,
+      margin: const EdgeInsets.symmetric(horizontal: 7),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(999),
