@@ -46,3 +46,4 @@
 - Trainer dashboard home page cleaned up to remove the course review card and restyle the four quick menus with a more polished industry-style treatment.
 - Trainer dashboard collapsed header now switches immediately to the Karakana logo/title bar instead of the greeting text.
 - Trainer dashboard collapsed state now shows only the Karakana app-bar brand row on scroll, with the duplicate greeting removed.
+- Trainer dashboard hero has been restyled with a more welcoming expanded summary band instead of a large empty gradient block.

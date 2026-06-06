@@ -2523,6 +2523,49 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           height: 1.2,
                         ),
                       ),
+                      const SizedBox(height: 18),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.10),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            _buildHeroMiniStat(
+                              'Kozi',
+                              '${_stats['total_courses'] ?? 0}',
+                            ),
+                            Container(
+                              width: 1,
+                              height: 32,
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              color: Colors.white.withValues(alpha: 0.12),
+                            ),
+                            _buildHeroMiniStat(
+                              'Wanafunzi',
+                              '${_stats['total_students'] ?? 0}',
+                            ),
+                            Container(
+                              width: 1,
+                              height: 32,
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              color: Colors.white.withValues(alpha: 0.12),
+                            ),
+                            _buildHeroMiniStat(
+                              'Ukadiriaji',
+                              (_stats['avg_rating'] as double? ?? 0.0)
+                                  .toStringAsFixed(1),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ],
                 ),
@@ -2543,6 +2586,35 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             ],
           ),
           const SizedBox(height: 2),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeroMiniStat(String label, String value) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.montserrat(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: Colors.white.withValues(alpha: 0.72),
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.montserrat(
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+            ),
+          ),
         ],
       ),
     );
