@@ -54,3 +54,4 @@
 - Trainer dashboard collapsed hero now uses compact and ultra-compact layouts to prevent overflow on small scroll states.
 - Trainer dashboard hero and summary rail were tightened further to fit both expanded and collapsed scroll states without overflow.
 - Trainer dashboard hero now uses a dense middle state and a compact fallback so the scroll header does not overflow on smaller visible heights.
+- Trainer dashboard Kozi tab now uses a slim scroll-aware top bar instead of the large dashboard hero.

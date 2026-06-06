@@ -2238,8 +2238,140 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   Widget _buildHeroAppBar(BuildContext context, bool innerBoxIsScrolled) {
     final bool isAccountTab = _tabController.index == 4;
+    final bool isCoursesTab = _tabController.index == 1;
     if (isAccountTab) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
+    }
+    if (isCoursesTab) {
+      return SliverAppBar(
+          toolbarHeight: 72,
+          expandedHeight: 72,
+          pinned: true,
+          floating: false,
+          forceElevated: innerBoxIsScrolled,
+          automaticallyImplyLeading: false,
+          scrolledUnderElevation: 0,
+          elevation: 0,
+          surfaceTintColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          backgroundColor: Colors.transparent,
+          titleSpacing: 0,
+          title: AnimatedOpacity(
+            opacity: innerBoxIsScrolled ? 1 : 0.92,
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOut,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: Image.asset(
+                      'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => Center(
+                        child: Text(
+                          'K',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Kozi Zangu',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      'Angalia na boresha kozi zako',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white.withValues(alpha: 0.74),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            AnimatedOpacity(
+              opacity: innerBoxIsScrolled ? 1 : 0.7,
+              duration: const Duration(milliseconds: 220),
+              curve: Curves.easeOut,
+              child: IconButton(
+                icon: const Icon(Icons.notifications_outlined,
+                    color: Colors.white),
+                onPressed: () => context.push('/notifications'),
+                tooltip: 'Arifa',
+              ),
+            ),
+            AnimatedOpacity(
+              opacity: innerBoxIsScrolled ? 1 : 0.7,
+              duration: const Duration(milliseconds: 220),
+              curve: Curves.easeOut,
+              child: IconButton(
+                icon: const Icon(Icons.settings_outlined, color: Colors.white),
+                onPressed: () => _tabController.animateTo(4),
+                tooltip: 'Mipangilio',
+              ),
+            ),
+          ],
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF2A1106),
+                  Color(0xFF5C2208),
+                  Color(0xFFB5540A)
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                stops: [0.0, 0.48, 1.0],
+              ),
+            ),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Positioned(
+                  top: -16,
+                  left: -22,
+                  child: _buildHeroGlow(
+                    120,
+                    Colors.white.withValues(alpha: 0.10),
+                  ),
+                ),
+                Positioned(
+                  right: -28,
+                  bottom: -32,
+                  child: _buildHeroGlow(
+                    150,
+                    const Color(0xFFFFD1A1).withValues(alpha: 0.08),
+                  ),
+                ),
+              ],
+            ),
+          ));
     }
     return SliverAppBar(
         toolbarHeight: 72,
