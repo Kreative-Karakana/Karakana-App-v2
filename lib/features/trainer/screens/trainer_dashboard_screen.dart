@@ -2291,8 +2291,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       );
     }
     return SliverAppBar(
-        toolbarHeight: 68,
-        expandedHeight: 214,
+        toolbarHeight: 66,
+        expandedHeight: 206,
         pinned: true,
         floating: false,
         forceElevated: innerBoxIsScrolled,
@@ -2313,9 +2313,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxHeight < 150;
-              final dense = constraints.maxHeight < 186;
-              final veryCompact = constraints.maxHeight < 150;
+              final compact = constraints.maxHeight < 146;
+              final dense = constraints.maxHeight < 176;
+              final veryCompact = constraints.maxHeight < 146;
               return Stack(
                 fit: StackFit.expand,
                 children: [
@@ -2365,7 +2365,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     SafeArea(
                       bottom: false,
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(18, 6, 18, 6),
+                        padding: const EdgeInsets.fromLTRB(18, 4, 18, 4),
                         child: Align(
                           alignment: Alignment.topCenter,
                           child: _buildDashboardHero(
@@ -2734,26 +2734,26 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 9),
         Text(
           '${_getGreeting()}, $firstName',
           style: GoogleFonts.montserrat(
-            fontSize: 17.5,
+            fontSize: 16.5,
             fontWeight: FontWeight.w800,
             color: Colors.white,
             height: 1.0,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 2),
         Text(
           _getTagline(),
           style: GoogleFonts.montserrat(
-            fontSize: 10.5,
+            fontSize: 10,
             color: Colors.white.withValues(alpha: 0.85),
-            height: 1.08,
+            height: 1.0,
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 6),
         _buildHeroSummaryRail(compact: false),
       ],
     );
