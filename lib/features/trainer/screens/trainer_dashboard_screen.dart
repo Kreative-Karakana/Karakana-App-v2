@@ -2560,7 +2560,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           Text(
             '${_getGreeting()}, $firstName',
             style: GoogleFonts.montserrat(
-              fontSize: 15,
+              fontSize: 14.5,
               fontWeight: FontWeight.w800,
               color: Colors.white,
               height: 1.0,
@@ -2572,13 +2572,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.montserrat(
-              fontSize: 9.2,
+              fontSize: 9,
               color: Colors.white.withValues(alpha: 0.82),
               height: 1.0,
             ),
           ),
-          const SizedBox(height: 8),
-          _buildHeroSummaryRail(compact: true),
         ],
       );
     }
