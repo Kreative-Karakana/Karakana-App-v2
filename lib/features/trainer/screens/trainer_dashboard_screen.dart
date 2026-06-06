@@ -527,7 +527,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+          padding: const EdgeInsets.fromLTRB(18, 0, 18, 12),
           child: Stack(
             clipBehavior: Clip.none,
             alignment: Alignment.center,
@@ -551,18 +551,27 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       ],
                     ),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Expanded(
-                            child: _buildNavTab(
-                                index: 0, icon: Icons.dashboard_outlined)),
+                          child: _buildNavTab(
+                            index: 0,
+                            icon: Icons.dashboard_outlined,
+                          ),
+                        ),
                         Expanded(
-                            child: _buildNavTab(
-                                index: 1, icon: Icons.school_outlined)),
-                        const SizedBox(width: 72),
+                          child: _buildNavTab(
+                            index: 1,
+                            icon: Icons.school_outlined,
+                          ),
+                        ),
+                        const SizedBox(width: 56),
                         Expanded(
-                            child: _buildNavTab(
-                                index: 3,
-                                icon: Icons.workspace_premium_outlined)),
+                          child: _buildNavTab(
+                            index: 3,
+                            icon: Icons.workspace_premium_outlined,
+                          ),
+                        ),
                         Expanded(
                           child: _buildNavAction(
                             index: 4,
@@ -629,7 +638,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         setState(() => _tabController.animateTo(index));
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -637,7 +646,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 color: isSelected
                     ? const Color(0xFFE87722)
                     : Colors.white.withValues(alpha: 0.55),
-                size: 24),
+                size: 22),
             const SizedBox(height: 4),
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
@@ -666,7 +675,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         onTap();
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -675,7 +684,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               color: isSelected
                   ? const Color(0xFFE87722)
                   : Colors.white.withValues(alpha: 0.55),
-              size: 24,
+              size: 22,
             ),
             const SizedBox(height: 4),
             AnimatedContainer(

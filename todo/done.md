@@ -63,3 +63,4 @@
 - Trainer dashboard settings button on the collapsed home header now opens the Akaunti tab.
 - Trainer dashboard hero spacing was tightened and the Kozi page now uses a compact independent topbar.
 - Trainer dashboard hero spacing was tightened again to remove the last small overflow while keeping Kozi independent.
+- Trainer dashboard bottom navbar spacing was relaxed to feel less congested.
