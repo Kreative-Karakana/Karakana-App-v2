@@ -513,6 +513,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         _buildCertificatesTab(
                             bgColor, surfaceColor, textPrimary, textSecondary),
                         TrainerAccountScreen(
+                          embeddedInDashboard: true,
                           onTabSwitch: (index) =>
                               _tabController.animateTo(index),
                         ),
@@ -2262,10 +2263,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final bool isAccountTab = _tabController.index == 4;
     final bool isCoursesTab = _tabController.index == 1;
     final bool isCertificatesTab = _tabController.index == 3;
-    if (isAccountTab) {
-      return const SliverToBoxAdapter(child: SizedBox.shrink());
-    }
-    if (isCoursesTab || isCertificatesTab) {
+    if (isAccountTab || isCoursesTab || isCertificatesTab) {
       return SliverAppBar(
         toolbarHeight: 66,
         expandedHeight: 118,
@@ -2294,7 +2292,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               child: Align(
                 alignment: Alignment.topCenter,
                 child: _buildPageHeaderChrome(
-                  title: isCertificatesTab ? 'Vyeti' : 'Kozi',
+                  title: isAccountTab
+                      ? 'Akaunti'
+                      : isCertificatesTab
+                          ? 'Vyeti'
+                          : 'Kozi',
                 ),
               ),
             ),

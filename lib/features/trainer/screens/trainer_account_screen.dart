@@ -15,7 +15,12 @@ import '../../auth/providers/auth_provider.dart';
 
 class TrainerAccountScreen extends StatefulWidget {
   final void Function(int tabIndex)? onTabSwitch;
-  const TrainerAccountScreen({super.key, this.onTabSwitch});
+  final bool embeddedInDashboard;
+  const TrainerAccountScreen({
+    super.key,
+    this.onTabSwitch,
+    this.embeddedInDashboard = false,
+  });
 
   @override
   State<TrainerAccountScreen> createState() => _TrainerAccountScreenState();
@@ -171,126 +176,7 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
         return CustomScrollView(
           controller: _scroll,
           slivers: [
-            SliverAppBar(
-              expandedHeight: _accountHeaderHeight,
-              pinned: true,
-              automaticallyImplyLeading: false,
-              backgroundColor: const Color(0xFF3D1800),
-              elevation: 0,
-              titleSpacing: AppSpacing.lg - AppSpacing.xs,
-              title: _CollapsedHeaderChrome(
-                scrollController: _scroll,
-                threshold: _accountHeaderHeight - kToolbarHeight - 28,
-                child: Text(
-                  'Akaunti',
-                  style: GoogleFonts.montserrat(
-                    fontSize: AppTextStyles.h3.fontSize,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              systemOverlayStyle: const SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                statusBarIconBrightness: Brightness.light,
-              ),
-              actions: [
-                _CollapsedHeaderChrome(
-                  scrollController: _scroll,
-                  threshold: _accountHeaderHeight - kToolbarHeight - 28,
-                  child: _buildLogoutAction(),
-                ),
-              ],
-              flexibleSpace: FlexibleSpaceBar(
-                collapseMode: CollapseMode.pin,
-                background: AnnotatedRegion<SystemUiOverlayStyle>(
-                  value: const SystemUiOverlayStyle(
-                    statusBarColor: Colors.transparent,
-                    statusBarIconBrightness: Brightness.light,
-                  ),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF2A0F04),
-                          Color(0xFF3D1800),
-                          Color(0xFF7B3A10),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: Stack(
-                      clipBehavior: Clip.hardEdge,
-                      children: [
-                        Positioned(
-                          top: -40,
-                          right: -30,
-                          child: Container(
-                            width: 180,
-                            height: 180,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: 0.04),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: -30,
-                          left: -20,
-                          child: Container(
-                            width: 120,
-                            height: 120,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: 0.03),
-                            ),
-                          ),
-                        ),
-                        SafeArea(
-                          bottom: false,
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              AppSpacing.lg - AppSpacing.xs,
-                              AppSpacing.md - AppSpacing.xs / 2,
-                              AppSpacing.lg - AppSpacing.xs,
-                              AppSpacing.md,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  'Akaunti',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize:
-                                        (AppTextStyles.displayLarge.fontSize ??
-                                                32) -
-                                            1,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.white,
-                                    height: 1.0,
-                                  ),
-                                ),
-                                const SizedBox(height: AppSpacing.xs),
-                                Text(
-                                  'Wasifu na Mipangilio ya Mkufunzi',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: AppTextStyles.bodyMedium.fontSize,
-                                    color: Colors.white.withValues(alpha: 0.65),
-                                    height: 1.35,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            if (!widget.embeddedInDashboard) _buildStandaloneHeader(),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
@@ -675,6 +561,127 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildStandaloneHeader() {
+    return SliverAppBar(
+      expandedHeight: _accountHeaderHeight,
+      pinned: true,
+      automaticallyImplyLeading: false,
+      backgroundColor: const Color(0xFF3D1800),
+      elevation: 0,
+      titleSpacing: AppSpacing.lg - AppSpacing.xs,
+      title: _CollapsedHeaderChrome(
+        scrollController: _scroll,
+        threshold: _accountHeaderHeight - kToolbarHeight - 28,
+        child: Text(
+          'Akaunti',
+          style: GoogleFonts.montserrat(
+            fontSize: AppTextStyles.h3.fontSize,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      systemOverlayStyle: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+      actions: [
+        _CollapsedHeaderChrome(
+          scrollController: _scroll,
+          threshold: _accountHeaderHeight - kToolbarHeight - 28,
+          child: _buildLogoutAction(),
+        ),
+      ],
+      flexibleSpace: FlexibleSpaceBar(
+        collapseMode: CollapseMode.pin,
+        background: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light,
+          ),
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF2A0F04),
+                  Color(0xFF3D1800),
+                  Color(0xFF7B3A10),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Stack(
+              clipBehavior: Clip.hardEdge,
+              children: [
+                Positioned(
+                  top: -40,
+                  right: -30,
+                  child: Container(
+                    width: 180,
+                    height: 180,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.04),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: -30,
+                  left: -20,
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.03),
+                    ),
+                  ),
+                ),
+                SafeArea(
+                  bottom: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.lg - AppSpacing.xs,
+                      AppSpacing.md - AppSpacing.xs / 2,
+                      AppSpacing.lg - AppSpacing.xs,
+                      AppSpacing.md,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Akaunti',
+                          style: GoogleFonts.montserrat(
+                            fontSize:
+                                (AppTextStyles.displayLarge.fontSize ?? 32) - 1,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            height: 1.0,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          'Wasifu na Mipangilio ya Mkufunzi',
+                          style: GoogleFonts.montserrat(
+                            fontSize: AppTextStyles.bodyMedium.fontSize,
+                            color: Colors.white.withValues(alpha: 0.65),
+                            height: 1.35,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
