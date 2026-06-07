@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -501,10 +502,11 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
                   controller: _amountController,
                   label: 'Kiasi',
                   hint: 'Mfano: 15000',
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: TextInputType.number,
+                  inputFormatters: const [_ThousandsSeparatorInputFormatter()],
                   validator: (value) {
-                    final amount = double.tryParse((value ?? '').trim());
+                    final amount =
+                        int.tryParse(_cleanAmount((value ?? '').trim()));
                     if (amount == null || amount <= 0) {
                       return 'Weka kiasi sahihi.';
                     }
@@ -553,7 +555,7 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
     if (!_formKey.currentState!.validate()) return;
 
     final provider = context.read<BusinessManagementProvider>();
-    final amount = _amountController.text.trim();
+    final amount = _cleanAmount(_amountController.text);
     final description = _descriptionController.text.trim();
     final ok = widget.isSale
         ? await provider.createSale(
@@ -894,6 +896,7 @@ class _KarakanaTextField extends StatelessWidget {
   final String label;
   final String hint;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
   final String? Function(String?)? validator;
   final int maxLines;
 
@@ -902,6 +905,7 @@ class _KarakanaTextField extends StatelessWidget {
     required this.label,
     required this.hint,
     this.keyboardType,
+    this.inputFormatters,
     this.validator,
     this.maxLines = 1,
   });
@@ -911,6 +915,7 @@ class _KarakanaTextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
       validator: validator,
       maxLines: maxLines,
       style: GoogleFonts.montserrat(
@@ -1250,7 +1255,82 @@ _SummaryTotals _totalsFor(
 
 String _money(double value, String currency) {
   final normalized = value.abs() < 0.005 ? 0.0 : value;
-  return '$currency ${normalized.toStringAsFixed(0)}';
+  return '$currency ${_formatThousandsNumber(normalized.toStringAsFixed(0))}';
+}
+
+String _cleanAmount(String value) {
+  return value.replaceAll(RegExp(r'[^0-9]'), '');
+}
+
+String _formatThousandsNumber(String digits) {
+  final isNegative = digits.startsWith('-');
+  final unsigned = isNegative ? digits.substring(1) : digits;
+  final buffer = StringBuffer();
+
+  for (var i = 0; i < unsigned.length; i++) {
+    final remaining = unsigned.length - i;
+    buffer.write(unsigned[i]);
+    if (remaining > 1 && remaining % 3 == 1) {
+      buffer.write(',');
+    }
+  }
+
+  return isNegative ? '-$buffer' : buffer.toString();
+}
+
+class _ThousandsSeparatorInputFormatter extends TextInputFormatter {
+  const _ThousandsSeparatorInputFormatter();
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final digits = _cleanAmount(newValue.text);
+    if (digits.isEmpty) {
+      return const TextEditingValue(
+        text: '',
+        selection: TextSelection.collapsed(offset: 0),
+      );
+    }
+
+    final safeCursor = newValue.selection.extentOffset.clamp(
+      0,
+      newValue.text.length,
+    );
+    final digitsBeforeCursor =
+        _cleanAmount(newValue.text.substring(0, safeCursor)).length;
+    final formatted = _formatThousands(digits);
+    final cursorOffset = _offsetForDigitCount(formatted, digitsBeforeCursor);
+
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: cursorOffset),
+    );
+  }
+
+  static String _formatThousands(String digits) {
+    return _formatThousandsNumber(digits);
+  }
+
+  static int _offsetForDigitCount(String formatted, int digitCount) {
+    if (digitCount <= 0) return 0;
+
+    var seenDigits = 0;
+    for (var i = 0; i < formatted.length; i++) {
+      if (_isDigit(formatted.codeUnitAt(i))) {
+        seenDigits++;
+      }
+      if (seenDigits == digitCount) {
+        return i + 1;
+      }
+    }
+    return formatted.length;
+  }
+
+  static bool _isDigit(int codeUnit) {
+    return codeUnit >= 48 && codeUnit <= 57;
+  }
 }
 
 String _formatDate(DateTime? date) {
