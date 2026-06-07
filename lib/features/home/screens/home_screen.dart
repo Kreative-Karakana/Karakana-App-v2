@@ -17,6 +17,8 @@ import '../../../widgets/cards/shimmer_card.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../courses/models/course_model.dart';
 import '../../courses/providers/course_provider.dart';
+import '../../fursa/models/fursa_item.dart';
+import '../../fursa/providers/fursa_provider.dart';
 import '../../notifications/providers/notification_provider.dart';
 import '../../../providers/theme_provider.dart';
 import '../widgets/ambassador_code_sheet.dart';
@@ -37,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CourseProvider>().loadHomeData();
+      context.read<FursaProvider>().loadItems();
       context.read<NotificationProvider>().loadNotifications();
       checkAndShowAmbassadorCode(context);
       // Temporarily hidden per request: "Fomu ya Taarifa" auto-popup on login.
@@ -114,11 +117,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Consumer3<CourseProvider, AuthProvider, NotificationProvider>(
-        builder: (context, courses, auth, notifications, _) {
+      body: Consumer4<CourseProvider, AuthProvider, NotificationProvider,
+          FursaProvider>(
+        builder: (context, courses, auth, notifications, fursa, _) {
           return RefreshIndicator(
             color: AppColors.primary,
-            onRefresh: () => context.read<CourseProvider>().loadHomeData(),
+            onRefresh: () => Future.wait([
+              context.read<CourseProvider>().loadHomeData(),
+              context.read<FursaProvider>().loadItems(),
+            ]),
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
@@ -541,39 +548,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           'Hakuna kozi maarufu kwa sasa')),
                   SliverToBoxAdapter(
                       child: _SectionHeader(
-                          title: 'Kozi Bure',
-                          subtitle: 'Anza bila gharama',
-                          onTapAll: () => context.push('/courses/list',
-                              extra: {'type': 'free', 'title': 'Kozi Bure'}))),
-                  if (courses.freeCourses.isEmpty)
-                    SliverToBoxAdapter(
-                        child: _empty('Hakuna kozi bure kwa sasa'))
+                          title: 'Fursa',
+                          subtitle: 'Angalia nafasi mpya leo',
+                          onTapAll: () => context.go('/home?tab=3'))),
+                  if (fursa.isLoading)
+                    SliverToBoxAdapter(child: _fursaShimmer())
+                  else if (fursa.items.isEmpty)
+                    SliverToBoxAdapter(child: _empty('Hakuna fursa kwa sasa'))
                   else
-                    SliverPadding(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                      sliver: SliverGrid(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 1,
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (_, i) => CourseCardHorizontal(
-                            course: courses.freeCourses[i],
-                            onTap: () => context
-                                .push('/course/${courses.freeCourses[i].id}'),
-                            onWishlistTap: () => context
-                                .read<CourseProvider>()
-                                .toggleWishlist(courses.freeCourses[i].id),
-                          ),
-                          childCount: courses.freeCourses.length > 4
-                              ? 4
-                              : courses.freeCourses.length,
-                        ),
-                      ),
+                    SliverToBoxAdapter(
+                      child: _fursaStrip(fursa.items.take(3).toList()),
                     ),
                   if (!auth.isTrainer)
                     SliverToBoxAdapter(
@@ -706,6 +690,27 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _fursaStrip(List<FursaItem> items) {
+    return SizedBox(
+      height: 112,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: AppSpacing.screenPadding,
+        itemCount: items.length,
+        itemBuilder: (_, i) => Padding(
+          padding: const EdgeInsets.only(right: 12),
+          child: SizedBox(
+            width: 230,
+            child: _HomeFursaCard(
+              item: items[i],
+              onTap: () => context.go('/home?tab=3'),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _empty(String text) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
@@ -722,6 +727,21 @@ class _HomeScreenState extends State<HomeScreen> {
             textAlign: TextAlign.center,
             style: GoogleFonts.montserrat(
                 fontSize: 13, color: AppColors.textTertiary)),
+      ),
+    );
+  }
+
+  Widget _fursaShimmer() {
+    return SizedBox(
+      height: 112,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: AppSpacing.screenPadding,
+        itemCount: 2,
+        itemBuilder: (_, __) => const Padding(
+          padding: EdgeInsets.only(right: 12),
+          child: ShimmerCard(width: 230, height: 112),
+        ),
       ),
     );
   }
@@ -786,6 +806,94 @@ class _SectionHeader extends StatelessWidget {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _HomeFursaCard extends StatelessWidget {
+  final FursaItem item;
+  final VoidCallback onTap;
+
+  const _HomeFursaCard({
+    required this.item,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final label = item.badgeText.isNotEmpty ? item.badgeText : item.category;
+
+    return Material(
+      color: Theme.of(context).cardColor,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isDark ? Colors.white12 : const Color(0xFFFFE5CC),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (label.isNotEmpty)
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.labelSmall.copyWith(
+                      color: const Color(0xFFE87722),
+                    ),
+                  ),
+                if (label.isNotEmpty) const SizedBox(height: 6),
+                Text(
+                  item.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    height: 1.22,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
+                ),
+                const Spacer(),
+                Row(
+                  children: [
+                    Text(
+                      'Fungua Fursa',
+                      style: AppTextStyles.labelMedium.copyWith(
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const Spacer(),
+                    Icon(
+                      Icons.arrow_forward_rounded,
+                      size: 18,
+                      color: Colors.grey[600],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
