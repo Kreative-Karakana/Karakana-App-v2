@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_spacing.dart';
 
@@ -150,6 +151,7 @@ class _MainScreenState extends State<MainScreen> {
       onTap: () {
         HapticFeedback.lightImpact();
         setState(() => _currentIndex = 2);
+        context.go('/home?tab=2');
       },
       child: Container(
         width: 68,
@@ -190,6 +192,7 @@ class _MainScreenState extends State<MainScreen> {
           context.read<CourseProvider>().loadHomeData();
         }
         setState(() => _currentIndex = index);
+        context.go('/home?tab=$index');
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),

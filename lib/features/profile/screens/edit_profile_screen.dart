@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -83,17 +85,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     final file = await ImagePicker().pickImage(
       source: source,
-      maxWidth: 1024,
-      maxHeight: 1024,
+      maxWidth: 2400,
+      maxHeight: 2400,
       imageQuality: 85,
     );
     if (file == null) return;
 
+    if (!mounted) return;
+    final cropped = await showDialog<File>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => _ImageCropDialog(
+        imageFile: File(file.path),
+        isAvatar: isAvatar,
+      ),
+    );
+    if (cropped == null) return;
+
     setState(() {
       if (isAvatar) {
-        _pickedAvatar = File(file.path);
+        _pickedAvatar = cropped;
       } else {
-        _pickedCover = File(file.path);
+        _pickedCover = cropped;
       }
     });
   }
@@ -229,14 +242,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           formData.files.add(MapEntry(
             'avatar',
             await MultipartFile.fromFile(_pickedAvatar!.path,
-                filename: 'avatar.jpg'),
+                filename: 'avatar.png'),
           ));
         }
         if (_pickedCover != null) {
           formData.files.add(MapEntry(
             'cover',
             await MultipartFile.fromFile(_pickedCover!.path,
-                filename: 'cover.jpg'),
+                filename: 'cover.png'),
           ));
         }
         await ApiClient().dio.patch(
@@ -545,6 +558,179 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         hintText: hint,
         hintStyle:
             AppTextStyles.bodyMedium.copyWith(color: Colors.grey.shade400),
+      ),
+    );
+  }
+}
+
+class _ImageCropDialog extends StatefulWidget {
+  final File imageFile;
+  final bool isAvatar;
+
+  const _ImageCropDialog({
+    required this.imageFile,
+    required this.isAvatar,
+  });
+
+  @override
+  State<_ImageCropDialog> createState() => _ImageCropDialogState();
+}
+
+class _ImageCropDialogState extends State<_ImageCropDialog> {
+  final _cropKey = GlobalKey();
+  final _controller = TransformationController();
+  bool _isCropping = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _confirmCrop() async {
+    setState(() => _isCropping = true);
+    try {
+      final boundary =
+          _cropKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      if (boundary == null) return;
+
+      final image = await boundary.toImage(pixelRatio: widget.isAvatar ? 3 : 2);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData == null) return;
+
+      final bytes = byteData.buffer.asUint8List();
+      final file = File(
+        '${Directory.systemTemp.path}/karakana_${widget.isAvatar ? 'avatar' : 'cover'}_${DateTime.now().microsecondsSinceEpoch}.png',
+      );
+      await file.writeAsBytes(bytes, flush: true);
+
+      if (!mounted) return;
+      Navigator.pop(context, file);
+    } finally {
+      if (mounted) setState(() => _isCropping = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final title =
+        widget.isAvatar ? 'Hariri picha ya wasifu' : 'Hariri picha ya juu';
+    final aspectRatio = widget.isAvatar ? 1.0 : 16 / 6;
+
+    return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 24),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.cardLg),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: AppTextStyles.h3.copyWith(color: AppColors.textPrimary),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Vuta picha kuipanga, tumia vidole viwili kukuza au kupunguza, kisha thibitisha.',
+              style: AppTextStyles.bodySmall.copyWith(
+                color: AppColors.textTertiary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final width = constraints.maxWidth;
+                final height = width / aspectRatio;
+                final cropFrame = RepaintBoundary(
+                  key: _cropKey,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      widget.isAvatar ? width / 2 : 18,
+                    ),
+                    child: SizedBox(
+                      width: width,
+                      height: height,
+                      child: InteractiveViewer(
+                        transformationController: _controller,
+                        minScale: 1,
+                        maxScale: 4,
+                        boundaryMargin: EdgeInsets.all(width),
+                        child: Image.file(
+                          widget.imageFile,
+                          width: width,
+                          height: height,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+
+                return Center(
+                  child: Stack(
+                    children: [
+                      cropFrame,
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                widget.isAvatar ? width / 2 : 18,
+                              ),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.9),
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                TextButton(
+                  onPressed: _isCropping ? null : () => Navigator.pop(context),
+                  child: const Text('Ghairi'),
+                ),
+                const Spacer(),
+                OutlinedButton.icon(
+                  onPressed: _isCropping
+                      ? null
+                      : () => _controller.value = Matrix4.identity(),
+                  icon: const Icon(Icons.restart_alt_rounded, size: 18),
+                  label: const Text('Rudisha'),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton.icon(
+                  onPressed: _isCropping ? null : _confirmCrop,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                  ),
+                  icon: _isCropping
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(Icons.check_rounded, size: 18),
+                  label: const Text('Thibitisha'),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
