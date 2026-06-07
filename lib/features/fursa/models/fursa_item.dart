@@ -2,6 +2,7 @@ class FursaItem {
   final int id;
   final String title;
   final String subtitle;
+  final String deadlineText;
   final String summary;
   final String sourceLabel;
   final String sourceUrl;
@@ -17,6 +18,7 @@ class FursaItem {
     required this.id,
     required this.title,
     required this.subtitle,
+    required this.deadlineText,
     required this.summary,
     required this.sourceLabel,
     required this.sourceUrl,
@@ -34,6 +36,7 @@ class FursaItem {
       id: json['id'] ?? 0,
       title: json['title']?.toString() ?? '',
       subtitle: json['subtitle']?.toString() ?? '',
+      deadlineText: json['deadline_text']?.toString() ?? '',
       summary: json['summary']?.toString() ?? '',
       sourceLabel: json['source_label']?.toString() ?? '',
       sourceUrl: json['source_url']?.toString() ?? '',

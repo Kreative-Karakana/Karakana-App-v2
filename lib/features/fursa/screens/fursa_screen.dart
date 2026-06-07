@@ -54,6 +54,7 @@ class _FursaScreenState extends State<FursaScreen> {
       final haystack = [
         item.title,
         item.subtitle,
+        item.deadlineText,
         item.summary,
         item.sourceLabel,
         item.category,
@@ -171,7 +172,8 @@ class _FursaScreenState extends State<FursaScreen> {
                                   children: [
                                     Text(
                                       'Fursa',
-                                      style: AppTextStyles.displayMedium.copyWith(
+                                      style:
+                                          AppTextStyles.displayMedium.copyWith(
                                         color: Colors.white,
                                         fontSize: 34,
                                         fontWeight: FontWeight.w800,
@@ -299,11 +301,11 @@ class _FursaScreenState extends State<FursaScreen> {
                   else ...[
                     if (featuredItems.isNotEmpty)
                       SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 6, 20, 8),
-                      child: _FeaturedFursaCard(
-                        item: featuredItems.first,
-                        onTap: () => _openItem(featuredItems.first),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 6, 20, 8),
+                          child: _FeaturedFursaCard(
+                            item: featuredItems.first,
+                            onTap: () => _openItem(featuredItems.first),
                           ),
                         ),
                       ),
@@ -476,6 +478,17 @@ class _FeaturedFursaCard extends StatelessWidget {
                       ),
                     ),
                   ],
+                  if (item.deadlineText.isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Text(
+                      'Deadline: ${item.deadlineText}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.labelLarge.copyWith(
+                        color: Colors.white.withValues(alpha: 0.92),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 14),
                   FilledButton(
                     onPressed: onTap,
@@ -552,7 +565,7 @@ class _FursaListCard extends StatelessWidget {
                               color: const Color(0xFFF0EEE8),
                               borderRadius: BorderRadius.circular(999),
                             ),
-                              child: Text(
+                            child: Text(
                               item.badgeText,
                               style: AppTextStyles.labelSmall.copyWith(
                                 color: const Color(0xFFE87722),
@@ -570,6 +583,29 @@ class _FursaListCard extends StatelessWidget {
                         ],
                       ],
                     ),
+                    if (item.deadlineText.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.event_available_rounded,
+                            size: 15,
+                            color: Color(0xFFE87722),
+                          ),
+                          const SizedBox(width: 5),
+                          Expanded(
+                            child: Text(
+                              'Deadline: ${item.deadlineText}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.labelMedium.copyWith(
+                                color: const Color(0xFFE87722),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                     const SizedBox(height: 8),
                     Text(
                       item.title,

@@ -823,7 +823,9 @@ class _HomeFursaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final label = item.badgeText.isNotEmpty ? item.badgeText : item.category;
+    final label = item.deadlineText.isNotEmpty
+        ? 'Deadline: ${item.deadlineText}'
+        : item.category;
 
     return Material(
       color: Theme.of(context).cardColor,
