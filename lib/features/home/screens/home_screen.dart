@@ -558,7 +558,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisCount: 2,
                           mainAxisSpacing: 12,
                           crossAxisSpacing: 12,
-                          mainAxisExtent: 218,
+                          childAspectRatio: 1,
                         ),
                         delegate: SliverChildBuilderDelegate(
                           (_, i) => CourseCardHorizontal(
@@ -685,7 +685,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _courseStrip(List<CourseModel> items, String empty) {
     if (items.isEmpty) return _empty(empty);
     return SizedBox(
-      height: 260,
+      height: 208,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: AppSpacing.screenPadding,
