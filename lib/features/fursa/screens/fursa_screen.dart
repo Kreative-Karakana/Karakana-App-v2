@@ -436,7 +436,7 @@ class _FeaturedFursaCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(18),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -457,21 +457,22 @@ class _FeaturedFursaCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                  const Spacer(),
+                  const SizedBox(height: 18),
                   Text(
                     item.title,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: AppTextStyles.h1.copyWith(
                       color: Colors.white,
-                      fontSize: 26,
+                      fontSize: 21,
+                      height: 1.1,
                     ),
                   ),
                   if (item.summary.isNotEmpty) ...[
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Text(
                       item.summary,
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: Colors.white.withValues(alpha: 0.85),
@@ -479,7 +480,7 @@ class _FeaturedFursaCard extends StatelessWidget {
                     ),
                   ],
                   if (item.deadlineText.isNotEmpty) ...[
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 7),
                     Text(
                       'Deadline: ${item.deadlineText}',
                       maxLines: 1,
@@ -489,17 +490,22 @@ class _FeaturedFursaCard extends StatelessWidget {
                       ),
                     ),
                   ],
-                  const SizedBox(height: 14),
-                  FilledButton(
-                    onPressed: onTap,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFFE87722),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(999),
+                  const Spacer(),
+                  SizedBox(
+                    height: 38,
+                    child: FilledButton(
+                      onPressed: onTap,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: const Color(0xFFE87722),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(999),
+                        ),
                       ),
+                      child:
+                          Text(item.ctaText.isEmpty ? 'Fungua' : item.ctaText),
                     ),
-                    child: Text(item.ctaText.isEmpty ? 'Fungua' : item.ctaText),
                   ),
                 ],
               ),
