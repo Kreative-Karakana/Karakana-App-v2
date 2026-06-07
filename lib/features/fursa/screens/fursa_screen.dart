@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../models/fursa_item.dart';
@@ -63,6 +62,65 @@ class _FursaScreenState extends State<FursaScreen> {
     }).toList();
   }
 
+  FursaItem? _nearestUpcomingDeadlineItem(List<FursaItem> items) {
+    final today = DateUtils.dateOnly(DateTime.now());
+    final upcoming = items
+        .map((item) => MapEntry(item, _parseDeadline(item.deadlineText)))
+        .where((entry) => entry.value != null && !entry.value!.isBefore(today))
+        .toList()
+      ..sort((a, b) => a.value!.compareTo(b.value!));
+
+    return upcoming.isEmpty ? null : upcoming.first.key;
+  }
+
+  DateTime? _parseDeadline(String value) {
+    final text = value.trim();
+    if (text.isEmpty) return null;
+
+    final match = RegExp(
+      r'^(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]+)\s+(\d{4})$',
+      caseSensitive: false,
+    ).firstMatch(text);
+    if (match == null) return null;
+
+    final day = int.tryParse(match.group(1)!);
+    final month = _monthNumber(match.group(2)!);
+    final year = int.tryParse(match.group(3)!);
+    if (day == null || month == null || year == null) return null;
+
+    return DateTime(year, month, day);
+  }
+
+  int? _monthNumber(String month) {
+    switch (month.toLowerCase()) {
+      case 'january':
+        return 1;
+      case 'february':
+        return 2;
+      case 'march':
+        return 3;
+      case 'april':
+        return 4;
+      case 'may':
+        return 5;
+      case 'june':
+        return 6;
+      case 'july':
+        return 7;
+      case 'august':
+        return 8;
+      case 'september':
+        return 9;
+      case 'october':
+        return 10;
+      case 'november':
+        return 11;
+      case 'december':
+        return 12;
+    }
+    return null;
+  }
+
   Future<void> _openItem(FursaItem item) async {
     final uri = Uri.tryParse(item.sourceUrl);
     if (uri == null) return;
@@ -78,7 +136,8 @@ class _FursaScreenState extends State<FursaScreen> {
         child: Consumer<FursaProvider>(
           builder: (context, provider, _) {
             final filteredItems = _filterItems(provider.items);
-            final featuredItems = _filterItems(provider.featuredItems);
+            final upcomingDeadlineItem =
+                _nearestUpcomingDeadlineItem(filteredItems);
             final categories = <String>{
               'Yote',
               ...provider.items
@@ -299,13 +358,13 @@ class _FursaScreenState extends State<FursaScreen> {
                       ),
                     )
                   else ...[
-                    if (featuredItems.isNotEmpty)
+                    if (upcomingDeadlineItem != null)
                       SliverToBoxAdapter(
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(20, 6, 20, 8),
                           child: _FeaturedFursaCard(
-                            item: featuredItems.first,
-                            onTap: () => _openItem(featuredItems.first),
+                            item: upcomingDeadlineItem,
+                            onTap: () => _openItem(upcomingDeadlineItem),
                           ),
                         ),
                       ),
@@ -390,48 +449,38 @@ class _FeaturedFursaCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(28),
           gradient: const LinearGradient(
-            colors: [Color(0xFF16120E), Color(0xFF2F2419), Color(0xFF57432B)],
+            colors: [
+              Color(0xFF1A0A00),
+              Color(0xFF3D1800),
+              Color(0xFF7B3A10),
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
         child: Stack(
           children: [
-            Positioned.fill(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(28),
-                child: item.imageUrl != null && item.imageUrl!.isNotEmpty
-                    ? Image.network(
-                        item.imageUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-                      )
-                    : Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.white.withValues(alpha: 0.04),
-                              Colors.white.withValues(alpha: 0.0),
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                        ),
-                      ),
+            Positioned(
+              top: -42,
+              right: -36,
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.06),
+                ),
               ),
             ),
-            Positioned.fill(
-              child: DecoratedBox(
+            Positioned(
+              bottom: -34,
+              left: -28,
+              child: Container(
+                width: 120,
+                height: 120,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(28),
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.black.withValues(alpha: 0.15),
-                      Colors.black.withValues(alpha: 0.55),
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
+                  shape: BoxShape.circle,
+                  color: const Color(0xFFE87722).withValues(alpha: 0.18),
                 ),
               ),
             ),
@@ -535,164 +584,112 @@ class _FursaListCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(
+          padding: const EdgeInsets.all(16),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(18),
-                child: SizedBox(
-                  width: 96,
-                  height: 96,
-                  child: item.imageUrl != null && item.imageUrl!.isNotEmpty
-                      ? Image.network(
-                          item.imageUrl!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
-                              _FursaPlaceholder(category: item.category),
-                        )
-                      : _FursaPlaceholder(category: item.category),
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        if (item.badgeText.isNotEmpty)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF0EEE8),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Text(
-                              item.badgeText,
-                              style: AppTextStyles.labelSmall.copyWith(
-                                color: const Color(0xFFE87722),
-                              ),
-                            ),
-                          ),
-                        if (item.amountText.isNotEmpty) ...[
-                          const Spacer(),
-                          Text(
-                            item.amountText,
-                            style: AppTextStyles.h4.copyWith(
-                              color: const Color(0xFFE87722),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                    if (item.deadlineText.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.event_available_rounded,
-                            size: 15,
-                            color: Color(0xFFE87722),
-                          ),
-                          const SizedBox(width: 5),
-                          Expanded(
-                            child: Text(
-                              'Deadline: ${item.deadlineText}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTextStyles.labelMedium.copyWith(
-                                color: const Color(0xFFE87722),
-                              ),
-                            ),
-                          ),
-                        ],
+              Row(
+                children: [
+                  if (item.badgeText.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
                       ),
-                    ],
-                    const SizedBox(height: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF0EEE8),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        item.badgeText,
+                        style: AppTextStyles.labelSmall.copyWith(
+                          color: const Color(0xFFE87722),
+                        ),
+                      ),
+                    ),
+                  if (item.amountText.isNotEmpty) ...[
+                    const Spacer(),
                     Text(
-                      item.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.h3.copyWith(
-                        color: const Color(0xFF1E1E1E),
+                      item.amountText,
+                      style: AppTextStyles.h4.copyWith(
+                        color: const Color(0xFFE87722),
                       ),
                     ),
-                    if (item.subtitle.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        item.subtitle,
+                  ],
+                ],
+              ),
+              if (item.deadlineText.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.event_available_rounded,
+                      size: 15,
+                      color: Color(0xFFE87722),
+                    ),
+                    const SizedBox(width: 5),
+                    Expanded(
+                      child: Text(
+                        'Deadline: ${item.deadlineText}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: const Color(0xFF8A8A8A),
+                        style: AppTextStyles.labelMedium.copyWith(
+                          color: const Color(0xFFE87722),
                         ),
                       ),
-                    ],
-                    const SizedBox(height: 8),
-                    Text(
-                      item.summary,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: const Color(0xFF636363),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.open_in_new_rounded,
-                          size: 16,
-                          color: Color(0xFF7A7A7A),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            item.sourceLabel,
-                            style: AppTextStyles.bodySmall.copyWith(
-                              color: const Color(0xFF7A7A7A),
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
                   ],
                 ),
+              ],
+              const SizedBox(height: 8),
+              Text(
+                item.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.h3.copyWith(
+                  color: const Color(0xFF1E1E1E),
+                ),
+              ),
+              if (item.subtitle.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(
+                  item.subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: const Color(0xFF8A8A8A),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 8),
+              Text(
+                item.summary,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: const Color(0xFF636363),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.open_in_new_rounded,
+                    size: 16,
+                    color: Color(0xFF7A7A7A),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      item.sourceLabel,
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: const Color(0xFF7A7A7A),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _FursaPlaceholder extends StatelessWidget {
-  final String category;
-
-  const _FursaPlaceholder({required this.category});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF3D1800), Color(0xFF7B3A10)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.sm),
-          child: Text(
-            category.isEmpty ? 'FURSA' : category.toUpperCase(),
-            textAlign: TextAlign.center,
-            style: AppTextStyles.labelLarge.copyWith(color: Colors.white),
           ),
         ),
       ),
