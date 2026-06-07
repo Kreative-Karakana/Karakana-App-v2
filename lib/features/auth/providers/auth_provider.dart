@@ -187,7 +187,16 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final deviceToken = await FirebaseMessaging.instance.getToken();
+      String? deviceToken;
+      try {
+        deviceToken = await FirebaseMessaging.instance
+            .getToken()
+            .timeout(const Duration(seconds: 5));
+      } catch (e) {
+        debugPrint(
+            '[AUTH] FCM token fetch failed during verify (non-fatal): $e');
+        deviceToken = null;
+      }
       final platform = Platform.isIOS ? 'ios' : 'android';
       final response = await ApiClient().dio.post(
         ApiEndpoints.verifyEmail,
