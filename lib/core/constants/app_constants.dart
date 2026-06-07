@@ -1,7 +1,10 @@
 class AppConstants {
   static const String appName = 'Karakana';
   static const String appVersion = '2.0.0';
-  static const String baseUrl = 'https://beta.kreativekarakana.co.tz';
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'https://beta.kreativekarakana.co.tz',
+  );
   static const String tokenKey = 'auth_token';
   static const String onboardingKey = 'onboarding_complete';
   static const String biometricKey = 'biometric_enabled';
