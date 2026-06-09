@@ -138,6 +138,7 @@ class EbookProvider extends ChangeNotifier {
     currentEbookPage = 1;
     totalPages = 1;
     watermarkText = null;
-    notifyListeners();
+    // No notifyListeners() — this is called from dispose() while the
+    // framework tree is locked; the reader is gone so no rebuild is needed.
   }
 }
