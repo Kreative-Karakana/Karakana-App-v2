@@ -2306,7 +2306,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     }
     return SliverAppBar(
         toolbarHeight: 60,
-        expandedHeight: 166,
+        expandedHeight: 270,
         pinned: true,
         floating: false,
         forceElevated: innerBoxIsScrolled,
@@ -2327,8 +2327,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxHeight < 132;
-              final veryCompact = constraints.maxHeight < 132;
+              final compact = constraints.maxHeight < 140;
+              final veryCompact = constraints.maxHeight < 140;
               return Stack(
                 fit: StackFit.expand,
                 children: [
@@ -2383,6 +2383,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           builder: (context, contentConstraints) {
                             final useCollapsed =
                                 contentConstraints.maxHeight < 132;
+                            final useTightHero =
+                                contentConstraints.maxHeight < 210;
                             return Align(
                               alignment: Alignment.topCenter,
                               child: useCollapsed
@@ -2392,6 +2394,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                   : _buildDashboardHero(
                                       compact: false,
                                       dense: false,
+                                      tight: useTightHero,
                                     ),
                             );
                           },
@@ -2570,6 +2573,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     required bool compact,
     bool dense = false,
     bool veryCompact = false,
+    bool tight = false,
   }) {
     final firstName = _getFirstName(context.read<AuthProvider>());
     if (compact) {
@@ -2721,50 +2725,88 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: Text(
-                '${_getGreeting()}, $firstName',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.montserrat(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                  height: 1.0,
-                  letterSpacing: 0,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        _getTimeIcon(),
+                        size: 13,
+                        color: Colors.white.withValues(alpha: 0.55),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        _getGreeting(),
+                        style: GoogleFonts.montserrat(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.60),
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    firstName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.montserrat(
+                      fontSize: tight ? 24 : 28,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      height: 1.0,
+                      letterSpacing: -0.5,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withValues(alpha: 0.2),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    _getTagline(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.montserrat(
+                      fontSize: tight ? 11 : 12,
+                      color: Colors.white.withValues(alpha: 0.55),
+                      height: 1.2,
+                      letterSpacing: 0,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 10),
-            _buildHeaderIconButton(
-              Icons.notifications_outlined,
-              () => context.push('/notifications'),
-              veryCompact: false,
-            ),
-            const SizedBox(width: 4),
-            _buildHeaderIconButton(
-              Icons.settings_outlined,
-              _openAccountTab,
-              veryCompact: false,
+            SizedBox(width: tight ? 10 : 14),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildHeaderIconButton(
+                  Icons.notifications_outlined,
+                  () => context.push('/notifications'),
+                  veryCompact: tight,
+                ),
+                SizedBox(width: tight ? 6 : 8),
+                _buildHeaderIconButton(
+                  Icons.settings_outlined,
+                  _openAccountTab,
+                  veryCompact: tight,
+                ),
+              ],
             ),
           ],
         ),
-        const SizedBox(height: 6),
-        Text(
-          _getTagline(),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.montserrat(
-            fontSize: 11,
-            color: Colors.white.withValues(alpha: 0.74),
-            height: 1.1,
-            letterSpacing: 0,
-          ),
-        ),
-        const SizedBox(height: 7),
-        _buildHeroSummaryRail(compact: false),
+        SizedBox(height: tight ? 12 : 20),
+        _buildHeroSummaryRail(compact: tight),
       ],
     );
   }
@@ -2780,19 +2822,26 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          width: veryCompact ? 32 : 34,
-          height: veryCompact ? 32 : 34,
+          width: veryCompact ? 32 : 38,
+          height: veryCompact ? 32 : 38,
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.09),
-            borderRadius: BorderRadius.circular(11),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.12),
               width: 0.8,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.10),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
           ),
           child: Icon(
             icon,
-            size: veryCompact ? 18 : 19,
+            size: veryCompact ? 18 : 20,
             color: Colors.white,
           ),
         ),
@@ -2803,23 +2852,31 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   Widget _buildHeroSummaryRail({required bool compact}) {
     final avgRating =
         (_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1);
+    final borderRadius = compact ? 18.0 : 24.0;
     return ClipRRect(
-      borderRadius: BorderRadius.circular(compact ? 16 : 18),
+      borderRadius: BorderRadius.circular(borderRadius),
       child: BackdropFilter(
         filter: ImageFilter.blur(
             sigmaX: compact ? 14 : 18, sigmaY: compact ? 14 : 18),
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: compact ? 8 : 10,
-            vertical: compact ? 5 : 5,
+            horizontal: compact ? 10 : 18,
+            vertical: compact ? 8 : 16,
           ),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.11),
-            borderRadius: BorderRadius.circular(compact ? 16 : 18),
+            color: Colors.white.withValues(alpha: compact ? 0.11 : 0.13),
+            borderRadius: BorderRadius.circular(borderRadius),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.16),
+              color: Colors.white.withValues(alpha: compact ? 0.16 : 0.18),
               width: 0.8,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: compact ? 0.08 : 0.12),
+                blurRadius: compact ? 16 : 22,
+                offset: const Offset(0, 10),
+              ),
+            ],
           ),
           child: Row(
             children: [
@@ -2866,40 +2923,40 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: compact ? 22 : 22,
-          height: compact ? 22 : 22,
+          width: compact ? 24 : 40,
+          height: compact ? 24 : 40,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(8),
+            color: Colors.white.withValues(alpha: compact ? 0.10 : 0.16),
+            borderRadius: BorderRadius.circular(compact ? 8 : 13),
           ),
           child: Icon(
             icon,
-            size: compact ? 12 : 12,
+            size: compact ? 12 : 22,
             color: Colors.white,
           ),
         ),
-        const SizedBox(height: 3),
+        SizedBox(height: compact ? 4 : 10),
         Text(
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.montserrat(
-            fontSize: compact ? 11.5 : 12,
+            fontSize: compact ? 11.5 : 22,
             fontWeight: FontWeight.w800,
             color: Colors.white,
             height: 1.0,
           ),
         ),
-        const SizedBox(height: 1),
+        SizedBox(height: compact ? 1 : 4),
         Text(
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.montserrat(
-            fontSize: compact ? 8 : 8.2,
+            fontSize: compact ? 8 : 11.5,
             fontWeight: FontWeight.w600,
-            color: Colors.white.withValues(alpha: 0.78),
-            height: 1.0,
+            color: Colors.white.withValues(alpha: compact ? 0.78 : 0.84),
+            height: 1.15,
           ),
         ),
       ],
@@ -2909,10 +2966,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   Widget _buildHeroSummaryDivider() {
     return Container(
       width: 1,
-      height: 20,
-      margin: const EdgeInsets.symmetric(horizontal: 7),
+      height: 58,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.14),
+        color: Colors.white.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(999),
       ),
     );
