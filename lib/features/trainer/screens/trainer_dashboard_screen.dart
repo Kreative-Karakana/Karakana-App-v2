@@ -402,7 +402,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
-                  context.push('/trainer/ebooks/add');
+                  context.push('/trainer/ebooks');
                 },
                 child: Container(
                   width: double.infinity,
@@ -433,7 +433,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Kitabu cha Kidijitali',
+                              'Vitabu vya Kidijitali',
                               style: GoogleFonts.montserrat(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
@@ -441,7 +441,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                               ),
                             ),
                             Text(
-                              'Pakia na uuze eBook kwenye maktaba ya Karakana',
+                              'Simamia na angalia takwimu za eBooks zako',
                               style: GoogleFonts.montserrat(
                                 fontSize: 12,
                                 color: const Color(0xFF9E8070),

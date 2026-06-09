@@ -123,7 +123,11 @@ class _EbookLibraryScreenState extends State<EbookLibraryScreen> {
                             )
                           : const Icon(Icons.menu_book_outlined),
                       title: Text(p.ebook.title),
-                      subtitle: Text('Ref: ${p.externalId}'),
+                      subtitle: Text(
+                        p.ebook.totalPages > 0
+                            ? '${p.ebook.authorName} • ${p.ebook.totalPages} kurasa'
+                            : p.ebook.authorName,
+                      ),
                       trailing: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
