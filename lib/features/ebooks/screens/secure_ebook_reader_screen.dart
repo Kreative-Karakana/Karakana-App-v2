@@ -88,12 +88,26 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
       _displayedPage = page;
     });
 
-    // Prefetch 2 pages ahead and 1 behind so adjacent pages are instant.
-    final total = provider.totalPages;
-    for (final p in [page + 1, page + 2, page - 1]) {
-      if (p >= 1 && p <= total) {
-        unawaited(provider.fetchReaderPage(ebookId: widget.ebookId, pageNumber: p));
-      }
+    // Stagger prefetch so we never fire two render requests simultaneously.
+    // 600 ms gap between each gives the server time to finish the previous.
+    _scheduleStaggeredPrefetch(page, provider.totalPages);
+  }
+
+  void _scheduleStaggeredPrefetch(int currentPage, int total) {
+    final targets = <int>[];
+    if (currentPage + 1 <= total) targets.add(currentPage + 1);
+    if (currentPage - 1 >= 1) targets.add(currentPage - 1);
+    if (currentPage + 2 <= total) targets.add(currentPage + 2);
+
+    for (var i = 0; i < targets.length; i++) {
+      final p = targets[i];
+      Future.delayed(Duration(milliseconds: 600 + i * 600), () {
+        if (!mounted) return;
+        final provider = context.read<EbookProvider>();
+        if (!provider.pageCache.containsKey(p)) {
+          unawaited(provider.fetchReaderPage(ebookId: widget.ebookId, pageNumber: p));
+        }
+      });
     }
   }
 
