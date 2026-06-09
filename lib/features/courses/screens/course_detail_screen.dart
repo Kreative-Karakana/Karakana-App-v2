@@ -15,6 +15,7 @@ import '../../../widgets/common/top_popup.dart';
 import '../../payments/providers/iap_provider.dart';
 import '../models/course_model.dart';
 import '../providers/course_provider.dart';
+import '../widgets/course_intro_video_player.dart';
 
 class CourseDetailScreen extends StatefulWidget {
   final int courseId;
@@ -341,6 +342,67 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      if (course.playbackUrl != null &&
+                          course.playbackUrl!.isNotEmpty) ...[
+                        Container(
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? const Color(0xFF2A1A0A)
+                                : const Color(0xFFFFF8F4),
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(
+                              color: isDark
+                                  ? Colors.white12
+                                  : const Color(0xFFE8D5C8),
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFE87722)
+                                          .withValues(alpha: 0.12),
+                                      borderRadius: BorderRadius.circular(999),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          Icons.play_circle_outline,
+                                          size: 16,
+                                          color: Color(0xFFE87722),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          'Utangulizi wa Kozi',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                            color: const Color(0xFFE87722),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              CourseIntroVideoPlayer(
+                                playbackUrl: course.playbackUrl!,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+                      ],
                       Text(
                         course.title,
                         style: GoogleFonts.montserrat(
