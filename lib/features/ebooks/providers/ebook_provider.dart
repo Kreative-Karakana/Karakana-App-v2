@@ -118,10 +118,13 @@ class EbookProvider extends ChangeNotifier {
       currentEbookPage = payload['page'] as int? ?? pageNumber;
 
       pageCache[pageNumber] = bytes;
-      // Keep a tiny LRU-like cap (max 5 pages in memory).
-      if (pageCache.length > 5) {
+      // LRU cap at 15 pages — evict the page furthest from current.
+      if (pageCache.length > 15) {
         final keys = pageCache.keys.toList()..sort();
-        pageCache.remove(keys.first);
+        final evict = (keys.first - pageNumber).abs() >= (keys.last - pageNumber).abs()
+            ? keys.first
+            : keys.last;
+        pageCache.remove(evict);
       }
       notifyListeners();
       return bytes;

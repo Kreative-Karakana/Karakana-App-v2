@@ -31,6 +31,7 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
   bool _showHud = true;
   Timer? _hudTimer;
   bool _screenCaptured = false;
+  int _displayedPage = 1;
 
   @override
   void initState() {
@@ -84,12 +85,15 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
     setState(() {
       _currentBytes = bytes;
       _loading = false;
+      _displayedPage = page;
     });
 
-    // prefetch next page
-    final next = provider.currentEbookPage + 1;
-    if (next <= provider.totalPages) {
-      unawaited(provider.fetchReaderPage(ebookId: widget.ebookId, pageNumber: next));
+    // Prefetch 2 pages ahead and 1 behind so adjacent pages are instant.
+    final total = provider.totalPages;
+    for (final p in [page + 1, page + 2, page - 1]) {
+      if (p >= 1 && p <= total) {
+        unawaited(provider.fetchReaderPage(ebookId: widget.ebookId, pageNumber: p));
+      }
     }
   }
 
@@ -176,10 +180,18 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
     if (_currentBytes == null) return const SizedBox.shrink();
 
     return Center(
-      child: InteractiveViewer(
-        minScale: 1,
-        maxScale: 3,
-        child: Image.memory(_currentBytes!, fit: BoxFit.contain),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 180),
+        child: InteractiveViewer(
+          key: ValueKey(_displayedPage),
+          minScale: 1,
+          maxScale: 3,
+          child: Image.memory(
+            _currentBytes!,
+            fit: BoxFit.contain,
+            gaplessPlayback: true,
+          ),
+        ),
       ),
     );
   }
