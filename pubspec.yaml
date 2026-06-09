@@ -1,7 +1,7 @@
 name: karakana_app
 description: Karakana - Tanzanian Edutech Platform for Entrepreneurship Training
 publish_to: none
-version: 2.0.3+35
+version: 2.0.4+36
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

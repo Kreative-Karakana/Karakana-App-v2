@@ -2327,8 +2327,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final compact = constraints.maxHeight < 140;
-              final veryCompact = constraints.maxHeight < 140;
+              final compact = constraints.maxHeight < 110;
+              final veryCompact = constraints.maxHeight < 110;
               return Stack(
                 fit: StackFit.expand,
                 children: [
@@ -2382,9 +2382,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         child: LayoutBuilder(
                           builder: (context, contentConstraints) {
                             final useCollapsed =
-                                contentConstraints.maxHeight < 132;
-                            final useTightHero =
-                                contentConstraints.maxHeight < 210;
+                                contentConstraints.maxHeight < 225;
                             return Align(
                               alignment: Alignment.topCenter,
                               child: useCollapsed
@@ -2394,7 +2392,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                   : _buildDashboardHero(
                                       compact: false,
                                       dense: false,
-                                      tight: useTightHero,
                                     ),
                             );
                           },
