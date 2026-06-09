@@ -30,8 +30,18 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
   String? _error;
   bool _showHud = true;
   Timer? _hudTimer;
+  Timer? _captureTimer;
   bool _screenCaptured = false;
   int _displayedPage = 1;
+
+  // Saved in didChangeDependencies so dispose() can call it without context.
+  late EbookProvider _ebookProvider;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _ebookProvider = context.read<EbookProvider>();
+  }
 
   @override
   void initState() {
@@ -43,11 +53,7 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
   }
 
   void _startCapturePolling() {
-    Timer.periodic(const Duration(seconds: 2), (timer) async {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
+    _captureTimer = Timer.periodic(const Duration(seconds: 2), (timer) async {
       final captured = await ScreenshotPrevention.isScreenCaptured();
       if (mounted) {
         setState(() => _screenCaptured = captured);
@@ -128,7 +134,8 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
   @override
   void dispose() {
     _hudTimer?.cancel();
-    context.read<EbookProvider>().clearReaderCache();
+    _captureTimer?.cancel();
+    _ebookProvider.clearReaderCache();
     ScreenshotPrevention.disable();
     super.dispose();
   }
