@@ -636,6 +636,11 @@ class _EmptyClassroomState extends StatelessWidget {
     required this.onRetry,
   });
 
+  bool get _isAccessRestricted {
+    final normalized = sectionsErrorMessage?.trim().toLowerCase() ?? '';
+    return normalized.contains('huna ruhusa');
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasError =
@@ -655,7 +660,9 @@ class _EmptyClassroomState extends StatelessWidget {
             const SizedBox(height: 14),
             Text(
               hasError
-                  ? 'Hatukuweza kufungua masomo ya darasa hili'
+                  ? (_isAccessRestricted
+                      ? 'Masomo ya kozi hii yamefungwa'
+                      : 'Hatukuweza kufungua masomo ya darasa hili')
                   : 'Masomo bado hayajaonekana hapa',
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
@@ -668,7 +675,9 @@ class _EmptyClassroomState extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Text(
               hasError
-                  ? sectionsErrorMessage!
+                  ? (_isAccessRestricted
+                      ? 'Jiandikishe kwanza kwenye kozi hii ili uweze kuona masomo na kuanza kujifunza.'
+                      : sectionsErrorMessage!)
                   : 'Rudi baadae au jaribu tena baada ya data ya kozi kupakiwa.',
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(

@@ -102,6 +102,11 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     }
   }
 
+  bool _isSectionsAccessRestricted(String? message) {
+    final normalized = message?.trim().toLowerCase() ?? '';
+    return normalized.contains('huna ruhusa');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<CourseProvider>(
@@ -665,7 +670,10 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'Hatukuweza kufungua mtaala sasa hivi',
+                                          _isSectionsAccessRestricted(
+                                                  provider.sectionsErrorMessage)
+                                              ? 'Mtaala umefungwa kwa sasa'
+                                              : 'Hatukuweza kufungua mtaala sasa hivi',
                                           style: GoogleFonts.montserrat(
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
@@ -674,7 +682,10 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                         ),
                                         const SizedBox(height: AppSpacing.xs),
                                         Text(
-                                          provider.sectionsErrorMessage!,
+                                          _isSectionsAccessRestricted(
+                                                  provider.sectionsErrorMessage)
+                                              ? 'Jiandikishe kwenye kozi hii ili uweze kuona sehemu na masomo yake yote.'
+                                              : provider.sectionsErrorMessage!,
                                           style: GoogleFonts.montserrat(
                                             fontSize: AppTextStyles
                                                 .bodySmall.fontSize,
@@ -684,7 +695,10 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                         ),
                                         const SizedBox(height: AppSpacing.sm),
                                         Text(
-                                          'Jaribu kuingia tena au fungua ukurasa huu baada ya ruhusa za kozi kusasishwa.',
+                                          _isSectionsAccessRestricted(
+                                                  provider.sectionsErrorMessage)
+                                              ? 'Ukishajiandikisha, mtaala utafunguka hapa moja kwa moja.'
+                                              : 'Jaribu kuingia tena au fungua ukurasa huu baada ya ruhusa za kozi kusasishwa.',
                                           style: GoogleFonts.montserrat(
                                             fontSize: AppTextStyles
                                                 .bodySmall.fontSize,
