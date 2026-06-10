@@ -1216,13 +1216,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                    color: const Color(0xFFE87722).withValues(alpha: 0.1),
+                    color: const Color(0xFFF0EAE3),
                     borderRadius: BorderRadius.circular(8)),
                 child: Text(trend,
                     style: GoogleFonts.montserrat(
                         fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFFE87722)))),
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF9E8070)))),
           ]),
           const SizedBox(height: 14),
           Text(value,
@@ -2907,105 +2907,144 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         ),
       );
     }
+    // ── Main overview / students tab — industry-standard collapsing hero ──
+    // The SliverAppBar's own title+actions are ALWAYS visible (no fading).
+    // The flexibleSpace contains only greeting+name+tagline+stats, which fades
+    // out smoothly as the user scrolls. No duplicate branding.
     return SliverAppBar(
-        toolbarHeight: 60,
-        expandedHeight: 270,
-        pinned: true,
-        floating: false,
-        forceElevated: innerBoxIsScrolled,
-        automaticallyImplyLeading: false,
-        scrolledUnderElevation: 0,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        shadowColor: Colors.transparent,
-        backgroundColor: Colors.transparent,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF201008), Color(0xFF4B2412), Color(0xFF9A4E1D)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              stops: [0.0, 0.48, 1.0],
+      toolbarHeight: 56,
+      expandedHeight: 244,
+      pinned: true,
+      floating: false,
+      forceElevated: innerBoxIsScrolled,
+      automaticallyImplyLeading: false,
+      scrolledUnderElevation: 0,
+      elevation: 0,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      backgroundColor: const Color(0xFF201008),
+
+      // ── ALWAYS-VISIBLE top bar (logo + Karakana + actions) ──
+      titleSpacing: 0,
+      title: Padding(
+        padding: const EdgeInsets.only(left: 16),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          Container(
+            width: 28,
+            height: 28,
+            decoration: const BoxDecoration(
+                color: Colors.white, shape: BoxShape.circle),
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: Image.asset(
+                'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) => Center(
+                  child: Text('K',
+                      style: GoogleFonts.montserrat(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFFE87722))),
+                ),
+              ),
             ),
           ),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final compact = constraints.maxHeight < 110;
-              final veryCompact = constraints.maxHeight < 110;
-              return Stack(
-                fit: StackFit.expand,
-                children: [
-                  Positioned(
-                    top: -36,
-                    left: -18,
-                    child: _buildHeroGlow(
-                      130,
-                      Colors.white.withValues(alpha: 0.08),
-                    ),
-                  ),
-                  Positioned(
-                    right: -36,
-                    bottom: -44,
-                    child: _buildHeroGlow(
-                      170,
-                      const Color(0xFFFFD1A1).withValues(alpha: 0.06),
-                    ),
-                  ),
-                  Positioned(
-                    right: 22,
-                    top: 80,
-                    child: Opacity(
-                      opacity: 0.04,
-                      child: Image.asset(
-                        'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                        width: 116,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                  if (compact)
-                    SafeArea(
-                      bottom: false,
-                      child: Padding(
-                        padding:
-                            EdgeInsets.fromLTRB(16, veryCompact ? 5 : 6, 16, 5),
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: _buildCollapsedDashboardChrome(
-                            veryCompact: veryCompact,
-                          ),
-                        ),
-                      ),
-                    )
-                  else
-                    SafeArea(
-                      bottom: false,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(18, 2, 18, 4),
-                        child: LayoutBuilder(
-                          builder: (context, contentConstraints) {
-                            final useCollapsed =
-                                contentConstraints.maxHeight < 225;
-                            return Align(
-                              alignment: Alignment.topCenter,
-                              child: useCollapsed
-                                  ? _buildCollapsedDashboardChrome(
-                                      veryCompact: true,
-                                    )
-                                  : _buildDashboardHero(
-                                      compact: false,
-                                      dense: false,
-                                    ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                ],
-              );
-            },
+          const SizedBox(width: 9),
+          Text(
+            'Karakana',
+            style: GoogleFonts.montserrat(
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              letterSpacing: 0.1,
+            ),
           ),
-        ));
+        ]),
+      ),
+      actions: [
+        _buildHeaderIconButton(
+          Icons.notifications_outlined,
+          () => context.push('/notifications'),
+          veryCompact: false,
+        ),
+        const SizedBox(width: 6),
+        _buildHeaderIconButton(
+          Icons.settings_outlined,
+          _openAccountTab,
+          veryCompact: false,
+        ),
+        const SizedBox(width: 14),
+      ],
+
+      // ── FLEXIBLE SPACE: greeting+name+tagline+stats (fades on scroll) ──
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF201008), Color(0xFF4B2412), Color(0xFF9A4E1D)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            stops: [0.0, 0.48, 1.0],
+          ),
+        ),
+        child: LayoutBuilder(
+          builder: (ctx, constraints) {
+            final h = constraints.maxHeight;
+            // Starts fading at 190px, fully gone at 100px
+            final heroOpacity =
+                ((h - 100.0) / (190.0 - 100.0)).clamp(0.0, 1.0);
+
+            return Stack(fit: StackFit.expand, children: [
+              // Decorative glows
+              Positioned(
+                top: -36,
+                left: -18,
+                child: _buildHeroGlow(
+                    130, Colors.white.withValues(alpha: 0.08)),
+              ),
+              Positioned(
+                right: -36,
+                bottom: -44,
+                child: _buildHeroGlow(
+                    170, const Color(0xFFFFD1A1).withValues(alpha: 0.06)),
+              ),
+              Positioned(
+                right: 22,
+                top: 76,
+                child: Opacity(
+                  opacity: 0.04,
+                  child: Image.asset(
+                    'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                    width: 110,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+
+              // Greeting+name+tagline+stats — fades out cleanly
+              if (heroOpacity > 0)
+                ClipRect(
+                  child: Opacity(
+                    opacity: heroOpacity,
+                    child: OverflowBox(
+                      alignment: Alignment.topCenter,
+                      maxHeight: double.infinity,
+                      child: Builder(builder: (ctx2) {
+                        final statusBarH =
+                            MediaQuery.of(ctx2).padding.top;
+                        return Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              18, statusBarH + 56 + 8, 18, 0),
+                          child: _buildHeroGreetingContent(),
+                        );
+                      }),
+                    ),
+                  ),
+                ),
+            ]);
+          },
+        ),
+      ),
+    );
   }
 
   Widget _buildCollapsedDashboardChrome({
@@ -3324,89 +3363,117 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // ── TOP BAR: logo + branding + action buttons ──
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        _getTimeIcon(),
-                        size: 13,
-                        color: Colors.white.withValues(alpha: 0.55),
+            Container(
+              width: 30,
+              height: 30,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(3),
+                child: Image.asset(
+                  'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Center(
+                    child: Text(
+                      'K',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFFE87722),
                       ),
-                      const SizedBox(width: 6),
-                      Text(
-                        _getGreeting(),
-                        style: GoogleFonts.montserrat(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white.withValues(alpha: 0.60),
-                          letterSpacing: 0.2,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    firstName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(
-                      fontSize: tight ? 24 : 28,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                      height: 1.0,
-                      letterSpacing: -0.5,
-                      shadows: [
-                        Shadow(
-                          color: Colors.black.withValues(alpha: 0.2),
-                          blurRadius: 10,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    _getTagline(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(
-                      fontSize: tight ? 11 : 12,
-                      color: Colors.white.withValues(alpha: 0.55),
-                      height: 1.2,
-                      letterSpacing: 0,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-            SizedBox(width: tight ? 10 : 14),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildHeaderIconButton(
-                  Icons.notifications_outlined,
-                  () => context.push('/notifications'),
-                  veryCompact: tight,
-                ),
-                SizedBox(width: tight ? 6 : 8),
-                _buildHeaderIconButton(
-                  Icons.settings_outlined,
-                  _openAccountTab,
-                  veryCompact: tight,
-                ),
-              ],
+            const SizedBox(width: 9),
+            Text(
+              'Karakana',
+              style: GoogleFonts.montserrat(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+                letterSpacing: 0.1,
+              ),
+            ),
+            const Spacer(),
+            _buildHeaderIconButton(
+              Icons.notifications_outlined,
+              () => context.push('/notifications'),
+              veryCompact: false,
+            ),
+            const SizedBox(width: 8),
+            _buildHeaderIconButton(
+              Icons.settings_outlined,
+              _openAccountTab,
+              veryCompact: false,
             ),
           ],
         ),
-        SizedBox(height: tight ? 12 : 20),
-        _buildHeroSummaryRail(compact: tight),
+
+        const SizedBox(height: 18),
+
+        // ── GREETING + NAME + TAGLINE ──
+        Row(
+          children: [
+            Icon(
+              _getTimeIcon(),
+              size: 13,
+              color: Colors.white.withValues(alpha: 0.50),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              _getGreeting(),
+              style: GoogleFonts.montserrat(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Colors.white.withValues(alpha: 0.55),
+                letterSpacing: 0.2,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          firstName,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.montserrat(
+            fontSize: 30,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            height: 1.05,
+            letterSpacing: -0.5,
+            shadows: [
+              Shadow(
+                color: Colors.black.withValues(alpha: 0.18),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 3),
+        Text(
+          _getTagline(),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.montserrat(
+            fontSize: 12,
+            color: Colors.white.withValues(alpha: 0.42),
+            letterSpacing: 0.1,
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // ── STATS RAIL ──
+        _buildHeroSummaryRail(compact: false),
       ],
     );
   }
@@ -3446,6 +3513,65 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
         ),
       ),
+    );
+  }
+
+  // ── HERO GREETING: greeting + name + tagline + stats rail ────────────────
+  // Used inside the fading flexible space — no logo row here.
+  Widget _buildHeroGreetingContent() {
+    final firstName = _getFirstName(context.read<AuthProvider>());
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(children: [
+          Icon(_getTimeIcon(),
+              size: 13, color: Colors.white.withValues(alpha: 0.50)),
+          const SizedBox(width: 6),
+          Text(
+            _getGreeting(),
+            style: GoogleFonts.montserrat(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: Colors.white.withValues(alpha: 0.55),
+              letterSpacing: 0.2,
+            ),
+          ),
+        ]),
+        const SizedBox(height: 4),
+        Text(
+          firstName,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.montserrat(
+            fontSize: 30,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            height: 1.05,
+            letterSpacing: -0.5,
+            shadows: [
+              Shadow(
+                color: Colors.black.withValues(alpha: 0.18),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 3),
+        Text(
+          _getTagline(),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.montserrat(
+            fontSize: 12,
+            color: Colors.white.withValues(alpha: 0.42),
+            letterSpacing: 0.1,
+          ),
+        ),
+        const SizedBox(height: 16),
+        _buildHeroSummaryRail(compact: false),
+      ],
     );
   }
 
