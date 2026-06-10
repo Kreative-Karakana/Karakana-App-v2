@@ -2890,43 +2890,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         shadowColor: Colors.transparent,
         backgroundColor: const Color(0xFF201008),
 
-        // ── Collapsed state: consistent Karakana brand bar ──
+        // Title is handled in flexibleSpace so we can drive it from the
+        // same LayoutBuilder that controls the large-title opacity.
         titleSpacing: 0,
-        title: Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            Container(
-              width: 28,
-              height: 28,
-              decoration: const BoxDecoration(
-                  color: Colors.white, shape: BoxShape.circle),
-              child: Padding(
-                padding: const EdgeInsets.all(3),
-                child: Image.asset(
-                  'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => Center(
-                    child: Text('K',
-                        style: GoogleFonts.montserrat(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFFE87722))),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 9),
-            Text(
-              'Karakana',
-              style: GoogleFonts.montserrat(
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-                letterSpacing: 0.1,
-              ),
-            ),
-          ]),
-        ),
+        title: const SizedBox.shrink(),
         actions: [
           _buildHeaderIconButton(
             Icons.notifications_outlined,
@@ -2942,13 +2909,18 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           const SizedBox(width: 14),
         ],
 
-        // ── Flexible space: gradient + large page title (fades on scroll) ──
+        // ── Flexible space: gradient + crossfading toolbar + large page title ──
         flexibleSpace: LayoutBuilder(builder: (ctx, constraints) {
           final h = constraints.maxHeight;
           final statusBarH = MediaQuery.of(ctx).padding.top;
           final baseH = statusBarH + 56.0;
-          // Start fading when just 28px of extra space remains
-          final titleOpacity = ((h - baseH - 4) / 26.0).clamp(0.0, 1.0);
+
+          // Large hero title: full opacity when expanded, fades as bar collapses.
+          final largeTitleOpacity = ((h - baseH - 4) / 26.0).clamp(0.0, 1.0);
+
+          // Crossfade in toolbar: "Karakana" (expanded) → tabTitle (collapsed).
+          // Starts transitioning when large title is 80% gone.
+          final crossfade = ((baseH + 22 - h) / 18.0).clamp(0.0, 1.0);
 
           return Stack(fit: StackFit.expand, children: [
             // Gradient background
@@ -2966,18 +2938,84 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 ),
               ),
             ),
-            // Subtle warm glow bottom-right
+            // Subtle warm glow
             Positioned(
               right: -30,
               bottom: -20,
               child: _buildHeroGlow(
                   140, const Color(0xFFFFD1A1).withValues(alpha: 0.05)),
             ),
-            // Large page title — fades away as bar collapses
-            if (titleOpacity > 0.01)
+
+            // ── Toolbar row: logo + crossfading title ──
+            // Sits at the toolbar position; action buttons rendered by the
+            // framework (via `actions`) over the top on the right side.
+            Positioned(
+              top: statusBarH,
+              left: 16,
+              height: 56,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: const BoxDecoration(
+                        color: Colors.white, shape: BoxShape.circle),
+                    child: Padding(
+                      padding: const EdgeInsets.all(3),
+                      child: Image.asset(
+                        'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => Center(
+                          child: Text('K',
+                              style: GoogleFonts.montserrat(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFFE87722))),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 9),
+                  // Both texts occupy the same Stack space; they crossfade.
+                  Stack(
+                    children: [
+                      Opacity(
+                        opacity: 1.0 - crossfade,
+                        child: Text(
+                          'Karakana',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            letterSpacing: 0.1,
+                          ),
+                        ),
+                      ),
+                      Opacity(
+                        opacity: crossfade,
+                        child: Text(
+                          tabTitle,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            letterSpacing: 0.1,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            // ── Large page title (fades away on scroll) ──
+            if (largeTitleOpacity > 0.01)
               ClipRect(
                 child: Opacity(
-                  opacity: titleOpacity,
+                  opacity: largeTitleOpacity,
                   child: OverflowBox(
                     alignment: Alignment.topLeft,
                     maxHeight: double.infinity,
