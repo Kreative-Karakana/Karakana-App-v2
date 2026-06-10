@@ -2945,69 +2945,64 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               child: _buildHeroGlow(
                   140, const Color(0xFFFFD1A1).withValues(alpha: 0.05)),
             ),
+            // Background logo watermark — mirrors the home hero
+            Positioned(
+              right: 18,
+              top: 58,
+              child: Opacity(
+                opacity: 0.045,
+                child: Image.asset(
+                  'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                  width: 94,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
 
-            // ── Toolbar row: logo + crossfading title ──
-            // Sits at the toolbar position; action buttons rendered by the
-            // framework (via `actions`) over the top on the right side.
+            // ── Toolbar row: fades in as bar collapses ──
+            // Hidden when the large hero title is visible; appears only on scroll.
             Positioned(
               top: statusBarH,
               left: 16,
               height: 56,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 28,
-                    height: 28,
-                    decoration: const BoxDecoration(
-                        color: Colors.white, shape: BoxShape.circle),
-                    child: Padding(
-                      padding: const EdgeInsets.all(3),
-                      child: Image.asset(
-                        'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                        fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => Center(
-                          child: Text('K',
-                              style: GoogleFonts.montserrat(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFFE87722))),
+              child: Opacity(
+                opacity: crossfade,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: const BoxDecoration(
+                          color: Colors.white, shape: BoxShape.circle),
+                      child: Padding(
+                        padding: const EdgeInsets.all(3),
+                        child: Image.asset(
+                          'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) => Center(
+                            child: Text('K',
+                                style: GoogleFonts.montserrat(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFFE87722))),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 9),
-                  // Both texts occupy the same Stack space; they crossfade.
-                  Stack(
-                    children: [
-                      Opacity(
-                        opacity: 1.0 - crossfade,
-                        child: Text(
-                          'Karakana',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                            letterSpacing: 0.1,
-                          ),
-                        ),
+                    const SizedBox(width: 9),
+                    Text(
+                      tabTitle,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: 0.1,
                       ),
-                      Opacity(
-                        opacity: crossfade,
-                        child: Text(
-                          tabTitle,
-                          style: GoogleFonts.montserrat(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                            letterSpacing: 0.1,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
 
