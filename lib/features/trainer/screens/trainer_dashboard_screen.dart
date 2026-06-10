@@ -26,6 +26,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
   List _courses = [];
+  List _ebooks = [];
   bool _isLoading = true;
   bool _showCoursesBackToTop = false;
   // ignore: unused_field
@@ -37,6 +38,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     'balance': 0,
     'published_courses': 0,
     'draft_courses': 0,
+    // ebook analytics
+    'total_ebooks': 0,
+    'total_ebook_readers': 0,
+    'total_ebook_revenue': 0.0,
+    'published_ebooks': 0,
   };
 
   List _certs = [];
@@ -64,6 +70,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         ApiClient().dio.get('/api/v1/courses/?enrolled=true&page_size=50'),
         ApiClient().dio.get('/api/v1/wallet/me/'),
         ApiClient().dio.get('/api/v1/certificates/?trainer=true'),
+        ApiClient().dio.get('/api/v1/ebooks/my/'),
       ]);
       final coursesData = results[0].data;
       final courses = coursesData is Map
@@ -74,11 +81,27 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       final certs = certsData is Map
           ? (certsData['results'] as List? ?? [])
           : (certsData as List? ?? []);
+      final ebooksData = results[3].data;
+      final ebooks = ebooksData is Map
+          ? (ebooksData['results'] as List? ?? [])
+          : (ebooksData as List? ?? []);
+
       final totalStudents = courses.fold<int>(
           0, (sum, c) => sum + ((c as Map)['student_count'] as int? ?? 0));
+      final totalEbookReaders = ebooks.fold<int>(
+          0, (sum, e) => sum + ((e as Map)['buyers_count'] as int? ?? 0));
+      final totalEbookRevenue = ebooks.fold<double>(
+          0.0,
+          (sum, e) =>
+              sum +
+              (double.tryParse(
+                      ((e as Map)['total_revenue'] ?? '0').toString()) ??
+                  0.0));
+
       if (mounted) {
         setState(() {
           _courses = courses;
+          _ebooks = ebooks;
           _wallet = wallet;
           _certs = certs;
           _stats = {
@@ -99,6 +122,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 .length,
             'draft_courses': courses
                 .where((c) => (c as Map)['status'] != 'published')
+                .length,
+            // ebook analytics
+            'total_ebooks': ebooks.length,
+            'total_ebook_readers': totalEbookReaders,
+            'total_ebook_revenue': totalEbookRevenue,
+            'published_ebooks': ebooks
+                .where((e) => (e as Map)['status'] == 'published')
                 .length,
           };
           _isLoading = false;
@@ -563,7 +593,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         Expanded(
                           child: _buildNavTab(
                             index: 1,
-                            icon: Icons.school_outlined,
+                            icon: Icons.collections_bookmark_outlined,
                           ),
                         ),
                         const SizedBox(width: 56),
@@ -753,6 +783,80 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         ),
                       ),
                     ),
+
+              const SizedBox(height: 28),
+
+              // ── EBOOKS PREVIEW SECTION ──
+              _sectionHeader(
+                'Vitabu vya Kidijitali',
+                'Fuatilia mauzo na wasomaji wa eBooks zako.',
+                onTap: () => _tabController.animateTo(1),
+                actionLabel: 'Zote',
+                textPrimary: textPrimary,
+              ),
+              const SizedBox(height: 12),
+              if (_ebooks.isEmpty)
+                GestureDetector(
+                  onTap: () => context.push('/trainer/ebooks/add'),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      color: surfaceColor,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                          color: const Color(0xFFE87722)
+                              .withValues(alpha: 0.2),
+                          style: BorderStyle.solid),
+                    ),
+                    child: Row(children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE87722)
+                              .withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.menu_book_outlined,
+                            color: Color(0xFFE87722), size: 22),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Pakia eBook yako ya kwanza',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              'Gusa hapa kuanza kupata mapato kutoka vitabu',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 11,
+                                color: const Color(0xFF7B3A10),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.add_circle_outline_rounded,
+                          color: Color(0xFFE87722), size: 22),
+                    ]),
+                  ),
+                )
+              else
+                ..._ebooks.take(2).map((e) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _buildEbookOverviewCard(
+                          e as Map, surfaceColor, textPrimary),
+                    )),
+
               const SizedBox(height: 100),
             ])));
   }
@@ -769,19 +873,19 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         ),
         const SizedBox(width: 10),
         _buildQuickAction(
+          Icons.menu_book_outlined,
+          'Vitabu',
+          'Simamia eBooks',
+          const Color(0xFF3D1800),
+          () => _tabController.animateTo(1),
+        ),
+        const SizedBox(width: 10),
+        _buildQuickAction(
           Icons.workspace_premium_outlined,
           'Vyeti',
           'Pitia vyeti',
           const Color(0xFF7B3A10),
           () => _tabController.animateTo(3),
-        ),
-        const SizedBox(width: 10),
-        _buildQuickAction(
-          Icons.person_outline_rounded,
-          'Akaunti',
-          'Mipangilio',
-          const Color(0xFF3D1800),
-          _openAccountTab,
         ),
         const SizedBox(width: 10),
         _buildQuickAction(
@@ -796,8 +900,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   }
 
   Widget _buildStatsGrid(Color surfaceColor, Color textPrimary) {
+    final ebookRevenue = _stats['total_ebook_revenue'] as double? ?? 0.0;
+    final ebookRevenueStr = ebookRevenue >= 1000000
+        ? 'TZS ${(ebookRevenue / 1000000).toStringAsFixed(1)}M'
+        : ebookRevenue >= 1000
+            ? 'TZS ${(ebookRevenue / 1000).toStringAsFixed(0)}K'
+            : 'TZS ${_formatNumber(ebookRevenue.toInt())}';
+
     return Column(
       children: [
+        // ── ROW 1: courses ──
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -829,6 +941,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ],
         ),
         const SizedBox(height: 12),
+        // ── ROW 2: course misc + rating ──
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -852,6 +965,91 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 Icons.star_outline,
                 const Color(0xFFFFA726),
                 'kwa kozi',
+                true,
+                surfaceColor,
+                textPrimary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        // ── EBOOK SECTION DIVIDER ──
+        Row(children: [
+          Container(
+            width: 4,
+            height: 16,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE87722),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'Vitabu vya Kidijitali',
+            style: GoogleFonts.montserrat(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: textPrimary,
+            ),
+          ),
+        ]),
+        const SizedBox(height: 12),
+        // ── ROW 3: ebook readers + revenue ──
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _buildStatCard(
+                'Wasomaji',
+                _formatNumber(_stats['total_ebook_readers'] ?? 0),
+                Icons.people_outlined,
+                const Color(0xFF3D1800),
+                '${_stats['total_ebooks'] ?? 0} vitabu',
+                true,
+                surfaceColor,
+                textPrimary,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildStatCard(
+                'Mapato ya eBooks',
+                ebookRevenueStr,
+                Icons.payments_outlined,
+                const Color(0xFF2E7D32),
+                'jumla',
+                true,
+                surfaceColor,
+                textPrimary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        // ── ROW 4: published ebooks + total ebooks ──
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _buildStatCard(
+                'eBooks Zilizochapishwa',
+                _formatNumber(_stats['published_ebooks'] ?? 0),
+                Icons.check_circle_outline,
+                const Color(0xFFE87722),
+                'zinaonekana',
+                true,
+                surfaceColor,
+                textPrimary,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildStatCard(
+                'eBooks Zote',
+                _formatNumber(_stats['total_ebooks'] ?? 0),
+                Icons.menu_book_outlined,
+                const Color(0xFF1565C0),
+                'zilizopakiwa',
                 true,
                 surfaceColor,
                 textPrimary,
@@ -1087,143 +1285,548 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   Widget _buildCoursesTab(Color bgColor, Color surfaceColor, Color textPrimary,
       Color textSecondary) {
-    return RefreshIndicator(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    if (_courses.isEmpty && _ebooks.isEmpty) {
+      return RefreshIndicator(
         color: const Color(0xFFE87722),
         onRefresh: () async => _loadAll(),
-        child: _courses.isEmpty
-            ? _buildEmptyState(
-                'Huna kozi bado.\nAnza kuunda kozi yako ya kwanza!',
-                Icons.school_outlined,
-                surfaceColor)
-            : NotificationListener<ScrollNotification>(
-                onNotification: (notification) {
-                  final show = notification.metrics.pixels > 420;
-                  if (show != _showCoursesBackToTop && mounted) {
-                    setState(() => _showCoursesBackToTop = show);
-                  }
-                  return false;
-                },
-                child: Stack(
-                  children: [
-                    ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(20, 14, 20, 100),
-                      itemCount: _courses.length + 1,
-                      itemBuilder: (_, i) {
-                        if (i == 0) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFFE87722),
-                                    Color(0xFFB85A16)
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFFE87722)
-                                        .withValues(alpha: 0.28),
-                                    blurRadius: 18,
-                                    offset: const Offset(0, 8),
-                                  ),
-                                ],
-                              ),
-                              child: Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(16),
-                                  onTap: () async {
-                                    await _showAddContentDialog(context);
-                                    await _refreshCurrentTab();
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 14),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 34,
-                                          height: 34,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white
-                                                .withValues(alpha: 0.18),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: const Icon(Icons.add_rounded,
-                                              color: Colors.white, size: 22),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Ongeza Kozi au Kitabu cha Kidijitali',
-                                                style: GoogleFonts.montserrat(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.w800,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              Text(
-                                                'Unda kozi mpya au pakia kitabu cha kidijitali',
-                                                style: GoogleFonts.montserrat(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.white
-                                                      .withValues(alpha: 0.9),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const Icon(Icons.arrow_forward_rounded,
-                                            color: Colors.white, size: 20),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-                        return _buildCourseCard(
-                          _courses[i - 1] as Map,
-                          surfaceColor,
-                          textPrimary,
-                          textSecondary,
-                        );
-                      },
+        child: ListView(
+          children: [
+            // CTA banner even when empty
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
+              child: _buildMaudhuiCtaBanner(),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: _buildEmptyState(
+                'Huna kozi au eBook bado.\nAnza kuunda maudhui yako ya kwanza!',
+                Icons.collections_bookmark_outlined,
+                surfaceColor,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      color: const Color(0xFFE87722),
+      onRefresh: () async => _loadAll(),
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(0, 14, 0, 100),
+        children: [
+          // ── CTA BANNER ──
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: _buildMaudhuiCtaBanner(),
+          ),
+
+          // ── COURSES CAROUSEL ──
+          if (_courses.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+              child: Row(children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE87722).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.school_outlined,
+                      size: 17, color: Color(0xFFE87722)),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Kozi',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: textPrimary,
                     ),
-                    if (_showCoursesBackToTop)
-                      Positioned(
-                        right: 20,
-                        bottom: 100,
-                        child: FloatingActionButton.small(
-                          heroTag: 'coursesBackToTop',
-                          backgroundColor: const Color(0xFFE87722),
-                          foregroundColor: Colors.white,
-                          onPressed: () {
-                            final controller =
-                                PrimaryScrollController.of(context);
-                            controller.animateTo(
-                              0,
-                              duration: const Duration(milliseconds: 350),
-                              curve: Curves.easeOutCubic,
-                            );
-                          },
-                          child: const Icon(Icons.keyboard_arrow_up_rounded),
-                        ),
+                  ),
+                ),
+                // count chip
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color:
+                        const Color(0xFFE87722).withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '${_courses.length}',
+                    style: GoogleFonts.montserrat(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFFE87722)),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // "View all" link
+                GestureDetector(
+                  onTap: () => context.push('/trainer/courses'),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE87722).withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                          color: const Color(0xFFE87722).withValues(alpha: 0.3)),
+                    ),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      Text(
+                        'Zote',
+                        style: GoogleFonts.montserrat(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFFE87722)),
                       ),
+                      const SizedBox(width: 3),
+                      const Icon(Icons.arrow_forward_rounded,
+                          size: 12, color: Color(0xFFE87722)),
+                    ]),
+                  ),
+                ),
+              ]),
+            ),
+            SizedBox(
+              height: 230,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                itemCount: _courses.length,
+                itemBuilder: (context, i) {
+                  final c = _courses[i] as Map;
+                  return _buildCarouselCourseCard(
+                      c, surfaceColor, textPrimary, textSecondary, isDark);
+                },
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+
+          // ── EBOOKS CAROUSEL ──
+          if (_ebooks.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+              child: Row(children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF3D1800).withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.menu_book_outlined,
+                      size: 17, color: Color(0xFF3D1800)),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Vitabu vya Kidijitali',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: textPrimary,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF3D1800).withValues(alpha: 0.09),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '${_ebooks.length}',
+                    style: GoogleFonts.montserrat(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF3D1800)),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: () => context.push('/trainer/ebooks'),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3D1800).withValues(alpha: 0.07),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                          color:
+                              const Color(0xFF3D1800).withValues(alpha: 0.25)),
+                    ),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      Text(
+                        'Zote',
+                        style: GoogleFonts.montserrat(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF3D1800)),
+                      ),
+                      const SizedBox(width: 3),
+                      const Icon(Icons.arrow_forward_rounded,
+                          size: 12, color: Color(0xFF3D1800)),
+                    ]),
+                  ),
+                ),
+              ]),
+            ),
+            SizedBox(
+              height: 200,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                itemCount: _ebooks.length,
+                itemBuilder: (context, i) {
+                  final e = _ebooks[i] as Map;
+                  return _buildCarouselEbookCard(
+                      e, surfaceColor, textPrimary, isDark);
+                },
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMaudhuiCtaBanner() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFE87722), Color(0xFFB85A16)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFE87722).withValues(alpha: 0.28),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () async {
+            await _showAddContentDialog(context);
+            await _refreshCurrentTab();
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child:
+                    const Icon(Icons.add_rounded, color: Colors.white, size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Ongeza Kozi au Kitabu cha Kidijitali',
+                      style: GoogleFonts.montserrat(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white),
+                    ),
+                    Text(
+                      'Unda kozi mpya au pakia kitabu cha kidijitali',
+                      style: GoogleFonts.montserrat(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.9)),
+                    ),
                   ],
                 ),
-              ));
+              ),
+              const Icon(Icons.arrow_forward_rounded,
+                  color: Colors.white, size: 20),
+            ]),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Compact vertical course card for the horizontal carousel (fixed width 160).
+  Widget _buildCarouselCourseCard(Map course, Color surfaceColor,
+      Color textPrimary, Color textSecondary, bool isDark) {
+    final title = course['title'] as String? ?? '';
+    final thumbnail = course['cover_photo'] as String?;
+    final students = course['student_count'] as int? ?? 0;
+    final rating = (course['average_rating'] as num? ?? 0).toDouble();
+    final price = course['price'];
+    final courseId = course['id'] as int? ?? 0;
+    final statusStr = course['status'] as String? ?? 'draft';
+    final isPublished = statusStr == 'published';
+    final statusColor = isPublished
+        ? const Color(0xFF2E7D32)
+        : statusStr == 'pending_review'
+            ? const Color(0xFFE87722)
+            : const Color(0xFF6B7280);
+
+    return GestureDetector(
+      onTap: () => context.push('/trainer/course/$courseId/sections',
+          extra: {'title': title}),
+      child: Container(
+        width: 160,
+        margin: const EdgeInsets.only(right: 12),
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFE87722).withValues(alpha: 0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          // thumbnail
+          ClipRRect(
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(14)),
+            child: Stack(children: [
+              thumbnail != null && thumbnail.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: thumbnail,
+                      height: 100,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) => Container(
+                        height: 100,
+                        color: isDark
+                            ? const Color(0xFF3A2010)
+                            : const Color(0xFFF5E6D8),
+                        child: const Center(
+                            child: KarakanaWaveLoader(
+                                strokeWidth: 2, color: Color(0xFFE87722))),
+                      ),
+                      errorWidget: (_, __, ___) => Container(
+                        height: 100,
+                        color: isDark
+                            ? const Color(0xFF3A2010)
+                            : const Color(0xFFF5E6D8),
+                        child: const Icon(Icons.school_outlined,
+                            color: Color(0xFFE87722), size: 32),
+                      ),
+                    )
+                  : Container(
+                      height: 100,
+                      color: isDark
+                          ? const Color(0xFF3A2010)
+                          : const Color(0xFFF5E6D8),
+                      child: const Center(
+                          child: Icon(Icons.school_outlined,
+                              color: Color(0xFFE87722), size: 32)),
+                    ),
+              Positioned(
+                top: 7,
+                right: 7,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: statusColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    isPublished ? '✓' : statusStr == 'pending_review' ? '⏳' : '✎',
+                    style: const TextStyle(fontSize: 9, color: Colors.white),
+                  ),
+                ),
+              ),
+            ]),
+          ),
+          // details
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.montserrat(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: textPrimary),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const Spacer(),
+                    Row(children: [
+                      const Icon(Icons.people_outline,
+                          size: 11, color: Color(0xFF7B3A10)),
+                      const SizedBox(width: 3),
+                      Text('$students',
+                          style: GoogleFonts.montserrat(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF7B3A10))),
+                      const SizedBox(width: 6),
+                      const Icon(Icons.star_rounded,
+                          size: 11, color: Color(0xFFFFA726)),
+                      const SizedBox(width: 2),
+                      Text(rating.toStringAsFixed(1),
+                          style: GoogleFonts.montserrat(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF7B3A10))),
+                    ]),
+                    const SizedBox(height: 4),
+                    Text(
+                      'TZS ${_formatPrice(price)}',
+                      style: GoogleFonts.montserrat(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFFE87722)),
+                    ),
+                  ]),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  /// Compact vertical ebook card for the horizontal carousel (fixed width 130).
+  Widget _buildCarouselEbookCard(
+      Map e, Color surfaceColor, Color textPrimary, bool isDark) {
+    final title = (e['title'] ?? '').toString();
+    final cover = e['cover_image']?.toString();
+    final buyers = e['buyers_count'] as int? ?? 0;
+    final price =
+        (double.tryParse((e['price'] ?? '0').toString()) ?? 0).toInt();
+    final ebookId = e['id'] as int? ?? 0;
+    final statusStr = (e['status'] as String? ?? 'draft');
+    final isPublished = statusStr == 'published';
+    final statusColor = isPublished
+        ? const Color(0xFF2E7D32)
+        : statusStr == 'pending_review'
+            ? const Color(0xFFE87722)
+            : const Color(0xFF6B7280);
+
+    return GestureDetector(
+      onTap: () async {
+        await context.push('/trainer/ebooks/$ebookId');
+        await _loadAll();
+      },
+      child: Container(
+        width: 130,
+        margin: const EdgeInsets.only(right: 12),
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFE87722).withValues(alpha: 0.07),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          // cover
+          ClipRRect(
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(14)),
+            child: Stack(children: [
+              Container(
+                height: 110,
+                width: double.infinity,
+                color: isDark
+                    ? const Color(0xFF2A1A0A)
+                    : const Color(0xFFF5E6D8),
+                child: cover != null && cover.isNotEmpty
+                    ? Image.network(
+                        cover,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Icon(
+                            Icons.menu_book_outlined,
+                            color: Color(0xFFE87722),
+                            size: 34),
+                      )
+                    : const Icon(Icons.menu_book_outlined,
+                        color: Color(0xFFE87722), size: 34),
+              ),
+              Positioned(
+                top: 7,
+                right: 7,
+                child: Container(
+                  width: 16,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: statusColor,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            ]),
+          ),
+          // details
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.montserrat(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: textPrimary),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const Spacer(),
+                    Row(children: [
+                      const Icon(Icons.people_outline,
+                          size: 11, color: Color(0xFF7B3A10)),
+                      const SizedBox(width: 3),
+                      Text('$buyers',
+                          style: GoogleFonts.montserrat(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF7B3A10))),
+                    ]),
+                    const SizedBox(height: 4),
+                    Text(
+                      'TZS ${_formatPrice(price)}',
+                      style: GoogleFonts.montserrat(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFFE87722)),
+                    ),
+                  ]),
+            ),
+          ),
+        ]),
+      ),
+    );
   }
 
   String _computeRevenue(Map course) {
@@ -2296,7 +2899,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       ? 'Akaunti'
                       : isCertificatesTab
                           ? 'Vyeti'
-                          : 'Kozi',
+                          : 'Kozi & Vitabu',
                 ),
               ),
             ),
@@ -2857,8 +3460,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             sigmaX: compact ? 14 : 18, sigmaY: compact ? 14 : 18),
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: compact ? 10 : 18,
-            vertical: compact ? 8 : 16,
+            horizontal: compact ? 8 : 14,
+            vertical: compact ? 8 : 14,
           ),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: compact ? 0.11 : 0.13),
@@ -2882,6 +3485,15 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   Icons.school_outlined,
                   'Kozi',
                   '${_stats['total_courses'] ?? 0}',
+                  compact: compact,
+                ),
+              ),
+              _buildHeroSummaryDivider(),
+              Expanded(
+                child: _buildHeroSummaryItem(
+                  Icons.menu_book_outlined,
+                  'Vitabu',
+                  '${_stats['total_ebooks'] ?? 0}',
                   compact: compact,
                 ),
               ),
@@ -2920,37 +3532,37 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          width: compact ? 24 : 40,
-          height: compact ? 24 : 40,
+          width: compact ? 22 : 34,
+          height: compact ? 22 : 34,
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: compact ? 0.10 : 0.16),
-            borderRadius: BorderRadius.circular(compact ? 8 : 13),
+            borderRadius: BorderRadius.circular(compact ? 7 : 11),
           ),
           child: Icon(
             icon,
-            size: compact ? 12 : 22,
+            size: compact ? 11 : 18,
             color: Colors.white,
           ),
         ),
-        SizedBox(height: compact ? 4 : 10),
+        SizedBox(height: compact ? 4 : 8),
         Text(
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.montserrat(
-            fontSize: compact ? 11.5 : 22,
+            fontSize: compact ? 11 : 18,
             fontWeight: FontWeight.w800,
             color: Colors.white,
             height: 1.0,
           ),
         ),
-        SizedBox(height: compact ? 1 : 4),
+        SizedBox(height: compact ? 1 : 3),
         Text(
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.montserrat(
-            fontSize: compact ? 8 : 11.5,
+            fontSize: compact ? 7.5 : 10,
             fontWeight: FontWeight.w600,
             color: Colors.white.withValues(alpha: compact ? 0.78 : 0.84),
             height: 1.15,
@@ -2963,11 +3575,367 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   Widget _buildHeroSummaryDivider() {
     return Container(
       width: 1,
-      height: 58,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
+      height: 46,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(999),
+      ),
+    );
+  }
+
+  // ── CONTENT-TAB SECTION HEADER ────────────────────────────────────────────
+
+  Widget _contentSectionHeader(
+    IconData icon,
+    String title,
+    int count,
+    Color accent,
+    Color textPrimary,
+  ) {
+    return Row(children: [
+      Container(
+        width: 32,
+        height: 32,
+        decoration: BoxDecoration(
+          color: accent.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(icon, size: 17, color: accent),
+      ),
+      const SizedBox(width: 10),
+      Expanded(
+        child: Text(
+          title,
+          style: GoogleFonts.montserrat(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: textPrimary,
+          ),
+        ),
+      ),
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: accent.withValues(alpha: 0.10),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          '$count',
+          style: GoogleFonts.montserrat(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: accent,
+          ),
+        ),
+      ),
+    ]);
+  }
+
+  // ── EBOOK CARD (content tab) ───────────────────────────────────────────────
+
+  Widget _buildEbookCardInTab(Map e, Color surfaceColor, Color textPrimary) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final status = (e['status'] as String? ?? 'draft');
+    final isPublished = status == 'published';
+    final isPending = status == 'pending_review';
+    final statusColor = isPublished
+        ? const Color(0xFF2E7D32)
+        : isPending
+            ? const Color(0xFFE87722)
+            : const Color(0xFF6B7280);
+    final statusLabel = isPublished
+        ? 'Imechapishwa'
+        : isPending
+            ? 'Inasubiri'
+            : 'Rasimu';
+    final title = (e['title'] ?? '').toString();
+    final cover = e['cover_image']?.toString();
+    final price = (double.tryParse((e['price'] ?? '0').toString()) ?? 0).toInt();
+    final buyers = e['buyers_count'] as int? ?? 0;
+    final purchases = e['successful_purchases_count'] as int? ?? 0;
+    final revenue =
+        double.tryParse((e['total_revenue'] ?? '0').toString()) ?? 0.0;
+    final ebookId = e['id'] as int? ?? 0;
+
+    return GestureDetector(
+      onTap: () async {
+        await context.push('/trainer/ebooks/$ebookId');
+        await _loadAll();
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFE87722).withValues(alpha: 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            // ── COVER ──
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                width: 62,
+                height: 84,
+                color: isDark
+                    ? const Color(0xFF2A1A0A)
+                    : const Color(0xFFF5E6D8),
+                child: cover != null && cover.isNotEmpty
+                    ? Image.network(cover,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Icon(
+                            Icons.menu_book_outlined,
+                            color: Color(0xFFE87722),
+                            size: 28))
+                    : const Icon(Icons.menu_book_outlined,
+                        color: Color(0xFFE87722), size: 28),
+              ),
+            ),
+            const SizedBox(width: 12),
+
+            // ── DETAILS ──
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: textPrimary,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: statusColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          statusLabel,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            color: statusColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+
+                  // stats row
+                  Wrap(spacing: 12, children: [
+                    _ebookStatChip(Icons.people_outline, '$buyers wasomaji'),
+                    _ebookStatChip(
+                        Icons.shopping_bag_outlined, '$purchases mauzo'),
+                    _ebookStatChip(Icons.payments_outlined,
+                        'TZS ${_formatPrice(revenue)}'),
+                  ]),
+
+                  const SizedBox(height: 10),
+                  Divider(
+                      height: 1,
+                      color: isDark
+                          ? Colors.white10
+                          : const Color(0xFFF5E6D8)),
+                  const SizedBox(height: 10),
+
+                  // price + action chips
+                  Row(children: [
+                    Text(
+                      'TZS ${_formatPrice(price)}',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFFE87722),
+                      ),
+                    ),
+                    const Spacer(),
+                    _buildSmallAction(
+                        'Hariri',
+                        Icons.edit_outlined,
+                        () async {
+                          await context
+                              .push('/trainer/ebooks/$ebookId/edit');
+                          await _loadAll();
+                        },
+                        isDanger: false),
+                    const SizedBox(width: 6),
+                    _buildSmallAction(
+                        'Maelezo',
+                        Icons.bar_chart_rounded,
+                        () async {
+                          await context.push('/trainer/ebooks/$ebookId');
+                          await _loadAll();
+                        },
+                        isDanger: false),
+                  ]),
+                ],
+              ),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  Widget _ebookStatChip(IconData icon, String label) {
+    return Row(mainAxisSize: MainAxisSize.min, children: [
+      Icon(icon, size: 11, color: const Color(0xFF7B3A10)),
+      const SizedBox(width: 3),
+      Text(
+        label,
+        style: GoogleFonts.montserrat(
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+          color: const Color(0xFF7B3A10),
+        ),
+      ),
+    ]);
+  }
+
+  // ── EBOOK OVERVIEW CARD (home tab preview) ────────────────────────────────
+
+  Widget _buildEbookOverviewCard(
+      Map e, Color surfaceColor, Color textPrimary) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final title = (e['title'] ?? '').toString();
+    final cover = e['cover_image']?.toString();
+    final buyers = e['buyers_count'] as int? ?? 0;
+    final purchases = e['successful_purchases_count'] as int? ?? 0;
+    final revenue =
+        double.tryParse((e['total_revenue'] ?? '0').toString()) ?? 0.0;
+    final price = (double.tryParse((e['price'] ?? '0').toString()) ?? 0).toInt();
+    final status = (e['status'] as String? ?? 'draft');
+    final statusColor = status == 'published'
+        ? const Color(0xFF2E7D32)
+        : status == 'pending_review'
+            ? const Color(0xFFE87722)
+            : const Color(0xFF6B7280);
+    final statusLabel = status == 'published'
+        ? 'Imechapishwa'
+        : status == 'pending_review'
+            ? 'Inasubiri'
+            : 'Rasimu';
+    final ebookId = e['id'] as int? ?? 0;
+
+    return GestureDetector(
+      onTap: () async {
+        await context.push('/trainer/ebooks/$ebookId');
+        await _loadAll();
+      },
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFE87722).withValues(alpha: 0.07),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              width: 54,
+              height: 72,
+              color: isDark
+                  ? const Color(0xFF2A1A0A)
+                  : const Color(0xFFF5E6D8),
+              child: cover != null && cover.isNotEmpty
+                  ? Image.network(cover,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const Icon(
+                          Icons.menu_book_outlined,
+                          color: Color(0xFFE87722),
+                          size: 24))
+                  : const Icon(Icons.menu_book_outlined,
+                      color: Color(0xFFE87722), size: 24),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: textPrimary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: statusColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      statusLabel,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                        color: statusColor,
+                      ),
+                    ),
+                  ),
+                ]),
+                const SizedBox(height: 6),
+                Text(
+                  'TZS ${_formatPrice(price)}',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFFE87722),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '$buyers wasomaji  •  $purchases mauzo  •  TZS ${_formatPrice(revenue)}',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: const Color(0xFF7B3A10),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 6),
+          const Icon(Icons.chevron_right_rounded,
+              color: Color(0xFFE87722), size: 20),
+        ]),
       ),
     );
   }

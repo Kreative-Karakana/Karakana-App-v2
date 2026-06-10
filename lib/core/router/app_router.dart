@@ -31,6 +31,7 @@ import '../../features/support/screens/new_ticket_screen.dart';
 import '../../features/support/screens/support_screen.dart';
 import '../../features/support/screens/ticket_detail_screen.dart';
 import '../../features/trainer/screens/course_builder_screen.dart';
+import '../../features/trainer/screens/trainer_courses_list_screen.dart';
 import '../../features/trainer/screens/lesson_manager_screen.dart';
 import '../../features/trainer/screens/quiz_manager_screen.dart';
 import '../../features/trainer/screens/student_progress_screen.dart';
@@ -268,6 +269,10 @@ class AppRouter {
             ebookTitle:
                 (state.extra as Map?)?['ebookTitle']?.toString() ?? 'eBook',
           ),
+        ),
+        GoRoute(
+          path: '/trainer/courses',
+          builder: (context, state) => const TrainerCoursesListScreen(),
         ),
         GoRoute(
           path: '/trainer/ebooks',

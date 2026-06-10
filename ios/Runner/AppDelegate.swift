@@ -3,7 +3,11 @@ import UIKit
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
-  private var secureOverlay: UIView?
+  // The secure UITextField container that wraps the Flutter view.
+  // A view that is a direct subview of a UITextField with isSecureTextEntry = true
+  // is rendered black by iOS in both screenshots and screen recordings —
+  // the same protection used by banking and streaming apps.
+  private var secureContainer: UITextField?
 
   override func application(
     _ application: UIApplication,
@@ -14,12 +18,13 @@ import UIKit
       channel.setMethodCallHandler { [weak self] call, result in
         switch call.method {
         case "enableScreenshotPrevention":
-          self?.enableSecureOverlay()
+          self?.enableSecureMode()
           result(nil)
         case "disableScreenshotPrevention":
-          self?.disableSecureOverlay()
+          self?.disableSecureMode()
           result(nil)
         case "isScreenCaptured":
+          // isCaptured is true during AirPlay mirroring, screen recording, etc.
           result(UIScreen.main.isCaptured)
         default:
           result(FlutterMethodNotImplemented)
@@ -29,27 +34,51 @@ import UIKit
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
-  private func enableSecureOverlay() {
-    guard let root = window else { return }
-    if secureOverlay != nil { return }
+  /// Wraps the Flutter view inside a secure UITextField so iOS blacks it out
+  /// in both screenshots and screen recordings (works on iOS 13+).
+  private func enableSecureMode() {
+    guard secureContainer == nil,
+          let flutterVC = window?.rootViewController as? FlutterViewController,
+          let flutterView = flutterVC.view,
+          let parent = flutterView.superview else { return }
 
-    let overlay = UIView(frame: root.bounds)
-    overlay.backgroundColor = UIColor.clear
-    overlay.isUserInteractionEnabled = false
+    let field = UITextField(frame: flutterView.frame)
+    field.isSecureTextEntry = true
+    field.isUserInteractionEnabled = true
+    field.backgroundColor = .clear
+    field.autoresizingMask = flutterView.autoresizingMask
 
-    let secureField = UITextField(frame: overlay.bounds)
-    secureField.isSecureTextEntry = true
-    secureField.isUserInteractionEnabled = false
-    secureField.backgroundColor = UIColor.clear
-    overlay.addSubview(secureField)
+    // Insert at the same z-position in the parent hierarchy.
+    let index = parent.subviews.firstIndex(of: flutterView) ?? parent.subviews.count
+    parent.insertSubview(field, at: index)
 
-    root.addSubview(overlay)
-    secureOverlay = overlay
+    // Move the Flutter view inside the secure field.
+    // This is the key step: iOS protects all content that is a direct subview
+    // of a UITextField whose isSecureTextEntry is true.
+    field.addSubview(flutterView)
+    flutterView.frame = field.bounds
+    flutterView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+
+    secureContainer = field
   }
 
-  private func disableSecureOverlay() {
-    secureOverlay?.removeFromSuperview()
-    secureOverlay = nil
+  /// Restores the Flutter view to its original parent, removing the secure wrapper.
+  private func disableSecureMode() {
+    guard let field = secureContainer,
+          let parent = field.superview else {
+      secureContainer = nil
+      return
+    }
+
+    if let flutterView = (window?.rootViewController as? FlutterViewController)?.view {
+      let index = parent.subviews.firstIndex(of: field) ?? parent.subviews.count
+      parent.insertSubview(flutterView, at: index)
+      flutterView.frame = field.frame
+      flutterView.autoresizingMask = field.autoresizingMask
+    }
+
+    field.removeFromSuperview()
+    secureContainer = nil
   }
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {

@@ -171,11 +171,23 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
 
   Widget _buildCanvas() {
     if (_screenCaptured) {
-      return Center(
-        child: Text(
-          'Screenshot/recording is blocked while reading.',
-          style: AppTextStyles.bodyMedium.copyWith(color: Colors.white),
-          textAlign: TextAlign.center,
+      // Full opaque black-out — same behaviour as WhatsApp view-once.
+      // On iOS the UITextField secure layer already blacks out the content
+      // in screenshots; this overlay fires for live screen-recording detection.
+      return Container(
+        color: Colors.black,
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.lock, color: Colors.white54, size: 48),
+            const SizedBox(height: 16),
+            Text(
+              'Screen capture is not allowed\nwhile reading this ebook.',
+              style: AppTextStyles.bodyMedium.copyWith(color: Colors.white54),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       );
     }
