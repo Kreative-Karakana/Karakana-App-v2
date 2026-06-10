@@ -2871,10 +2871,15 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ? 'Akaunti'
           : isCertificatesTab
               ? 'Vyeti'
-              : 'Kozi & Vitabu';
+              : 'Maudhui';
+      final tabSubtitle = isAccountTab
+          ? 'Mipangilio ya akaunti'
+          : isCertificatesTab
+              ? 'Maombi ya uthibitishaji'
+              : 'Kozi na vitabu vyako';
       return SliverAppBar(
         toolbarHeight: 56,
-        expandedHeight: 88,
+        expandedHeight: 148,
         pinned: true,
         floating: false,
         forceElevated: innerBoxIsScrolled,
@@ -2884,6 +2889,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         surfaceTintColor: Colors.transparent,
         shadowColor: Colors.transparent,
         backgroundColor: const Color(0xFF201008),
+
+        // ── Collapsed state: consistent Karakana brand bar ──
         titleSpacing: 0,
         title: Padding(
           padding: const EdgeInsets.only(left: 16),
@@ -2910,7 +2917,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             ),
             const SizedBox(width: 9),
             Text(
-              tabTitle,
+              'Karakana',
               style: GoogleFonts.montserrat(
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
@@ -2934,16 +2941,80 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           ),
           const SizedBox(width: 14),
         ],
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF201008), Color(0xFF4B2412), Color(0xFF9A4E1D)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              stops: [0.0, 0.48, 1.0],
+
+        // ── Flexible space: gradient + large page title (fades on scroll) ──
+        flexibleSpace: LayoutBuilder(builder: (ctx, constraints) {
+          final h = constraints.maxHeight;
+          final statusBarH = MediaQuery.of(ctx).padding.top;
+          final baseH = statusBarH + 56.0;
+          // Start fading when just 28px of extra space remains
+          final titleOpacity = ((h - baseH - 4) / 26.0).clamp(0.0, 1.0);
+
+          return Stack(fit: StackFit.expand, children: [
+            // Gradient background
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF201008),
+                    Color(0xFF4B2412),
+                    Color(0xFF9A4E1D),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  stops: [0.0, 0.48, 1.0],
+                ),
+              ),
             ),
-          ),
-        ),
+            // Subtle warm glow bottom-right
+            Positioned(
+              right: -30,
+              bottom: -20,
+              child: _buildHeroGlow(
+                  140, const Color(0xFFFFD1A1).withValues(alpha: 0.05)),
+            ),
+            // Large page title — fades away as bar collapses
+            if (titleOpacity > 0.01)
+              ClipRect(
+                child: Opacity(
+                  opacity: titleOpacity,
+                  child: OverflowBox(
+                    alignment: Alignment.topLeft,
+                    maxHeight: double.infinity,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(20, baseH + 10, 20, 0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            tabTitle,
+                            style: GoogleFonts.montserrat(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              height: 1.0,
+                              letterSpacing: -0.4,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            tabSubtitle,
+                            style: GoogleFonts.montserrat(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white.withValues(alpha: 0.50),
+                              letterSpacing: 0.1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ]);
+        }),
       );
     }
     // ── Main overview / students tab — industry-standard collapsing hero ──
