@@ -26,6 +26,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
   List _courses = [];
+  List _shuffledCourses = [];
   List _ebooks = [];
   bool _isLoading = true;
   bool _showCoursesBackToTop = false;
@@ -101,6 +102,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       if (mounted) {
         setState(() {
           _courses = courses;
+          _shuffledCourses = List.from(courses)..shuffle();
           _ebooks = ebooks;
           _wallet = wallet;
           _certs = certs;
@@ -772,7 +774,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   surfaceColor,
                 )
               else
-                ..._courses.take(3).map(
+                ..._shuffledCourses.take(3).map(
                       (c) => Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: _buildCourseCard(
@@ -872,17 +874,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           () {
             HapticFeedback.lightImpact();
             _tabController.animateTo(1);
-          },
-        ),
-        const SizedBox(width: 10),
-        _buildQuickAction(
-          Icons.people_outline_rounded,
-          'Wanafunzi',
-          'Wanafunzi wako',
-          const Color(0xFF3D1800),
-          () {
-            HapticFeedback.lightImpact();
-            _tabController.animateTo(2);
           },
         ),
         const SizedBox(width: 10),
@@ -1516,14 +1507,15 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFE87722), Color(0xFFB85A16)],
+          colors: [Color(0xFF201008), Color(0xFF4B2412), Color(0xFF9A4E1D)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
+          stops: [0.0, 0.48, 1.0],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFE87722).withValues(alpha: 0.28),
+            color: const Color(0xFF201008).withValues(alpha: 0.35),
             blurRadius: 18,
             offset: const Offset(0, 8),
           ),
@@ -2502,8 +2494,22 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final approved =
         _certs.where((c) => (c as Map)['is_approved'] == true).length;
 
+    // Premium palette for Vyeti tab (neutral, no orange overload)
+    const approvedGreen = Color(0xFF2E7D32);
+    const pendingAmber = Color(0xFF8D6E00);
+    final cardBorder = isDark
+        ? const Color(0xFF2E2420).withValues(alpha: 0.8)
+        : const Color(0xFFE8E0DA);
+    final cardShadowColor = Colors.black.withValues(alpha: 0.06);
+    final bannerBg = isDark
+        ? const Color(0xFF1E1610).withValues(alpha: 0.9)
+        : const Color(0xFFF5F0EC);
+    final bannerBorder = isDark
+        ? const Color(0xFF3A2E26)
+        : const Color(0xFFDDD5CC);
+
     return RefreshIndicator(
-      color: const Color(0xFFE87722),
+      color: const Color(0xFF4B2412),
       onRefresh: () async => _loadAll(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -2513,14 +2519,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                  color: const Color(0xFFE87722).withValues(alpha: 0.08),
+                  color: bannerBg,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                      color: const Color(0xFFE87722).withValues(alpha: 0.25))),
+                  border: Border.all(color: bannerBorder)),
               child:
                   Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Icon(Icons.workspace_premium_outlined,
-                    color: Color(0xFFE87722), size: 22),
+                Icon(Icons.workspace_premium_outlined,
+                    color: const Color(0xFF4B2412), size: 22),
                 const SizedBox(width: 12),
                 Expanded(
                     child: Column(
@@ -2530,7 +2535,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           style: GoogleFonts.montserrat(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
-                              color: const Color(0xFF3D1800))),
+                              color: textPrimary)),
                       const SizedBox(height: 4),
                       Text(
                           'Kagua ukamilishaji wa mwanafunzi kisha '
@@ -2538,7 +2543,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           style: GoogleFonts.montserrat(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
-                              color: const Color(0xFF7B3A10),
+                              color: textSecondary,
                               height: 1.5)),
                     ])),
               ])),
@@ -2547,12 +2552,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
           // ── SUMMARY STATS ROW ──
           Row(children: [
-            _buildMiniStat('$pending', 'Zinasubiri', const Color(0xFFFFA726)),
+            _buildMiniStat('$pending', 'Zinasubiri', pendingAmber),
             const SizedBox(width: 10),
-            _buildMiniStat(
-                '$approved', 'Zilizoidhinishwa', const Color(0xFFE87722)),
+            _buildMiniStat('$approved', 'Zilizoidhinishwa', approvedGreen),
             const SizedBox(width: 10),
-            _buildMiniStat('${_certs.length}', 'Zote', const Color(0xFF3D1800)),
+            _buildMiniStat('${_certs.length}', 'Zote', const Color(0xFF4B2412)),
           ]),
 
           const SizedBox(height: 24),
@@ -2583,14 +2587,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   decoration: BoxDecoration(
                       color: surfaceColor,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                          color: isApproved
-                              ? const Color(0xFFE87722).withValues(alpha: 0.2)
-                              : const Color(0xFFE87722).withValues(alpha: 0.1)),
+                      border: Border.all(color: cardBorder),
                       boxShadow: [
                         BoxShadow(
-                            color:
-                                const Color(0xFFE87722).withValues(alpha: 0.07),
+                            color: cardShadowColor,
                             blurRadius: 10,
                             offset: const Offset(0, 3))
                       ]),
@@ -2607,8 +2607,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                   decoration: const BoxDecoration(
                                       gradient: LinearGradient(
                                           colors: [
-                                            Color(0xFF3D1800),
-                                            Color(0xFFE87722)
+                                            Color(0xFF201008),
+                                            Color(0xFF4B2412)
                                           ],
                                           begin: Alignment.topLeft,
                                           end: Alignment.bottomRight),
@@ -2638,19 +2638,19 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                         style: GoogleFonts.montserrat(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w400,
-                                            color: const Color(0xFF7B3A10)),
+                                            color: textSecondary),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis),
                                     const SizedBox(height: 5),
                                     Row(children: [
-                                      const Icon(Icons.calendar_today_outlined,
-                                          size: 11, color: Color(0xFFBDA99C)),
+                                      Icon(Icons.calendar_today_outlined,
+                                          size: 11, color: textSecondary.withValues(alpha: 0.6)),
                                       const SizedBox(width: 4),
                                       Text(date,
                                           style: GoogleFonts.montserrat(
                                               fontSize: 10,
                                               fontWeight: FontWeight.w400,
-                                              color: const Color(0xFFBDA99C))),
+                                              color: textSecondary.withValues(alpha: 0.6))),
                                     ]),
                                   ])),
                               Container(
@@ -2658,10 +2658,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                       horizontal: 10, vertical: 5),
                                   decoration: BoxDecoration(
                                       color: isApproved
-                                          ? const Color(0xFFE87722)
-                                              .withValues(alpha: 0.1)
-                                          : const Color(0xFFFFA726)
-                                              .withValues(alpha: 0.12),
+                                          ? approvedGreen.withValues(alpha: 0.10)
+                                          : pendingAmber.withValues(alpha: 0.10),
                                       borderRadius: BorderRadius.circular(20)),
                                   child: Text(
                                       isApproved
@@ -2671,8 +2669,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                           fontSize: 10,
                                           fontWeight: FontWeight.w700,
                                           color: isApproved
-                                              ? const Color(0xFFE87722)
-                                              : const Color(0xFFFFA726)))),
+                                              ? approvedGreen
+                                              : pendingAmber))),
                             ])),
 
                     // ── PROGRESS BAR ──
@@ -2689,12 +2687,12 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                         style: GoogleFonts.montserrat(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w500,
-                                            color: const Color(0xFF7B3A10))),
+                                            color: textSecondary)),
                                     Text('$progress%',
                                         style: GoogleFonts.montserrat(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w700,
-                                            color: const Color(0xFFE87722))),
+                                            color: const Color(0xFF4B2412))),
                                   ]),
                               const SizedBox(height: 6),
                               ClipRRect(
@@ -2703,9 +2701,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                       value: progress / 100,
                                       backgroundColor: isDark
                                           ? const Color(0xFF2A1A0A)
-                                          : const Color(0xFFF5E6D8),
+                                          : const Color(0xFFEDE5DF),
                                       valueColor: const AlwaysStoppedAnimation(
-                                          Color(0xFFE87722)),
+                                          Color(0xFF4B2412)),
                                       minHeight: 8)),
                             ])),
 
@@ -2722,10 +2720,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                             _showRejectConfirm(cert),
                                         style: OutlinedButton.styleFrom(
                                             side: BorderSide(
-                                                color: const Color(0xFF3D1800)
+                                                color: textSecondary
                                                     .withValues(alpha: 0.4)),
-                                            foregroundColor:
-                                                const Color(0xFF3D1800),
+                                            foregroundColor: textSecondary,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(28)),
@@ -2749,7 +2746,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                                 fontWeight: FontWeight.w700)),
                                         style: ElevatedButton.styleFrom(
                                             backgroundColor:
-                                                const Color(0xFFE87722),
+                                                const Color(0xFF3D1800),
                                             foregroundColor: Colors.white,
                                             elevation: 0,
                                             shape: RoundedRectangleBorder(
@@ -2763,20 +2760,19 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 12),
                                 decoration: BoxDecoration(
-                                    color: const Color(0xFFE87722)
-                                        .withValues(alpha: 0.08),
+                                    color: approvedGreen.withValues(alpha: 0.08),
                                     borderRadius: BorderRadius.circular(28)),
                                 child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Icon(Icons.check_circle_outline,
-                                          color: Color(0xFFE87722), size: 16),
+                                      Icon(Icons.check_circle_outline,
+                                          color: approvedGreen, size: 16),
                                       const SizedBox(width: 8),
                                       Text('Cheti Kimethibitishwa',
                                           style: GoogleFonts.montserrat(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,
-                                              color: const Color(0xFFE87722))),
+                                              color: approvedGreen)),
                                     ]))),
                   ]));
             }),
@@ -3073,31 +3069,31 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         padding: const EdgeInsets.only(left: 16),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           Container(
-            width: 28,
-            height: 28,
+            width: 34,
+            height: 34,
             decoration: const BoxDecoration(
                 color: Colors.white, shape: BoxShape.circle),
             child: Padding(
-              padding: const EdgeInsets.all(3),
+              padding: const EdgeInsets.all(4),
               child: Image.asset(
                 'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
                 fit: BoxFit.contain,
                 errorBuilder: (_, __, ___) => Center(
                   child: Text('K',
                       style: GoogleFonts.montserrat(
-                          fontSize: 11,
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: const Color(0xFFE87722))),
                 ),
               ),
             ),
           ),
-          const SizedBox(width: 9),
+          const SizedBox(width: 10),
           Text(
             'Karakana',
             style: GoogleFonts.montserrat(
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
+              fontSize: 20,
+              fontWeight: FontWeight.w800,
               color: Colors.white,
               letterSpacing: 0.1,
             ),
