@@ -174,7 +174,11 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
         final isDark = Theme.of(context).brightness == Brightness.dark;
 
         return CustomScrollView(
-          controller: _scroll,
+          // When embedded in the dashboard's NestedScrollView the inner
+          // scroll view must use the PrimaryScrollController that
+          // NestedScrollView injects — otherwise the SliverAppBar never
+          // receives scroll notifications and the hero won't collapse.
+          controller: widget.embeddedInDashboard ? null : _scroll,
           slivers: [
             if (!widget.embeddedInDashboard) _buildStandaloneHeader(),
             SliverToBoxAdapter(
