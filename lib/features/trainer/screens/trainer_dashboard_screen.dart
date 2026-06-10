@@ -2867,6 +2867,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final bool isCoursesTab = _tabController.index == 1;
     final bool isCertificatesTab = _tabController.index == 3;
     if (isAccountTab || isCoursesTab || isCertificatesTab) {
+      final tabTitle = isAccountTab
+          ? 'Akaunti'
+          : isCertificatesTab
+              ? 'Vyeti'
+              : 'Kozi & Vitabu';
       return SliverAppBar(
         toolbarHeight: 56,
         expandedHeight: 88,
@@ -2878,30 +2883,64 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         shadowColor: Colors.transparent,
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFF201008),
+        titleSpacing: 0,
+        title: Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: const BoxDecoration(
+                  color: Colors.white, shape: BoxShape.circle),
+              child: Padding(
+                padding: const EdgeInsets.all(3),
+                child: Image.asset(
+                  'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Center(
+                    child: Text('K',
+                        style: GoogleFonts.montserrat(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFFE87722))),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 9),
+            Text(
+              tabTitle,
+              style: GoogleFonts.montserrat(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+                letterSpacing: 0.1,
+              ),
+            ),
+          ]),
+        ),
+        actions: [
+          _buildHeaderIconButton(
+            Icons.notifications_outlined,
+            () => context.push('/notifications'),
+            veryCompact: false,
+          ),
+          const SizedBox(width: 6),
+          _buildHeaderIconButton(
+            Icons.settings_outlined,
+            _openAccountTab,
+            veryCompact: false,
+          ),
+          const SizedBox(width: 14),
+        ],
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFF1F0F08), Color(0xFF4A2110), Color(0xFF8A4218)],
+              colors: [Color(0xFF201008), Color(0xFF4B2412), Color(0xFF9A4E1D)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               stops: [0.0, 0.48, 1.0],
-            ),
-          ),
-          child: SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: _buildPageHeaderChrome(
-                  title: isAccountTab
-                      ? 'Akaunti'
-                      : isCertificatesTab
-                          ? 'Vyeti'
-                          : 'Kozi & Vitabu',
-                ),
-              ),
             ),
           ),
         ),
@@ -2913,7 +2952,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     // out smoothly as the user scrolls. No duplicate branding.
     return SliverAppBar(
       toolbarHeight: 56,
-      expandedHeight: 244,
+      expandedHeight: 268,
       pinned: true,
       floating: false,
       forceElevated: innerBoxIsScrolled,
@@ -3578,7 +3617,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   Widget _buildHeroSummaryRail({required bool compact}) {
     final avgRating =
         (_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1);
-    final borderRadius = compact ? 18.0 : 24.0;
+    final borderRadius = compact ? 16.0 : 20.0;
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: BackdropFilter(
@@ -3586,21 +3625,21 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             sigmaX: compact ? 14 : 18, sigmaY: compact ? 14 : 18),
         child: Container(
           padding: EdgeInsets.symmetric(
-            horizontal: compact ? 8 : 14,
-            vertical: compact ? 8 : 14,
+            horizontal: compact ? 8 : 12,
+            vertical: compact ? 9 : 12,
           ),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: compact ? 0.11 : 0.13),
             borderRadius: BorderRadius.circular(borderRadius),
             border: Border.all(
-              color: Colors.white.withValues(alpha: compact ? 0.16 : 0.18),
+              color: Colors.white.withValues(alpha: compact ? 0.16 : 0.20),
               width: 0.8,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: compact ? 0.08 : 0.12),
-                blurRadius: compact ? 16 : 22,
-                offset: const Offset(0, 10),
+                color: Colors.black.withValues(alpha: compact ? 0.08 : 0.14),
+                blurRadius: compact ? 14 : 20,
+                offset: const Offset(0, 8),
               ),
             ],
           ),
@@ -3608,37 +3647,34 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             children: [
               Expanded(
                 child: _buildHeroSummaryItem(
-                  Icons.school_outlined,
                   'Kozi',
                   '${_stats['total_courses'] ?? 0}',
                   compact: compact,
                 ),
               ),
-              _buildHeroSummaryDivider(),
+              _buildHeroSummaryDivider(compact: compact),
               Expanded(
                 child: _buildHeroSummaryItem(
-                  Icons.menu_book_outlined,
                   'Vitabu',
                   '${_stats['total_ebooks'] ?? 0}',
                   compact: compact,
                 ),
               ),
-              _buildHeroSummaryDivider(),
+              _buildHeroSummaryDivider(compact: compact),
               Expanded(
                 child: _buildHeroSummaryItem(
-                  Icons.people_outline_rounded,
                   'Wanafunzi',
                   '${_stats['total_students'] ?? 0}',
                   compact: compact,
                 ),
               ),
-              _buildHeroSummaryDivider(),
+              _buildHeroSummaryDivider(compact: compact),
               Expanded(
                 child: _buildHeroSummaryItem(
-                  Icons.star_outline_rounded,
                   'Ukadiriaji',
                   avgRating,
                   compact: compact,
+                  isStar: true,
                 ),
               ),
             ],
@@ -3649,276 +3685,63 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   }
 
   Widget _buildHeroSummaryItem(
-    IconData icon,
     String label,
     String value, {
     required bool compact,
+    bool isStar = false,
   }) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: compact ? 22 : 34,
-          height: compact ? 22 : 34,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: compact ? 0.10 : 0.16),
-            borderRadius: BorderRadius.circular(compact ? 7 : 11),
-          ),
-          child: Icon(
-            icon,
-            size: compact ? 11 : 18,
-            color: Colors.white,
-          ),
+        // Value row — for rating, inline star icon
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            if (isStar && !compact) ...[
+              Icon(Icons.star_rounded,
+                  size: 13,
+                  color: const Color(0xFFFFD569).withValues(alpha: 0.9)),
+              const SizedBox(width: 2),
+            ],
+            Text(
+              value,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.montserrat(
+                fontSize: compact ? 13 : 22,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+                height: 1.0,
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: compact ? 4 : 8),
-        Text(
-          value,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.montserrat(
-            fontSize: compact ? 11 : 18,
-            fontWeight: FontWeight.w800,
-            color: Colors.white,
-            height: 1.0,
-          ),
-        ),
-        SizedBox(height: compact ? 1 : 3),
+        SizedBox(height: compact ? 2 : 4),
         Text(
           label,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: GoogleFonts.montserrat(
             fontSize: compact ? 7.5 : 10,
-            fontWeight: FontWeight.w600,
-            color: Colors.white.withValues(alpha: compact ? 0.78 : 0.84),
-            height: 1.15,
+            fontWeight: FontWeight.w500,
+            color: Colors.white.withValues(alpha: compact ? 0.72 : 0.75),
+            height: 1.1,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildHeroSummaryDivider() {
+  Widget _buildHeroSummaryDivider({bool compact = false}) {
     return Container(
       width: 1,
-      height: 46,
+      height: compact ? 26 : 34,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.18),
         borderRadius: BorderRadius.circular(999),
-      ),
-    );
-  }
-
-  // ── CONTENT-TAB SECTION HEADER ────────────────────────────────────────────
-
-  Widget _contentSectionHeader(
-    IconData icon,
-    String title,
-    int count,
-    Color accent,
-    Color textPrimary,
-  ) {
-    return Row(children: [
-      Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          color: accent.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(icon, size: 17, color: accent),
-      ),
-      const SizedBox(width: 10),
-      Expanded(
-        child: Text(
-          title,
-          style: GoogleFonts.montserrat(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            color: textPrimary,
-          ),
-        ),
-      ),
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: accent.withValues(alpha: 0.10),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          '$count',
-          style: GoogleFonts.montserrat(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            color: accent,
-          ),
-        ),
-      ),
-    ]);
-  }
-
-  // ── EBOOK CARD (content tab) ───────────────────────────────────────────────
-
-  Widget _buildEbookCardInTab(Map e, Color surfaceColor, Color textPrimary) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final status = (e['status'] as String? ?? 'draft');
-    final isPublished = status == 'published';
-    final isPending = status == 'pending_review';
-    final statusColor = isPublished
-        ? const Color(0xFF2E7D32)
-        : isPending
-            ? const Color(0xFFE87722)
-            : const Color(0xFF6B7280);
-    final statusLabel = isPublished
-        ? 'Imechapishwa'
-        : isPending
-            ? 'Inasubiri'
-            : 'Rasimu';
-    final title = (e['title'] ?? '').toString();
-    final cover = e['cover_image']?.toString();
-    final price = (double.tryParse((e['price'] ?? '0').toString()) ?? 0).toInt();
-    final buyers = e['buyers_count'] as int? ?? 0;
-    final purchases = e['successful_purchases_count'] as int? ?? 0;
-    final revenue =
-        double.tryParse((e['total_revenue'] ?? '0').toString()) ?? 0.0;
-    final ebookId = e['id'] as int? ?? 0;
-
-    return GestureDetector(
-      onTap: () async {
-        await context.push('/trainer/ebooks/$ebookId');
-        await _loadAll();
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: surfaceColor,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFE87722).withValues(alpha: 0.08),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            // ── COVER ──
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                width: 62,
-                height: 84,
-                color: isDark
-                    ? const Color(0xFF2A1A0A)
-                    : const Color(0xFFF5E6D8),
-                child: cover != null && cover.isNotEmpty
-                    ? Image.network(cover,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Icon(
-                            Icons.menu_book_outlined,
-                            color: Color(0xFFE87722),
-                            size: 28))
-                    : const Icon(Icons.menu_book_outlined,
-                        color: Color(0xFFE87722), size: 28),
-              ),
-            ),
-            const SizedBox(width: 12),
-
-            // ── DETAILS ──
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: GoogleFonts.montserrat(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: textPrimary,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: statusColor.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          statusLabel,
-                          style: GoogleFonts.montserrat(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
-                            color: statusColor,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  // stats row
-                  Wrap(spacing: 12, children: [
-                    _ebookStatChip(Icons.people_outline, '$buyers wasomaji'),
-                    _ebookStatChip(
-                        Icons.shopping_bag_outlined, '$purchases mauzo'),
-                    _ebookStatChip(Icons.payments_outlined,
-                        'TZS ${_formatPrice(revenue)}'),
-                  ]),
-
-                  const SizedBox(height: 10),
-                  Divider(
-                      height: 1,
-                      color: isDark
-                          ? Colors.white10
-                          : const Color(0xFFF5E6D8)),
-                  const SizedBox(height: 10),
-
-                  // price + action chips
-                  Row(children: [
-                    Text(
-                      'TZS ${_formatPrice(price)}',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFFE87722),
-                      ),
-                    ),
-                    const Spacer(),
-                    _buildSmallAction(
-                        'Hariri',
-                        Icons.edit_outlined,
-                        () async {
-                          await context
-                              .push('/trainer/ebooks/$ebookId/edit');
-                          await _loadAll();
-                        },
-                        isDanger: false),
-                    const SizedBox(width: 6),
-                    _buildSmallAction(
-                        'Maelezo',
-                        Icons.bar_chart_rounded,
-                        () async {
-                          await context.push('/trainer/ebooks/$ebookId');
-                          await _loadAll();
-                        },
-                        isDanger: false),
-                  ]),
-                ],
-              ),
-            ),
-          ]),
-        ),
       ),
     );
   }
