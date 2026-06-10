@@ -865,19 +865,25 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     return Row(
       children: [
         _buildQuickAction(
-          Icons.school_outlined,
-          'Kozi',
-          'Boresha maudhui',
+          Icons.collections_bookmark_outlined,
+          'Maudhui',
+          'Kozi na vitabu',
           const Color(0xFFE87722),
-          () => _tabController.animateTo(1),
+          () {
+            HapticFeedback.lightImpact();
+            _tabController.animateTo(1);
+          },
         ),
         const SizedBox(width: 10),
         _buildQuickAction(
-          Icons.menu_book_outlined,
-          'Vitabu',
-          'Simamia eBooks',
+          Icons.people_outline_rounded,
+          'Wanafunzi',
+          'Wanafunzi wako',
           const Color(0xFF3D1800),
-          () => _tabController.animateTo(1),
+          () {
+            HapticFeedback.lightImpact();
+            _tabController.animateTo(2);
+          },
         ),
         const SizedBox(width: 10),
         _buildQuickAction(
@@ -885,15 +891,21 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           'Vyeti',
           'Pitia vyeti',
           const Color(0xFF7B3A10),
-          () => _tabController.animateTo(3),
+          () {
+            HapticFeedback.lightImpact();
+            _tabController.animateTo(3);
+          },
         ),
         const SizedBox(width: 10),
         _buildQuickAction(
           Icons.account_balance_wallet_outlined,
           'Mkoba',
-          'Mapato',
+          'Angalia mapato',
           const Color(0xFF7B3A10),
-          () => context.push('/wallet'),
+          () {
+            HapticFeedback.lightImpact();
+            context.push('/wallet');
+          },
         ),
       ],
     );
@@ -2890,24 +2902,12 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         shadowColor: Colors.transparent,
         backgroundColor: const Color(0xFF201008),
 
-        // Title is handled in flexibleSpace so we can drive it from the
-        // same LayoutBuilder that controls the large-title opacity.
+        // Title + toolbar content are handled entirely in flexibleSpace so
+        // both the large hero title and the crossfading compact title share
+        // the same LayoutBuilder height value.  No action buttons here —
+        // bell and settings live only on the home tab.
         titleSpacing: 0,
         title: const SizedBox.shrink(),
-        actions: [
-          _buildHeaderIconButton(
-            Icons.notifications_outlined,
-            () => context.push('/notifications'),
-            veryCompact: false,
-          ),
-          const SizedBox(width: 6),
-          _buildHeaderIconButton(
-            Icons.settings_outlined,
-            _openAccountTab,
-            veryCompact: false,
-          ),
-          const SizedBox(width: 14),
-        ],
 
         // ── Flexible space: gradient + crossfading toolbar + large page title ──
         flexibleSpace: LayoutBuilder(builder: (ctx, constraints) {
