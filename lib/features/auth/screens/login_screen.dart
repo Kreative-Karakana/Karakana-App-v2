@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -21,10 +23,23 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen>
     with AutomaticKeepAliveClientMixin {
+  static const List<String> _welcomeMessages = [
+    'Karibu tena. Endelea kujenga ndoto zako hatua kwa hatua.',
+    'Leo ni nafasi mpya ya kujifunza, kuunda, na kukua.',
+    'Rudi kwenye safari yako ya maarifa na ujasiriamali.',
+    'Kila hatua ndogo inakusogeza karibu na biashara unayoitamani.',
+    'Endelea pale ulipoishia na fanya leo iwe na maana.',
+    'Maarifa yako yanaweza kufungua mlango mpya leo.',
+    'Karibu tena. Kazi nzuri huanza na hatua moja ya ujasiri.',
+    'Jifunze kitu kipya leo, kisha kigeuze kuwa hatua halisi.',
+  ];
+
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final LocalAuthentication _localAuth = LocalAuthentication();
+  late final String _welcomeMessage =
+      _welcomeMessages[math.Random().nextInt(_welcomeMessages.length)];
   bool _obscurePassword = true;
   OverlayEntry? _errorOverlayEntry;
 
@@ -435,7 +450,7 @@ class _LoginScreenState extends State<LoginScreen>
                                             ),
                                             SizedBox(height: AppSpacing.sm.h),
                                             Text(
-                                              'Ingia kwa akaunti yako na uendelee na masomo yako bila usumbufu.',
+                                              _welcomeMessage,
                                               style: GoogleFonts.montserrat(
                                                 fontSize: compact ? 12.5 : 13.5,
                                                 color: Colors.white
