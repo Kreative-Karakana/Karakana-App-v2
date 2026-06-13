@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "466490006316-974p68l591lck6tt15tss0p6icebo8kd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kreativekarakana.karakana",
+            "certificate_hash": "9d3fb9a568a813259db8fafe32c190d47c0826b0"
+          }
+        },
+        {
           "client_id": "466490006316-aeg7rdf4vgi7f6qcbetthemmc6efkfn9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
