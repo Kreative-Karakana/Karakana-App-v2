@@ -7,20 +7,31 @@ class NotificationProvider extends ChangeNotifier {
   List<NotificationModel> _notifications = [];
   bool _isLoading = false;
   String? _errorMessage;
+  bool? _lastLoadedTrainerRole;
 
   List<NotificationModel> get notifications => _notifications;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   int get unreadCount => _notifications.where((n) => !n.isRead).length;
 
-  Future<void> loadNotifications() async {
+  Future<void> loadNotifications({required bool isTrainer}) async {
+    if (_lastLoadedTrainerRole != null &&
+        _lastLoadedTrainerRole != isTrainer &&
+        _notifications.isNotEmpty) {
+      _notifications = [];
+    }
+    _lastLoadedTrainerRole = isTrainer;
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final response =
-          await ApiClient().dio.get('/api/v1/communications/notifications/me/');
+      final response = await ApiClient().dio.get(
+        '/api/v1/communications/notifications/me/',
+        queryParameters: {
+          'role': isTrainer ? 'trainer' : 'user',
+        },
+      );
       final data = response.data;
       final List<dynamic> rawList;
       if (data is List) {
@@ -36,6 +47,7 @@ class NotificationProvider extends ChangeNotifier {
           .map((item) => NotificationModel.fromJson(
                 Map<String, dynamic>.from(item),
               ))
+          .where((notification) => _matchesRole(notification, isTrainer))
           .toList();
     } catch (e) {
       _errorMessage = ApiClient().parseError(e);
@@ -46,6 +58,32 @@ class NotificationProvider extends ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  bool _matchesRole(NotificationModel notification, bool isTrainer) {
+    final targetRole = notification.targetRole?.trim().toLowerCase();
+    if (targetRole != null && targetRole.isNotEmpty) {
+      if (targetRole == 'all' ||
+          targetRole == 'both' ||
+          targetRole == 'everyone' ||
+          targetRole == 'broadcast') {
+        return true;
+      }
+      if (isTrainer) {
+        return targetRole == 'trainer' || targetRole == 'trainers';
+      }
+      return targetRole == 'user' ||
+          targetRole == 'users' ||
+          targetRole == 'student' ||
+          targetRole == 'students' ||
+          targetRole == 'learner' ||
+          targetRole == 'learners';
+    }
+
+    final route = notification.route?.toLowerCase() ?? '';
+    if (route.startsWith('/trainer')) return isTrainer;
+
+    return true;
   }
 
   void markAllRead() {
@@ -59,6 +97,7 @@ class NotificationProvider extends ChangeNotifier {
             isRead: true,
             createdAt: n.createdAt,
             route: n.route,
+            targetRole: n.targetRole,
           ),
         )
         .toList();
@@ -77,6 +116,7 @@ class NotificationProvider extends ChangeNotifier {
                   isRead: true,
                   createdAt: n.createdAt,
                   route: n.route,
+                  targetRole: n.targetRole,
                 )
               : n,
         )

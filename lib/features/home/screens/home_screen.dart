@@ -39,7 +39,9 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CourseProvider>().loadHomeData();
       context.read<FursaProvider>().loadItems();
-      context.read<NotificationProvider>().loadNotifications();
+      context
+          .read<NotificationProvider>()
+          .loadNotifications(isTrainer: context.read<AuthProvider>().isTrainer);
       checkAndShowAmbassadorCode(context);
       // Temporarily hidden per request: "Fomu ya Taarifa" auto-popup on login.
       // Re-enable later by restoring this call.
@@ -50,7 +52,9 @@ class _HomeScreenState extends State<HomeScreen> {
         const Duration(seconds: 20),
         (_) {
           if (mounted) {
-            context.read<NotificationProvider>().loadNotifications();
+            context.read<NotificationProvider>().loadNotifications(
+                  isTrainer: context.read<AuthProvider>().isTrainer,
+                );
           }
         },
       );
@@ -418,7 +422,9 @@ class _HomeScreenState extends State<HomeScreen> {
         _HomeNotificationAction(
           unreadCount: notifications.unreadCount,
           onTap: () async {
-            await context.read<NotificationProvider>().loadNotifications();
+            await context.read<NotificationProvider>().loadNotifications(
+                  isTrainer: context.read<AuthProvider>().isTrainer,
+                );
             if (!mounted) return;
             context.push('/notifications');
           },

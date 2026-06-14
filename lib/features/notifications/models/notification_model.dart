@@ -6,6 +6,7 @@ class NotificationModel {
   final bool isRead;
   final String createdAt;
   final String? route;
+  final String? targetRole;
 
   const NotificationModel({
     required this.id,
@@ -15,6 +16,7 @@ class NotificationModel {
     required this.isRead,
     required this.createdAt,
     this.route,
+    this.targetRole,
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
@@ -22,10 +24,19 @@ class NotificationModel {
       id: json['id'] ?? 0,
       title: json['title']?.toString() ?? '',
       message: json['message']?.toString() ?? '',
-      type: json['type']?.toString() ?? 'general',
+      type: (json['type'] ?? json['notification_type'] ?? 'general')
+          .toString()
+          .toLowerCase(),
       isRead: json['is_read'] ?? false,
       createdAt: json['created_at']?.toString() ?? '',
       route: json['route']?.toString(),
+      targetRole: (json['target_role'] ??
+              json['audience'] ??
+              json['recipient_role'] ??
+              json['role'] ??
+              json['user_type'])
+          ?.toString()
+          .toLowerCase(),
     );
   }
 
@@ -38,6 +49,7 @@ class NotificationModel {
       'is_read': isRead,
       'created_at': createdAt,
       'route': route,
+      'target_role': targetRole,
     };
   }
 }

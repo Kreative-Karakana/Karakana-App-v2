@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import '../../../core/network/api_client.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../notifications/providers/notification_provider.dart';
 import 'trainer_account_screen.dart';
 
 class TrainerDashboardScreen extends StatefulWidget {
@@ -127,9 +128,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             'total_ebooks': ebooks.length,
             'total_ebook_readers': totalEbookReaders,
             'total_ebook_revenue': totalEbookRevenue,
-            'published_ebooks': ebooks
-                .where((e) => (e as Map)['status'] == 'published')
-                .length,
+            'published_ebooks':
+                ebooks.where((e) => (e as Map)['status'] == 'published').length,
           };
           _isLoading = false;
         });
@@ -805,8 +805,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       color: surfaceColor,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                          color: const Color(0xFFE87722)
-                              .withValues(alpha: 0.2),
+                          color: const Color(0xFFE87722).withValues(alpha: 0.2),
                           style: BorderStyle.solid),
                     ),
                     child: Row(children: [
@@ -814,8 +813,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         width: 44,
                         height: 44,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE87722)
-                              .withValues(alpha: 0.1),
+                          color: const Color(0xFFE87722).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Icon(Icons.menu_book_outlined,
@@ -1355,8 +1353,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color:
-                        const Color(0xFFE87722).withValues(alpha: 0.10),
+                    color: const Color(0xFFE87722).withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -1372,13 +1369,14 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 GestureDetector(
                   onTap: () => context.push('/trainer/courses'),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: const Color(0xFFE87722).withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                          color: const Color(0xFFE87722).withValues(alpha: 0.3)),
+                          color:
+                              const Color(0xFFE87722).withValues(alpha: 0.3)),
                     ),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       Text(
@@ -1457,8 +1455,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 GestureDetector(
                   onTap: () => context.push('/trainer/ebooks'),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: const Color(0xFF3D1800).withValues(alpha: 0.07),
                       borderRadius: BorderRadius.circular(20),
@@ -1537,8 +1535,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   color: Colors.white.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child:
-                    const Icon(Icons.add_rounded, color: Colors.white, size: 22),
+                child: const Icon(Icons.add_rounded,
+                    color: Colors.white, size: 22),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -1589,8 +1587,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             : const Color(0xFF6B7280);
 
     return GestureDetector(
-      onTap: () => context.push('/trainer/course/$courseId/sections',
-          extra: {'title': title}),
+      onTap: () => context
+          .push('/trainer/course/$courseId/sections', extra: {'title': title}),
       child: Container(
         width: 160,
         margin: const EdgeInsets.only(right: 12),
@@ -1608,8 +1606,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           // thumbnail
           ClipRRect(
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(14)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
             child: Stack(children: [
               thumbnail != null && thumbnail.isNotEmpty
                   ? CachedNetworkImage(
@@ -1655,7 +1652,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    isPublished ? '✓' : statusStr == 'pending_review' ? '⏳' : '✎',
+                    isPublished
+                        ? '✓'
+                        : statusStr == 'pending_review'
+                            ? '⏳'
+                            : '✎',
                     style: const TextStyle(fontSize: 9, color: Colors.white),
                   ),
                 ),
@@ -1753,15 +1754,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           // cover
           ClipRRect(
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(14)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
             child: Stack(children: [
               Container(
                 height: 110,
                 width: double.infinity,
-                color: isDark
-                    ? const Color(0xFF2A1A0A)
-                    : const Color(0xFFF5E6D8),
+                color:
+                    isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                 child: cover != null && cover.isNotEmpty
                     ? Image.network(
                         cover,
@@ -2502,9 +2501,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final bannerBg = isDark
         ? const Color(0xFF1E1610).withValues(alpha: 0.9)
         : const Color(0xFFF5F0EC);
-    final bannerBorder = isDark
-        ? const Color(0xFF3A2E26)
-        : const Color(0xFFDDD5CC);
+    final bannerBorder =
+        isDark ? const Color(0xFF3A2E26) : const Color(0xFFDDD5CC);
 
     return RefreshIndicator(
       color: const Color(0xFF4B2412),
@@ -2642,13 +2640,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                     const SizedBox(height: 5),
                                     Row(children: [
                                       Icon(Icons.calendar_today_outlined,
-                                          size: 11, color: textSecondary.withValues(alpha: 0.6)),
+                                          size: 11,
+                                          color: textSecondary.withValues(
+                                              alpha: 0.6)),
                                       const SizedBox(width: 4),
                                       Text(date,
                                           style: GoogleFonts.montserrat(
                                               fontSize: 10,
                                               fontWeight: FontWeight.w400,
-                                              color: textSecondary.withValues(alpha: 0.6))),
+                                              color: textSecondary.withValues(
+                                                  alpha: 0.6))),
                                     ]),
                                   ])),
                               Container(
@@ -2656,8 +2657,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                       horizontal: 10, vertical: 5),
                                   decoration: BoxDecoration(
                                       color: isApproved
-                                          ? approvedGreen.withValues(alpha: 0.10)
-                                          : pendingAmber.withValues(alpha: 0.10),
+                                          ? approvedGreen.withValues(
+                                              alpha: 0.10)
+                                          : pendingAmber.withValues(
+                                              alpha: 0.10),
                                       borderRadius: BorderRadius.circular(20)),
                                   child: Text(
                                       isApproved
@@ -2718,8 +2721,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                             _showRejectConfirm(cert),
                                         style: OutlinedButton.styleFrom(
                                             side: BorderSide(
-                                                color: textSecondary
-                                                    .withValues(alpha: 0.4)),
+                                                color: textSecondary.withValues(
+                                                    alpha: 0.4)),
                                             foregroundColor: textSecondary,
                                             shape: RoundedRectangleBorder(
                                                 borderRadius:
@@ -2758,7 +2761,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 12),
                                 decoration: BoxDecoration(
-                                    color: approvedGreen.withValues(alpha: 0.08),
+                                    color:
+                                        approvedGreen.withValues(alpha: 0.08),
                                     borderRadius: BorderRadius.circular(28)),
                                 child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -3101,7 +3105,12 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       actions: [
         _buildHeaderIconButton(
           Icons.notifications_outlined,
-          () => context.push('/notifications'),
+          () {
+            context
+                .read<NotificationProvider>()
+                .loadNotifications(isTrainer: true);
+            context.push('/notifications');
+          },
           veryCompact: false,
         ),
         const SizedBox(width: 6),
@@ -3127,16 +3136,15 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           builder: (ctx, constraints) {
             final h = constraints.maxHeight;
             // Starts fading at 190px, fully gone at 100px
-            final heroOpacity =
-                ((h - 100.0) / (190.0 - 100.0)).clamp(0.0, 1.0);
+            final heroOpacity = ((h - 100.0) / (190.0 - 100.0)).clamp(0.0, 1.0);
 
             return Stack(fit: StackFit.expand, children: [
               // Decorative glows
               Positioned(
                 top: -36,
                 left: -18,
-                child: _buildHeroGlow(
-                    130, Colors.white.withValues(alpha: 0.08)),
+                child:
+                    _buildHeroGlow(130, Colors.white.withValues(alpha: 0.08)),
               ),
               Positioned(
                 right: -36,
@@ -3166,8 +3174,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       alignment: Alignment.topCenter,
                       maxHeight: double.infinity,
                       child: Builder(builder: (ctx2) {
-                        final statusBarH =
-                            MediaQuery.of(ctx2).padding.top;
+                        final statusBarH = MediaQuery.of(ctx2).padding.top;
                         return Padding(
                           padding: EdgeInsets.fromLTRB(
                               18, statusBarH + 56 + 8, 18, 0),
@@ -3415,8 +3422,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   // ── EBOOK OVERVIEW CARD (home tab preview) ────────────────────────────────
 
-  Widget _buildEbookOverviewCard(
-      Map e, Color surfaceColor, Color textPrimary) {
+  Widget _buildEbookOverviewCard(Map e, Color surfaceColor, Color textPrimary) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = (e['title'] ?? '').toString();
     final cover = e['cover_image']?.toString();
@@ -3424,7 +3430,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final purchases = e['successful_purchases_count'] as int? ?? 0;
     final revenue =
         double.tryParse((e['total_revenue'] ?? '0').toString()) ?? 0.0;
-    final price = (double.tryParse((e['price'] ?? '0').toString()) ?? 0).toInt();
+    final price =
+        (double.tryParse((e['price'] ?? '0').toString()) ?? 0).toInt();
     final status = (e['status'] as String? ?? 'draft');
     final statusColor = status == 'published'
         ? const Color(0xFF2E7D32)
@@ -3462,9 +3469,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             child: Container(
               width: 54,
               height: 72,
-              color: isDark
-                  ? const Color(0xFF2A1A0A)
-                  : const Color(0xFFF5E6D8),
+              color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
               child: cover != null && cover.isNotEmpty
                   ? Image.network(cover,
                       fit: BoxFit.cover,
