@@ -52,4 +52,26 @@ class NotificationModel {
       'target_role': targetRole,
     };
   }
+
+  NotificationModel copyWith({
+    int? id,
+    String? title,
+    String? message,
+    String? type,
+    bool? isRead,
+    String? createdAt,
+    String? route,
+    String? targetRole,
+  }) {
+    return NotificationModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      message: message ?? this.message,
+      type: type ?? this.type,
+      isRead: isRead ?? this.isRead,
+      createdAt: createdAt ?? this.createdAt,
+      route: route ?? this.route,
+      targetRole: targetRole ?? this.targetRole,
+    );
+  }
 }

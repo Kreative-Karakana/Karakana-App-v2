@@ -5,6 +5,7 @@ import '../models/notification_model.dart';
 
 class NotificationProvider extends ChangeNotifier {
   List<NotificationModel> _notifications = [];
+  final Set<int> _readNotificationIds = {};
   bool _isLoading = false;
   String? _errorMessage;
   bool? _lastLoadedTrainerRole;
@@ -48,6 +49,11 @@ class NotificationProvider extends ChangeNotifier {
                 Map<String, dynamic>.from(item),
               ))
           .where((notification) => _matchesRole(notification, isTrainer))
+          .map(
+            (notification) => _readNotificationIds.contains(notification.id)
+                ? notification.copyWith(isRead: true)
+                : notification,
+          )
           .toList();
     } catch (e) {
       _errorMessage = ApiClient().parseError(e);
@@ -86,41 +92,43 @@ class NotificationProvider extends ChangeNotifier {
     return true;
   }
 
-  void markAllRead() {
+  Future<void> markAllRead() async {
+    _readNotificationIds.addAll(_notifications.map((n) => n.id));
     _notifications = _notifications
-        .map(
-          (n) => NotificationModel(
-            id: n.id,
-            title: n.title,
-            message: n.message,
-            type: n.type,
-            isRead: true,
-            createdAt: n.createdAt,
-            route: n.route,
-            targetRole: n.targetRole,
-          ),
-        )
+        .map((notification) => notification.copyWith(isRead: true))
         .toList();
     notifyListeners();
+
+    try {
+      await ApiClient()
+          .dio
+          .post('/api/v1/communications/notifications/me/read-all/');
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('[NotificationProvider] markAllRead: $e');
+      }
+    }
   }
 
-  void markRead(int id) {
+  Future<void> markRead(int id) async {
+    _readNotificationIds.add(id);
     _notifications = _notifications
         .map(
-          (n) => n.id == id
-              ? NotificationModel(
-                  id: n.id,
-                  title: n.title,
-                  message: n.message,
-                  type: n.type,
-                  isRead: true,
-                  createdAt: n.createdAt,
-                  route: n.route,
-                  targetRole: n.targetRole,
-                )
-              : n,
+          (notification) => notification.id == id
+              ? notification.copyWith(isRead: true)
+              : notification,
         )
         .toList();
     notifyListeners();
+
+    try {
+      await ApiClient()
+          .dio
+          .post('/api/v1/communications/notifications/$id/read/');
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('[NotificationProvider] markRead: $e');
+      }
+    }
   }
 }

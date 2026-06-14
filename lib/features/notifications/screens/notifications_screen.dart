@@ -40,6 +40,9 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
+  static const double _expandedHeight = 244;
+
+  final ScrollController _scrollController = ScrollController();
   _NotificationFilter _selectedFilter = _NotificationFilter.all;
 
   @override
@@ -51,6 +54,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           .read<NotificationProvider>()
           .loadNotifications(isTrainer: isTrainer);
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   List<NotificationModel> _visibleNotifications(
@@ -76,22 +85,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         return Scaffold(
           backgroundColor: AppColors.background,
           body: SafeArea(
+            top: false,
             child: RefreshIndicator(
               color: AppColors.primary,
               onRefresh: () =>
                   provider.loadNotifications(isTrainer: auth.isTrainer),
               child: CustomScrollView(
+                controller: _scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: [
-                  SliverToBoxAdapter(
-                    child: _NotificationsHeader(
-                      isTrainer: auth.isTrainer,
-                      unreadCount: provider.unreadCount,
-                      totalCount: provider.notifications.length,
-                      canMarkAllRead: provider.unreadCount > 0,
-                      onBack: _handleBack,
-                      onMarkAllRead: provider.markAllRead,
-                    ),
+                  _buildNotificationsAppBar(
+                    auth: auth,
+                    provider: provider,
                   ),
                   if (provider.isLoading)
                     const SliverFillRemaining(
@@ -203,6 +208,64 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
+  SliverAppBar _buildNotificationsAppBar({
+    required AuthProvider auth,
+    required NotificationProvider provider,
+  }) {
+    return SliverAppBar(
+      expandedHeight: _expandedHeight,
+      pinned: true,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      backgroundColor: AppColors.primaryDark,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+        onPressed: _handleBack,
+      ),
+      title: AnimatedBuilder(
+        animation: _scrollController,
+        builder: (context, _) {
+          final show = _scrollController.hasClients &&
+              _scrollController.offset > (_expandedHeight - kToolbarHeight);
+          return AnimatedOpacity(
+            opacity: show ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 200),
+            child: Text(
+              'Arifa',
+              style: AppTextStyles.h3.copyWith(color: Colors.white),
+            ),
+          );
+        },
+      ),
+      actions: [
+        IconButton(
+          tooltip: 'Soma zote',
+          onPressed: provider.unreadCount > 0
+              ? () {
+                  provider.markAllRead();
+                }
+              : null,
+          icon: Icon(
+            Icons.done_all_rounded,
+            color: provider.unreadCount > 0
+                ? Colors.white
+                : Colors.white.withValues(alpha: 0.38),
+          ),
+        ),
+        const SizedBox(width: AppSpacing.sm),
+      ],
+      flexibleSpace: FlexibleSpaceBar(
+        background: _NotificationsHeader(
+          isTrainer: auth.isTrainer,
+          unreadCount: provider.unreadCount,
+          totalCount: provider.notifications.length,
+        ),
+      ),
+    );
+  }
+
   _NotificationCategory _categoryFor(NotificationModel notification) {
     final text = [
       notification.type,
@@ -299,108 +362,124 @@ class _NotificationsHeader extends StatelessWidget {
     required this.isTrainer,
     required this.unreadCount,
     required this.totalCount,
-    required this.canMarkAllRead,
-    required this.onBack,
-    required this.onMarkAllRead,
   });
 
   final bool isTrainer;
   final int unreadCount;
   final int totalCount;
-  final bool canMarkAllRead;
-  final VoidCallback onBack;
-  final VoidCallback onMarkAllRead;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        AppSpacing.sm,
-        AppSpacing.md,
-        AppSpacing.lg,
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: AppColors.headerGradient,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: [0.0, 0.5, 1.0],
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
+        clipBehavior: Clip.hardEdge,
         children: [
-          Row(
-            children: [
-              _HeaderActionButton(
-                icon: Icons.arrow_back_rounded,
-                onTap: onBack,
+          Positioned(
+            top: -44,
+            right: -34,
+            child: Container(
+              width: 190,
+              height: 190,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.04),
               ),
-              const Spacer(),
-              Text(
-                'Arifa',
-                style: AppTextStyles.h3.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const Spacer(),
-              _HeaderActionButton(
-                icon: Icons.done_all_rounded,
-                onTap: canMarkAllRead ? onMarkAllRead : null,
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: AppColors.cardGradient,
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(AppRadius.cardLg),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.16),
-                  blurRadius: 22,
-                  offset: const Offset(0, 12),
-                ),
-              ],
             ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+          Positioned(
+            bottom: -46,
+            left: -40,
+            child: Container(
+              width: 154,
+              height: 154,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary.withValues(alpha: 0.16),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 72,
+            right: 26,
+            child: Icon(
+              Icons.notifications_active_outlined,
+              size: 112,
+              color: Colors.white.withValues(alpha: 0.06),
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                kToolbarHeight + AppSpacing.sm,
+                AppSpacing.lg,
+                AppSpacing.lg,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    'Arifa',
+                    style: AppTextStyles.h1.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    isTrainer
+                        ? 'Fuatilia taarifa za kozi, wanafunzi, mapato na akaunti yako.'
+                        : 'Fuatilia taarifa za kozi, malipo, msaada na akaunti yako.',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: Colors.white.withValues(alpha: 0.72),
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Row(
                     children: [
                       _RoleBadge(isTrainer: isTrainer),
-                      const SizedBox(height: AppSpacing.md),
-                      Text(
-                        unreadCount == 0
-                            ? 'Umesoma arifa zote'
-                            : '$unreadCount arifa mpya',
-                        style: AppTextStyles.h1.copyWith(color: Colors.white),
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      Text(
-                        '$totalCount jumla kwenye akaunti hii',
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: Colors.white.withValues(alpha: 0.68),
+                      const SizedBox(width: AppSpacing.sm),
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm + AppSpacing.xs,
+                            vertical: AppSpacing.xs,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(AppRadius.chip),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.16),
+                            ),
+                          ),
+                          child: Text(
+                            unreadCount == 0
+                                ? 'Zote zimesomwa'
+                                : '$unreadCount mpya kati ya $totalCount',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTextStyles.labelSmall.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
-                Container(
-                  width: 58,
-                  height: 58,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.14),
-                    borderRadius: BorderRadius.circular(AppRadius.card),
-                  ),
-                  child: const Icon(
-                    Icons.notifications_active_outlined,
-                    color: Colors.white,
-                    size: 28,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -429,43 +508,6 @@ class _RoleBadge extends StatelessWidget {
       child: Text(
         isTrainer ? 'Akaunti ya Mkufunzi' : 'Akaunti ya Mwanafunzi',
         style: AppTextStyles.labelSmall.copyWith(color: Colors.white),
-      ),
-    );
-  }
-}
-
-class _HeaderActionButton extends StatelessWidget {
-  const _HeaderActionButton({
-    required this.icon,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final enabled = onTap != null;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.input),
-        child: Container(
-          width: 42,
-          height: 42,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(AppRadius.input),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Icon(
-            icon,
-            color: enabled ? AppColors.textPrimary : AppColors.textHint,
-            size: 21,
-          ),
-        ),
       ),
     );
   }
