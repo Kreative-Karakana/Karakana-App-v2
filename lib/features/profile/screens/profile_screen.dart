@@ -10,7 +10,6 @@ import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/secure_storage.dart';
-import '../../../providers/theme_provider.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 
@@ -587,109 +586,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                       const SizedBox(height: AppSpacing.md),
-                      Consumer<ThemeProvider>(
-                        builder: (context, themeProvider, _) {
-                          return _buildMenuGroup(
-                            'Mipangilio',
-                            [
-                              ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 4,
-                                ),
-                                leading: Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFE87722)
-                                        .withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Icon(
-                                    themeProvider.isDark
-                                        ? Icons.dark_mode
-                                        : Icons.light_mode,
-                                    color: const Color(0xFFE87722),
-                                    size: 18,
-                                  ),
-                                ),
-                                title: Text(
-                                  themeProvider.isDark
-                                      ? 'Hali ya Giza'
-                                      : 'Hali ya Mwanga',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 14,
-                                    color: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.color ??
-                                        const Color(0xFF1A0A00),
-                                  ),
-                                ),
-                                trailing: Switch(
-                                  value: themeProvider.isDark,
-                                  onChanged: (_) => themeProvider.toggleTheme(),
-                                  activeThumbColor: const Color(0xFFE87722),
-                                  activeTrackColor: const Color(0xFFE87722)
-                                      .withValues(alpha: 0.3),
-                                ),
+                      _buildMenuGroup(
+                        'Mipangilio',
+                        [
+                          ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 4,
+                            ),
+                            leading: Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE87722)
+                                    .withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 4,
-                                ),
-                                leading: Container(
-                                  width: 36,
-                                  height: 36,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFE87722)
-                                        .withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Icon(
-                                    _biometricLabel == 'Face ID'
-                                        ? Icons.face_retouching_natural_rounded
-                                        : Icons.fingerprint_rounded,
-                                    color: const Color(0xFFE87722),
-                                    size: 18,
-                                  ),
-                                ),
-                                title: Text(
-                                  'Ingia kwa $_biometricLabel',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 14,
-                                    color: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.color ??
-                                        const Color(0xFF1A0A00),
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  _biometricAvailable
-                                      ? 'Washa au zima biometric kwa akaunti hii'
-                                      : 'Haipatikani kwenye kifaa hiki',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 12,
-                                    color: const Color(0xFF9E8070),
-                                  ),
-                                ),
-                                trailing: Switch(
-                                  value:
-                                      _biometricEnabled && _biometricAvailable,
-                                  onChanged:
-                                      (_biometricAvailable && !_biometricBusy)
-                                          ? _toggleBiometric
-                                          : null,
-                                  activeThumbColor: const Color(0xFFE87722),
-                                  activeTrackColor: const Color(0xFFE87722)
-                                      .withValues(alpha: 0.3),
-                                ),
+                              child: Icon(
+                                _biometricLabel == 'Face ID'
+                                    ? Icons.face_retouching_natural_rounded
+                                    : Icons.fingerprint_rounded,
+                                color: const Color(0xFFE87722),
+                                size: 18,
                               ),
-                            ],
-                          );
-                        },
+                            ),
+                            title: Text(
+                              'Ingia kwa $_biometricLabel',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color ??
+                                    const Color(0xFF1A0A00),
+                              ),
+                            ),
+                            subtitle: Text(
+                              _biometricAvailable
+                                  ? 'Washa au zima biometric kwa akaunti hii'
+                                  : 'Haipatikani kwenye kifaa hiki',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 12,
+                                color: const Color(0xFF9E8070),
+                              ),
+                            ),
+                            trailing: Switch(
+                              value: _biometricEnabled && _biometricAvailable,
+                              onChanged:
+                                  (_biometricAvailable && !_biometricBusy)
+                                      ? _toggleBiometric
+                                      : null,
+                              activeThumbColor: const Color(0xFFE87722),
+                              activeTrackColor: const Color(0xFFE87722)
+                                  .withValues(alpha: 0.3),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: AppSpacing.md),
                       if (auth.isTrainer) ...[

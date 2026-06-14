@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/secure_storage.dart';
-import '../../../providers/theme_provider.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 
@@ -380,48 +379,28 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                       ],
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    Consumer<ThemeProvider>(
-                      builder: (context, themeProvider, _) {
-                        return _buildMenuGroup(
-                          'Mipangilio',
-                          [
-                            _buildSettingTile(
-                              icon: themeProvider.isDark
-                                  ? Icons.dark_mode
-                                  : Icons.light_mode,
-                              title: themeProvider.isDark
-                                  ? 'Hali ya Giza'
-                                  : 'Hali ya Mwanga',
-                              trailing: Switch(
-                                value: themeProvider.isDark,
-                                onChanged: (_) => themeProvider.toggleTheme(),
-                                activeThumbColor: const Color(0xFFE87722),
-                                activeTrackColor: const Color(0xFFE87722)
-                                    .withValues(alpha: 0.3),
-                              ),
-                            ),
-                            _buildSettingTile(
-                              icon: _biometricLabel == 'Face ID'
-                                  ? Icons.face_retouching_natural_rounded
-                                  : Icons.fingerprint_rounded,
-                              title: 'Ingia kwa $_biometricLabel',
-                              subtitle: _biometricAvailable
-                                  ? 'Washa au zima biometric kwa akaunti hii'
-                                  : 'Haipatikani kwenye kifaa hiki',
-                              trailing: Switch(
-                                value: _biometricEnabled && _biometricAvailable,
-                                onChanged:
-                                    (_biometricAvailable && !_biometricBusy)
-                                        ? _toggleBiometric
-                                        : null,
-                                activeThumbColor: const Color(0xFFE87722),
-                                activeTrackColor: const Color(0xFFE87722)
-                                    .withValues(alpha: 0.3),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
+                    _buildMenuGroup(
+                      'Mipangilio',
+                      [
+                        _buildSettingTile(
+                          icon: _biometricLabel == 'Face ID'
+                              ? Icons.face_retouching_natural_rounded
+                              : Icons.fingerprint_rounded,
+                          title: 'Ingia kwa $_biometricLabel',
+                          subtitle: _biometricAvailable
+                              ? 'Washa au zima biometric kwa akaunti hii'
+                              : 'Haipatikani kwenye kifaa hiki',
+                          trailing: Switch(
+                            value: _biometricEnabled && _biometricAvailable,
+                            onChanged: (_biometricAvailable && !_biometricBusy)
+                                ? _toggleBiometric
+                                : null,
+                            activeThumbColor: const Color(0xFFE87722),
+                            activeTrackColor:
+                                const Color(0xFFE87722).withValues(alpha: 0.3),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 24),
                     Row(

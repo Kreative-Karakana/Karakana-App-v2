@@ -12,7 +12,6 @@ import 'features/courses/providers/course_provider.dart';
 import 'features/ebooks/providers/ebook_provider.dart';
 import 'features/fursa/providers/fursa_provider.dart';
 import 'features/payments/providers/iap_provider.dart';
-import 'providers/theme_provider.dart';
 
 /// Must be a top-level function — called by FCM for background messages.
 @pragma('vm:entry-point')
@@ -150,47 +149,27 @@ class _KarakanaAppState extends State<KarakanaApp> {
             ChangeNotifierProvider(create: (_) => EbookProvider()),
             ChangeNotifierProvider(create: (_) => FursaProvider()),
             ChangeNotifierProvider(create: (_) => IAPProvider()),
-            ChangeNotifierProvider(create: (_) => ThemeProvider()),
           ],
-          child: Consumer<ThemeProvider>(
-            builder: (context, themeProvider, _) {
-              return MaterialApp.router(
-                title: 'Karakana',
-                debugShowCheckedModeBanner: false,
-                themeMode: themeProvider.themeMode,
-                theme: ThemeData(
-                  brightness: Brightness.light,
-                  primaryColor: const Color(0xFFE87722),
-                  scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-                  colorScheme: const ColorScheme.light(
-                    primary: Color(0xFFE87722),
-                    secondary: Color(0xFF3D1800),
-                    surface: Colors.white,
-                  ),
-                  textTheme: GoogleFonts.montserratTextTheme(
-                    ThemeData.light().textTheme,
-                  ),
-                  cardColor: Colors.white,
-                  iconTheme: const IconThemeData(color: Color(0xFF1A1A1A)),
-                ),
-                darkTheme: ThemeData(
-                  brightness: Brightness.dark,
-                  primaryColor: const Color(0xFFE87722),
-                  scaffoldBackgroundColor: const Color(0xFF121212),
-                  colorScheme: const ColorScheme.dark(
-                    primary: Color(0xFFE87722),
-                    secondary: Color(0xFFFFA726),
-                    surface: Color(0xFF1E1E1E),
-                  ),
-                  textTheme: GoogleFonts.montserratTextTheme(
-                    ThemeData.dark().textTheme,
-                  ),
-                  cardColor: const Color(0xFF1E1E1E),
-                  iconTheme: const IconThemeData(color: Colors.white),
-                ),
-                routerConfig: router,
-              );
-            },
+          child: MaterialApp.router(
+            title: 'Karakana',
+            debugShowCheckedModeBanner: false,
+            themeMode: ThemeMode.light,
+            theme: ThemeData(
+              brightness: Brightness.light,
+              primaryColor: const Color(0xFFE87722),
+              scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+              colorScheme: const ColorScheme.light(
+                primary: Color(0xFFE87722),
+                secondary: Color(0xFF3D1800),
+                surface: Colors.white,
+              ),
+              textTheme: GoogleFonts.montserratTextTheme(
+                ThemeData.light().textTheme,
+              ),
+              cardColor: Colors.white,
+              iconTheme: const IconThemeData(color: Color(0xFF1A1A1A)),
+            ),
+            routerConfig: router,
           ),
         );
       },

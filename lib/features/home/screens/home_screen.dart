@@ -20,7 +20,6 @@ import '../../courses/providers/course_provider.dart';
 import '../../fursa/models/fursa_item.dart';
 import '../../fursa/providers/fursa_provider.dart';
 import '../../notifications/providers/notification_provider.dart';
-import '../../../providers/theme_provider.dart';
 import '../widgets/ambassador_code_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -416,15 +415,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       actions: [
-        Consumer<ThemeProvider>(
-          builder: (_, theme, __) => _HomeHeaderIconButton(
-            icon: theme.isDark
-                ? Icons.light_mode_outlined
-                : Icons.dark_mode_outlined,
-            onTap: theme.toggleTheme,
-          ),
-        ),
-        const SizedBox(width: AppSpacing.xs),
         _HomeNotificationAction(
           unreadCount: notifications.unreadCount,
           onTap: () async {

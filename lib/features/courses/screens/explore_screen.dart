@@ -23,7 +23,7 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen>
     with AutomaticKeepAliveClientMixin {
-  static const double _expandedHeight = 262;
+  static const double _expandedHeight = 218;
   static const double _floatingNavClearance = 112;
 
   final TextEditingController _searchController = TextEditingController();
@@ -219,7 +219,7 @@ class _ExploreScreenState extends State<ExploreScreen>
                     AppSpacing.md,
                     AppSpacing.sm,
                     AppSpacing.md,
-                    AppSpacing.lg,
+                    AppSpacing.sm,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
