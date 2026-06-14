@@ -9,6 +9,7 @@ class NotificationProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
   bool? _lastLoadedTrainerRole;
+  bool _serverSupportsReadReceipts = false;
 
   List<NotificationModel> get notifications => _notifications;
   bool get isLoading => _isLoading;
@@ -42,6 +43,8 @@ class NotificationProvider extends ChangeNotifier {
       } else {
         rawList = const [];
       }
+      _serverSupportsReadReceipts =
+          rawList.whereType<Map>().any((item) => item.containsKey('is_read'));
 
       _notifications = rawList
           .whereType<Map>()
@@ -99,6 +102,8 @@ class NotificationProvider extends ChangeNotifier {
         .toList();
     notifyListeners();
 
+    if (!_serverSupportsReadReceipts) return;
+
     try {
       await ApiClient()
           .dio
@@ -120,6 +125,8 @@ class NotificationProvider extends ChangeNotifier {
         )
         .toList();
     notifyListeners();
+
+    if (!_serverSupportsReadReceipts) return;
 
     try {
       await ApiClient()
