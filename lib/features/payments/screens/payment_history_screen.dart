@@ -353,7 +353,13 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                 child: CustomScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   slivers: [
-                    SliverToBoxAdapter(child: _buildHeader(context)),
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: _TransactionsHeaderDelegate(
+                        topInset: MediaQuery.paddingOf(context).top,
+                        onBack: _handleBack,
+                      ),
+                    ),
                     if (_errorMessage != null)
                       SliverFillRemaining(
                         hasScrollBody: false,
@@ -402,89 +408,12 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    final topInset = MediaQuery.paddingOf(context).top;
-
-    return Container(
-      padding: EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        topInset + AppSpacing.sm,
-        AppSpacing.lg,
-        AppSpacing.xl,
-      ),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: AppColors.headerGradient,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(AppRadius.modal),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {
-                  if (context.canPop()) {
-                    context.pop();
-                  } else {
-                    context.go('/home');
-                  }
-                },
-                icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: AppSpacing.xs,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.14),
-                  borderRadius: BorderRadius.circular(AppRadius.chip),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.18),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.lock_outline_rounded,
-                      color: Colors.white,
-                      size: 14,
-                    ),
-                    const SizedBox(width: AppSpacing.xs),
-                    Text(
-                      'Salama',
-                      style: AppTextStyles.labelSmall.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          Text(
-            'Miamala Yangu',
-            style: AppTextStyles.displayMedium.copyWith(color: Colors.white),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            'Fuatilia malipo yako, hali ya ununuzi, na historia ya kozi au ebook ulizonunua.',
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: Colors.white.withValues(alpha: 0.86),
-            ),
-          ),
-        ],
-      ),
-    );
+  void _handleBack() {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/home');
+    }
   }
 
   Widget _buildSummarySection() {
@@ -753,6 +682,150 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
         );
       },
     );
+  }
+}
+
+class _TransactionsHeaderDelegate extends SliverPersistentHeaderDelegate {
+  const _TransactionsHeaderDelegate({
+    required this.topInset,
+    required this.onBack,
+  });
+
+  final double topInset;
+  final VoidCallback onBack;
+
+  @override
+  double get minExtent => topInset + 64;
+
+  @override
+  double get maxExtent => topInset + 258;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    final progress = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
+    final expandedOpacity = (1 - (progress * 1.35)).clamp(0.0, 1.0);
+    final compactOpacity = ((progress - 0.55) / 0.45).clamp(0.0, 1.0);
+    final bottomRadius = Radius.circular(AppRadius.modal * (1 - progress));
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: AppColors.headerGradient,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.vertical(bottom: bottomRadius),
+      ),
+      child: Stack(
+        clipBehavior: Clip.hardEdge,
+        children: [
+          Positioned(
+            left: AppSpacing.md,
+            right: AppSpacing.lg,
+            top: topInset + AppSpacing.sm,
+            child: SizedBox(
+              height: 48,
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: onBack,
+                    icon: const Icon(
+                      Icons.arrow_back_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Expanded(
+                    child: Opacity(
+                      opacity: compactOpacity,
+                      child: Text(
+                        'Miamala Yangu',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.h3.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Opacity(
+                    opacity: expandedOpacity,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                        vertical: AppSpacing.xs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(AppRadius.chip),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.18),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.lock_outline_rounded,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                          const SizedBox(width: AppSpacing.xs),
+                          Text(
+                            'Salama',
+                            style: AppTextStyles.labelSmall.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            left: AppSpacing.lg,
+            right: AppSpacing.lg,
+            top: topInset + 96 - (progress * 28),
+            child: IgnorePointer(
+              ignoring: progress > 0.45,
+              child: Opacity(
+                opacity: expandedOpacity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Miamala Yangu',
+                      style: AppTextStyles.displayMedium.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      'Fuatilia malipo yako, hali ya ununuzi, na historia ya kozi au ebook ulizonunua.',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: Colors.white.withValues(alpha: 0.86),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _TransactionsHeaderDelegate oldDelegate) {
+    return topInset != oldDelegate.topInset || onBack != oldDelegate.onBack;
   }
 }
 
