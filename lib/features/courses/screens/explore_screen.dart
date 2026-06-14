@@ -23,9 +23,11 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen>
     with AutomaticKeepAliveClientMixin {
+  static const double _expandedHeight = 262;
   static const double _floatingNavClearance = 112;
 
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   String _searchQuery = '';
   String? _selectedCategoryName;
   Timer? _debounceTimer;
@@ -46,6 +48,7 @@ class _ExploreScreenState extends State<ExploreScreen>
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _searchController.dispose();
     _debounceTimer?.cancel();
     super.dispose();
@@ -82,311 +85,369 @@ class _ExploreScreenState extends State<ExploreScreen>
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
-          top: false,
-          bottom: false,
-          child: Column(
-            children: [
-              // ── Gradient header ────────────────────────────────────
-              Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: AppColors.headerGradient,
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    stops: [0.0, 0.5, 1.0],
+        top: false,
+        bottom: false,
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            _buildExploreAppBar(provider),
+            SliverToBoxAdapter(
+              child: _buildFiltersSection(
+                context,
+                displayCourses.length,
+                isDark,
+              ),
+            ),
+            if (provider.isLoading)
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  AppSpacing.lg,
+                  AppSpacing.lg,
+                  deviceBottomInset + _floatingNavClearance,
+                ),
+                sliver: SliverList.builder(
+                  itemCount: 6,
+                  itemBuilder: (_, __) => const Padding(
+                    padding: EdgeInsets.only(bottom: 12),
+                    child: ShimmerCard(width: double.infinity, height: 96),
                   ),
                 ),
-                child: Stack(
-                  clipBehavior: Clip.hardEdge,
-                  children: [
-                    // Decorative circles
-                    Positioned(
-                      top: -50,
-                      right: -40,
-                      child: Container(
-                        width: 200,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withValues(alpha: 0.04),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 30,
-                      right: 50,
-                      child: Container(
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.primary.withValues(alpha: 0.18),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: -20,
-                      left: -20,
-                      child: Container(
-                        width: 120,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withValues(alpha: 0.03),
-                        ),
-                      ),
-                    ),
-                    SafeArea(
-                      bottom: false,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          AppSpacing.md,
-                          AppSpacing.sm,
-                          AppSpacing.md,
-                          AppSpacing.lg,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Tafuta',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 30,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                                height: 1.1,
-                              ),
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            Text(
-                              'Gundua kozi yako inayofuata',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 13,
-                                color: Colors.white.withValues(alpha: 0.55),
-                              ),
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            // Search bar inside header
-                            TextField(
-                              controller: _searchController,
-                              onChanged: _onSearchChanged,
-                              style: GoogleFonts.montserrat(
-                                fontSize: AppTextStyles.bodyMedium.fontSize,
-                                color: AppColors.textPrimary,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: 'Tafuta kozi yoyote...',
-                                hintStyle: GoogleFonts.montserrat(
-                                  fontSize: AppTextStyles.bodyMedium.fontSize,
-                                  color: AppColors.textHint,
-                                ),
-                                prefixIcon: const Icon(
-                                  Icons.search_rounded,
-                                  color: AppColors.primary,
-                                  size: 20,
-                                ),
-                                suffixIcon: _searchQuery.isNotEmpty
-                                    ? IconButton(
-                                        icon: const Icon(Icons.clear,
-                                            size: 18,
-                                            color: AppColors.textTertiary),
-                                        onPressed: () {
-                                          _searchController.clear();
-                                          _onSearchChanged('');
-                                        },
-                                      )
-                                    : null,
-                                filled: true,
-                                fillColor: Theme.of(context).cardColor,
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 14),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  borderSide: BorderSide.none,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  borderSide: BorderSide.none,
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                      color: AppColors.primary, width: 1.5),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              )
+            else if (displayCourses.isEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: _buildEmptyResultsState(context),
+              )
+            else
+              _buildResultsSliver(
+                context,
+                provider,
+                displayCourses,
+                deviceBottomInset,
               ),
-
-              // ── Filters ────────────────────────────────────────────
-              Container(
-                color: Theme.of(context).cardColor,
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                child: Column(
-                  children: [
-                    // Category chips
-                    if (provider.categories.isNotEmpty)
-                      SizedBox(
-                        height: 36,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: provider.categories.length + 1,
-                          itemBuilder: (_, i) {
-                            final isAll = i == 0;
-                            final catName =
-                                isAll ? null : provider.categories[i - 1].name;
-                            final isSelected = _selectedCategoryName == catName;
-                            return GestureDetector(
-                              onTap: () => _selectCategory(catName),
-                              child: Container(
-                                margin: const EdgeInsets.only(right: 8),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 14, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppColors.primary
-                                      : Theme.of(context).cardColor,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? AppColors.primary
-                                        : (isDark
-                                            ? Colors.white12
-                                            : AppColors.border),
-                                  ),
-                                ),
-                                child: Text(
-                                  isAll
-                                      ? 'Zote'
-                                      : provider.categories[i - 1].name,
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: AppTextStyles.bodySmall.fontSize,
-                                    fontWeight: FontWeight.w600,
-                                    color: isSelected
-                                        ? Colors.white
-                                        : AppColors.textSecondary,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    const SizedBox(height: 12),
-
-                    // Count + sort row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '${displayCourses.length} Kozi Zimepatikana',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 13,
-                            color: AppColors.textTertiary,
-                          ),
-                        ),
-                        PopupMenuButton<String>(
-                          onSelected: (val) => setState(() => _sortBy = val),
-                          icon: const Icon(Icons.sort,
-                              color: AppColors.primary, size: 20),
-                          itemBuilder: (_) => [
-                            const PopupMenuItem(
-                                value: 'default', child: Text('Default')),
-                            const PopupMenuItem(
-                                value: 'rating', child: Text('Ukadiriaji Juu')),
-                            const PopupMenuItem(
-                                value: 'price_asc',
-                                child: Text('Bei: Chini → Juu')),
-                            const PopupMenuItem(
-                                value: 'price_desc',
-                                child: Text('Bei: Juu → Chini')),
-                            const PopupMenuItem(
-                                value: 'title_az', child: Text('Jina A → Z')),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Divider(
-                      color: isDark ? Colors.white10 : const Color(0xFFF5E6D8),
-                      height: 1,
-                      thickness: 1,
-                    ),
-                  ],
-                ),
-              ),
-
-              // ── Results list ───────────────────────────────────────
-              Expanded(
-                child: provider.isLoading
-                    ? ListView.builder(
-                        itemCount: 6,
-                        padding: EdgeInsets.fromLTRB(
-                          AppSpacing.lg,
-                          AppSpacing.lg,
-                          AppSpacing.lg,
-                          deviceBottomInset + _floatingNavClearance,
-                        ),
-                        itemBuilder: (_, __) => const Padding(
-                          padding: EdgeInsets.only(bottom: 12),
-                          child:
-                              ShimmerCard(width: double.infinity, height: 96),
-                        ),
-                      )
-                    : displayCourses.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.search_off_rounded,
-                                  size: 64,
-                                  color: AppColors.border,
-                                ),
-                                const SizedBox(height: AppSpacing.md),
-                                Text(
-                                  'Kozi haikupatikana',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                    color: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge
-                                            ?.color ??
-                                        const Color(0xFF1A0A00),
-                                  ),
-                                ),
-                                const SizedBox(height: AppSpacing.sm),
-                                Text(
-                                  'Jaribu maneno mengine ya utafutaji',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: AppTextStyles.bodyMedium.fontSize,
-                                    color: AppColors.textTertiary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        : _buildResultsList(
-                            context,
-                            provider,
-                            displayCourses,
-                            deviceBottomInset,
-                          ),
-              ),
-            ],
-          )),
+          ],
+        ),
+      ),
     );
   }
 
   bool get _isIdle => _searchQuery.isEmpty && _selectedCategoryName == null;
 
-  Widget _buildResultsList(
+  Widget _buildExploreAppBar(CourseProvider provider) {
+    return SliverAppBar(
+      expandedHeight: _expandedHeight,
+      pinned: true,
+      backgroundColor: AppColors.primaryDark,
+      title: AnimatedBuilder(
+        animation: _scrollController,
+        builder: (context, _) {
+          final show = _scrollController.hasClients &&
+              _scrollController.offset > (_expandedHeight - kToolbarHeight);
+          return AnimatedOpacity(
+            opacity: show ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 200),
+            child: Text(
+              'Tafuta',
+              style: AppTextStyles.h3.copyWith(color: Colors.white),
+            ),
+          );
+        },
+      ),
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: AppColors.headerGradient,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              stops: [0.0, 0.5, 1.0],
+            ),
+          ),
+          child: Stack(
+            clipBehavior: Clip.hardEdge,
+            children: [
+              Positioned(
+                top: -50,
+                right: -40,
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withValues(alpha: 0.04),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 30,
+                right: 50,
+                child: Container(
+                  width: 70,
+                  height: 70,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.primary.withValues(alpha: 0.18),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -20,
+                left: -20,
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withValues(alpha: 0.03),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 26,
+                right: 18,
+                child: Icon(
+                  Icons.search_rounded,
+                  size: 108,
+                  color: Colors.white.withValues(alpha: 0.05),
+                ),
+              ),
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.md,
+                    AppSpacing.sm,
+                    AppSpacing.md,
+                    AppSpacing.lg,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Tafuta',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 30,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          height: 1.1,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        'Gundua kozi yako inayofuata',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 13,
+                          color: Colors.white.withValues(alpha: 0.55),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      TextField(
+                        controller: _searchController,
+                        onChanged: _onSearchChanged,
+                        style: GoogleFonts.montserrat(
+                          fontSize: AppTextStyles.bodyMedium.fontSize,
+                          color: AppColors.textPrimary,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Tafuta kozi yoyote...',
+                          hintStyle: GoogleFonts.montserrat(
+                            fontSize: AppTextStyles.bodyMedium.fontSize,
+                            color: AppColors.textHint,
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.search_rounded,
+                            color: AppColors.primary,
+                            size: 20,
+                          ),
+                          suffixIcon: _searchQuery.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(
+                                    Icons.clear,
+                                    size: 18,
+                                    color: AppColors.textTertiary,
+                                  ),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    _onSearchChanged('');
+                                  },
+                                )
+                              : null,
+                          filled: true,
+                          fillColor: Theme.of(context).cardColor,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: AppColors.primary,
+                              width: 1.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (provider.categories.isNotEmpty) ...[
+                        const SizedBox(height: AppSpacing.md),
+                        SizedBox(
+                          height: 38,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: provider.categories.length + 1,
+                            itemBuilder: (_, i) {
+                              final isAll = i == 0;
+                              final catName = isAll
+                                  ? null
+                                  : provider.categories[i - 1].name;
+                              final isSelected =
+                                  _selectedCategoryName == catName;
+                              return GestureDetector(
+                                onTap: () => _selectCategory(catName),
+                                child: Container(
+                                  margin: const EdgeInsets.only(
+                                      right: AppSpacing.sm),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppSpacing.md,
+                                    vertical: AppSpacing.sm,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? Colors.white
+                                        : Colors.white.withValues(alpha: 0.12),
+                                    borderRadius:
+                                        BorderRadius.circular(AppRadius.chip),
+                                    border: Border.all(
+                                      color: Colors.white.withValues(
+                                        alpha: isSelected ? 0.0 : 0.22,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    isAll
+                                        ? 'Zote'
+                                        : provider.categories[i - 1].name,
+                                    style: GoogleFonts.montserrat(
+                                      fontSize:
+                                          AppTextStyles.bodySmall.fontSize,
+                                      fontWeight: FontWeight.w700,
+                                      color: isSelected
+                                          ? AppColors.primary
+                                          : Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFiltersSection(
+    BuildContext context,
+    int courseCount,
+    bool isDark,
+  ) {
+    return Container(
+      color: Theme.of(context).cardColor,
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '$courseCount Kozi Zimepatikana',
+                style: GoogleFonts.montserrat(
+                  fontSize: 13,
+                  color: AppColors.textTertiary,
+                ),
+              ),
+              PopupMenuButton<String>(
+                onSelected: (val) => setState(() => _sortBy = val),
+                icon: const Icon(
+                  Icons.sort,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
+                itemBuilder: (_) => const [
+                  PopupMenuItem(value: 'default', child: Text('Default')),
+                  PopupMenuItem(value: 'rating', child: Text('Ukadiriaji Juu')),
+                  PopupMenuItem(
+                    value: 'price_asc',
+                    child: Text('Bei: Chini → Juu'),
+                  ),
+                  PopupMenuItem(
+                    value: 'price_desc',
+                    child: Text('Bei: Juu → Chini'),
+                  ),
+                  PopupMenuItem(value: 'title_az', child: Text('Jina A → Z')),
+                ],
+              ),
+            ],
+          ),
+          Divider(
+            color: isDark ? Colors.white10 : const Color(0xFFF5E6D8),
+            height: 1,
+            thickness: 1,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyResultsState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.search_off_rounded,
+            size: 64,
+            color: AppColors.border,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            'Kozi haikupatikana',
+            style: GoogleFonts.montserrat(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).textTheme.bodyLarge?.color ??
+                  const Color(0xFF1A0A00),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            'Jaribu maneno mengine ya utafutaji',
+            style: GoogleFonts.montserrat(
+              fontSize: AppTextStyles.bodyMedium.fontSize,
+              color: AppColors.textTertiary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultsSliver(
     BuildContext context,
     CourseProvider provider,
     List displayCourses,
@@ -396,24 +457,26 @@ class _ExploreScreenState extends State<ExploreScreen>
     final showCarousel = _isIdle && popular.isNotEmpty;
     final itemCount = displayCourses.length + (showCarousel ? 1 : 0);
 
-    return ListView.builder(
-      physics: const BouncingScrollPhysics(),
+    return SliverPadding(
       padding: EdgeInsets.fromLTRB(20, showCarousel ? 0 : 20, 20,
           deviceBottomInset + _floatingNavClearance),
-      itemCount: itemCount,
-      itemBuilder: (_, i) {
-        if (showCarousel && i == 0) {
-          return _ExploreCarousel(
-            courses: popular,
-            onTap: (course) => context.push('/course/${course.id}'),
+      sliver: SliverList.builder(
+        itemCount: itemCount,
+        itemBuilder: (_, i) {
+          if (showCarousel && i == 0) {
+            return _ExploreCarousel(
+              courses: popular,
+              onTap: (course) => context.push('/course/${course.id}'),
+            );
+          }
+          final course =
+              displayCourses[showCarousel ? i - 1 : i] as CourseModel;
+          return CourseListCard(
+            course: course,
+            onTap: () => context.push('/course/${course.id}'),
           );
-        }
-        final course = displayCourses[showCarousel ? i - 1 : i] as CourseModel;
-        return CourseListCard(
-          course: course,
-          onTap: () => context.push('/course/${course.id}'),
-        );
-      },
+        },
+      ),
     );
   }
 

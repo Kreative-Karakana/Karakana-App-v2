@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +12,6 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/utils/responsive.dart';
 import '../../../widgets/cards/course_card_horizontal.dart';
 import '../../../widgets/cards/shimmer_card.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -129,298 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: CustomScrollView(
               physics: const BouncingScrollPhysics(),
               slivers: [
-                SliverToBoxAdapter(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color(0xFF2A1106),
-                          Color(0xFF5C2208),
-                          Color(0xFFB5540A)
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        stops: [0.0, 0.5, 1.0],
-                      ),
-                    ),
-                    padding: EdgeInsets.only(
-                      top: Responsive.topPadding(context) + AppSpacing.sm,
-                      left: AppSpacing.md,
-                      right: AppSpacing.md,
-                      bottom: AppSpacing.lg,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 34,
-                                  height: 34,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(3),
-                                    child: Image.asset(
-                                      'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                                      fit: BoxFit.contain,
-                                      errorBuilder: (_, __, ___) => Center(
-                                        child: Text(
-                                          'K',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w700,
-                                            color: AppColors.primary,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  'Karakana',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Consumer<ThemeProvider>(
-                                  builder: (_, theme, __) => Container(
-                                    margin: const EdgeInsets.only(right: 3),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: IconButton(
-                                      icon: Icon(
-                                        theme.isDark
-                                            ? Icons.light_mode_outlined
-                                            : Icons.dark_mode_outlined,
-                                        color: Colors.white,
-                                        size: 19,
-                                      ),
-                                      onPressed: () => theme.toggleTheme(),
-                                      padding: const EdgeInsets.all(5),
-                                      constraints: const BoxConstraints(),
-                                    ),
-                                  ),
-                                ),
-                                Stack(
-                                  clipBehavior: Clip.none,
-                                  children: [
-                                    Container(
-                                      margin: const EdgeInsets.only(right: 3),
-                                      decoration: BoxDecoration(
-                                        color:
-                                            Colors.white.withValues(alpha: 0.1),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.notifications_outlined,
-                                          color: Colors.white,
-                                          size: 19,
-                                        ),
-                                        onPressed: () async {
-                                          await context
-                                              .read<NotificationProvider>()
-                                              .loadNotifications();
-                                          if (!context.mounted) return;
-                                          context.push('/notifications');
-                                        },
-                                        padding: const EdgeInsets.all(5),
-                                        constraints: const BoxConstraints(),
-                                      ),
-                                    ),
-                                    if (notifications.unreadCount > 0)
-                                      Positioned(
-                                        right: 1,
-                                        top: -1,
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 5, vertical: 2),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFE53935),
-                                            borderRadius:
-                                                BorderRadius.circular(999),
-                                            border: Border.all(
-                                                color: Colors.white,
-                                                width: 1.2),
-                                          ),
-                                          constraints: const BoxConstraints(
-                                              minWidth: 16),
-                                          child: Text(
-                                            notifications.unreadCount > 99
-                                                ? '99+'
-                                                : '${notifications.unreadCount}',
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: 9,
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.white,
-                                              height: 1.1,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                                GestureDetector(
-                                  onTap: () => context.go('/home?tab=4'),
-                                  child: Container(
-                                    width: 32,
-                                    height: 32,
-                                    margin: const EdgeInsets.only(right: 12),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                          color: AppColors.primary, width: 1.6),
-                                    ),
-                                    child: ClipOval(
-                                      child: auth.userAvatar != null
-                                          ? CachedNetworkImage(
-                                              imageUrl: auth.userAvatar!,
-                                              fit: BoxFit.cover,
-                                              width: 32,
-                                              height: 32,
-                                            )
-                                          : Container(
-                                              color: AppColors.primary,
-                                              child: Center(
-                                                child: Text(
-                                                  _getFirstName(auth).isNotEmpty
-                                                      ? _getFirstName(auth)[0]
-                                                          .toUpperCase()
-                                                      : 'K',
-                                                  style: GoogleFonts.montserrat(
-                                                    fontSize: 12.5,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: Responsive.h(context, 0.03)),
-                        Row(
-                          children: [
-                            Icon(
-                              _getTimeIcon(),
-                              color: Colors.white.withValues(alpha: 0.5),
-                              size: 13,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              _getGreeting(),
-                              style: GoogleFonts.montserrat(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white.withValues(alpha: 0.55),
-                                letterSpacing: 0.2,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-                        Text(
-                          _getFirstName(auth),
-                          style: GoogleFonts.montserrat(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                            height: 1.1,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black.withValues(alpha: 0.2),
-                                blurRadius: 10,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-                        Text(
-                          _getTagline(),
-                          style: GoogleFonts.montserrat(
-                            fontSize: 12,
-                            color: Colors.white.withValues(alpha: 0.42),
-                            letterSpacing: 0.1,
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        GestureDetector(
-                          onTap: () => context.push('/explore'),
-                          child: Container(
-                            height: 48,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                width: 1.5,
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                const SizedBox(width: 14),
-                                Icon(
-                                  Icons.search_rounded,
-                                  color: Colors.white.withValues(alpha: 0.65),
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    'Tafuta kozi, mada, Mkufunzi...',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 13,
-                                      color:
-                                          Colors.white.withValues(alpha: 0.5),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.only(right: 8),
-                                  padding: const EdgeInsets.all(7),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primary
-                                        .withValues(alpha: 0.35),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: const Icon(
-                                    Icons.tune_rounded,
-                                    color: Colors.white,
-                                    size: 15,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                _buildHomeAppBar(auth, notifications),
                 if (_banners.isNotEmpty)
                   SliverToBoxAdapter(
                     child: _BannerCarousel(banners: _banners),
@@ -662,6 +371,207 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildHomeAppBar(
+    AuthProvider auth,
+    NotificationProvider notifications,
+  ) {
+    return SliverAppBar(
+      toolbarHeight: 56,
+      expandedHeight: 258,
+      pinned: true,
+      floating: false,
+      automaticallyImplyLeading: false,
+      scrolledUnderElevation: 0,
+      elevation: 0,
+      surfaceTintColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      backgroundColor: const Color(0xFF201008),
+      systemOverlayStyle: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+      titleSpacing: 0,
+      title: Padding(
+        padding: const EdgeInsets.only(left: AppSpacing.md),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildHomeLogo(size: 34, fallbackFontSize: 13),
+            const SizedBox(width: 10),
+            Text(
+              'Karakana',
+              style: GoogleFonts.montserrat(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+                letterSpacing: 0.1,
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        Consumer<ThemeProvider>(
+          builder: (_, theme, __) => _HomeHeaderIconButton(
+            icon: theme.isDark
+                ? Icons.light_mode_outlined
+                : Icons.dark_mode_outlined,
+            onTap: theme.toggleTheme,
+          ),
+        ),
+        const SizedBox(width: AppSpacing.xs),
+        _HomeNotificationAction(
+          unreadCount: notifications.unreadCount,
+          onTap: () async {
+            await context.read<NotificationProvider>().loadNotifications();
+            if (!mounted) return;
+            context.push('/notifications');
+          },
+        ),
+        const SizedBox(width: AppSpacing.xs),
+        _HomeAvatarAction(
+          avatarUrl: auth.userAvatar,
+          initial: _getFirstName(auth).isNotEmpty
+              ? _getFirstName(auth)[0].toUpperCase()
+              : 'K',
+          onTap: () => context.go('/home?tab=4'),
+        ),
+        const SizedBox(width: AppSpacing.md),
+      ],
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF201008),
+              Color(0xFF4B2412),
+              Color(0xFF9A4E1D),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            stops: [0.0, 0.48, 1.0],
+          ),
+        ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final height = constraints.maxHeight;
+            final statusBarHeight = MediaQuery.paddingOf(context).top;
+            final heroOpacity =
+                ((height - 100.0) / (190.0 - 100.0)).clamp(0.0, 1.0);
+
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                Positioned(
+                  top: -36,
+                  left: -18,
+                  child: _buildHomeHeroGlow(
+                    130,
+                    Colors.white.withValues(alpha: 0.08),
+                  ),
+                ),
+                Positioned(
+                  right: -36,
+                  bottom: -44,
+                  child: _buildHomeHeroGlow(
+                    170,
+                    const Color(0xFFFFD1A1).withValues(alpha: 0.06),
+                  ),
+                ),
+                Positioned(
+                  right: 22,
+                  top: 76,
+                  child: Opacity(
+                    opacity: 0.04,
+                    child: Image.asset(
+                      'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                      width: 110,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                if (heroOpacity > 0)
+                  ClipRect(
+                    child: Opacity(
+                      opacity: heroOpacity,
+                      child: OverflowBox(
+                        alignment: Alignment.topCenter,
+                        maxHeight: double.infinity,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            AppSpacing.lg,
+                            statusBarHeight + 56 + AppSpacing.sm,
+                            AppSpacing.lg,
+                            0,
+                          ),
+                          child: _HomeHeroContent(
+                            greeting: _getGreeting(),
+                            timeIcon: _getTimeIcon(),
+                            firstName: _getFirstName(auth),
+                            tagline: _getTagline(),
+                            onSearchTap: () => context.push('/explore'),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHomeLogo({
+    required double size,
+    required double fallbackFontSize,
+  }) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(4),
+        child: Image.asset(
+          'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+          fit: BoxFit.contain,
+          errorBuilder: (_, __, ___) => Center(
+            child: Text(
+              'K',
+              style: GoogleFonts.montserrat(
+                fontSize: fallbackFontSize,
+                fontWeight: FontWeight.w700,
+                color: AppColors.primary,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHomeHeroGlow(double size, Color color) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+        boxShadow: [
+          BoxShadow(
+            color: color,
+            blurRadius: 42,
+            spreadRadius: 16,
+          ),
+        ],
       ),
     );
   }
@@ -956,6 +866,272 @@ class _HomeFursaCard extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HomeHeroContent extends StatelessWidget {
+  const _HomeHeroContent({
+    required this.greeting,
+    required this.timeIcon,
+    required this.firstName,
+    required this.tagline,
+    required this.onSearchTap,
+  });
+
+  final String greeting;
+  final IconData timeIcon;
+  final String firstName;
+  final String tagline;
+  final VoidCallback onSearchTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          children: [
+            Icon(
+              timeIcon,
+              color: Colors.white.withValues(alpha: 0.5),
+              size: 13,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              greeting,
+              style: GoogleFonts.montserrat(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Colors.white.withValues(alpha: 0.55),
+                letterSpacing: 0.2,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          firstName,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.montserrat(
+            fontSize: 30,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            height: 1.1,
+            shadows: [
+              Shadow(
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          tagline,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: GoogleFonts.montserrat(
+            fontSize: 12,
+            color: Colors.white.withValues(alpha: 0.42),
+            letterSpacing: 0.1,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        GestureDetector(
+          onTap: onSearchTap,
+          child: Container(
+            height: 48,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.2),
+                width: 1.5,
+              ),
+            ),
+            child: Row(
+              children: [
+                const SizedBox(width: 14),
+                Icon(
+                  Icons.search_rounded,
+                  color: Colors.white.withValues(alpha: 0.65),
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Tafuta kozi, mada, Mkufunzi...',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 13,
+                      color: Colors.white.withValues(alpha: 0.5),
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.35),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.tune_rounded,
+                    color: Colors.white,
+                    size: 15,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _HomeHeaderIconButton extends StatelessWidget {
+  const _HomeHeaderIconButton({
+    required this.icon,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.09),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.12),
+              width: 0.8,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.10),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Icon(icon, color: Colors.white, size: 19),
+        ),
+      ),
+    );
+  }
+}
+
+class _HomeNotificationAction extends StatelessWidget {
+  const _HomeNotificationAction({
+    required this.unreadCount,
+    required this.onTap,
+  });
+
+  final int unreadCount;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        _HomeHeaderIconButton(
+          icon: Icons.notifications_outlined,
+          onTap: onTap,
+        ),
+        if (unreadCount > 0)
+          Positioned(
+            right: -2,
+            top: -2,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE53935),
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(color: Colors.white, width: 1.2),
+              ),
+              constraints: const BoxConstraints(minWidth: 16),
+              child: Text(
+                unreadCount > 99 ? '99+' : '$unreadCount',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.montserrat(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  height: 1.1,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _HomeAvatarAction extends StatelessWidget {
+  const _HomeAvatarAction({
+    required this.avatarUrl,
+    required this.initial,
+    required this.onTap,
+  });
+
+  final String? avatarUrl;
+  final String initial;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.09),
+          shape: BoxShape.circle,
+          border: Border.all(color: AppColors.primary, width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.10),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: ClipOval(
+          child: avatarUrl != null
+              ? CachedNetworkImage(
+                  imageUrl: avatarUrl!,
+                  fit: BoxFit.cover,
+                )
+              : Container(
+                  color: AppColors.primary,
+                  child: Center(
+                    child: Text(
+                      initial,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
         ),
       ),
     );
