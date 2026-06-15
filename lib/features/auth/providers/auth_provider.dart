@@ -72,7 +72,10 @@ class AuthProvider extends ChangeNotifier {
     return null;
   }
 
-  String get homeRoute => isTrainer ? '/trainer/dashboard' : '/home';
+  String get homeRoute {
+    if (passwordChangeRequired) return '/profile/change-password';
+    return isTrainer ? '/trainer/dashboard' : '/home';
+  }
 
   Future<void> _syncBiometricSessionForCurrentUser() async {
     final accountId = userId?.toString();
@@ -131,6 +134,7 @@ class AuthProvider extends ChangeNotifier {
         _roles = _extractRoles(response.data);
         debugPrint('[AUTH] Signin roles: $_roles');
         if (_roles != null) await SecureStorage().saveRoles(_roles!);
+        _user = _extractUser(response.data);
         await getCurrentUser();
         await _syncBiometricSessionForCurrentUser();
         _isAuthenticated = true;
@@ -452,6 +456,7 @@ class AuthProvider extends ChangeNotifier {
       await SecureStorage().saveToken(token.toString());
       _roles = _extractRoles(data);
       if (_roles != null) await SecureStorage().saveRoles(_roles!);
+      _user = _extractUser(data);
       await getCurrentUser();
       await _syncBiometricSessionForCurrentUser();
       _isAuthenticated = true;
@@ -469,9 +474,11 @@ class AuthProvider extends ChangeNotifier {
     try {
       final response = await ApiClient().dio.get(ApiEndpoints.profileMe);
       debugPrint('[AUTH] Profile response: ${response.data}');
-      _user = response.data is Map<String, dynamic>
+      final currentUser = _user;
+      final profileUser = response.data is Map<String, dynamic>
           ? response.data
           : Map<String, dynamic>.from(response.data);
+      _user = _mergeUserState(currentUser, profileUser);
       if (_user?['id'] != null) {
         await SecureStorage().saveUserId(_user!['id'].toString());
       }
@@ -502,5 +509,32 @@ class AuthProvider extends ChangeNotifier {
     } catch (_) {
       return false;
     }
+  }
+
+  Map<String, dynamic>? _extractUser(dynamic data) {
+    if (data is! Map) return null;
+    final nested = data['user'];
+    if (nested is Map<String, dynamic>) return nested;
+    if (nested is Map) return Map<String, dynamic>.from(nested);
+    return Map<String, dynamic>.from(data);
+  }
+
+  Map<String, dynamic> _mergeUserState(
+    Map<String, dynamic>? currentUser,
+    Map<String, dynamic> profileUser,
+  ) {
+    final merged = <String, dynamic>{
+      if (currentUser != null) ...currentUser,
+      ...profileUser,
+    };
+
+    if (currentUser?['password_change_required'] == true) {
+      merged['password_change_required'] = true;
+    }
+    if (_roles != null && !merged.containsKey('roles')) {
+      merged['roles'] = _roles;
+    }
+
+    return merged;
   }
 }
