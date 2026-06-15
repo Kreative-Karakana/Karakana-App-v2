@@ -7,6 +7,7 @@ class ApiEndpoints {
   static const String resendOTP = '/api/auth/verify/resend/';
   static const String googleAuth = '/api/oauth/';
   static const String appleAuth = '/api/apple-oauth/';
+  static const String changePassword = '/api/auth/change-password/';
 
   // Profile
   static const String profileMe = '/api/v1/profiles/me/';
@@ -32,7 +33,8 @@ class ApiEndpoints {
 
   // Communications
   static const String banners = '/api/v1/communications/banners/';
-  static const String notifications = '/api/v1/communications/notifications/me/';
+  static const String notifications =
+      '/api/v1/communications/notifications/me/';
   static const String supportTickets = '/api/v1/communications/tickets/';
   static const String deviceToken = '/api/v1/communications/device-token/';
   static const String versions = '/api/v1/versions/';

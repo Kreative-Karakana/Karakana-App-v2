@@ -382,6 +382,13 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                     _buildMenuGroup(
                       'Mipangilio',
                       [
+                        _buildMenuItem(
+                          Icons.lock_reset_rounded,
+                          const Color(0xFF3D1800),
+                          'Badilisha Nywila',
+                          subtitle: 'Weka nywila mpya ya akaunti yako',
+                          onTap: () => context.push('/profile/change-password'),
+                        ),
                         _buildSettingTile(
                           icon: _biometricLabel == 'Face ID'
                               ? Icons.face_retouching_natural_rounded

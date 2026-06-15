@@ -22,6 +22,7 @@ import '../../features/payments/screens/payment_screen.dart';
 import '../../features/payments/screens/payment_success_screen.dart';
 import '../../features/payments/screens/wallet_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
+import '../../features/profile/screens/change_password_screen.dart';
 import '../../features/profile/screens/mastercard_form_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/profile/screens/terms_screen.dart';
@@ -73,6 +74,7 @@ class AppRoutes {
   static const String wallet = '/wallet';
   static const String profile = '/profile';
   static const String editProfile = '/profile/edit';
+  static const String changePassword = '/profile/change-password';
   static const String myCourses = '/my-courses';
   static const String wishlist = '/wishlist';
   static const String trainerApply = '/trainer/apply';
@@ -388,6 +390,10 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.editProfile,
           builder: (context, state) => const EditProfileScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.changePassword,
+          builder: (context, state) => const ChangePasswordScreen(),
         ),
         GoRoute(
           path: AppRoutes.mastercardForm,
