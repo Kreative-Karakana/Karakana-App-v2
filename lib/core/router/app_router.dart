@@ -158,6 +158,12 @@ class AppRouter {
           return AppRoutes.login;
         }
 
+        if (isAuth &&
+            authProvider.passwordChangeRequired &&
+            location != AppRoutes.changePassword) {
+          return AppRoutes.changePassword;
+        }
+
         // Already logged in: redirect away from auth screens
         if (isAuth && authRoutes.contains(location)) {
           return authProvider.isTrainer

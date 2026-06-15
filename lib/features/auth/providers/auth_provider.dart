@@ -55,6 +55,11 @@ class AuthProvider extends ChangeNotifier {
     return false;
   }
 
+  bool get passwordChangeRequired {
+    final value = _user?['password_change_required'];
+    return isTrainer && value == true;
+  }
+
   List<dynamic>? _extractRoles(dynamic data) {
     if (data is! Map) return null;
     final direct = data['roles'];
