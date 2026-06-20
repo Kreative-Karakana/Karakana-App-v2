@@ -20,6 +20,12 @@ class EbookDetailScreen extends StatefulWidget {
 }
 
 class _EbookDetailScreenState extends State<EbookDetailScreen> {
+  static const _headerGradient = [
+    Color(0xFF1A0A00),
+    Color(0xFF3D1800),
+    Color(0xFF7B3A10),
+  ];
+
   final _service = EbookService();
   final _currency = NumberFormat('#,###');
   Map<String, dynamic>? _detail;
@@ -268,8 +274,10 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Scaffold(
-        body: SafeArea(
+      return Scaffold(
+        backgroundColor: const Color(0xFFF8F7FB),
+        appBar: _buildAppBar(),
+        body: const SafeArea(
           child: Center(child: KarakanaWaveLoader()),
         ),
       );
@@ -282,17 +290,7 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F7FB),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        elevation: 0,
-        leading: const BackButton(color: Color(0xFF1A1A1A)),
-        centerTitle: true,
-        title: Text(
-          'Maelezo ya eBook',
-          style: AppTextStyles.h3.copyWith(color: const Color(0xFF1A1A1A)),
-        ),
-      ),
+      appBar: _buildAppBar(),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -444,6 +442,35 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: _headerGradient,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+      ),
+      leading: const BackButton(color: Colors.white),
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.menu_book_outlined, color: Colors.white, size: 18),
+          const SizedBox(width: 8),
+          Text(
+            'Maelezo ya eBook',
+            style: AppTextStyles.h3.copyWith(color: Colors.white),
+          ),
+        ],
+      ),
+      centerTitle: true,
     );
   }
 }
