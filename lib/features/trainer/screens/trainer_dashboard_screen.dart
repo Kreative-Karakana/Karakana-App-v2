@@ -70,9 +70,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     try {
       final results = await Future.wait([
         ApiClient().dio.get(
-          '/api/v1/courses/',
-          queryParameters: TrainerCourseFilters.ownedCoursesQueryParameters,
-        ),
+              '/api/v1/courses/',
+              queryParameters: TrainerCourseFilters.ownedCoursesQueryParameters,
+            ),
         ApiClient().dio.get('/api/v1/wallet/me/'),
         ApiClient().dio.get('/api/v1/certificates/?trainer=true'),
         ApiClient().dio.get('/api/v1/ebooks/my/'),
@@ -120,13 +120,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             'avg_rating': courses.isEmpty
                 ? 0.0
                 : courses.fold<double>(
-                        0.0,
-                        (sum, c) =>
-                            sum +
-                            ((c as Map)['average_rating'] as num? ?? 0.0)
-                                .toDouble(),
-                      ) /
-                      courses.length,
+                      0.0,
+                      (sum, c) =>
+                          sum +
+                          ((c as Map)['average_rating'] as num? ?? 0.0)
+                              .toDouble(),
+                    ) /
+                    courses.length,
             'balance': wallet['balance'] ?? 0,
             'published_courses': courses
                 .where((c) => (c as Map)['status'] == 'published')
@@ -138,9 +138,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             'total_ebooks': ebooks.length,
             'total_ebook_readers': totalEbookReaders,
             'total_ebook_revenue': totalEbookRevenue,
-            'published_ebooks': ebooks
-                .where((e) => (e as Map)['status'] == 'published')
-                .length,
+            'published_ebooks':
+                ebooks.where((e) => (e as Map)['status'] == 'published').length,
           };
           _isLoading = false;
         });
@@ -814,9 +813,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 surfaceColor,
               )
             else
-              ..._shuffledCourses
-                  .take(3)
-                  .map(
+              ..._shuffledCourses.take(3).map(
                     (c) => Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: _buildCourseCard(
@@ -902,9 +899,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 ),
               )
             else
-              ..._ebooks
-                  .take(2)
-                  .map(
+              ..._ebooks.take(2).map(
                     (e) => Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: _buildEbookOverviewCard(
@@ -966,8 +961,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final ebookRevenueStr = ebookRevenue >= 1000000
         ? 'TZS ${(ebookRevenue / 1000000).toStringAsFixed(1)}M'
         : ebookRevenue >= 1000
-        ? 'TZS ${(ebookRevenue / 1000).toStringAsFixed(0)}K'
-        : 'TZS ${_formatNumber(ebookRevenue.toInt())}';
+            ? 'TZS ${(ebookRevenue / 1000).toStringAsFixed(0)}K'
+            : 'TZS ${_formatNumber(ebookRevenue.toInt())}';
 
     return Column(
       children: [
@@ -1353,9 +1348,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               width: 88,
               height: 88,
               decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFF2A1A0A)
-                    : const Color(0xFFF5E6D8),
+                color:
+                    isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, size: 44, color: const Color(0xFFE87722)),
@@ -1846,9 +1840,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     child: Tooltip(
                       message: isRejected
                           ? (CourseContract.rejectionReason(course) ??
-                                CourseContract.statusPresentation(
-                                  statusStr,
-                                ).label)
+                              CourseContract.statusPresentation(
+                                statusStr,
+                              ).label)
                           : CourseContract.statusPresentation(statusStr).label,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -1863,10 +1857,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           isPublished
                               ? '✓'
                               : isPendingReview
-                              ? '⏳'
-                              : isRejected
-                              ? '!'
-                              : '✎',
+                                  ? '⏳'
+                                  : isRejected
+                                      ? '!'
+                                      : '✎',
                           style: const TextStyle(
                             fontSize: 9,
                             color: Colors.white,
@@ -1958,16 +1952,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final title = (e['title'] ?? '').toString();
     final cover = e['cover_image']?.toString();
     final buyers = e['buyers_count'] as int? ?? 0;
-    final price = (double.tryParse((e['price'] ?? '0').toString()) ?? 0)
-        .toInt();
+    final price =
+        (double.tryParse((e['price'] ?? '0').toString()) ?? 0).toInt();
     final ebookId = e['id'] as int? ?? 0;
     final statusStr = (e['status'] as String? ?? 'draft');
     final isPublished = statusStr == 'published';
     final statusColor = isPublished
         ? const Color(0xFF2E7D32)
         : statusStr == 'pending_review'
-        ? const Color(0xFFE87722)
-        : const Color(0xFF6B7280);
+            ? const Color(0xFFE87722)
+            : const Color(0xFF6B7280);
 
     return GestureDetector(
       onTap: () async {
@@ -2121,10 +2115,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final publishButtonText = isPublished
         ? 'Imechapishwa'
         : isPendingReview
-        ? 'Inasubiri Ukaguzi'
-        : isRejected
-        ? 'Wasilisha Tena'
-        : 'Tuma kwa Ukaguzi';
+            ? 'Inasubiri Ukaguzi'
+            : isRejected
+                ? 'Wasilisha Tena'
+                : 'Tuma kwa Ukaguzi';
     final title = course['title'] as String? ?? '';
     final thumbnail = course['cover_photo'] as String?;
     final students = course['student_count'] as int? ?? 0;
@@ -2434,10 +2428,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                 isPublished
                                     ? Icons.visibility_outlined
                                     : isPendingReview
-                                    ? Icons.hourglass_top_rounded
-                                    : isRejected
-                                    ? Icons.refresh_rounded
-                                    : Icons.visibility_off_outlined,
+                                        ? Icons.hourglass_top_rounded
+                                        : isRejected
+                                            ? Icons.refresh_rounded
+                                            : Icons.visibility_off_outlined,
                                 size: 13,
                                 color: statusTextColor,
                               ),
@@ -2524,9 +2518,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             Icon(
               icon,
               size: 12,
-              color: isDanger
-                  ? const Color(0xFFB71C1C)
-                  : const Color(0xFF7B3A10),
+              color:
+                  isDanger ? const Color(0xFFB71C1C) : const Color(0xFF7B3A10),
             ),
             const SizedBox(width: 4),
             Text(
@@ -2556,8 +2549,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           isPublished
               ? 'Ficha Kozi?'
               : isRejected
-              ? 'Wasilisha Tena kwa Ukaguzi?'
-              : 'Tuma Kozi kwa Ukaguzi?',
+                  ? 'Wasilisha Tena kwa Ukaguzi?'
+                  : 'Tuma Kozi kwa Ukaguzi?',
           style: GoogleFonts.montserrat(
             fontWeight: FontWeight.w700,
             color: const Color(0xFF1A0A00),
@@ -2567,8 +2560,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
           isPublished
               ? 'Kozi itafichwa na wanafunzi hawataweza kuiona tena.'
               : isRejected
-              ? 'Baada ya kurekebisha maudhui, kozi itatumwa tena kwa timu ya Kreative Karakana kwa ukaguzi.'
-              : 'Kozi haitachapishwa moja kwa moja. Timu ya Kreative Karakana itaipitia kwanza kabla haijaonekana kwa wanafunzi.',
+                  ? 'Baada ya kurekebisha maudhui, kozi itatumwa tena kwa timu ya Kreative Karakana kwa ukaguzi.'
+                  : 'Kozi haitachapishwa moja kwa moja. Timu ya Kreative Karakana itaipitia kwanza kabla haijaonekana kwa wanafunzi.',
           style: GoogleFonts.montserrat(
             fontSize: 13,
             color: const Color(0xFF7B3A10),
@@ -2782,8 +2775,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     final title = course['title'] as String? ?? '';
                     final students = course['student_count'] as int? ?? 0;
                     final thumbnail = course['cover_photo'] as String?;
-                    final rating = (course['average_rating'] as num? ?? 0)
-                        .toDouble();
+                    final rating =
+                        (course['average_rating'] as num? ?? 0).toDouble();
                     final courseStatus =
                         (course['status'] as String? ?? 'draft');
                     final statusPresentation =
@@ -3048,12 +3041,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     Color textSecondary,
   ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final pending = _certs
-        .where((c) => (c as Map)['is_approved'] != true)
-        .length;
-    final approved = _certs
-        .where((c) => (c as Map)['is_approved'] == true)
-        .length;
+    final pending =
+        _certs.where((c) => (c as Map)['is_approved'] != true).length;
+    final approved =
+        _certs.where((c) => (c as Map)['is_approved'] == true).length;
 
     // Premium palette for Vyeti tab (neutral, no orange overload)
     const approvedGreen = Color(0xFF2E7D32);
@@ -3065,9 +3056,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final bannerBg = isDark
         ? const Color(0xFF1E1610).withValues(alpha: 0.9)
         : const Color(0xFFF5F0EC);
-    final bannerBorder = isDark
-        ? const Color(0xFF3A2E26)
-        : const Color(0xFFDDD5CC);
+    final bannerBorder =
+        isDark ? const Color(0xFF3A2E26) : const Color(0xFFDDD5CC);
 
     return RefreshIndicator(
       color: const Color(0xFF4B2412),
@@ -3284,9 +3274,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                 style: GoogleFonts.montserrat(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
-                                  color: isApproved
-                                      ? approvedGreen
-                                      : pendingAmber,
+                                  color:
+                                      isApproved ? approvedGreen : pendingAmber,
                                 ),
                               ),
                             ),
@@ -3574,13 +3563,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       final tabTitle = isAccountTab
           ? 'Akaunti'
           : isCertificatesTab
-          ? 'Vyeti'
-          : 'Maudhui';
+              ? 'Vyeti'
+              : 'Maudhui';
       final tabSubtitle = isAccountTab
           ? 'Mipangilio ya akaunti'
           : isCertificatesTab
-          ? 'Maombi ya uthibitishaji'
-          : 'Kozi na vitabu vyako';
+              ? 'Maombi ya uthibitishaji'
+              : 'Kozi na vitabu vyako';
       return SliverAppBar(
         toolbarHeight: 56,
         expandedHeight: 148,
@@ -3819,8 +3808,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       actions: [
         _buildHeaderIconButton(Icons.notifications_outlined, () {
           context.read<NotificationProvider>().loadNotifications(
-            isTrainer: true,
-          );
+                isTrainer: true,
+              );
           context.push('/notifications');
         }, veryCompact: false),
         const SizedBox(width: 6),
@@ -4159,19 +4148,19 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final purchases = e['successful_purchases_count'] as int? ?? 0;
     final revenue =
         double.tryParse((e['total_revenue'] ?? '0').toString()) ?? 0.0;
-    final price = (double.tryParse((e['price'] ?? '0').toString()) ?? 0)
-        .toInt();
+    final price =
+        (double.tryParse((e['price'] ?? '0').toString()) ?? 0).toInt();
     final status = (e['status'] as String? ?? 'draft');
     final statusColor = status == 'published'
         ? const Color(0xFF2E7D32)
         : status == 'pending_review'
-        ? const Color(0xFFE87722)
-        : const Color(0xFF6B7280);
+            ? const Color(0xFFE87722)
+            : const Color(0xFF6B7280);
     final statusLabel = status == 'published'
         ? 'Imechapishwa'
         : status == 'pending_review'
-        ? 'Inasubiri'
-        : 'Rasimu';
+            ? 'Inasubiri'
+            : 'Rasimu';
     final ebookId = e['id'] as int? ?? 0;
 
     return GestureDetector(
@@ -4200,9 +4189,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               child: Container(
                 width: 54,
                 height: 72,
-                color: isDark
-                    ? const Color(0xFF2A1A0A)
-                    : const Color(0xFFF5E6D8),
+                color:
+                    isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                 child: cover != null && cover.isNotEmpty
                     ? Image.network(
                         cover,
