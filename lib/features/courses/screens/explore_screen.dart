@@ -22,8 +22,7 @@ class ExploreScreen extends StatefulWidget {
   State<ExploreScreen> createState() => _ExploreScreenState();
 }
 
-class _ExploreScreenState extends State<ExploreScreen>
-    with AutomaticKeepAliveClientMixin {
+class _ExploreScreenState extends State<ExploreScreen> {
   static const double _expandedHeight = 218;
   static const double _floatingNavClearance = 112;
 
@@ -33,9 +32,6 @@ class _ExploreScreenState extends State<ExploreScreen>
   String? _selectedCategoryName;
   Timer? _debounceTimer;
   String _sortBy = 'default';
-
-  @override
-  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -76,7 +72,10 @@ class _ExploreScreenState extends State<ExploreScreen>
   }
 
   void _maybeLoadMoreCourses() {
-    if (!_scrollController.hasClients) return;
+    if (!_scrollController.hasClients ||
+        _scrollController.positions.length != 1) {
+      return;
+    }
     final position = _scrollController.position;
     if (position.extentAfter > 480) return;
     context.read<CourseProvider>().loadMoreCourses();
@@ -91,7 +90,6 @@ class _ExploreScreenState extends State<ExploreScreen>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final provider = context.watch<CourseProvider>();
 
     final displayCourses = _sortedCourses(provider);
@@ -166,6 +164,7 @@ class _ExploreScreenState extends State<ExploreScreen>
         animation: _scrollController,
         builder: (context, _) {
           final show = _scrollController.hasClients &&
+              _scrollController.positions.length == 1 &&
               _scrollController.offset > (_expandedHeight - kToolbarHeight);
           return AnimatedOpacity(
             opacity: show ? 1.0 : 0.0,
