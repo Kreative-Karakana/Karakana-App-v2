@@ -13,6 +13,8 @@ import '../../../core/network/api_client.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notifications/providers/notification_provider.dart';
+import '../utils/course_contract.dart';
+import '../utils/trainer_course_filters.dart';
 import 'trainer_account_screen.dart';
 
 class TrainerDashboardScreen extends StatefulWidget {
@@ -67,15 +69,18 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     setState(() => _isLoading = true);
     try {
       final results = await Future.wait([
-        ApiClient().dio.get('/api/v1/courses/?enrolled=true&page_size=50'),
+        ApiClient().dio.get(
+          '/api/v1/courses/',
+          queryParameters: TrainerCourseFilters.ownedCoursesQueryParameters,
+        ),
         ApiClient().dio.get('/api/v1/wallet/me/'),
         ApiClient().dio.get('/api/v1/certificates/?trainer=true'),
         ApiClient().dio.get('/api/v1/ebooks/my/'),
       ]);
       final coursesData = results[0].data;
-      final courses = coursesData is Map
-          ? (coursesData['results'] as List? ?? [])
-          : (coursesData as List? ?? []);
+      final courses = TrainerCourseFilters.ownedCoursesFromResponse(
+        coursesData,
+      );
       final wallet = results[1].data as Map? ?? {};
       final certsData = results[2].data;
       final certs = certsData is Map
@@ -1757,11 +1762,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final courseId = course['id'] as int? ?? 0;
     final statusStr = course['status'] as String? ?? 'draft';
     final isPublished = statusStr == 'published';
-    final statusColor = isPublished
-        ? const Color(0xFF2E7D32)
-        : statusStr == 'pending_review'
-        ? const Color(0xFFE87722)
-        : const Color(0xFF6B7280);
+    final isPendingReview = statusStr == 'pending_review';
+    final isRejected = statusStr == 'rejected';
+    final statusColor = Color(
+      CourseContract.statusPresentation(statusStr).colorValue,
+    );
 
     return GestureDetector(
       onTap: () => context.push(
@@ -1838,24 +1843,34 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   Positioned(
                     top: 7,
                     right: 7,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: statusColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        isPublished
-                            ? '✓'
-                            : statusStr == 'pending_review'
-                            ? '⏳'
-                            : '✎',
-                        style: const TextStyle(
-                          fontSize: 9,
-                          color: Colors.white,
+                    child: Tooltip(
+                      message: isRejected
+                          ? (CourseContract.rejectionReason(course) ??
+                                CourseContract.statusPresentation(
+                                  statusStr,
+                                ).label)
+                          : CourseContract.statusPresentation(statusStr).label,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: statusColor,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          isPublished
+                              ? '✓'
+                              : isPendingReview
+                              ? '⏳'
+                              : isRejected
+                              ? '!'
+                              : '✎',
+                          style: const TextStyle(
+                            fontSize: 9,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -2097,25 +2112,18 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final courseStatus = (course['status'] as String? ?? 'draft');
     final isPublished = courseStatus == 'published';
     final isPendingReview = courseStatus == 'pending_review';
-    final statusLabel = isPublished
-        ? 'Imechapishwa'
-        : isPendingReview
-        ? 'Inasubiri Ukaguzi'
-        : 'Rasimu';
-    final statusBgColor = isPublished
-        ? const Color(0xFF2E7D32)
-        : isPendingReview
-        ? const Color(0xFFE87722)
-        : const Color(0xFF6B7280);
-    final statusTextColor = isPublished
-        ? const Color(0xFF2E7D32)
-        : isPendingReview
-        ? const Color(0xFFE87722)
-        : const Color(0xFF6B7280);
+    final isRejected = CourseContract.isRejected(courseStatus);
+    final rejectionReason = CourseContract.rejectionReason(course);
+    final statusPresentation = CourseContract.statusPresentation(courseStatus);
+    final statusLabel = statusPresentation.label;
+    final statusBgColor = Color(statusPresentation.colorValue);
+    final statusTextColor = Color(statusPresentation.colorValue);
     final publishButtonText = isPublished
         ? 'Imechapishwa'
         : isPendingReview
         ? 'Inasubiri Ukaguzi'
+        : isRejected
+        ? 'Wasilisha Tena'
         : 'Tuma kwa Ukaguzi';
     final title = course['title'] as String? ?? '';
     final thumbnail = course['cover_photo'] as String?;
@@ -2270,6 +2278,59 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     overflow: TextOverflow.ellipsis,
                   ),
 
+                  if (isRejected) ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFB71C1C).withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: const Color(
+                            0xFFB71C1C,
+                          ).withValues(alpha: 0.25),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.error_outline_rounded,
+                                size: 13,
+                                color: Color(0xFFB71C1C),
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                'Sababu ya Kukataliwa',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 10.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFFB71C1C),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            rejectionReason ??
+                                'Timu ya Kreative Karakana haikutoa sababu maalum. Wasiliana nao kwa maelezo zaidi.',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 11.5,
+                              height: 1.4,
+                              color: const Color(0xFF7B3A10),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+
                   const SizedBox(height: 10),
 
                   Row(
@@ -2374,6 +2435,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                                     ? Icons.visibility_outlined
                                     : isPendingReview
                                     ? Icons.hourglass_top_rounded
+                                    : isRejected
+                                    ? Icons.refresh_rounded
                                     : Icons.visibility_off_outlined,
                                 size: 13,
                                 color: statusTextColor,
@@ -2484,12 +2547,17 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   void _showPublishConfirm(Map course) {
     final isPublished = course['status'] == 'published';
+    final isRejected = CourseContract.isRejected(course['status'] as String?);
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          isPublished ? 'Ficha Kozi?' : 'Tuma Kozi kwa Ukaguzi?',
+          isPublished
+              ? 'Ficha Kozi?'
+              : isRejected
+              ? 'Wasilisha Tena kwa Ukaguzi?'
+              : 'Tuma Kozi kwa Ukaguzi?',
           style: GoogleFonts.montserrat(
             fontWeight: FontWeight.w700,
             color: const Color(0xFF1A0A00),
@@ -2498,6 +2566,8 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         content: Text(
           isPublished
               ? 'Kozi itafichwa na wanafunzi hawataweza kuiona tena.'
+              : isRejected
+              ? 'Baada ya kurekebisha maudhui, kozi itatumwa tena kwa timu ya Kreative Karakana kwa ukaguzi.'
               : 'Kozi haitachapishwa moja kwa moja. Timu ya Kreative Karakana itaipitia kwanza kabla haijaonekana kwa wanafunzi.',
           style: GoogleFonts.montserrat(
             fontSize: 13,
@@ -2529,7 +2599,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
               ),
             ),
             child: Text(
-              isPublished ? 'Ndiyo, Ficha' : 'Tuma kwa Ukaguzi',
+              isPublished
+                  ? 'Ndiyo, Ficha'
+                  : CourseContract.submitActionLabel(
+                      course['status'] as String?,
+                    ),
               style: GoogleFonts.montserrat(
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
@@ -2712,18 +2786,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         .toDouble();
                     final courseStatus =
                         (course['status'] as String? ?? 'draft');
-                    final isPublished = courseStatus == 'published';
-                    final isPendingReview = courseStatus == 'pending_review';
-                    final statusLabel = isPublished
-                        ? 'Imechapishwa'
-                        : isPendingReview
-                        ? 'Inasubiri Ukaguzi'
-                        : 'Rasimu';
-                    final statusColor = isPublished
-                        ? const Color(0xFF2E7D32)
-                        : isPendingReview
-                        ? const Color(0xFFE87722)
-                        : const Color(0xFF6B7280);
+                    final statusPresentation =
+                        CourseContract.statusPresentation(courseStatus);
+                    final statusLabel = statusPresentation.label;
+                    final statusColor = Color(statusPresentation.colorValue);
+                    final isRejectedRow = CourseContract.isRejected(
+                      courseStatus,
+                    );
+                    final rejectionReasonRow = CourseContract.rejectionReason(
+                      course,
+                    );
                     final courseId = course['id'] as int? ?? 0;
                     return Container(
                       margin: const EdgeInsets.only(bottom: 14),
@@ -2853,6 +2925,36 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                               ),
                             ],
                           ),
+                          if (isRejectedRow) ...[
+                            const SizedBox(height: 12),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(
+                                  0xFFB71C1C,
+                                ).withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: const Color(
+                                    0xFFB71C1C,
+                                  ).withValues(alpha: 0.25),
+                                ),
+                              ),
+                              child: Text(
+                                rejectionReasonRow ??
+                                    'Timu ya Kreative Karakana haikutoa sababu maalum.',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 11.5,
+                                  height: 1.4,
+                                  color: const Color(0xFF7B3A10),
+                                ),
+                              ),
+                            ),
+                          ],
                           const SizedBox(height: 16),
                           Divider(
                             height: 1,

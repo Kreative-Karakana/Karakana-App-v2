@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import '../../../core/network/api_client.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../utils/course_contract.dart';
+import '../utils/trainer_course_filters.dart';
 
 class TrainerCoursesListScreen extends StatefulWidget {
   const TrainerCoursesListScreen({super.key});
@@ -34,25 +36,11 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
   }
 
   String _statusLabel(String s) {
-    switch (s) {
-      case 'published':
-        return 'Imechapishwa';
-      case 'pending_review':
-        return 'Inasubiri Ukaguzi';
-      default:
-        return 'Rasimu';
-    }
+    return CourseContract.statusPresentation(s).label;
   }
 
   Color _statusColor(String s) {
-    switch (s) {
-      case 'published':
-        return const Color(0xFF2E7D32);
-      case 'pending_review':
-        return const Color(0xFFE87722);
-      default:
-        return const Color(0xFF6B7280);
-    }
+    return Color(CourseContract.statusPresentation(s).colorValue);
   }
 
   String _computeRevenue(Map c) {
@@ -82,13 +70,11 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
       _error = null;
     });
     try {
-      final res = await ApiClient()
-          .dio
-          .get('/api/v1/courses/?enrolled=true&page_size=100');
-      final data = res.data;
-      final courses = data is Map
-          ? (data['results'] as List? ?? [])
-          : (data as List? ?? []);
+      final res = await ApiClient().dio.get(
+            '/api/v1/courses/',
+            queryParameters: TrainerCourseFilters.ownedCoursesQueryParameters,
+          );
+      final courses = TrainerCourseFilters.ownedCoursesFromResponse(res.data);
       if (mounted) {
         setState(() {
           _courses = courses;
@@ -151,19 +137,27 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
 
   Future<void> _showPublishConfirm(Map course) async {
     final id = course['id'] as int? ?? 0;
-    final isPublished = (course['status'] as String? ?? '') == 'published';
+    final statusStr = course['status'] as String? ?? '';
+    final isPublished = statusStr == 'published';
+    final isRejected = CourseContract.isRejected(statusStr);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          isPublished ? 'Ficha Kozi?' : 'Tuma kwa Ukaguzi?',
+          isPublished
+              ? 'Ficha Kozi?'
+              : isRejected
+                  ? 'Wasilisha Tena kwa Ukaguzi?'
+                  : 'Tuma kwa Ukaguzi?',
           style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
         ),
         content: Text(
           isPublished
               ? 'Kozi itafichwa na wanafunzi wapya hawataweza kuisajili.'
-              : 'Kozi itatumwa kwa timu ya Karakana kwa ukaguzi kabla ya kuchapishwa.',
+              : isRejected
+                  ? 'Baada ya kurekebisha maudhui, kozi itatumwa tena kwa timu ya Karakana kwa ukaguzi.'
+                  : 'Kozi itatumwa kwa timu ya Karakana kwa ukaguzi kabla ya kuchapishwa.',
           style: GoogleFonts.montserrat(fontSize: 13, height: 1.5),
         ),
         actions: [
@@ -233,6 +227,8 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
     final statusStr = course['status'] as String? ?? 'draft';
     final isPublished = statusStr == 'published';
     final isPendingReview = statusStr == 'pending_review';
+    final isRejected = CourseContract.isRejected(statusStr);
+    final rejectionReason = CourseContract.rejectionReason(course);
     final title = course['title'] as String? ?? '';
     final thumbnail = course['cover_photo'] as String?;
     final students = course['student_count'] as int? ?? 0;
@@ -357,6 +353,44 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
+            if (isRejected) ...[
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFB71C1C).withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      color: const Color(0xFFB71C1C).withValues(alpha: 0.25)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      const Icon(Icons.error_outline_rounded,
+                          size: 13, color: Color(0xFFB71C1C)),
+                      const SizedBox(width: 5),
+                      Text('Sababu ya Kukataliwa',
+                          style: GoogleFonts.montserrat(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFFB71C1C))),
+                    ]),
+                    const SizedBox(height: 4),
+                    Text(
+                      rejectionReason ??
+                          'Timu ya Kreative Karakana haikutoa sababu maalum. Wasiliana nao kwa maelezo zaidi.',
+                      style: GoogleFonts.montserrat(
+                          fontSize: 11.5,
+                          height: 1.4,
+                          color: const Color(0xFF7B3A10)),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const SizedBox(height: 10),
             Row(children: [
               const Icon(Icons.people_outline,
@@ -407,13 +441,18 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
                     ? 'Imechapishwa'
                     : isPendingReview
                         ? 'Inasubiri'
-                        : 'Tuma kwa Ukaguzi',
+                        : isRejected
+                            ? 'Wasilisha Tena'
+                            : 'Tuma kwa Ukaguzi',
                 isPublished
                     ? Icons.visibility_outlined
                     : isPendingReview
                         ? Icons.hourglass_top_rounded
-                        : Icons.visibility_off_outlined,
+                        : isRejected
+                            ? Icons.refresh_rounded
+                            : Icons.visibility_off_outlined,
                 isPendingReview ? () {} : () => _showPublishConfirm(course),
+                isDanger: isRejected,
               ),
               _buildSmallAction(
                 'Ongeza Somo',
