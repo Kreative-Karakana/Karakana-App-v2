@@ -196,6 +196,8 @@ class _FakeService implements BusinessManagementApi {
     String? category,
     DateTime? dateFrom,
     DateTime? dateTo,
+    String? search,
+    String? ordering,
     int page = 1,
     int pageSize = 20,
   }) async =>

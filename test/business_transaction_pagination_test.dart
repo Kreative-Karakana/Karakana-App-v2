@@ -161,6 +161,132 @@ void main() {
       },
     );
 
+    test('search text is sent to the backend and resets pagination', () async {
+      final service = _FakeBusinessManagementService({
+        const _PageRequest(page: 1): _page([_transaction(1)], hasNext: true),
+        const _PageRequest(page: 1, search: 'juma'): _page([_transaction(20)]),
+      });
+      final provider = BusinessManagementProvider(service: service);
+
+      await provider.loadTransactions();
+      await provider.loadTransactions(search: 'juma');
+
+      expect(provider.searchQuery, 'juma');
+      expect(provider.transactions.map((t) => t.id), [20]);
+      expect(
+          service.requests.last, const _PageRequest(page: 1, search: 'juma'));
+    });
+
+    test('loadMoreTransactions reuses the active search and ordering',
+        () async {
+      final service = _FakeBusinessManagementService({
+        const _PageRequest(page: 1, search: 'juma', ordering: 'amount'): _page(
+          [_transaction(1)],
+          hasNext: true,
+        ),
+        const _PageRequest(page: 2, search: 'juma', ordering: 'amount'): _page(
+          [_transaction(2)],
+        ),
+      });
+      final provider = BusinessManagementProvider(service: service);
+
+      await provider.loadTransactions(search: 'juma', ordering: 'amount');
+      await provider.loadMoreTransactions();
+
+      expect(provider.transactions.map((t) => t.id), [1, 2]);
+    });
+
+    test(
+      'applyFilters replaces the whole filter set, including clearing '
+      'fields left unset',
+      () async {
+        final service = _FakeBusinessManagementService({
+          const _PageRequest(
+            page: 1,
+            transactionType: 'sale',
+            category: 'huduma',
+          ): _page([_transaction(1)]),
+          const _PageRequest(page: 1): _page([_transaction(2)]),
+        });
+        final provider = BusinessManagementProvider(service: service);
+
+        await provider.applyFilters(
+          transactionType: 'sale',
+          category: 'huduma',
+        );
+
+        expect(provider.selectedTransactionType, 'sale');
+        expect(provider.selectedCategory, 'huduma');
+        expect(provider.transactions.map((t) => t.id), [1]);
+
+        // Calling applyFilters again without category/type must clear them
+        // (unlike loadTransactions, which would have preserved them).
+        await provider.applyFilters();
+
+        expect(provider.selectedTransactionType, isNull);
+        expect(provider.selectedCategory, isNull);
+        expect(provider.transactions.map((t) => t.id), [2]);
+      },
+    );
+
+    test(
+      'setTransactionType resets category since categories differ by type',
+      () async {
+        final service = _FakeBusinessManagementService({
+          const _PageRequest(
+            page: 1,
+            transactionType: 'sale',
+            category: 'huduma',
+          ): _page([_transaction(1)]),
+          const _PageRequest(page: 1, transactionType: 'expense'): _page([
+            _transaction(2),
+          ]),
+        });
+        final provider = BusinessManagementProvider(service: service);
+
+        await provider.applyFilters(
+          transactionType: 'sale',
+          category: 'huduma',
+        );
+        await provider.setTransactionType('expense');
+
+        expect(provider.selectedTransactionType, 'expense');
+        expect(provider.selectedCategory, isNull);
+        expect(provider.transactions.map((t) => t.id), [2]);
+      },
+    );
+
+    test('resetFilters clears every filter, search, and sort field', () async {
+      final service = _FakeBusinessManagementService({
+        const _PageRequest(
+          page: 1,
+          transactionType: 'sale',
+          category: 'huduma',
+          search: 'juma',
+          ordering: 'amount',
+        ): _page([_transaction(1)]),
+        const _PageRequest(page: 1): _page([_transaction(2), _transaction(3)]),
+      });
+      final provider = BusinessManagementProvider(service: service);
+
+      await provider.applyFilters(
+        transactionType: 'sale',
+        category: 'huduma',
+        search: 'juma',
+        ordering: 'amount',
+      );
+      expect(provider.hasActiveFilters, isTrue);
+
+      await provider.resetFilters();
+
+      expect(provider.hasActiveFilters, isFalse);
+      expect(provider.selectedTransactionType, isNull);
+      expect(provider.selectedCategory, isNull);
+      expect(provider.searchQuery, isEmpty);
+      expect(provider.ordering, isNull);
+      expect(provider.transactions.map((t) => t.id), [2, 3]);
+    });
+
     test('load-more failure preserves loaded items and can retry', () async {
       final service = _FakeBusinessManagementService({
         const _PageRequest(page: 1): _page([_transaction(1)], hasNext: true),
@@ -253,6 +379,8 @@ class _FakeBusinessManagementService implements BusinessManagementApi {
     String? category,
     DateTime? dateFrom,
     DateTime? dateTo,
+    String? search,
+    String? ordering,
     int page = 1,
     int pageSize = 20,
   }) async {
@@ -261,6 +389,11 @@ class _FakeBusinessManagementService implements BusinessManagementApi {
       transactionType: transactionType == null || transactionType.isEmpty
           ? null
           : transactionType,
+      category: category == null || category.isEmpty ? null : category,
+      dateFrom: dateFrom,
+      dateTo: dateTo,
+      search: search == null || search.isEmpty ? null : search,
+      ordering: ordering == null || ordering.isEmpty ? null : ordering,
     );
     requests.add(request);
     if (_failOnce.remove(request)) {
@@ -321,20 +454,48 @@ class _FakeBusinessManagementService implements BusinessManagementApi {
 class _PageRequest {
   final int page;
   final String? transactionType;
+  final String? category;
+  final DateTime? dateFrom;
+  final DateTime? dateTo;
+  final String? search;
+  final String? ordering;
 
-  const _PageRequest({required this.page, this.transactionType});
+  const _PageRequest({
+    required this.page,
+    this.transactionType,
+    this.category,
+    this.dateFrom,
+    this.dateTo,
+    this.search,
+    this.ordering,
+  });
 
   @override
   bool operator ==(Object other) {
     return other is _PageRequest &&
         other.page == page &&
-        other.transactionType == transactionType;
+        other.transactionType == transactionType &&
+        other.category == category &&
+        other.dateFrom == dateFrom &&
+        other.dateTo == dateTo &&
+        other.search == search &&
+        other.ordering == ordering;
   }
 
   @override
-  int get hashCode => Object.hash(page, transactionType);
+  int get hashCode => Object.hash(
+        page,
+        transactionType,
+        category,
+        dateFrom,
+        dateTo,
+        search,
+        ordering,
+      );
 
   @override
   String toString() =>
-      '_PageRequest(page: $page, transactionType: $transactionType)';
+      '_PageRequest(page: $page, transactionType: $transactionType, '
+      'category: $category, dateFrom: $dateFrom, dateTo: $dateTo, '
+      'search: $search, ordering: $ordering)';
 }

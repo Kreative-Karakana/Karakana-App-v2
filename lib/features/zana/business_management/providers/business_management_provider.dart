@@ -30,6 +30,8 @@ class BusinessManagementProvider extends ChangeNotifier {
   String? _selectedCategory;
   DateTime? _dateFrom;
   DateTime? _dateTo;
+  String _searchQuery = '';
+  String? _ordering;
   int _currentTransactionPage = 0;
   int _transactionCount = 0;
   bool _hasMoreTransactions = false;
@@ -50,8 +52,17 @@ class BusinessManagementProvider extends ChangeNotifier {
   String? get selectedCategory => _selectedCategory;
   DateTime? get dateFrom => _dateFrom;
   DateTime? get dateTo => _dateTo;
+  String get searchQuery => _searchQuery;
+  String? get ordering => _ordering;
   int get transactionCount => _transactionCount;
   bool get hasMoreTransactions => _hasMoreTransactions;
+  bool get hasActiveFilters =>
+      _selectedTransactionType != null ||
+      _selectedCategory != null ||
+      _dateFrom != null ||
+      _dateTo != null ||
+      _searchQuery.isNotEmpty ||
+      _ordering != null;
 
   Future<void> loadInitial() async {
     _isLoading = true;
@@ -166,12 +177,16 @@ class BusinessManagementProvider extends ChangeNotifier {
     String? category,
     DateTime? dateFrom,
     DateTime? dateTo,
+    String? search,
+    String? ordering,
     bool notify = true,
   }) async {
     _selectedTransactionType = transactionType ?? _selectedTransactionType;
     _selectedCategory = category ?? _selectedCategory;
     _dateFrom = dateFrom ?? _dateFrom;
     _dateTo = dateTo ?? _dateTo;
+    _searchQuery = search ?? _searchQuery;
+    _ordering = ordering ?? _ordering;
     _isLoadingTransactions = true;
     _isLoadingMoreTransactions = false;
     _errorMessage = null;
@@ -187,6 +202,8 @@ class BusinessManagementProvider extends ChangeNotifier {
         category: _selectedCategory,
         dateFrom: _dateFrom,
         dateTo: _dateTo,
+        search: _searchQuery,
+        ordering: _ordering,
         page: 1,
         pageSize: _transactionPageSize,
       );
@@ -227,6 +244,8 @@ class BusinessManagementProvider extends ChangeNotifier {
         category: _selectedCategory,
         dateFrom: _dateFrom,
         dateTo: _dateTo,
+        search: _searchQuery,
+        ordering: _ordering,
         page: _currentTransactionPage + 1,
         pageSize: _transactionPageSize,
       );
@@ -335,13 +354,45 @@ class BusinessManagementProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void clearFilters() {
-    _selectedTransactionType = null;
-    _selectedCategory = null;
-    _dateFrom = null;
-    _dateTo = null;
-    notifyListeners();
+  /// Replaces every transaction-history filter/search/sort dimension in one
+  /// call and reloads page 1. Unlike [loadTransactions] — which only merges
+  /// non-null values into whatever filters are already active — every
+  /// argument here (including a null/empty one) becomes the new value, so
+  /// this is the only way to clear a single dimension (e.g. category) while
+  /// leaving the others as they are: read the current getters and pass them
+  /// back alongside the one that's changing.
+  Future<void> applyFilters({
+    String? transactionType,
+    String? category,
+    DateTime? dateFrom,
+    DateTime? dateTo,
+    String search = '',
+    String? ordering,
+  }) {
+    _selectedTransactionType = transactionType;
+    _selectedCategory = category;
+    _dateFrom = dateFrom;
+    _dateTo = dateTo;
+    _searchQuery = search;
+    _ordering = ordering;
+    return loadTransactions();
   }
+
+  /// Quick single-tap switch between Yote/Mauzo/Matumizi. Resets category,
+  /// since sale and expense categories don't overlap.
+  Future<void> setTransactionType(String? value) {
+    return applyFilters(
+      transactionType: value,
+      dateFrom: _dateFrom,
+      dateTo: _dateTo,
+      search: _searchQuery,
+      ordering: _ordering,
+    );
+  }
+
+  /// Clears every active filter, search term, and sort order and reloads
+  /// page 1 of the unfiltered transaction history.
+  Future<void> resetFilters() => applyFilters();
 
   Future<bool> _createTransaction({
     required String transactionType,
