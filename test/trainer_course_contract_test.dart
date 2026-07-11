@@ -4,10 +4,12 @@ import 'package:karakana_app/features/trainer/utils/course_contract.dart';
 void main() {
   group('CourseContract', () {
     test('exposes backend-supported level values', () {
-      expect(
-        CourseContract.levelOptions.map((option) => option.value),
-        ['beginner', 'intermediate', 'advanced', 'short_course'],
-      );
+      expect(CourseContract.levelOptions.map((option) => option.value), [
+        'beginner',
+        'intermediate',
+        'advanced',
+        'short_course',
+      ]);
       expect(CourseContract.levelLabel('short_course'), 'Kozi Fupi');
       expect(CourseContract.normalizeLevel('unsupported'), 'beginner');
     });
@@ -23,15 +25,18 @@ void main() {
         'Imechapishwa',
       );
       expect(
-          CourseContract.statusPresentation('rejected').label, 'Imekataliwa');
+        CourseContract.statusPresentation('rejected').label,
+        'Imekataliwa',
+      );
       expect(CourseContract.normalizeStatus('unsupported'), 'draft');
     });
 
     test('exposes rejection reason only when present and non-blank', () {
-      expect(CourseContract.rejectionReason({'rejection_reason': 'Fix desc'}),
-          'Fix desc');
       expect(
-          CourseContract.rejectionReason({'rejection_reason': '   '}), null);
+        CourseContract.rejectionReason({'rejection_reason': 'Fix desc'}),
+        'Fix desc',
+      );
+      expect(CourseContract.rejectionReason({'rejection_reason': '   '}), null);
       expect(CourseContract.rejectionReason({}), null);
       expect(CourseContract.rejectionReason(null), null);
     });
@@ -40,8 +45,7 @@ void main() {
       expect(CourseContract.isRejected('rejected'), isTrue);
       expect(CourseContract.isRejected('draft'), isFalse);
       expect(CourseContract.submitActionLabel('rejected'), 'Wasilisha Tena');
-      expect(
-          CourseContract.submitActionLabel('draft'), 'Tuma kwa Ukaguzi');
+      expect(CourseContract.submitActionLabel('draft'), 'Tuma kwa Ukaguzi');
     });
 
     test('provides trainer-facing guidance text for every status', () {
@@ -69,8 +73,10 @@ void main() {
       );
 
       expect(result.isValid, isFalse);
-      expect(result.fieldErrors.keys,
-          containsAll(['title', 'description', 'category', 'price']));
+      expect(
+        result.fieldErrors.keys,
+        containsAll(['title', 'description', 'category', 'price']),
+      );
     });
 
     test('rejects unsupported lifecycle values in builder payloads', () {

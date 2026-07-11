@@ -69,15 +69,18 @@ class CourseContract {
 
   static const statusPresentations = {
     statusDraft: CourseStatusPresentation('Rasimu', 0xFF6B7280),
-    statusPendingReview:
-        CourseStatusPresentation('Inasubiri Ukaguzi', 0xFFE87722),
+    statusPendingReview: CourseStatusPresentation(
+      'Inasubiri Ukaguzi',
+      0xFFE87722,
+    ),
     statusPublished: CourseStatusPresentation('Imechapishwa', 0xFF2E7D32),
     statusRejected: CourseStatusPresentation('Imekataliwa', 0xFFB71C1C),
   };
 
   // What the trainer should understand/do next for each lifecycle state.
   static const statusGuidance = {
-    statusDraft: 'Bado haijawasilishwa. Kamilisha maelezo kisha tuma kwa ukaguzi.',
+    statusDraft:
+        'Bado haijawasilishwa. Kamilisha maelezo kisha tuma kwa ukaguzi.',
     statusPendingReview:
         'Timu ya Kreative Karakana inaipitia kozi yako. Tutakujulisha baada ya ukaguzi.',
     statusPublished: 'Kozi yako imechapishwa na inapatikana kwa wanafunzi.',
@@ -108,7 +111,8 @@ class CourseContract {
     return statusGuidance[normalizeStatus(value)] ?? '';
   }
 
-  static bool isRejected(String? value) => normalizeStatus(value) == statusRejected;
+  static bool isRejected(String? value) =>
+      normalizeStatus(value) == statusRejected;
 
   /// Extracts the trainer-facing rejection reason from a raw course JSON map,
   /// if the backend provided one. Returns null when absent/blank so callers
