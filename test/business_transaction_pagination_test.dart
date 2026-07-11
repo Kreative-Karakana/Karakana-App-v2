@@ -165,7 +165,8 @@ void main() {
       final service = _FakeBusinessManagementService({
         const _PageRequest(page: 1): _page([_transaction(1)], hasNext: true),
         const _PageRequest(page: 2): _page([_transaction(2)]),
-      })..failOnceFor(const _PageRequest(page: 2));
+      })
+        ..failOnceFor(const _PageRequest(page: 2));
       final provider = BusinessManagementProvider(service: service);
 
       await provider.loadTransactions();
@@ -217,25 +218,25 @@ BusinessTransaction _transaction(int id) =>
     BusinessTransaction.fromJson(_transactionJson(id));
 
 Map<String, dynamic> _transactionJson(int id) => {
-  'id': id,
-  'transaction_type': 'sale',
-  'amount': '1000.00',
-  'category': 'huduma',
-  'description': '',
-  'transaction_date': '2026-07-01',
-  'created_at': '2026-07-01T08:00:00Z',
-  'updated_at': '2026-07-01T08:00:00Z',
-};
+      'id': id,
+      'transaction_type': 'sale',
+      'amount': '1000.00',
+      'category': 'huduma',
+      'description': '',
+      'transaction_date': '2026-07-01',
+      'created_at': '2026-07-01T08:00:00Z',
+      'updated_at': '2026-07-01T08:00:00Z',
+    };
 
 Map<String, dynamic> _businessJson() => {
-  'id': 1,
-  'name': 'Duka la Jaribio',
-  'business_type': 'duka',
-  'currency': 'TZS',
-  'is_active': true,
-  'created_at': '2026-01-01T08:00:00Z',
-  'updated_at': '2026-01-01T08:00:00Z',
-};
+      'id': 1,
+      'name': 'Duka la Jaribio',
+      'business_type': 'duka',
+      'currency': 'TZS',
+      'is_active': true,
+      'created_at': '2026-01-01T08:00:00Z',
+      'updated_at': '2026-01-01T08:00:00Z',
+    };
 
 class _FakeBusinessManagementService implements BusinessManagementApi {
   _FakeBusinessManagementService(this.pages);
@@ -282,13 +283,15 @@ class _FakeBusinessManagementService implements BusinessManagementApi {
   Future<Business> createBusiness({
     required String name,
     required String businessType,
-  }) => throw UnimplementedError();
+  }) =>
+      throw UnimplementedError();
 
   @override
   Future<Business> updateBusiness({
     required String name,
     required String businessType,
-  }) => throw UnimplementedError();
+  }) =>
+      throw UnimplementedError();
 
   @override
   Future<BusinessTransaction> createTransaction({
@@ -297,7 +300,8 @@ class _FakeBusinessManagementService implements BusinessManagementApi {
     required String category,
     required DateTime transactionDate,
     String description = '',
-  }) => throw UnimplementedError();
+  }) =>
+      throw UnimplementedError();
 
   @override
   Future<BusinessTransaction> updateTransaction({
@@ -307,7 +311,8 @@ class _FakeBusinessManagementService implements BusinessManagementApi {
     String? category,
     DateTime? transactionDate,
     String? description,
-  }) => throw UnimplementedError();
+  }) =>
+      throw UnimplementedError();
 
   @override
   Future<void> deleteTransaction(int id) => throw UnimplementedError();

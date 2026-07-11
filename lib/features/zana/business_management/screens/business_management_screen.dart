@@ -331,8 +331,7 @@ class _DashboardSummary extends StatelessWidget {
         provider.dashboardSummary?.today ?? BusinessPeriodSummary.zero;
     final monthTotals =
         provider.dashboardSummary?.month ?? BusinessPeriodSummary.zero;
-    final currency =
-        provider.business?.currency ??
+    final currency = provider.business?.currency ??
         provider.dashboardSummary?.currency ??
         'TZS';
 
@@ -437,8 +436,8 @@ class _RecentTransactions extends StatelessWidget {
   Widget build(BuildContext context) {
     final recent =
         provider.dashboardSummary?.recentTransactions.isNotEmpty == true
-        ? provider.dashboardSummary!.recentTransactions
-        : provider.transactions.take(5).toList();
+            ? provider.dashboardSummary!.recentTransactions
+            : provider.transactions.take(5).toList();
 
     return _SurfaceCard(
       child: Column(
@@ -755,18 +754,18 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
             description: description,
           )
         : widget.isSale
-        ? await provider.createSale(
-            amount: amount,
-            category: _category,
-            transactionDate: _date,
-            description: description,
-          )
-        : await provider.createExpense(
-            amount: amount,
-            category: _category,
-            transactionDate: _date,
-            description: description,
-          );
+            ? await provider.createSale(
+                amount: amount,
+                category: _category,
+                transactionDate: _date,
+                description: description,
+              )
+            : await provider.createExpense(
+                amount: amount,
+                category: _category,
+                transactionDate: _date,
+                description: description,
+              );
 
     if (!mounted) return;
     if (ok) {
@@ -775,8 +774,8 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
         existing != null
             ? 'Muamala umesasishwa.'
             : (widget.isSale
-                  ? 'Mauzo yamerekodiwa.'
-                  : 'Matumizi yamerekodiwa.'),
+                ? 'Mauzo yamerekodiwa.'
+                : 'Matumizi yamerekodiwa.'),
         type: TopPopupType.success,
       );
       Navigator.of(context).pop();
