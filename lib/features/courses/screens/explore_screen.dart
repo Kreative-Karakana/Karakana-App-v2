@@ -11,6 +11,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/cards/course_card_list.dart';
 import '../../../widgets/cards/shimmer_card.dart';
+import '../../../widgets/common/karakana_wave_loader.dart';
 import '../models/course_model.dart';
 import '../providers/course_provider.dart';
 
@@ -44,6 +45,7 @@ class _ExploreScreenState extends State<ExploreScreen>
       provider.loadCourses();
       provider.loadCategories();
     });
+    _scrollController.addListener(_maybeLoadMoreCourses);
   }
 
   @override
@@ -73,6 +75,20 @@ class _ExploreScreenState extends State<ExploreScreen>
     context.read<CourseProvider>().filterByCategory(name);
   }
 
+  void _maybeLoadMoreCourses() {
+    if (!_scrollController.hasClients) return;
+    final position = _scrollController.position;
+    if (position.extentAfter > 480) return;
+    context.read<CourseProvider>().loadMoreCourses();
+  }
+
+  Future<void> _refreshCourses() async {
+    await context.read<CourseProvider>().loadCourses(
+          search: _searchQuery,
+          categoryName: _selectedCategoryName,
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -87,47 +103,53 @@ class _ExploreScreenState extends State<ExploreScreen>
       body: SafeArea(
         top: false,
         bottom: false,
-        child: CustomScrollView(
-          controller: _scrollController,
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            _buildExploreAppBar(provider),
-            SliverToBoxAdapter(
-              child: _buildFiltersSection(
-                context,
-                displayCourses.length,
-                isDark,
-              ),
+        child: RefreshIndicator(
+          color: AppColors.primary,
+          onRefresh: _refreshCourses,
+          child: CustomScrollView(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: BouncingScrollPhysics(),
             ),
-            if (provider.isLoading)
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  AppSpacing.lg,
-                  AppSpacing.lg,
-                  AppSpacing.lg,
-                  deviceBottomInset + _floatingNavClearance,
+            slivers: [
+              _buildExploreAppBar(provider),
+              SliverToBoxAdapter(
+                child: _buildFiltersSection(
+                  context,
+                  displayCourses.length,
+                  isDark,
                 ),
-                sliver: SliverList.builder(
-                  itemCount: 6,
-                  itemBuilder: (_, __) => const Padding(
-                    padding: EdgeInsets.only(bottom: 12),
-                    child: ShimmerCard(width: double.infinity, height: 96),
-                  ),
-                ),
-              )
-            else if (displayCourses.isEmpty)
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: _buildEmptyResultsState(context),
-              )
-            else
-              _buildResultsSliver(
-                context,
-                provider,
-                displayCourses,
-                deviceBottomInset,
               ),
-          ],
+              if (provider.isLoading)
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                    AppSpacing.lg,
+                    deviceBottomInset + _floatingNavClearance,
+                  ),
+                  sliver: SliverList.builder(
+                    itemCount: 6,
+                    itemBuilder: (_, __) => const Padding(
+                      padding: EdgeInsets.only(bottom: 12),
+                      child: ShimmerCard(width: double.infinity, height: 96),
+                    ),
+                  ),
+                )
+              else if (displayCourses.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: _buildEmptyResultsState(context),
+                )
+              else
+                _buildResultsSliver(
+                  context,
+                  provider,
+                  displayCourses,
+                  deviceBottomInset,
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -455,7 +477,7 @@ class _ExploreScreenState extends State<ExploreScreen>
   ) {
     final popular = provider.popularCourses;
     final showCarousel = _isIdle && popular.isNotEmpty;
-    final itemCount = displayCourses.length + (showCarousel ? 1 : 0);
+    final itemCount = displayCourses.length + (showCarousel ? 1 : 0) + 1;
 
     return SliverPadding(
       padding: EdgeInsets.fromLTRB(20, showCarousel ? 0 : 20, 20,
@@ -469,8 +491,11 @@ class _ExploreScreenState extends State<ExploreScreen>
               onTap: (course) => context.push('/course/${course.id}'),
             );
           }
-          final course =
-              displayCourses[showCarousel ? i - 1 : i] as CourseModel;
+          final courseIndex = showCarousel ? i - 1 : i;
+          if (courseIndex >= displayCourses.length) {
+            return _buildPaginationFooter(provider);
+          }
+          final course = displayCourses[courseIndex] as CourseModel;
           return CourseListCard(
             course: course,
             onTap: () => context.push('/course/${course.id}'),
@@ -478,6 +503,50 @@ class _ExploreScreenState extends State<ExploreScreen>
         },
       ),
     );
+  }
+
+  Widget _buildPaginationFooter(CourseProvider provider) {
+    if (provider.isLoadingMore) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 18),
+        child: Center(
+          child: KarakanaWaveLoader(color: AppColors.primary),
+        ),
+      );
+    }
+
+    if (provider.loadMoreErrorMessage != null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        child: Center(
+          child: TextButton.icon(
+            onPressed: provider.loadMoreCourses,
+            icon: const Icon(Icons.refresh_rounded, size: 18),
+            label: Text(
+              'Jaribu tena',
+              style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (!provider.hasMoreCourses) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 18),
+        child: Center(
+          child: Text(
+            'Umefika mwisho wa orodha',
+            style: GoogleFonts.montserrat(
+              fontSize: 12,
+              color: AppColors.textTertiary,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return const SizedBox(height: 24);
   }
 
   List _sortedCourses(CourseProvider provider) {

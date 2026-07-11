@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../utils/course_contract.dart';
 
 class CourseBuilderScreen extends StatefulWidget {
   final int? courseId;
@@ -29,8 +30,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
   final _priceController = TextEditingController(text: '0');
-  String _selectedLevel = 'beginner';
+  String _selectedLevel = CourseContract.levelBeginner;
   String _selectedCategory = '';
+  Map<String, String> _fieldErrors = {};
   List<Map<String, dynamic>> _categories = [];
   File? _coverImage;
 
@@ -96,7 +98,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         _descController.text =
             _cleanRichTextDescription(data['description'] as String? ?? '');
         _priceController.text = (data['price'] ?? '0').toString();
-        _selectedLevel = data['level'] as String? ?? 'beginner';
+        _selectedLevel =
+            CourseContract.normalizeLevel(data['level'] as String?);
         if (catId != null) _selectedCategory = catId.toString();
         _isLoadingCourse = false;
       });
@@ -135,9 +138,19 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     return value;
   }
 
-  bool get _step1Valid =>
-      _titleController.text.trim().isNotEmpty &&
-      _descController.text.trim().isNotEmpty;
+  bool get _step1Valid => CourseContract.validatePayloadInput(
+        _payloadInput,
+        requireCategory: _categories.isNotEmpty,
+      ).isValid;
+
+  CoursePayloadInput get _payloadInput => CoursePayloadInput(
+        title: _titleController.text,
+        description: _descController.text,
+        priceText: _priceController.text,
+        level: _selectedLevel,
+        categoryId: _selectedCategory,
+        status: CourseContract.submitForReviewStatus,
+      );
 
   Future<void> _pickCoverImage() async {
     try {
@@ -171,26 +184,28 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   }
 
   Future<void> _submitCourse() async {
-    if (!_step1Valid) {
-      _showError('Jaza jina na maelezo ya kozi.');
+    final validation = CourseContract.validatePayloadInput(
+      _payloadInput,
+      requireCategory: _categories.isNotEmpty,
+    );
+    if (!validation.isValid) {
+      setState(() => _fieldErrors = validation.fieldErrors);
+      _showError(validation.firstError ?? 'Tafadhali kagua taarifa za kozi.');
       return;
     }
 
-    setState(() => _isSubmitting = true);
+    setState(() {
+      _fieldErrors = {};
+      _isSubmitting = true;
+    });
 
     try {
-      final price = double.tryParse(_priceController.text.trim()) ?? 0;
+      final payload = CourseContract.buildPayload(_payloadInput);
 
       if (_coverImage != null) {
         // Multipart upload when a cover image is selected
         final formData = FormData.fromMap({
-          'title': _titleController.text.trim(),
-          'description': _descController.text.trim(),
-          'price': price.toString(),
-          'level': _selectedLevel,
-          'status': 'pending_review',
-          if (_selectedCategory.isNotEmpty)
-            'category': int.tryParse(_selectedCategory),
+          ...payload,
           'cover_photo': await MultipartFile.fromFile(_coverImage!.path,
               filename: 'cover.jpg'),
         });
@@ -221,20 +236,10 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           }
         }
       } else {
-        final body = {
-          'title': _titleController.text.trim(),
-          'description': _descController.text.trim(),
-          'price': price,
-          'level': _selectedLevel,
-          'status': 'pending_review',
-          if (_selectedCategory.isNotEmpty)
-            'category': int.tryParse(_selectedCategory),
-        };
-
         if (_isEditMode) {
           await ApiClient()
               .dio
-              .patch('/api/v1/courses/${widget.courseId}/', data: body);
+              .patch('/api/v1/courses/${widget.courseId}/', data: payload);
           if (!mounted) return;
           _showSuccess(
             'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.',
@@ -242,7 +247,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           context.pop();
         } else {
           final res =
-              await ApiClient().dio.post('/api/v1/courses/', data: body);
+              await ApiClient().dio.post('/api/v1/courses/', data: payload);
           final createdId = (res.data as Map?)?['id'] as int?;
           if (createdId != null) await _saveQuiz(createdId);
           if (!mounted) return;
@@ -745,11 +750,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   Widget _buildStep1() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom + 24;
-    const levels = [
-      ('beginner', 'Mwanzo'),
-      ('intermediate', 'Kati'),
-      ('advanced', 'Juu'),
-    ];
+    const levels = CourseContract.levelOptions;
 
     return SingleChildScrollView(
       physics:
@@ -767,6 +768,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
             controller: _titleController,
             label: 'Jina la Kozi *',
             hint: 'Mfano: Biashara Bila Mtaji',
+            errorText: _fieldErrors['title'],
           ),
           const SizedBox(height: 16),
           _field(
@@ -774,6 +776,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
             label: 'Maelezo ya Kozi *',
             hint: 'Elezea kozi yako kwa kina...',
             maxLines: 5,
+            errorText: _fieldErrors['description'],
           ),
           const SizedBox(height: 16),
           // Category picker
@@ -789,6 +792,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
             const SizedBox(height: 8),
             _dropdown<String>(
               value: _selectedCategory.isEmpty ? null : _selectedCategory,
+              errorText: _fieldErrors['category'],
               items: _categories
                   .where((c) => c['id'] != null)
                   .map((c) => DropdownMenuItem<String>(
@@ -811,6 +815,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                   label: 'Bei (TZS)',
                   hint: '0',
                   keyboardType: TextInputType.number,
+                  errorText: _fieldErrors['price'],
                 ),
               ),
               const SizedBox(width: 12),
@@ -819,15 +824,16 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                   label: 'Kiwango',
                   value: _selectedLevel.isEmpty ? null : _selectedLevel,
                   hint: 'Chagua...',
+                  errorText: _fieldErrors['level'],
                   items: levels
                       .map((l) => DropdownMenuItem<String>(
-                            value: l.$1,
-                            child: Text(l.$2,
+                            value: l.value,
+                            child: Text(l.label,
                                 style: GoogleFonts.montserrat(fontSize: 14)),
                           ))
                       .toList(),
-                  onChanged: (v) =>
-                      setState(() => _selectedLevel = v ?? 'beginner'),
+                  onChanged: (v) => setState(
+                      () => _selectedLevel = v ?? CourseContract.levelBeginner),
                 ),
               ),
             ],
@@ -1067,11 +1073,6 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   Widget _buildStep4() {
     final price = double.tryParse(_priceController.text.trim()) ?? 0;
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom + 150;
-    final levelLabels = {
-      'beginner': 'Mwanzo',
-      'intermediate': 'Kati',
-      'advanced': 'Juu',
-    };
     final categoryName = _categories.firstWhere(
           (c) => c['id'].toString() == _selectedCategory,
           orElse: () => {'name': '—'},
@@ -1102,7 +1103,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         _summaryTile('Kategoria', categoryName),
         _summaryTile(
             'Bei', price == 0 ? 'Bure' : 'TZS ${price.toStringAsFixed(0)}'),
-        _summaryTile('Kiwango', levelLabels[_selectedLevel] ?? _selectedLevel),
+        _summaryTile('Kiwango', CourseContract.levelLabel(_selectedLevel)),
         if (!_isEditMode)
           _summaryTile('Maswali ya Mtihani',
               _questions.isEmpty ? 'Hakuna' : '${_questions.length} maswali'),
@@ -1124,6 +1125,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     required T? value,
     required List<DropdownMenuItem<T>> items,
     required ValueChanged<T?> onChanged,
+    String? errorText,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dedupedItems = <DropdownMenuItem<T>>[];
@@ -1135,13 +1137,26 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     }
     final safeValue =
         dedupedItems.any((item) => item.value == value) ? value : null;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-            color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+    return InputDecorator(
+      decoration: InputDecoration(
+        errorText: errorText,
+        filled: true,
+        fillColor: Theme.of(context).cardColor,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+              color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+              color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(14)),
+          borderSide: BorderSide(color: Color(0xFFE87722), width: 1.5),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       ),
       child: DropdownButton<T>(
         value: safeValue,
@@ -1168,6 +1183,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     required String hint,
     required List<DropdownMenuItem<T>> items,
     required ValueChanged<T?> onChanged,
+    String? errorText,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dedupedItems = <DropdownMenuItem<T>>[];
@@ -1185,6 +1201,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
+          errorText: errorText,
           floatingLabelStyle: GoogleFonts.montserrat(
             color: const Color(0xFFE87722),
             fontWeight: FontWeight.w600,
@@ -1368,6 +1385,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     required String hint,
     int maxLines = 1,
     TextInputType? keyboardType,
+    String? errorText,
   }) {
     return TextField(
       controller: controller,
@@ -1377,6 +1395,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
+        errorText: errorText,
         floatingLabelStyle: GoogleFonts.montserrat(
           color: const Color(0xFFE87722),
           fontWeight: FontWeight.w600,

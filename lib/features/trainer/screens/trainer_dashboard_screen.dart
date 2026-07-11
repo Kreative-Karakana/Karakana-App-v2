@@ -13,6 +13,8 @@ import '../../../core/network/api_client.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notifications/providers/notification_provider.dart';
+import '../utils/course_contract.dart';
+import '../utils/trainer_course_filters.dart';
 import 'trainer_account_screen.dart';
 
 class TrainerDashboardScreen extends StatefulWidget {
@@ -67,15 +69,17 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     setState(() => _isLoading = true);
     try {
       final results = await Future.wait([
-        ApiClient().dio.get('/api/v1/courses/?enrolled=true&page_size=50'),
+        ApiClient().dio.get(
+              '/api/v1/courses/',
+              queryParameters: TrainerCourseFilters.ownedCoursesQueryParameters,
+            ),
         ApiClient().dio.get('/api/v1/wallet/me/'),
         ApiClient().dio.get('/api/v1/certificates/?trainer=true'),
         ApiClient().dio.get('/api/v1/ebooks/my/'),
       ]);
       final coursesData = results[0].data;
-      final courses = coursesData is Map
-          ? (coursesData['results'] as List? ?? [])
-          : (coursesData as List? ?? []);
+      final courses =
+          TrainerCourseFilters.ownedCoursesFromResponse(coursesData);
       final wallet = results[1].data as Map? ?? {};
       final certsData = results[2].data;
       final certs = certsData is Map
@@ -1580,11 +1584,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final courseId = course['id'] as int? ?? 0;
     final statusStr = course['status'] as String? ?? 'draft';
     final isPublished = statusStr == 'published';
-    final statusColor = isPublished
-        ? const Color(0xFF2E7D32)
-        : statusStr == 'pending_review'
-            ? const Color(0xFFE87722)
-            : const Color(0xFF6B7280);
+    final isPendingReview = statusStr == 'pending_review';
+    final isRejected = statusStr == 'rejected';
+    final statusColor =
+        Color(CourseContract.statusPresentation(statusStr).colorValue);
 
     return GestureDetector(
       onTap: () => context
@@ -1654,9 +1657,11 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   child: Text(
                     isPublished
                         ? '✓'
-                        : statusStr == 'pending_review'
+                        : isPendingReview
                             ? '⏳'
-                            : '✎',
+                            : isRejected
+                                ? '!'
+                                : '✎',
                     style: const TextStyle(fontSize: 9, color: Colors.white),
                   ),
                 ),
@@ -1848,21 +1853,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final courseStatus = (course['status'] as String? ?? 'draft');
     final isPublished = courseStatus == 'published';
     final isPendingReview = courseStatus == 'pending_review';
-    final statusLabel = isPublished
-        ? 'Imechapishwa'
-        : isPendingReview
-            ? 'Inasubiri Ukaguzi'
-            : 'Rasimu';
-    final statusBgColor = isPublished
-        ? const Color(0xFF2E7D32)
-        : isPendingReview
-            ? const Color(0xFFE87722)
-            : const Color(0xFF6B7280);
-    final statusTextColor = isPublished
-        ? const Color(0xFF2E7D32)
-        : isPendingReview
-            ? const Color(0xFFE87722)
-            : const Color(0xFF6B7280);
+    final statusPresentation = CourseContract.statusPresentation(courseStatus);
+    final statusLabel = statusPresentation.label;
+    final statusBgColor = Color(statusPresentation.colorValue);
+    final statusTextColor = Color(statusPresentation.colorValue);
     final publishButtonText = isPublished
         ? 'Imechapishwa'
         : isPendingReview
@@ -2305,18 +2299,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                           (course['average_rating'] as num? ?? 0).toDouble();
                       final courseStatus =
                           (course['status'] as String? ?? 'draft');
-                      final isPublished = courseStatus == 'published';
-                      final isPendingReview = courseStatus == 'pending_review';
-                      final statusLabel = isPublished
-                          ? 'Imechapishwa'
-                          : isPendingReview
-                              ? 'Inasubiri Ukaguzi'
-                              : 'Rasimu';
-                      final statusColor = isPublished
-                          ? const Color(0xFF2E7D32)
-                          : isPendingReview
-                              ? const Color(0xFFE87722)
-                              : const Color(0xFF6B7280);
+                      final statusPresentation =
+                          CourseContract.statusPresentation(courseStatus);
+                      final statusLabel = statusPresentation.label;
+                      final statusColor = Color(statusPresentation.colorValue);
                       final courseId = course['id'] as int? ?? 0;
                       return Container(
                           margin: const EdgeInsets.only(bottom: 14),

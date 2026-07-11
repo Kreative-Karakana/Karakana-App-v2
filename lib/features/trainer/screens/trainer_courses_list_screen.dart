@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import '../../../core/network/api_client.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../utils/course_contract.dart';
+import '../utils/trainer_course_filters.dart';
 
 class TrainerCoursesListScreen extends StatefulWidget {
   const TrainerCoursesListScreen({super.key});
@@ -34,25 +36,11 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
   }
 
   String _statusLabel(String s) {
-    switch (s) {
-      case 'published':
-        return 'Imechapishwa';
-      case 'pending_review':
-        return 'Inasubiri Ukaguzi';
-      default:
-        return 'Rasimu';
-    }
+    return CourseContract.statusPresentation(s).label;
   }
 
   Color _statusColor(String s) {
-    switch (s) {
-      case 'published':
-        return const Color(0xFF2E7D32);
-      case 'pending_review':
-        return const Color(0xFFE87722);
-      default:
-        return const Color(0xFF6B7280);
-    }
+    return Color(CourseContract.statusPresentation(s).colorValue);
   }
 
   String _computeRevenue(Map c) {
@@ -82,13 +70,11 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
       _error = null;
     });
     try {
-      final res = await ApiClient()
-          .dio
-          .get('/api/v1/courses/?enrolled=true&page_size=100');
-      final data = res.data;
-      final courses = data is Map
-          ? (data['results'] as List? ?? [])
-          : (data as List? ?? []);
+      final res = await ApiClient().dio.get(
+            '/api/v1/courses/',
+            queryParameters: TrainerCourseFilters.ownedCoursesQueryParameters,
+          );
+      final courses = TrainerCourseFilters.ownedCoursesFromResponse(res.data);
       if (mounted) {
         setState(() {
           _courses = courses;
