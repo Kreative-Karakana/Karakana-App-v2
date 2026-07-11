@@ -1164,8 +1164,8 @@ class _MetricCard extends StatelessWidget {
                 color: isNegative
                     ? AppColors.error
                     : isPositive
-                    ? AppColors.profit
-                    : AppColors.primaryDark,
+                        ? AppColors.profit
+                        : AppColors.primaryDark,
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
               ),
