@@ -88,11 +88,12 @@ void main() {
   });
 
   group('BusinessManagementProvider transaction pagination', () {
-    test('loads the initial page and preserves pagination metadata',
-        () async {
+    test('loads the initial page and preserves pagination metadata', () async {
       final service = _FakeBusinessManagementService({
-        const _PageRequest(page: 1):
-            _page([_transaction(1), _transaction(2)], hasNext: true),
+        const _PageRequest(page: 1): _page([
+          _transaction(1),
+          _transaction(2),
+        ], hasNext: true),
       });
       final provider = BusinessManagementProvider(service: service);
 
@@ -104,11 +105,12 @@ void main() {
       expect(provider.isLoadingTransactions, isFalse);
     });
 
-    test('loads the next page and prevents duplicate transactions',
-        () async {
+    test('loads the next page and prevents duplicate transactions', () async {
       final service = _FakeBusinessManagementService({
-        const _PageRequest(page: 1):
-            _page([_transaction(1), _transaction(2)], hasNext: true),
+        const _PageRequest(page: 1): _page([
+          _transaction(1),
+          _transaction(2),
+        ], hasNext: true),
         const _PageRequest(page: 2): _page([_transaction(2), _transaction(3)]),
       });
       final provider = BusinessManagementProvider(service: service);
@@ -132,38 +134,38 @@ void main() {
       await provider.loadTransactions();
 
       expect(provider.transactions.map((t) => t.id), [1]);
-      expect(
-        service.requests.map((r) => r.page),
-        [1, 2, 1],
-      );
+      expect(service.requests.map((r) => r.page), [1, 2, 1]);
     });
 
-    test('filter change resets pagination and uses the backend filter',
-        () async {
-      final service = _FakeBusinessManagementService({
-        const _PageRequest(page: 1): _page([_transaction(1)], hasNext: true),
-        const _PageRequest(page: 1, transactionType: 'sale'):
-            _page([_transaction(10)], hasNext: true),
-        const _PageRequest(page: 2, transactionType: 'sale'):
-            _page([_transaction(11)]),
-      });
-      final provider = BusinessManagementProvider(service: service);
+    test(
+      'filter change resets pagination and uses the backend filter',
+      () async {
+        final service = _FakeBusinessManagementService({
+          const _PageRequest(page: 1): _page([_transaction(1)], hasNext: true),
+          const _PageRequest(page: 1, transactionType: 'sale'): _page([
+            _transaction(10),
+          ], hasNext: true),
+          const _PageRequest(page: 2, transactionType: 'sale'): _page([
+            _transaction(11),
+          ]),
+        });
+        final provider = BusinessManagementProvider(service: service);
 
-      await provider.loadTransactions();
-      await provider.loadTransactions(transactionType: 'sale');
-      await provider.loadMoreTransactions();
+        await provider.loadTransactions();
+        await provider.loadTransactions(transactionType: 'sale');
+        await provider.loadMoreTransactions();
 
-      expect(provider.transactions.map((t) => t.id), [10, 11]);
-      expect(service.requests.last.transactionType, 'sale');
-      expect(service.requests.last.page, 2);
-    });
+        expect(provider.transactions.map((t) => t.id), [10, 11]);
+        expect(service.requests.last.transactionType, 'sale');
+        expect(service.requests.last.page, 2);
+      },
+    );
 
     test('load-more failure preserves loaded items and can retry', () async {
       final service = _FakeBusinessManagementService({
         const _PageRequest(page: 1): _page([_transaction(1)], hasNext: true),
         const _PageRequest(page: 2): _page([_transaction(2)]),
-      })
-        ..failOnceFor(const _PageRequest(page: 2));
+      })..failOnceFor(const _PageRequest(page: 2));
       final provider = BusinessManagementProvider(service: service);
 
       await provider.loadTransactions();
@@ -179,24 +181,28 @@ void main() {
       expect(provider.loadMoreTransactionsError, isNull);
     });
 
-    test('loadMoreTransactions is a no-op once there is no next page',
-        () async {
-      final service = _FakeBusinessManagementService({
-        const _PageRequest(page: 1): _page([_transaction(1)]),
-      });
-      final provider = BusinessManagementProvider(service: service);
+    test(
+      'loadMoreTransactions is a no-op once there is no next page',
+      () async {
+        final service = _FakeBusinessManagementService({
+          const _PageRequest(page: 1): _page([_transaction(1)]),
+        });
+        final provider = BusinessManagementProvider(service: service);
 
-      await provider.loadTransactions();
-      await provider.loadMoreTransactions();
+        await provider.loadTransactions();
+        await provider.loadMoreTransactions();
 
-      expect(service.requests.length, 1);
-      expect(provider.transactions.map((t) => t.id), [1]);
-    });
+        expect(service.requests.length, 1);
+        expect(provider.transactions.map((t) => t.id), [1]);
+      },
+    );
   });
 }
 
-PaginatedTransactions _page(List<BusinessTransaction> items,
-    {bool hasNext = false}) {
+PaginatedTransactions _page(
+  List<BusinessTransaction> items, {
+  bool hasNext = false,
+}) {
   return PaginatedTransactions(
     items: items,
     count: hasNext ? items.length + 1 : items.length,
@@ -211,25 +217,25 @@ BusinessTransaction _transaction(int id) =>
     BusinessTransaction.fromJson(_transactionJson(id));
 
 Map<String, dynamic> _transactionJson(int id) => {
-      'id': id,
-      'transaction_type': 'sale',
-      'amount': '1000.00',
-      'category': 'huduma',
-      'description': '',
-      'transaction_date': '2026-07-01',
-      'created_at': '2026-07-01T08:00:00Z',
-      'updated_at': '2026-07-01T08:00:00Z',
-    };
+  'id': id,
+  'transaction_type': 'sale',
+  'amount': '1000.00',
+  'category': 'huduma',
+  'description': '',
+  'transaction_date': '2026-07-01',
+  'created_at': '2026-07-01T08:00:00Z',
+  'updated_at': '2026-07-01T08:00:00Z',
+};
 
 Map<String, dynamic> _businessJson() => {
-      'id': 1,
-      'name': 'Duka la Jaribio',
-      'business_type': 'duka',
-      'currency': 'TZS',
-      'is_active': true,
-      'created_at': '2026-01-01T08:00:00Z',
-      'updated_at': '2026-01-01T08:00:00Z',
-    };
+  'id': 1,
+  'name': 'Duka la Jaribio',
+  'business_type': 'duka',
+  'currency': 'TZS',
+  'is_active': true,
+  'created_at': '2026-01-01T08:00:00Z',
+  'updated_at': '2026-01-01T08:00:00Z',
+};
 
 class _FakeBusinessManagementService implements BusinessManagementApi {
   _FakeBusinessManagementService(this.pages);
@@ -251,10 +257,9 @@ class _FakeBusinessManagementService implements BusinessManagementApi {
   }) async {
     final request = _PageRequest(
       page: page,
-      transactionType:
-          transactionType == null || transactionType.isEmpty
-              ? null
-              : transactionType,
+      transactionType: transactionType == null || transactionType.isEmpty
+          ? null
+          : transactionType,
     );
     requests.add(request);
     if (_failOnce.remove(request)) {
@@ -268,26 +273,22 @@ class _FakeBusinessManagementService implements BusinessManagementApi {
   }
 
   @override
-  Future<Business?> getMyBusiness() async =>
-      Business.fromJson(_businessJson());
+  Future<Business?> getMyBusiness() async => Business.fromJson(_businessJson());
 
   @override
-  Future<BusinessDashboardSummary> getDashboard() =>
-      throw UnimplementedError();
+  Future<BusinessDashboardSummary> getDashboard() => throw UnimplementedError();
 
   @override
   Future<Business> createBusiness({
     required String name,
     required String businessType,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<Business> updateBusiness({
     required String name,
     required String businessType,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<BusinessTransaction> createTransaction({
@@ -296,8 +297,7 @@ class _FakeBusinessManagementService implements BusinessManagementApi {
     required String category,
     required DateTime transactionDate,
     String description = '',
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<BusinessTransaction> updateTransaction({
@@ -307,8 +307,7 @@ class _FakeBusinessManagementService implements BusinessManagementApi {
     String? category,
     DateTime? transactionDate,
     String? description,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<void> deleteTransaction(int id) => throw UnimplementedError();

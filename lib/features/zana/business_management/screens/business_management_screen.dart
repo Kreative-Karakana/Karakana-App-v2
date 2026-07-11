@@ -121,7 +121,11 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                       _openTransactionSheet(context, isSale: false),
                 ),
                 const SizedBox(height: 18),
-                _RecentTransactions(provider: provider),
+                _RecentTransactions(
+                  provider: provider,
+                  onEdit: (transaction) =>
+                      _openTransactionSheet(context, transaction: transaction),
+                ),
                 const SizedBox(height: 18),
                 _HistorySection(
                   provider: provider,
@@ -131,6 +135,8 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                     provider.clearFilters();
                     await provider.loadTransactions(transactionType: value);
                   },
+                  onEdit: (transaction) =>
+                      _openTransactionSheet(context, transaction: transaction),
                 ),
               ],
             ),
@@ -142,7 +148,8 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
 
   Future<void> _openTransactionSheet(
     BuildContext context, {
-    required bool isSale,
+    bool isSale = true,
+    BusinessTransaction? transaction,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -150,7 +157,10 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
       backgroundColor: Colors.transparent,
       builder: (_) => ChangeNotifierProvider.value(
         value: context.read<BusinessManagementProvider>(),
-        child: _TransactionFormSheet(isSale: isSale),
+        child: _TransactionFormSheet(
+          isSale: transaction?.isSale ?? isSale,
+          transaction: transaction,
+        ),
       ),
     );
   }
@@ -256,11 +266,12 @@ class _DashboardSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final todayTotals = provider.dashboardSummary?.today ??
-        BusinessPeriodSummary.zero;
-    final monthTotals = provider.dashboardSummary?.month ??
-        BusinessPeriodSummary.zero;
-    final currency = provider.business?.currency ??
+    final todayTotals =
+        provider.dashboardSummary?.today ?? BusinessPeriodSummary.zero;
+    final monthTotals =
+        provider.dashboardSummary?.month ?? BusinessPeriodSummary.zero;
+    final currency =
+        provider.business?.currency ??
         provider.dashboardSummary?.currency ??
         'TZS';
 
@@ -350,15 +361,16 @@ class _ActionRow extends StatelessWidget {
 
 class _RecentTransactions extends StatelessWidget {
   final BusinessManagementProvider provider;
+  final ValueChanged<BusinessTransaction> onEdit;
 
-  const _RecentTransactions({required this.provider});
+  const _RecentTransactions({required this.provider, required this.onEdit});
 
   @override
   Widget build(BuildContext context) {
     final recent =
         provider.dashboardSummary?.recentTransactions.isNotEmpty == true
-            ? provider.dashboardSummary!.recentTransactions
-            : provider.transactions.take(5).toList();
+        ? provider.dashboardSummary!.recentTransactions
+        : provider.transactions.take(5).toList();
 
     return _SurfaceCard(
       child: Column(
@@ -375,7 +387,12 @@ class _RecentTransactions extends StatelessWidget {
               message: 'Rekodi Mauzo au Matumizi ili yaonekane hapa.',
             )
           else
-            ...recent.map((item) => _TransactionTile(transaction: item)),
+            ...recent.map(
+              (item) => _TransactionTile(
+                transaction: item,
+                onTap: () => onEdit(item),
+              ),
+            ),
         ],
       ),
     );
@@ -386,11 +403,13 @@ class _HistorySection extends StatelessWidget {
   final BusinessManagementProvider provider;
   final String? filter;
   final ValueChanged<String?> onFilterChanged;
+  final ValueChanged<BusinessTransaction> onEdit;
 
   const _HistorySection({
     required this.provider,
     required this.filter,
     required this.onFilterChanged,
+    required this.onEdit,
   });
 
   @override
@@ -437,8 +456,12 @@ class _HistorySection extends StatelessWidget {
               message: 'Miamala utakayorekodi itaonekana hapa.',
             )
           else ...[
-            ...provider.transactions
-                .map((item) => _TransactionTile(transaction: item)),
+            ...provider.transactions.map(
+              (item) => _TransactionTile(
+                transaction: item,
+                onTap: () => onEdit(item),
+              ),
+            ),
             _HistoryPaginationFooter(provider: provider),
           ],
         ],
@@ -499,8 +522,11 @@ class _HistoryPaginationFooter extends StatelessWidget {
 
 class _TransactionFormSheet extends StatefulWidget {
   final bool isSale;
+  final BusinessTransaction? transaction;
 
-  const _TransactionFormSheet({required this.isSale});
+  const _TransactionFormSheet({required this.isSale, this.transaction});
+
+  bool get isEditing => transaction != null;
 
   @override
   State<_TransactionFormSheet> createState() => _TransactionFormSheetState();
@@ -511,12 +537,20 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
   late String _category;
-  DateTime _date = DateTime.now();
+  late DateTime _date;
 
   @override
   void initState() {
     super.initState();
-    _category = widget.isSale ? 'huduma' : 'kodi';
+    final existing = widget.transaction;
+    _category = existing?.category ?? (widget.isSale ? 'huduma' : 'kodi');
+    _date = existing?.transactionDate ?? DateTime.now();
+    _descriptionController.text = existing?.description ?? '';
+    if (existing != null) {
+      _amountController.text = _formatThousandsNumber(
+        existing.amountValue.round().toString(),
+      );
+    }
   }
 
   @override
@@ -529,7 +563,10 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<BusinessManagementProvider>();
-    final title = widget.isSale ? 'Rekodi Mauzo' : 'Rekodi Matumizi';
+    final isEditing = widget.isEditing;
+    final recordLabel = widget.isSale ? 'Mauzo' : 'Matumizi';
+    final title = isEditing ? 'Hariri $recordLabel' : 'Rekodi $recordLabel';
+    final buttonLabel = isEditing ? 'Hifadhi Mabadiliko' : title;
     final categoryLabel = widget.isSale ? 'Aina ya Mauzo' : 'Aina ya Matumizi';
 
     return Padding(
@@ -562,7 +599,15 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
                 ),
                 const SizedBox(height: 16),
                 _SectionTitle(
-                    title: title, subtitle: 'Jaza taarifa za muamala.'),
+                  title: title,
+                  subtitle: isEditing
+                      ? 'Unahariri muamala uliopo. Mabadiliko yatahifadhiwa baada ya kubonyeza Hifadhi Mabadiliko.'
+                      : 'Jaza taarifa za muamala.',
+                ),
+                if (isEditing) ...[
+                  const SizedBox(height: 12),
+                  _EditingBanner(recordLabel: recordLabel),
+                ],
                 const SizedBox(height: 16),
                 _KarakanaTextField(
                   controller: _amountController,
@@ -571,8 +616,9 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
                   keyboardType: TextInputType.number,
                   inputFormatters: const [_ThousandsSeparatorInputFormatter()],
                   validator: (value) {
-                    final amount =
-                        int.tryParse(_cleanAmount((value ?? '').trim()));
+                    final amount = int.tryParse(
+                      _cleanAmount((value ?? '').trim()),
+                    );
                     if (amount == null || amount <= 0) {
                       return 'Weka kiasi sahihi.';
                     }
@@ -604,7 +650,7 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
                 SizedBox(
                   width: double.infinity,
                   child: _PrimaryButton(
-                    label: title,
+                    label: buttonLabel,
                     isLoading: provider.isSubmitting,
                     onPressed: _submit,
                   ),
@@ -623,7 +669,16 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
     final provider = context.read<BusinessManagementProvider>();
     final amount = _cleanAmount(_amountController.text);
     final description = _descriptionController.text.trim();
-    final ok = widget.isSale
+    final existing = widget.transaction;
+    final ok = existing != null
+        ? await provider.updateTransaction(
+            id: existing.id,
+            amount: amount,
+            category: _category,
+            transactionDate: _date,
+            description: description,
+          )
+        : widget.isSale
         ? await provider.createSale(
             amount: amount,
             category: _category,
@@ -641,7 +696,11 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
     if (ok) {
       showTopPopup(
         context,
-        widget.isSale ? 'Mauzo yamerekodiwa.' : 'Matumizi yamerekodiwa.',
+        existing != null
+            ? 'Muamala umesasishwa.'
+            : (widget.isSale
+                  ? 'Mauzo yamerekodiwa.'
+                  : 'Matumizi yamerekodiwa.'),
         type: TopPopupType.success,
       );
       Navigator.of(context).pop();
@@ -652,6 +711,45 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
         type: TopPopupType.error,
       );
     }
+  }
+}
+
+class _EditingBanner extends StatelessWidget {
+  final String recordLabel;
+
+  const _EditingBanner({required this.recordLabel});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.edit_note_rounded,
+            size: 18,
+            color: AppColors.primary,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Unahariri $recordLabel yaliyokwisha rekodiwa.',
+              style: GoogleFonts.montserrat(
+                color: AppColors.primaryDark,
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -881,77 +979,89 @@ class _ActionButton extends StatelessWidget {
 
 class _TransactionTile extends StatelessWidget {
   final BusinessTransaction transaction;
+  final VoidCallback? onTap;
 
-  const _TransactionTile({required this.transaction});
+  const _TransactionTile({required this.transaction, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final isSale = transaction.isSale;
     final color = isSale ? AppColors.primaryDark : AppColors.error;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 11),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.divider)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 11),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: AppColors.divider)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isSale ? Icons.arrow_upward : Icons.arrow_downward,
+                size: 18,
+                color: color,
+              ),
             ),
-            child: Icon(
-              isSale ? Icons.arrow_upward : Icons.arrow_downward,
-              size: 18,
-              color: color,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${transaction.typeLabel} • ${_categoryLabel(transaction.category)}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.montserrat(
-                    color: AppColors.textPrimary,
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w800,
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${transaction.typeLabel} • ${_categoryLabel(transaction.category)}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.montserrat(
+                      color: AppColors.textPrimary,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  [
-                    _formatDate(transaction.transactionDate),
-                    if (transaction.description.trim().isNotEmpty)
-                      transaction.description.trim(),
-                  ].join(' • '),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.montserrat(
-                    color: AppColors.textTertiary,
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w600,
+                  const SizedBox(height: 4),
+                  Text(
+                    [
+                      _formatDate(transaction.transactionDate),
+                      if (transaction.description.trim().isNotEmpty)
+                        transaction.description.trim(),
+                    ].join(' • '),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.montserrat(
+                      color: AppColors.textTertiary,
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            _money(transaction.amountValue, 'TZS'),
-            style: GoogleFonts.montserrat(
-              color: color,
-              fontSize: 12.5,
-              fontWeight: FontWeight.w800,
+            const SizedBox(width: 10),
+            Text(
+              _money(transaction.amountValue, 'TZS'),
+              style: GoogleFonts.montserrat(
+                color: color,
+                fontSize: 12.5,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-          ),
-        ],
+            if (onTap != null) ...[
+              const SizedBox(width: 8),
+              const Icon(
+                Icons.edit_outlined,
+                size: 16,
+                color: AppColors.textTertiary,
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -1013,10 +1123,8 @@ class _KarakanaDropdown extends StatelessWidget {
       initialValue: value,
       items: items.entries
           .map(
-            (entry) => DropdownMenuItem(
-              value: entry.key,
-              child: Text(entry.value),
-            ),
+            (entry) =>
+                DropdownMenuItem(value: entry.key, child: Text(entry.value)),
           )
           .toList(),
       onChanged: onChanged,
@@ -1066,8 +1174,11 @@ class _DatePickerField extends StatelessWidget {
         decoration: _inputDecoration('Tarehe ya muamala', ''),
         child: Row(
           children: [
-            const Icon(Icons.calendar_today_outlined,
-                size: 18, color: AppColors.primary),
+            const Icon(
+              Icons.calendar_today_outlined,
+              size: 18,
+              color: AppColors.primary,
+            ),
             const SizedBox(width: 10),
             Text(
               _formatDate(date),
@@ -1345,8 +1456,9 @@ class _ThousandsSeparatorInputFormatter extends TextInputFormatter {
       0,
       newValue.text.length,
     );
-    final digitsBeforeCursor =
-        _cleanAmount(newValue.text.substring(0, safeCursor)).length;
+    final digitsBeforeCursor = _cleanAmount(
+      newValue.text.substring(0, safeCursor),
+    ).length;
     final formatted = _formatThousands(digits);
     final cursorOffset = _offsetForDigitCount(formatted, digitsBeforeCursor);
 
