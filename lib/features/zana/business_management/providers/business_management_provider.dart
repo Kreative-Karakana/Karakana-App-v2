@@ -8,7 +8,12 @@ import '../models/business_transaction.dart';
 import '../services/business_management_service.dart';
 
 class BusinessManagementProvider extends ChangeNotifier {
-  final BusinessManagementService _service = BusinessManagementService();
+  final BusinessManagementApi _service;
+
+  BusinessManagementProvider({BusinessManagementApi? service})
+      : _service = service ?? BusinessManagementService();
+
+  static const int _transactionPageSize = 20;
 
   Business? _business;
   BusinessDashboardSummary? _dashboardSummary;
@@ -16,13 +21,18 @@ class BusinessManagementProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _isLoadingDashboard = false;
   bool _isLoadingTransactions = false;
+  bool _isLoadingMoreTransactions = false;
   bool _isSubmitting = false;
   bool _hasNoBusiness = false;
   String? _errorMessage;
+  String? _loadMoreTransactionsError;
   String? _selectedTransactionType;
   String? _selectedCategory;
   DateTime? _dateFrom;
   DateTime? _dateTo;
+  int _currentTransactionPage = 0;
+  int _transactionCount = 0;
+  bool _hasMoreTransactions = false;
 
   Business? get business => _business;
   BusinessDashboardSummary? get dashboardSummary => _dashboardSummary;
@@ -31,13 +41,17 @@ class BusinessManagementProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isLoadingDashboard => _isLoadingDashboard;
   bool get isLoadingTransactions => _isLoadingTransactions;
+  bool get isLoadingMoreTransactions => _isLoadingMoreTransactions;
   bool get isSubmitting => _isSubmitting;
   bool get hasNoBusiness => _hasNoBusiness;
   String? get errorMessage => _errorMessage;
+  String? get loadMoreTransactionsError => _loadMoreTransactionsError;
   String? get selectedTransactionType => _selectedTransactionType;
   String? get selectedCategory => _selectedCategory;
   DateTime? get dateFrom => _dateFrom;
   DateTime? get dateTo => _dateTo;
+  int get transactionCount => _transactionCount;
+  bool get hasMoreTransactions => _hasMoreTransactions;
 
   Future<void> loadInitial() async {
     _isLoading = true;
@@ -57,7 +71,7 @@ class BusinessManagementProvider extends ChangeNotifier {
       if (_isNotFound(e)) {
         _business = null;
         _dashboardSummary = null;
-        _transactions = [];
+        _resetTransactions();
         _hasNoBusiness = true;
       } else {
         _errorMessage = ApiClient().parseError(e);
@@ -145,6 +159,8 @@ class BusinessManagementProvider extends ChangeNotifier {
     }
   }
 
+  /// Loads the first page of transactions for the given filters, replacing
+  /// whatever is currently loaded and resetting pagination state.
   Future<void> loadTransactions({
     String? transactionType,
     String? category,
@@ -157,27 +173,72 @@ class BusinessManagementProvider extends ChangeNotifier {
     _dateFrom = dateFrom ?? _dateFrom;
     _dateTo = dateTo ?? _dateTo;
     _isLoadingTransactions = true;
+    _isLoadingMoreTransactions = false;
     _errorMessage = null;
+    _loadMoreTransactionsError = null;
+    _currentTransactionPage = 0;
+    _transactionCount = 0;
+    _hasMoreTransactions = false;
     if (notify) notifyListeners();
 
     try {
-      _transactions = await _service.getTransactions(
+      final page = await _service.getTransactionsPage(
         transactionType: _selectedTransactionType,
         category: _selectedCategory,
         dateFrom: _dateFrom,
         dateTo: _dateTo,
+        page: 1,
+        pageSize: _transactionPageSize,
       );
+      _currentTransactionPage = 1;
+      _transactionCount = page.count;
+      _hasMoreTransactions = page.hasNext;
+      _transactions = _dedupeTransactions(page.items);
       _hasNoBusiness = false;
     } catch (e) {
       if (_isNotFound(e)) {
         _hasNoBusiness = true;
-        _transactions = [];
+        _resetTransactions();
       } else {
         _errorMessage = ApiClient().parseError(e);
       }
     } finally {
       _isLoadingTransactions = false;
       if (notify) notifyListeners();
+    }
+  }
+
+  /// Fetches the next page of transactions for the current filters and
+  /// appends it to the already-loaded list, deduplicating by id.
+  Future<void> loadMoreTransactions() async {
+    if (_isLoadingTransactions ||
+        _isLoadingMoreTransactions ||
+        !_hasMoreTransactions) {
+      return;
+    }
+
+    _isLoadingMoreTransactions = true;
+    _loadMoreTransactionsError = null;
+    notifyListeners();
+
+    try {
+      final page = await _service.getTransactionsPage(
+        transactionType: _selectedTransactionType,
+        category: _selectedCategory,
+        dateFrom: _dateFrom,
+        dateTo: _dateTo,
+        page: _currentTransactionPage + 1,
+        pageSize: _transactionPageSize,
+      );
+      _currentTransactionPage += 1;
+      _transactionCount = page.count;
+      _hasMoreTransactions = page.hasNext;
+      _transactions = _dedupeTransactions([..._transactions, ...page.items]);
+    } catch (e) {
+      _loadMoreTransactionsError = ApiClient().parseError(e);
+    } finally {
+      _isLoadingMoreTransactions = false;
+      notifyListeners();
     }
   }
 
@@ -315,6 +376,23 @@ class BusinessManagementProvider extends ChangeNotifier {
       _isSubmitting = false;
       notifyListeners();
     }
+  }
+
+  void _resetTransactions() {
+    _transactions = [];
+    _currentTransactionPage = 0;
+    _transactionCount = 0;
+    _hasMoreTransactions = false;
+  }
+
+  List<BusinessTransaction> _dedupeTransactions(
+    List<BusinessTransaction> items,
+  ) {
+    final seen = <int>{};
+    return [
+      for (final item in items)
+        if (seen.add(item.id)) item,
+    ];
   }
 
   bool _isNotFound(Object error) {

@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../widgets/common/karakana_wave_loader.dart';
 import '../../../../widgets/common/top_popup.dart';
 import '../models/business.dart';
+import '../models/business_dashboard_summary.dart';
 import '../models/business_transaction.dart';
 import '../providers/business_management_provider.dart';
 
@@ -32,6 +33,26 @@ class _BusinessManagementView extends StatefulWidget {
 
 class _BusinessManagementViewState extends State<_BusinessManagementView> {
   String? _historyFilter;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_maybeLoadMoreTransactions);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _maybeLoadMoreTransactions() {
+    if (!_scrollController.hasClients) return;
+    final position = _scrollController.position;
+    if (position.extentAfter > 480) return;
+    context.read<BusinessManagementProvider>().loadMoreTransactions();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +108,7 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
             color: AppColors.primary,
             onRefresh: provider.loadInitial,
             child: ListView(
+              controller: _scrollController,
               padding: const EdgeInsets.fromLTRB(18, 18, 18, 28),
               children: [
                 _BusinessHeader(business: provider.business!),
@@ -234,18 +256,10 @@ class _DashboardSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final today = DateTime.now();
-    final todayTotals = _totalsFor(provider.transactions, (date) {
-      return date != null &&
-          date.year == today.year &&
-          date.month == today.month &&
-          date.day == today.day;
-    });
-    final monthTotals = _totalsFor(provider.transactions, (date) {
-      return date != null &&
-          date.year == today.year &&
-          date.month == today.month;
-    });
+    final todayTotals = provider.dashboardSummary?.today ??
+        BusinessPeriodSummary.zero;
+    final monthTotals = provider.dashboardSummary?.month ??
+        BusinessPeriodSummary.zero;
     final currency = provider.business?.currency ??
         provider.dashboardSummary?.currency ??
         'TZS';
@@ -271,29 +285,29 @@ class _DashboardSummary extends StatelessWidget {
               children: [
                 _MetricCard(
                   label: 'Mauzo ya Leo',
-                  value: _money(todayTotals.sales, currency),
+                  value: _money(todayTotals.mauzoValue, currency),
                 ),
                 _MetricCard(
                   label: 'Matumizi ya Leo',
-                  value: _money(todayTotals.expenses, currency),
+                  value: _money(todayTotals.matumiziValue, currency),
                 ),
                 _MetricCard(
                   label: 'Faida / Hasara ya Leo',
-                  value: _money(todayTotals.profitLoss, currency),
-                  isNegative: todayTotals.profitLoss < 0,
+                  value: _money(todayTotals.faidaHasaraValue, currency),
+                  isNegative: todayTotals.hasLoss,
                 ),
                 _MetricCard(
                   label: 'Mauzo ya Mwezi',
-                  value: _money(monthTotals.sales, currency),
+                  value: _money(monthTotals.mauzoValue, currency),
                 ),
                 _MetricCard(
                   label: 'Matumizi ya Mwezi',
-                  value: _money(monthTotals.expenses, currency),
+                  value: _money(monthTotals.matumiziValue, currency),
                 ),
                 _MetricCard(
                   label: 'Faida / Hasara ya Mwezi',
-                  value: _money(monthTotals.profitLoss, currency),
-                  isNegative: monthTotals.profitLoss < 0,
+                  value: _money(monthTotals.faidaHasaraValue, currency),
+                  isNegative: monthTotals.hasLoss,
                 ),
               ],
             );
@@ -422,12 +436,64 @@ class _HistorySection extends StatelessWidget {
               title: 'Hakuna historia bado',
               message: 'Miamala utakayorekodi itaonekana hapa.',
             )
-          else
+          else ...[
             ...provider.transactions
                 .map((item) => _TransactionTile(transaction: item)),
+            _HistoryPaginationFooter(provider: provider),
+          ],
         ],
       ),
     );
+  }
+}
+
+class _HistoryPaginationFooter extends StatelessWidget {
+  final BusinessManagementProvider provider;
+
+  const _HistoryPaginationFooter({required this.provider});
+
+  @override
+  Widget build(BuildContext context) {
+    if (provider.isLoadingMoreTransactions) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Center(child: KarakanaWaveLoader(size: 24)),
+      );
+    }
+
+    if (provider.loadMoreTransactionsError != null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Center(
+          child: TextButton.icon(
+            onPressed: provider.loadMoreTransactions,
+            icon: const Icon(Icons.refresh_rounded, size: 18),
+            label: Text(
+              'Jaribu tena',
+              style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (!provider.hasMoreTransactions) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        child: Center(
+          child: Text(
+            'Umefika mwisho wa historia',
+            style: GoogleFonts.montserrat(
+              color: AppColors.textTertiary,
+              fontSize: 11.5,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
   }
 }
 
@@ -1234,25 +1300,6 @@ InputDecoration _inputDecoration(String label, String hint) {
   );
 }
 
-_SummaryTotals _totalsFor(
-  List<BusinessTransaction> transactions,
-  bool Function(DateTime?) include,
-) {
-  double sales = 0;
-  double expenses = 0;
-
-  for (final transaction in transactions) {
-    if (!include(transaction.transactionDate)) continue;
-    if (transaction.isSale) {
-      sales += transaction.amountValue;
-    } else if (transaction.isExpense) {
-      expenses += transaction.amountValue;
-    }
-  }
-
-  return _SummaryTotals(sales: sales, expenses: expenses);
-}
-
 String _money(double value, String currency) {
   final normalized = value.abs() < 0.005 ? 0.0 : value;
   return '$currency ${_formatThousandsNumber(normalized.toStringAsFixed(0))}';
@@ -1346,15 +1393,6 @@ String _labelFor(Map<String, String> items, String value) {
 
 String _categoryLabel(String value) {
   return _saleCategories[value] ?? _expenseCategories[value] ?? value;
-}
-
-class _SummaryTotals {
-  final double sales;
-  final double expenses;
-
-  const _SummaryTotals({required this.sales, required this.expenses});
-
-  double get profitLoss => sales - expenses;
 }
 
 const Map<String, String> _businessTypes = {
