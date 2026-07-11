@@ -33,6 +33,7 @@ class _BusinessManagementView extends StatefulWidget {
 
 class _BusinessManagementViewState extends State<_BusinessManagementView> {
   String? _historyFilter;
+  int? _deletingTransactionId;
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -125,6 +126,8 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                   provider: provider,
                   onEdit: (transaction) =>
                       _openTransactionSheet(context, transaction: transaction),
+                  onDelete: _confirmAndDelete,
+                  deletingTransactionId: _deletingTransactionId,
                 ),
                 const SizedBox(height: 18),
                 _HistorySection(
@@ -137,6 +140,8 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                   },
                   onEdit: (transaction) =>
                       _openTransactionSheet(context, transaction: transaction),
+                  onDelete: _confirmAndDelete,
+                  deletingTransactionId: _deletingTransactionId,
                 ),
               ],
             ),
@@ -163,6 +168,62 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
         ),
       ),
     );
+  }
+
+  Future<void> _confirmAndDelete(BusinessTransaction transaction) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Futa Muamala?',
+          style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
+        ),
+        content: Text(
+          'Una uhakika unataka kufuta muamala huu wa ${transaction.typeLabel}? '
+          'Hatua hii haiwezi kutenduliwa.',
+          style: GoogleFonts.montserrat(fontSize: 13, height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(
+              'Ghairi',
+              style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
+            ),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFFB71C1C),
+            ),
+            child: Text(
+              'Futa',
+              style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _deletingTransactionId = transaction.id);
+    final provider = context.read<BusinessManagementProvider>();
+    final ok = await provider.deleteTransaction(transaction.id);
+
+    if (!mounted) return;
+    setState(() => _deletingTransactionId = null);
+
+    if (ok) {
+      showTopPopup(context, 'Muamala umefutwa.', type: TopPopupType.success);
+    } else {
+      showTopPopup(
+        context,
+        provider.errorMessage ?? 'Imeshindikana kufuta muamala.',
+        type: TopPopupType.error,
+      );
+    }
   }
 }
 
@@ -362,8 +423,15 @@ class _ActionRow extends StatelessWidget {
 class _RecentTransactions extends StatelessWidget {
   final BusinessManagementProvider provider;
   final ValueChanged<BusinessTransaction> onEdit;
+  final ValueChanged<BusinessTransaction> onDelete;
+  final int? deletingTransactionId;
 
-  const _RecentTransactions({required this.provider, required this.onEdit});
+  const _RecentTransactions({
+    required this.provider,
+    required this.onEdit,
+    required this.onDelete,
+    this.deletingTransactionId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -391,6 +459,8 @@ class _RecentTransactions extends StatelessWidget {
               (item) => _TransactionTile(
                 transaction: item,
                 onTap: () => onEdit(item),
+                onDelete: () => onDelete(item),
+                isDeleting: deletingTransactionId == item.id,
               ),
             ),
         ],
@@ -404,12 +474,16 @@ class _HistorySection extends StatelessWidget {
   final String? filter;
   final ValueChanged<String?> onFilterChanged;
   final ValueChanged<BusinessTransaction> onEdit;
+  final ValueChanged<BusinessTransaction> onDelete;
+  final int? deletingTransactionId;
 
   const _HistorySection({
     required this.provider,
     required this.filter,
     required this.onFilterChanged,
     required this.onEdit,
+    required this.onDelete,
+    this.deletingTransactionId,
   });
 
   @override
@@ -460,6 +534,8 @@ class _HistorySection extends StatelessWidget {
               (item) => _TransactionTile(
                 transaction: item,
                 onTap: () => onEdit(item),
+                onDelete: () => onDelete(item),
+                isDeleting: deletingTransactionId == item.id,
               ),
             ),
             _HistoryPaginationFooter(provider: provider),
@@ -980,8 +1056,15 @@ class _ActionButton extends StatelessWidget {
 class _TransactionTile extends StatelessWidget {
   final BusinessTransaction transaction;
   final VoidCallback? onTap;
+  final VoidCallback? onDelete;
+  final bool isDeleting;
 
-  const _TransactionTile({required this.transaction, this.onTap});
+  const _TransactionTile({
+    required this.transaction,
+    this.onTap,
+    this.onDelete,
+    this.isDeleting = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1059,6 +1142,30 @@ class _TransactionTile extends StatelessWidget {
                 size: 16,
                 color: AppColors.textTertiary,
               ),
+            ],
+            if (onDelete != null) ...[
+              const SizedBox(width: 4),
+              isDeleting
+                  ? const Padding(
+                      padding: EdgeInsets.all(8),
+                      child: SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: KarakanaWaveLoader(size: 16),
+                      ),
+                    )
+                  : IconButton(
+                      onPressed: onDelete,
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        size: 18,
+                        color: AppColors.error,
+                      ),
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      tooltip: 'Futa muamala',
+                    ),
             ],
           ],
         ),
