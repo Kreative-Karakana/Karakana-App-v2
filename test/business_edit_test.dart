@@ -8,7 +8,8 @@ import 'package:karakana_app/features/zana/business_management/services/business
 
 void main() {
   group('BusinessManagementProvider.updateBusiness', () {
-    test('successful edit updates local state and refreshes dashboard', () async {
+    test('successful edit updates local state and refreshes dashboard',
+        () async {
       final service = _FakeService(
         business: _business(name: 'Duka la Zamani', businessType: 'duka'),
         dashboard: _dashboard(name: 'Duka la Zamani', businessType: 'duka'),
@@ -33,23 +34,21 @@ void main() {
     test(
       'failed edit surfaces an error without corrupting loaded state',
       () async {
-        final service =
-            _FakeService(
-                business: _business(name: 'Duka la Zamani', businessType: 'duka'),
-                dashboard: _dashboard(name: 'Duka la Zamani', businessType: 'duka'),
-              )
-              ..failNextUpdate = DioException(
-                requestOptions: RequestOptions(
-                  path: '/api/v1/businesses/me/',
-                ),
-                response: Response(
-                  requestOptions: RequestOptions(path: ''),
-                  statusCode: 400,
-                  data: {
-                    'name': ['Weka jina la biashara.'],
-                  },
-                ),
-              );
+        final service = _FakeService(
+          business: _business(name: 'Duka la Zamani', businessType: 'duka'),
+          dashboard: _dashboard(name: 'Duka la Zamani', businessType: 'duka'),
+        )..failNextUpdate = DioException(
+            requestOptions: RequestOptions(
+              path: '/api/v1/businesses/me/',
+            ),
+            response: Response(
+              requestOptions: RequestOptions(path: ''),
+              statusCode: 400,
+              data: {
+                'name': ['Weka jina la biashara.'],
+              },
+            ),
+          );
         final provider = BusinessManagementProvider(service: service);
         await provider.loadInitial();
 
@@ -103,45 +102,46 @@ Business _business({required String name, required String businessType}) =>
 BusinessDashboardSummary _dashboard({
   required String name,
   required String businessType,
-}) => BusinessDashboardSummary.fromJson({
-  'business': {
-    'id': 1,
-    'name': name,
-    'business_type': businessType,
-    'currency': 'TZS',
-    'is_active': true,
-    'created_at': '2026-01-01T08:00:00Z',
-    'updated_at': '2026-01-01T08:00:00Z',
-  },
-  'summary': {
-    'mauzo': '0.00',
-    'matumizi': '0.00',
-    'faida_hasara': '0.00',
-    'status': 'sawa',
-    'status_text': 'Sawa',
-    'miamala': 0,
-    'currency': 'TZS',
-  },
-  'leo': {
-    'mauzo': '0.00',
-    'matumizi': '0.00',
-    'faida_hasara': '0.00',
-    'status': 'sawa',
-    'status_text': 'Sawa',
-    'miamala': 0,
-    'currency': 'TZS',
-  },
-  'mwezi': {
-    'mauzo': '0.00',
-    'matumizi': '0.00',
-    'faida_hasara': '0.00',
-    'status': 'sawa',
-    'status_text': 'Sawa',
-    'miamala': 0,
-    'currency': 'TZS',
-  },
-  'recent_transactions': [],
-});
+}) =>
+    BusinessDashboardSummary.fromJson({
+      'business': {
+        'id': 1,
+        'name': name,
+        'business_type': businessType,
+        'currency': 'TZS',
+        'is_active': true,
+        'created_at': '2026-01-01T08:00:00Z',
+        'updated_at': '2026-01-01T08:00:00Z',
+      },
+      'summary': {
+        'mauzo': '0.00',
+        'matumizi': '0.00',
+        'faida_hasara': '0.00',
+        'status': 'sawa',
+        'status_text': 'Sawa',
+        'miamala': 0,
+        'currency': 'TZS',
+      },
+      'leo': {
+        'mauzo': '0.00',
+        'matumizi': '0.00',
+        'faida_hasara': '0.00',
+        'status': 'sawa',
+        'status_text': 'Sawa',
+        'miamala': 0,
+        'currency': 'TZS',
+      },
+      'mwezi': {
+        'mauzo': '0.00',
+        'matumizi': '0.00',
+        'faida_hasara': '0.00',
+        'status': 'sawa',
+        'status_text': 'Sawa',
+        'miamala': 0,
+        'currency': 'TZS',
+      },
+      'recent_transactions': [],
+    });
 
 class _UpdateCall {
   final String name;
@@ -187,7 +187,8 @@ class _FakeService implements BusinessManagementApi {
   Future<Business> createBusiness({
     required String name,
     required String businessType,
-  }) => throw UnimplementedError();
+  }) =>
+      throw UnimplementedError();
 
   @override
   Future<PaginatedTransactions> getTransactionsPage({
@@ -197,12 +198,13 @@ class _FakeService implements BusinessManagementApi {
     DateTime? dateTo,
     int page = 1,
     int pageSize = 20,
-  }) async => const PaginatedTransactions(
-    items: [],
-    count: 0,
-    next: null,
-    previous: null,
-  );
+  }) async =>
+      const PaginatedTransactions(
+        items: [],
+        count: 0,
+        next: null,
+        previous: null,
+      );
 
   @override
   Future<BusinessTransaction> createTransaction({
@@ -211,7 +213,8 @@ class _FakeService implements BusinessManagementApi {
     required String category,
     required DateTime transactionDate,
     String description = '',
-  }) => throw UnimplementedError();
+  }) =>
+      throw UnimplementedError();
 
   @override
   Future<BusinessTransaction> updateTransaction({
@@ -221,7 +224,8 @@ class _FakeService implements BusinessManagementApi {
     String? category,
     DateTime? transactionDate,
     String? description,
-  }) => throw UnimplementedError();
+  }) =>
+      throw UnimplementedError();
 
   @override
   Future<void> deleteTransaction(int id) => throw UnimplementedError();
