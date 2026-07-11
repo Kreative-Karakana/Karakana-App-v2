@@ -266,11 +266,12 @@ class _DashboardSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final todayTotals = provider.dashboardSummary?.today ??
-        BusinessPeriodSummary.zero;
-    final monthTotals = provider.dashboardSummary?.month ??
-        BusinessPeriodSummary.zero;
-    final currency = provider.business?.currency ??
+    final todayTotals =
+        provider.dashboardSummary?.today ?? BusinessPeriodSummary.zero;
+    final monthTotals =
+        provider.dashboardSummary?.month ?? BusinessPeriodSummary.zero;
+    final currency =
+        provider.business?.currency ??
         provider.dashboardSummary?.currency ??
         'TZS';
 
@@ -368,8 +369,8 @@ class _RecentTransactions extends StatelessWidget {
   Widget build(BuildContext context) {
     final recent =
         provider.dashboardSummary?.recentTransactions.isNotEmpty == true
-            ? provider.dashboardSummary!.recentTransactions
-            : provider.transactions.take(5).toList();
+        ? provider.dashboardSummary!.recentTransactions
+        : provider.transactions.take(5).toList();
 
     return _SurfaceCard(
       child: Column(
@@ -546,8 +547,9 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
     _date = existing?.transactionDate ?? DateTime.now();
     _descriptionController.text = existing?.description ?? '';
     if (existing != null) {
-      _amountController.text =
-          _formatThousandsNumber(existing.amountValue.round().toString());
+      _amountController.text = _formatThousandsNumber(
+        existing.amountValue.round().toString(),
+      );
     }
   }
 
@@ -614,8 +616,9 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
                   keyboardType: TextInputType.number,
                   inputFormatters: const [_ThousandsSeparatorInputFormatter()],
                   validator: (value) {
-                    final amount =
-                        int.tryParse(_cleanAmount((value ?? '').trim()));
+                    final amount = int.tryParse(
+                      _cleanAmount((value ?? '').trim()),
+                    );
                     if (amount == null || amount <= 0) {
                       return 'Weka kiasi sahihi.';
                     }
@@ -676,18 +679,18 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
             description: description,
           )
         : widget.isSale
-            ? await provider.createSale(
-                amount: amount,
-                category: _category,
-                transactionDate: _date,
-                description: description,
-              )
-            : await provider.createExpense(
-                amount: amount,
-                category: _category,
-                transactionDate: _date,
-                description: description,
-              );
+        ? await provider.createSale(
+            amount: amount,
+            category: _category,
+            transactionDate: _date,
+            description: description,
+          )
+        : await provider.createExpense(
+            amount: amount,
+            category: _category,
+            transactionDate: _date,
+            description: description,
+          );
 
     if (!mounted) return;
     if (ok) {
@@ -695,7 +698,9 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
         context,
         existing != null
             ? 'Muamala umesasishwa.'
-            : (widget.isSale ? 'Mauzo yamerekodiwa.' : 'Matumizi yamerekodiwa.'),
+            : (widget.isSale
+                  ? 'Mauzo yamerekodiwa.'
+                  : 'Matumizi yamerekodiwa.'),
         type: TopPopupType.success,
       );
       Navigator.of(context).pop();
@@ -726,7 +731,11 @@ class _EditingBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.edit_note_rounded, size: 18, color: AppColors.primary),
+          const Icon(
+            Icons.edit_note_rounded,
+            size: 18,
+            color: AppColors.primary,
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -1114,10 +1123,8 @@ class _KarakanaDropdown extends StatelessWidget {
       initialValue: value,
       items: items.entries
           .map(
-            (entry) => DropdownMenuItem(
-              value: entry.key,
-              child: Text(entry.value),
-            ),
+            (entry) =>
+                DropdownMenuItem(value: entry.key, child: Text(entry.value)),
           )
           .toList(),
       onChanged: onChanged,
@@ -1167,8 +1174,11 @@ class _DatePickerField extends StatelessWidget {
         decoration: _inputDecoration('Tarehe ya muamala', ''),
         child: Row(
           children: [
-            const Icon(Icons.calendar_today_outlined,
-                size: 18, color: AppColors.primary),
+            const Icon(
+              Icons.calendar_today_outlined,
+              size: 18,
+              color: AppColors.primary,
+            ),
             const SizedBox(width: 10),
             Text(
               _formatDate(date),
@@ -1446,8 +1456,9 @@ class _ThousandsSeparatorInputFormatter extends TextInputFormatter {
       0,
       newValue.text.length,
     );
-    final digitsBeforeCursor =
-        _cleanAmount(newValue.text.substring(0, safeCursor)).length;
+    final digitsBeforeCursor = _cleanAmount(
+      newValue.text.substring(0, safeCursor),
+    ).length;
     final formatted = _formatThousands(digits);
     final cursorOffset = _offsetForDigitCount(formatted, digitsBeforeCursor);
 
