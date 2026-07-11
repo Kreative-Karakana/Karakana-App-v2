@@ -112,7 +112,10 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
               controller: _scrollController,
               padding: const EdgeInsets.fromLTRB(18, 18, 18, 28),
               children: [
-                _BusinessHeader(business: provider.business!),
+                _BusinessHeader(
+                  business: provider.business!,
+                  onEdit: () => _openBusinessEditSheet(context),
+                ),
                 const SizedBox(height: 14),
                 _DashboardSummary(provider: provider),
                 const SizedBox(height: 14),
@@ -166,6 +169,18 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
           isSale: transaction?.isSale ?? isSale,
           transaction: transaction,
         ),
+      ),
+    );
+  }
+
+  Future<void> _openBusinessEditSheet(BuildContext context) {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => ChangeNotifierProvider.value(
+        value: context.read<BusinessManagementProvider>(),
+        child: const _BusinessEditSheet(),
       ),
     );
   }
@@ -828,10 +843,138 @@ class _EditingBanner extends StatelessWidget {
   }
 }
 
+class _BusinessEditSheet extends StatefulWidget {
+  const _BusinessEditSheet();
+
+  @override
+  State<_BusinessEditSheet> createState() => _BusinessEditSheetState();
+}
+
+class _BusinessEditSheetState extends State<_BusinessEditSheet> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _nameController;
+  late String _businessType;
+
+  @override
+  void initState() {
+    super.initState();
+    final business = context.read<BusinessManagementProvider>().business;
+    _nameController = TextEditingController(text: business?.name ?? '');
+    _businessType = business?.businessType ?? _businessTypes.keys.first;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<BusinessManagementProvider>();
+
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: AppColors.background,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+        ),
+        padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
+        child: SafeArea(
+          top: false,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 42,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppColors.border,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const _SectionTitle(
+                  title: 'Hariri Biashara',
+                  subtitle: 'Sasisha jina au aina ya biashara yako.',
+                ),
+                const SizedBox(height: 16),
+                _KarakanaTextField(
+                  controller: _nameController,
+                  label: 'Jina la biashara',
+                  hint: 'Mfano: Kinyozi cha Mtaa',
+                  validator: (value) {
+                    if ((value ?? '').trim().isEmpty) {
+                      return 'Weka jina la biashara.';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 14),
+                _KarakanaDropdown(
+                  label: 'Aina ya biashara',
+                  value: _businessType,
+                  items: _businessTypes,
+                  onChanged: (value) {
+                    if (value != null) setState(() => _businessType = value);
+                  },
+                ),
+                const SizedBox(height: 18),
+                SizedBox(
+                  width: double.infinity,
+                  child: _PrimaryButton(
+                    label: 'Hifadhi Mabadiliko',
+                    isLoading: provider.isSubmitting,
+                    onPressed: () => _submit(provider),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submit(BusinessManagementProvider provider) async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final ok = await provider.updateBusiness(
+      name: _nameController.text.trim(),
+      businessType: _businessType,
+    );
+
+    if (!mounted) return;
+    if (ok) {
+      showTopPopup(
+        context,
+        'Taarifa za biashara zimesasishwa.',
+        type: TopPopupType.success,
+      );
+      Navigator.of(context).pop();
+    } else {
+      showTopPopup(
+        context,
+        provider.errorMessage ?? 'Imeshindikana kusasisha biashara.',
+        type: TopPopupType.error,
+      );
+    }
+  }
+}
+
 class _BusinessHeader extends StatelessWidget {
   final Business business;
+  final VoidCallback? onEdit;
 
-  const _BusinessHeader({required this.business});
+  const _BusinessHeader({required this.business, this.onEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -852,26 +995,50 @@ class _BusinessHeader extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            business.name,
-            style: GoogleFonts.montserrat(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  business.name,
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '${_labelFor(_businessTypes, business.businessType)} • ${business.currency}',
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white.withValues(alpha: 0.84),
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            '${_labelFor(_businessTypes, business.businessType)} • ${business.currency}',
-            style: GoogleFonts.montserrat(
-              color: Colors.white.withValues(alpha: 0.84),
-              fontSize: 12.5,
-              fontWeight: FontWeight.w600,
+          if (onEdit != null)
+            Material(
+              color: Colors.white.withValues(alpha: 0.16),
+              shape: const CircleBorder(),
+              child: InkWell(
+                onTap: onEdit,
+                customBorder: const CircleBorder(),
+                child: const Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Icon(
+                    Icons.edit_outlined,
+                    size: 18,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ),
-          ),
         ],
       ),
     );
