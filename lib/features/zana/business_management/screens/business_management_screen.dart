@@ -381,6 +381,7 @@ class _DashboardSummary extends StatelessWidget {
                   label: 'Faida / Hasara ya Leo',
                   value: _money(todayTotals.faidaHasaraValue, currency),
                   isNegative: todayTotals.hasLoss,
+                  isPositive: todayTotals.hasProfit,
                 ),
                 _MetricCard(
                   label: 'Mauzo ya Mwezi',
@@ -394,6 +395,7 @@ class _DashboardSummary extends StatelessWidget {
                   label: 'Faida / Hasara ya Mwezi',
                   value: _money(monthTotals.faidaHasaraValue, currency),
                   isNegative: monthTotals.hasLoss,
+                  isPositive: monthTotals.hasProfit,
                 ),
               ],
             );
@@ -1120,11 +1122,13 @@ class _MetricCard extends StatelessWidget {
   final String label;
   final String value;
   final bool isNegative;
+  final bool isPositive;
 
   const _MetricCard({
     required this.label,
     required this.value,
     this.isNegative = false,
+    this.isPositive = false,
   });
 
   @override
@@ -1157,7 +1161,11 @@ class _MetricCard extends StatelessWidget {
             child: Text(
               value,
               style: GoogleFonts.montserrat(
-                color: isNegative ? AppColors.error : AppColors.primaryDark,
+                color: isNegative
+                    ? AppColors.error
+                    : isPositive
+                    ? AppColors.profit
+                    : AppColors.primaryDark,
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
               ),
