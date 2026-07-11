@@ -3,11 +3,16 @@ import '../models/course_model.dart';
 import '../services/course_service.dart';
 
 class CourseProvider extends ChangeNotifier {
-  final _service = CourseService();
+  final CourseCatalogService _service;
+
+  CourseProvider({CourseCatalogService? service})
+      : _service = service ?? CourseService();
 
   bool _isLoading = false;
+  bool _isLoadingMore = false;
   bool _isLoadingDetail = false;
   String? _errorMessage;
+  String? _loadMoreErrorMessage;
   String? _sectionsErrorMessage;
   String? _reviewsErrorMessage;
 
@@ -24,11 +29,17 @@ class CourseProvider extends ChangeNotifier {
   List<ReviewModel> _reviews = [];
   String? _selectedCategoryName;
   String _searchQuery = '';
+  int _currentCoursePage = 0;
+  int _courseCount = 0;
+  bool _hasMoreCourses = false;
+  static const int _coursePageSize = 20;
 
   // Getters
   bool get isLoading => _isLoading;
+  bool get isLoadingMore => _isLoadingMore;
   bool get isLoadingDetail => _isLoadingDetail;
   String? get errorMessage => _errorMessage;
+  String? get loadMoreErrorMessage => _loadMoreErrorMessage;
   String? get sectionsErrorMessage => _sectionsErrorMessage;
   String? get reviewsErrorMessage => _reviewsErrorMessage;
   List<CourseModel> get allCourses => _allCourses;
@@ -44,6 +55,8 @@ class CourseProvider extends ChangeNotifier {
   List<ReviewModel> get reviews => _reviews;
   String? get selectedCategoryName => _selectedCategoryName;
   String get searchQuery => _searchQuery;
+  int get courseCount => _courseCount;
+  bool get hasMoreCourses => _hasMoreCourses;
 
   List<CourseModel> get enrolledCourses =>
       _allCourses.where((c) => c.isEnrolled).toList();
@@ -113,28 +126,65 @@ class CourseProvider extends ChangeNotifier {
 
   Future<void> loadCourses({String? search, String? categoryName}) async {
     _isLoading = true;
+    _isLoadingMore = false;
     _errorMessage = null;
+    _loadMoreErrorMessage = null;
+    _currentCoursePage = 0;
+    _courseCount = 0;
+    _hasMoreCourses = false;
     notifyListeners();
 
     try {
-      final result = await _service.getCourses(search: search);
-      final isSearchMode = (search ?? '').trim().isNotEmpty;
-      if (!isSearchMode) {
-        _allCourses = result;
+      _searchQuery = (search ?? _searchQuery).trim();
+      _selectedCategoryName = categoryName ?? _selectedCategoryName;
+      final page = await _service.getCoursesPage(
+        search: _searchQuery,
+        categoryName: _selectedCategoryName,
+        page: 1,
+        pageSize: _coursePageSize,
+      );
+      _currentCoursePage = 1;
+      _courseCount = page.count;
+      _hasMoreCourses = page.hasNext;
+      _courses = _dedupeCourses(page.items);
+      if (_searchQuery.isEmpty && _selectedCategoryName == null) {
+        _allCourses = List.from(_courses);
       }
-      var working = List<CourseModel>.from(isSearchMode ? result : _allCourses);
-      if (categoryName != null) {
-        working = working
-            .where((c) => c.categories
-                .any((cat) => cat.toLowerCase() == categoryName.toLowerCase()))
-            .toList();
-      }
-      _courses = working;
     } catch (e) {
       _errorMessage = e.toString();
+      _courses = [];
     }
 
     _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> loadMoreCourses() async {
+    if (_isLoading || _isLoadingMore || !_hasMoreCourses) return;
+
+    _isLoadingMore = true;
+    _loadMoreErrorMessage = null;
+    notifyListeners();
+
+    try {
+      final page = await _service.getCoursesPage(
+        search: _searchQuery,
+        categoryName: _selectedCategoryName,
+        page: _currentCoursePage + 1,
+        pageSize: _coursePageSize,
+      );
+      _currentCoursePage += 1;
+      _courseCount = page.count;
+      _hasMoreCourses = page.hasNext;
+      _courses = _dedupeCourses([..._courses, ...page.items]);
+      if (_searchQuery.isEmpty && _selectedCategoryName == null) {
+        _allCourses = List.from(_courses);
+      }
+    } catch (e) {
+      _loadMoreErrorMessage = e.toString();
+    }
+
+    _isLoadingMore = false;
     notifyListeners();
   }
 
@@ -197,37 +247,12 @@ class CourseProvider extends ChangeNotifier {
   Future<void> searchCourses(String query) async {
     final normalized = query.trim();
     _searchQuery = normalized;
-    if (normalized.isEmpty) {
-      if (_selectedCategoryName == null) {
-        _courses = List.from(_allCourses);
-      } else {
-        _courses = _allCourses
-            .where((c) => c.categories.any((cat) =>
-                cat.toLowerCase() == _selectedCategoryName!.toLowerCase()))
-            .toList();
-      }
-      notifyListeners();
-    } else {
-      await loadCourses(
-          search: normalized, categoryName: _selectedCategoryName);
-    }
+    await loadCourses(search: normalized, categoryName: _selectedCategoryName);
   }
 
   Future<void> filterByCategory(String? categoryName) async {
     _selectedCategoryName = categoryName;
-    if (_searchQuery.isNotEmpty) {
-      await loadCourses(search: _searchQuery, categoryName: categoryName);
-      return;
-    }
-    if (categoryName == null) {
-      _courses = List.from(_allCourses);
-    } else {
-      _courses = _allCourses
-          .where((c) => c.categories
-              .any((cat) => cat.toLowerCase() == categoryName.toLowerCase()))
-          .toList();
-    }
-    notifyListeners();
+    await loadCourses(search: _searchQuery, categoryName: categoryName);
   }
 
   // ── Enroll / wishlist ──────────────────────────────────────────
@@ -312,7 +337,16 @@ class CourseProvider extends ChangeNotifier {
 
   void clearError() {
     _errorMessage = null;
+    _loadMoreErrorMessage = null;
     notifyListeners();
+  }
+
+  List<CourseModel> _dedupeCourses(List<CourseModel> courses) {
+    final seen = <int>{};
+    return [
+      for (final course in courses)
+        if (seen.add(course.id)) course,
+    ];
   }
 
   List<CourseModel> _shuffled(List<CourseModel> courses) {

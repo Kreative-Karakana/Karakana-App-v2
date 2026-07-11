@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../utils/course_contract.dart';
 
 class CourseBuilderScreen extends StatefulWidget {
   final int? courseId;
@@ -29,16 +30,20 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
   final _priceController = TextEditingController(text: '0');
-  String _selectedLevel = 'beginner';
+  String _selectedLevel = CourseContract.levelBeginner;
   String _selectedCategory = '';
+  Map<String, String> _fieldErrors = {};
   List<Map<String, dynamic>> _categories = [];
   File? _coverImage;
+  String? _existingStatus;
+  String? _rejectionReason;
 
   // Step 3 — Quiz (local state, submitted after course is created)
   final List<Map<String, dynamic>> _questions = [];
   final _passingScoreController = TextEditingController(text: '70');
 
   bool get _isEditMode => widget.courseId != null;
+  bool get _isRejected => CourseContract.isRejected(_existingStatus);
 
   @override
   void initState() {
@@ -96,8 +101,11 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         _descController.text =
             _cleanRichTextDescription(data['description'] as String? ?? '');
         _priceController.text = (data['price'] ?? '0').toString();
-        _selectedLevel = data['level'] as String? ?? 'beginner';
+        _selectedLevel =
+            CourseContract.normalizeLevel(data['level'] as String?);
         if (catId != null) _selectedCategory = catId.toString();
+        _existingStatus = data['status'] as String?;
+        _rejectionReason = CourseContract.rejectionReason(data);
         _isLoadingCourse = false;
       });
     } catch (_) {
@@ -135,9 +143,19 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     return value;
   }
 
-  bool get _step1Valid =>
-      _titleController.text.trim().isNotEmpty &&
-      _descController.text.trim().isNotEmpty;
+  bool get _step1Valid => CourseContract.validatePayloadInput(
+        _payloadInput,
+        requireCategory: _categories.isNotEmpty,
+      ).isValid;
+
+  CoursePayloadInput get _payloadInput => CoursePayloadInput(
+        title: _titleController.text,
+        description: _descController.text,
+        priceText: _priceController.text,
+        level: _selectedLevel,
+        categoryId: _selectedCategory,
+        status: CourseContract.submitForReviewStatus,
+      );
 
   Future<void> _pickCoverImage() async {
     try {
@@ -171,26 +189,33 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   }
 
   Future<void> _submitCourse() async {
-    if (!_step1Valid) {
-      _showError('Jaza jina na maelezo ya kozi.');
+    final validation = CourseContract.validatePayloadInput(
+      _payloadInput,
+      requireCategory: _categories.isNotEmpty,
+    );
+    if (!validation.isValid) {
+      setState(() => _fieldErrors = validation.fieldErrors);
+      _showError(validation.firstError ?? 'Tafadhali kagua taarifa za kozi.');
       return;
     }
 
-    setState(() => _isSubmitting = true);
+    final wasRejected = _isRejected;
+
+    setState(() {
+      _fieldErrors = {};
+      _isSubmitting = true;
+    });
 
     try {
-      final price = double.tryParse(_priceController.text.trim()) ?? 0;
+      final payload = CourseContract.buildPayload(_payloadInput);
+      final editSuccessMessage = wasRejected
+          ? 'Kozi yako imewasilishwa tena kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.'
+          : 'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.';
 
       if (_coverImage != null) {
         // Multipart upload when a cover image is selected
         final formData = FormData.fromMap({
-          'title': _titleController.text.trim(),
-          'description': _descController.text.trim(),
-          'price': price.toString(),
-          'level': _selectedLevel,
-          'status': 'pending_review',
-          if (_selectedCategory.isNotEmpty)
-            'category': int.tryParse(_selectedCategory),
+          ...payload,
           'cover_photo': await MultipartFile.fromFile(_coverImage!.path,
               filename: 'cover.jpg'),
         });
@@ -200,9 +225,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               .dio
               .patch('/api/v1/courses/${widget.courseId}/', data: formData);
           if (!mounted) return;
-          _showSuccess(
-            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.',
-          );
+          _showSuccess(editSuccessMessage);
           context.pop();
         } else {
           final res =
@@ -221,28 +244,16 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
           }
         }
       } else {
-        final body = {
-          'title': _titleController.text.trim(),
-          'description': _descController.text.trim(),
-          'price': price,
-          'level': _selectedLevel,
-          'status': 'pending_review',
-          if (_selectedCategory.isNotEmpty)
-            'category': int.tryParse(_selectedCategory),
-        };
-
         if (_isEditMode) {
           await ApiClient()
               .dio
-              .patch('/api/v1/courses/${widget.courseId}/', data: body);
+              .patch('/api/v1/courses/${widget.courseId}/', data: payload);
           if (!mounted) return;
-          _showSuccess(
-            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.',
-          );
+          _showSuccess(editSuccessMessage);
           context.pop();
         } else {
           final res =
-              await ApiClient().dio.post('/api/v1/courses/', data: body);
+              await ApiClient().dio.post('/api/v1/courses/', data: payload);
           final createdId = (res.data as Map?)?['id'] as int?;
           if (createdId != null) await _saveQuiz(createdId);
           if (!mounted) return;
@@ -426,7 +437,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     final surfaceColor = Theme.of(context).cardColor;
     final title = _isEditMode ? 'Hariri Kozi' : 'Unda Kozi Mpya';
     final subtitle = _isEditMode
-        ? 'Safisha maudhui, panga sehemu, na tuma mabadiliko kwa ukaguzi.'
+        ? (_isRejected
+            ? 'Kozi hii ilikataliwa. Rekebisha kulingana na sababu iliyotolewa kisha uwasilishe tena.'
+            : 'Safisha maudhui, panga sehemu, na tuma mabadiliko kwa ukaguzi.')
         : 'Jaza maelezo ya kozi, kisha tuma kwa ukaguzi wa timu ya Kreative Karakana.';
 
     if (_isLoadingCourse) {
@@ -558,6 +571,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 ],
               ),
             ),
+            if (_isRejected) _buildRejectionBanner(),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(14),
@@ -723,7 +737,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                               _currentStep < 3
                                   ? 'Endelea'
                                   : (_isEditMode
-                                      ? 'Tuma Mabadiliko'
+                                      ? (_isRejected
+                                          ? 'Wasilisha Tena kwa Ukaguzi'
+                                          : 'Tuma Mabadiliko')
                                       : 'Tuma kwa Ukaguzi'),
                               style: GoogleFonts.montserrat(
                                 fontSize: 15,
@@ -745,11 +761,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   Widget _buildStep1() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom + 24;
-    const levels = [
-      ('beginner', 'Mwanzo'),
-      ('intermediate', 'Kati'),
-      ('advanced', 'Juu'),
-    ];
+    const levels = CourseContract.levelOptions;
 
     return SingleChildScrollView(
       physics:
@@ -767,6 +779,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
             controller: _titleController,
             label: 'Jina la Kozi *',
             hint: 'Mfano: Biashara Bila Mtaji',
+            errorText: _fieldErrors['title'],
           ),
           const SizedBox(height: 16),
           _field(
@@ -774,6 +787,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
             label: 'Maelezo ya Kozi *',
             hint: 'Elezea kozi yako kwa kina...',
             maxLines: 5,
+            errorText: _fieldErrors['description'],
           ),
           const SizedBox(height: 16),
           // Category picker
@@ -789,6 +803,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
             const SizedBox(height: 8),
             _dropdown<String>(
               value: _selectedCategory.isEmpty ? null : _selectedCategory,
+              errorText: _fieldErrors['category'],
               items: _categories
                   .where((c) => c['id'] != null)
                   .map((c) => DropdownMenuItem<String>(
@@ -811,6 +826,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                   label: 'Bei (TZS)',
                   hint: '0',
                   keyboardType: TextInputType.number,
+                  errorText: _fieldErrors['price'],
                 ),
               ),
               const SizedBox(width: 12),
@@ -819,15 +835,16 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                   label: 'Kiwango',
                   value: _selectedLevel.isEmpty ? null : _selectedLevel,
                   hint: 'Chagua...',
+                  errorText: _fieldErrors['level'],
                   items: levels
                       .map((l) => DropdownMenuItem<String>(
-                            value: l.$1,
-                            child: Text(l.$2,
+                            value: l.value,
+                            child: Text(l.label,
                                 style: GoogleFonts.montserrat(fontSize: 14)),
                           ))
                       .toList(),
-                  onChanged: (v) =>
-                      setState(() => _selectedLevel = v ?? 'beginner'),
+                  onChanged: (v) => setState(
+                      () => _selectedLevel = v ?? CourseContract.levelBeginner),
                 ),
               ),
             ],
@@ -1067,11 +1084,6 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   Widget _buildStep4() {
     final price = double.tryParse(_priceController.text.trim()) ?? 0;
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom + 150;
-    final levelLabels = {
-      'beginner': 'Mwanzo',
-      'intermediate': 'Kati',
-      'advanced': 'Juu',
-    };
     final categoryName = _categories.firstWhere(
           (c) => c['id'].toString() == _selectedCategory,
           orElse: () => {'name': '—'},
@@ -1102,7 +1114,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         _summaryTile('Kategoria', categoryName),
         _summaryTile(
             'Bei', price == 0 ? 'Bure' : 'TZS ${price.toStringAsFixed(0)}'),
-        _summaryTile('Kiwango', levelLabels[_selectedLevel] ?? _selectedLevel),
+        _summaryTile('Kiwango', CourseContract.levelLabel(_selectedLevel)),
         if (!_isEditMode)
           _summaryTile('Maswali ya Mtihani',
               _questions.isEmpty ? 'Hakuna' : '${_questions.length} maswali'),
@@ -1124,6 +1136,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     required T? value,
     required List<DropdownMenuItem<T>> items,
     required ValueChanged<T?> onChanged,
+    String? errorText,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dedupedItems = <DropdownMenuItem<T>>[];
@@ -1135,13 +1148,26 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     }
     final safeValue =
         dedupedItems.any((item) => item.value == value) ? value : null;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-            color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+    return InputDecorator(
+      decoration: InputDecoration(
+        errorText: errorText,
+        filled: true,
+        fillColor: Theme.of(context).cardColor,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+              color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+              color: isDark ? Colors.white12 : const Color(0xFFE8D5C8)),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(14)),
+          borderSide: BorderSide(color: Color(0xFFE87722), width: 1.5),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       ),
       child: DropdownButton<T>(
         value: safeValue,
@@ -1168,6 +1194,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     required String hint,
     required List<DropdownMenuItem<T>> items,
     required ValueChanged<T?> onChanged,
+    String? errorText,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dedupedItems = <DropdownMenuItem<T>>[];
@@ -1185,6 +1212,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
+          errorText: errorText,
           floatingLabelStyle: GoogleFonts.montserrat(
             color: const Color(0xFFE87722),
             fontWeight: FontWeight.w600,
@@ -1368,6 +1396,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     required String hint,
     int maxLines = 1,
     TextInputType? keyboardType,
+    String? errorText,
   }) {
     return TextField(
       controller: controller,
@@ -1377,6 +1406,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
+        errorText: errorText,
         floatingLabelStyle: GoogleFonts.montserrat(
           color: const Color(0xFFE87722),
           fontWeight: FontWeight.w600,
@@ -1444,6 +1474,56 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 Text(subtitle,
                     style: GoogleFonts.montserrat(
                         fontSize: 12, color: const Color(0xFF9E8070))),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRejectionBanner() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFB71C1C).withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border:
+            Border.all(color: const Color(0xFFB71C1C).withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.error_outline_rounded,
+              color: Color(0xFFB71C1C), size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Status: Imekataliwa',
+                    style: GoogleFonts.montserrat(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFFB71C1C))),
+                const SizedBox(height: 4),
+                Text(
+                  _rejectionReason ??
+                      'Timu ya Kreative Karakana haikutoa sababu maalum. Wasiliana nao kwa maelezo zaidi.',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 12.5,
+                      color: const Color(0xFF7B3A10),
+                      height: 1.5),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Rekebisha maudhui hapa chini kisha uwasilishe tena kwa ukaguzi.',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFFB71C1C)),
+                ),
               ],
             ),
           ),

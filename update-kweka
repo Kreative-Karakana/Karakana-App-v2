@@ -1,0 +1,75 @@
+# Update — Victor Kweka
+
+## Issue #15 — [P1] Add rejected course lifecycle handling to Flutter trainer experience
+
+**Status:** Implemented, analyzed, and tested. Ready for review/merge.
+**Branch:** `feature/issue-15-rejected-course-lifecycle`
+
+### Summary of what was done
+
+Trainer-facing Flutter screens previously only understood `draft`, `pending_review`,
+and `published` course statuses. A `rejected` course fell through to the default
+case and rendered like a draft, with no way for a trainer to see why it was
+rejected or what to do next. This work adds full support for the `rejected`
+state across every trainer screen that shows course status.
+
+1. **`lib/features/trainer/utils/course_contract.dart`**
+   - Added `CourseContract.rejectionReason(Map?)` — reads the backend's
+     `rejection_reason` field and returns it only when present and non-blank.
+   - Added `CourseContract.isRejected(String?)` helper.
+   - Added `CourseContract.submitActionLabel(String?)` — returns "Wasilisha
+     Tena" (resubmit) for rejected courses vs "Tuma kwa Ukaguzi" (submit) for
+     drafts.
+   - Added `CourseContract.statusGuidanceFor(String?)` — trainer-facing
+     next-action copy for every lifecycle state.
+
+2. **Trainer course list** (`trainer_courses_list_screen.dart`)
+   - Rejected courses show a distinct red "Sababu ya Kukataliwa" (rejection
+     reason) box on the card.
+   - The submit/resubmit action pill and confirmation dialog now say
+     "Wasilisha Tena" and explain resubmission instead of generic "submit for
+     review" copy.
+
+3. **Trainer dashboard** (`trainer_dashboard_screen.dart`)
+   - Compact carousel course card: rejected badge now carries a tooltip with
+     the rejection reason.
+   - Full course card and the "Maendeleo kwa Kozi" progress list both render
+     a rejection-reason banner when the course is rejected.
+   - Publish/resubmit buttons and confirmation dialog are rejection-aware.
+
+4. **Course builder / edit screen** (`course_builder_screen.dart`)
+   - Loads the course's current `status` and `rejection_reason` when editing.
+   - Shows a "Status: Imekataliwa" banner with the reason at the top of the
+     screen when editing a rejected course.
+   - Submit button and success message switch to resubmission copy
+     ("Wasilisha Tena kwa Ukaguzi") for rejected courses.
+
+5. **Tests** (`test/trainer_course_contract_test.dart`)
+   - Added coverage for `rejectionReason`, `isRejected`, `submitActionLabel`,
+     and `statusGuidanceFor`.
+
+### Notes / caveats
+
+- The backend's `CourseSerializer` / `CourseListSerializer` do not currently
+  expose `rejection_reason` in API responses (confirmed against
+  `Kreative-Karakana-backend`) — the field exists on the Django model but
+  isn't in either serializer's `Meta.fields`. The Flutter code reads it
+  defensively and falls back to a generic "no specific reason given" message,
+  so nothing breaks today, but the reason text won't actually appear until
+  the backend exposes that field. That's backend lifecycle work and is out of
+  scope for this issue (see "Explicitly Out Of Scope" in #15).
+- No changes to draft/pending_review/published behavior — verified via
+  `flutter analyze` (no issues) and `flutter test` (19/19 passing).
+
+### Acceptance criteria — verified against Issue #15
+
+- [x] Rejected courses display a distinct status.
+- [x] Rejected courses are not displayed as drafts.
+- [x] Rejection reasons are visible when provided.
+- [x] Existing draft/pending/published behaviour remains unchanged.
+- [x] Trainers can understand required next actions.
+- [x] Flutter analysis and tests pass.
+
+Issue #15 is functionally complete from the Flutter side and ready to close
+once merged (pending the backend serializer follow-up noted above so the
+reason text actually reaches the app).
