@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-- Flutter SDK compatible with Dart `>=3.0.0 <4.0.0`.
+- Flutter 3.44.0 for parity with CI. The Dart SDK constraint remains `>=3.0.0 <4.0.0`.
 - Android Studio and Android SDK for Android builds.
 - Xcode and CocoaPods for iOS builds.
 - Access to the Karakana backend environment used for development/testing.
@@ -63,7 +63,7 @@ Use these commands before handing off a code change:
 
 ```sh
 flutter analyze
-dart format .
+dart format --set-exit-if-changed .
 flutter test
 ```
 

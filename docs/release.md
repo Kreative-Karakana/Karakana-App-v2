@@ -23,21 +23,31 @@ Example:
 2.1.0+38
 ```
 
+Protected release workflows also accept a `version_name` input. The workflow run number is used as the store build number for Android and iOS release artifacts. Do not reuse a build number for a corrected upload.
+
 ## Pre-Release Checks
 
 ```sh
 flutter clean
 flutter pub get
-dart format .
+dart format --set-exit-if-changed .
 flutter analyze
 flutter test
 ```
 
 Document any skipped command and why it was skipped.
 
+Pull requests and protected-branch pushes are validated by `.github/workflows/flutter-ci.yml`. See `docs/ci-cd.md` for the full CI/CD policy, pinned Flutter version, required secrets, and protected release workflow details.
+
 ## Android Release
 
-Build the app bundle:
+Use the protected manual workflow:
+
+```text
+.github/workflows/android-release.yml
+```
+
+The workflow builds both a release APK and Play Store app bundle:
 
 ```sh
 flutter build appbundle --release
@@ -59,25 +69,13 @@ Before upload:
 
 ## iOS Release
 
-Prepare dependencies:
+Use the protected manual workflow:
 
-```sh
-flutter clean
-flutter pub get
-flutter analyze
-cd ios
-pod install
-cd ..
-open ios/Runner.xcworkspace
+```text
+.github/workflows/ios-release.yml
 ```
 
-In Xcode:
-
-1. Select `Runner`.
-2. Confirm bundle identifier, signing team, version, and build number.
-3. Select a generic iOS device target.
-4. Run `Product > Archive`.
-5. Use Organizer to distribute to App Store Connect.
+The workflow builds and exports an IPA, then uploads it to App Store Connect. Use Xcode manual archive only as a fallback when the protected workflow is unavailable, and document the reason.
 
 ## Release Notes
 

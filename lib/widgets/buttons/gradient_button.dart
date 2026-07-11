@@ -50,8 +50,7 @@ class GradientButton extends StatelessWidget {
                     width: 22,
                     height: 22,
                     child: CircularProgressIndicator.adaptive(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       strokeWidth: 2.5,
                     ),
                   )

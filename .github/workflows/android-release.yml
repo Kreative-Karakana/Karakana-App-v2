@@ -1,0 +1,107 @@
+name: Android Release Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: "Version name (for example, 2.1.1)"
+        required: true
+        default: "2.1.0"
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: "3.44.0"
+  FLUTTER_SUPPRESS_ANALYTICS: "true"
+
+jobs:
+  build-android-release:
+    name: Build Android release artifacts
+    runs-on: ubuntu-24.04
+    environment: production
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Verify Flutter version
+        run: flutter --version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Check formatting
+        run: dart format --set-exit-if-changed .
+
+      - name: Run static analysis
+        run: flutter analyze
+
+      - name: Run Flutter tests
+        run: flutter test
+
+      - name: Configure Android signing
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          mkdir -p android/app/keystore
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/keystore/release.jks
+          {
+            echo "storePassword=$ANDROID_KEYSTORE_PASSWORD"
+            echo "keyPassword=$ANDROID_KEY_PASSWORD"
+            echo "keyAlias=$ANDROID_KEY_ALIAS"
+            echo "storeFile=app/keystore/release.jks"
+          } > android/key.properties
+          chmod 600 android/key.properties android/app/keystore/release.jks
+
+      - name: Build release APK
+        run: |
+          flutter build apk --release \
+            --build-name=${{ github.event.inputs.version_name }} \
+            --build-number=${{ github.run_number }}
+
+      - name: Build release app bundle
+        run: |
+          flutter build appbundle --release \
+            --build-name=${{ github.event.inputs.version_name }} \
+            --build-number=${{ github.run_number }}
+
+      - name: Confirm Android artifacts exist
+        run: |
+          set -euo pipefail
+          test -f build/app/outputs/flutter-apk/app-release.apk
+          test -f build/app/outputs/bundle/release/app-release.aab
+
+      - name: Upload Android release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-${{ github.run_number }}
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Clean Android signing files
+        if: always()
+        run: |
+          rm -f android/key.properties
+          rm -f android/app/keystore/release.jks

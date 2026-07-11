@@ -72,7 +72,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
       context: context,
       barrierDismissible: false,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.cardLg)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.cardLg)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -264,7 +265,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 children: [
                   if (widget.courseThumbnail != null)
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
+                      borderRadius: BorderRadius.circular(
+                          AppSpacing.sm + AppSpacing.xs / 2),
                       child: CachedNetworkImage(
                         imageUrl: widget.courseThumbnail!,
                         width: 72,
@@ -324,7 +326,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 ),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.only(bottom: AppSpacing.sm + AppSpacing.xs / 2),
+                  margin: const EdgeInsets.only(
+                      bottom: AppSpacing.sm + AppSpacing.xs / 2),
                   padding: AppSpacing.cardPadding,
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -350,7 +353,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         height: 48,
                         decoration: BoxDecoration(
                           color: color.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
+                          borderRadius: BorderRadius.circular(
+                              AppSpacing.sm + AppSpacing.xs / 2),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(6),
@@ -446,7 +450,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               size: 24,
                             ),
                           ),
-                              const SizedBox(width: 12),
+                          const SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -473,7 +477,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.sm + AppSpacing.xs / 2, vertical: AppSpacing.sm - AppSpacing.xs / 2),
+                                horizontal: AppSpacing.sm + AppSpacing.xs / 2,
+                                vertical: AppSpacing.sm - AppSpacing.xs / 2),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
@@ -490,12 +495,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         ],
                       ),
                     ),
-                            Positioned(
+                    Positioned(
                       top: AppSpacing.xs,
                       right: AppSpacing.xs,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.xs, vertical: AppSpacing.xs / 2),
+                            horizontal: AppSpacing.xs,
+                            vertical: AppSpacing.xs / 2),
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(4),

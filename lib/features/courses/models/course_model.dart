@@ -78,10 +78,13 @@ class CourseModel {
     final cats = json['categories'];
     List<String> categories = [];
     if (cats is List) {
-      categories = cats.map((c) {
-        if (c is Map) return c['name']?.toString() ?? '';
-        return c.toString();
-      }).where((s) => s.isNotEmpty).toList();
+      categories = cats
+          .map((c) {
+            if (c is Map) return c['name']?.toString() ?? '';
+            return c.toString();
+          })
+          .where((s) => s.isNotEmpty)
+          .toList();
     }
 
     final rawFaqs = json['faqs'];
@@ -228,7 +231,9 @@ class SectionModel {
   factory SectionModel.fromJson(Map<String, dynamic> json) {
     final rawLessons = json['lessons'];
     final lessons = rawLessons is List
-        ? rawLessons.map((l) => LessonModel.fromJson(l as Map<String, dynamic>)).toList()
+        ? rawLessons
+            .map((l) => LessonModel.fromJson(l as Map<String, dynamic>))
+            .toList()
         : <LessonModel>[];
     return SectionModel(
       id: json['id'] ?? 0,

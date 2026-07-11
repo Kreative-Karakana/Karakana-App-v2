@@ -57,7 +57,8 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
 
   String _computeRevenue(Map c) {
     final students = c['student_count'] as int? ?? 0;
-    final price = (double.tryParse((c['price'] ?? '0').toString()) ?? 0).toInt();
+    final price =
+        (double.tryParse((c['price'] ?? '0').toString()) ?? 0).toInt();
     final commissionRate = (c['commission_rate'] as num?)?.toDouble();
     int gross = students * price;
     if (commissionRate != null && commissionRate > 0 && commissionRate <= 100) {
@@ -189,8 +190,8 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
         data: {'status': isPublished ? 'draft' : 'pending_review'},
       );
       if (!mounted) return;
-      showTopPopup(
-          context, isPublished ? 'Kozi imefichwa.' : 'Kozi imetumwa kwa ukaguzi.');
+      showTopPopup(context,
+          isPublished ? 'Kozi imefichwa.' : 'Kozi imetumwa kwa ukaguzi.');
       await _load();
     } catch (e) {
       if (!mounted) return;
@@ -200,8 +201,7 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
 
   // ── WIDGETS ───────────────────────────────────────────────────────────────
 
-  Widget _buildSmallAction(
-      String label, IconData icon, VoidCallback onTap,
+  Widget _buildSmallAction(String label, IconData icon, VoidCallback onTap,
       {bool isDanger = false}) {
     final color = isDanger ? const Color(0xFFB71C1C) : const Color(0xFFE87722);
     return GestureDetector(
@@ -257,8 +257,7 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
       child: Column(children: [
         // ── THUMBNAIL ──
         ClipRRect(
-          borderRadius:
-              const BorderRadius.vertical(top: Radius.circular(16)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
           child: Stack(children: [
             thumbnail != null && thumbnail.isNotEmpty
                 ? CachedNetworkImage(
@@ -463,9 +462,7 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
       const SizedBox(height: 6),
       Text(value,
           style: GoogleFonts.montserrat(
-              fontSize: 15,
-              fontWeight: FontWeight.w800,
-              color: Colors.white)),
+              fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white)),
       Text(label,
           style: GoogleFonts.montserrat(
               fontSize: 10,
@@ -477,8 +474,7 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? const Color(0xFF1A0A00) : const Color(0xFFF7F2ED);
+    final bgColor = isDark ? const Color(0xFF1A0A00) : const Color(0xFFF7F2ED);
 
     final published =
         _courses.where((c) => (c as Map)['status'] == 'published').length;
@@ -513,8 +509,7 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
                 ),
                 child: SafeArea(
                   child: Padding(
-                    padding:
-                        const EdgeInsets.fromLTRB(24, 56, 24, 24),
+                    padding: const EdgeInsets.fromLTRB(24, 56, 24, 24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -536,13 +531,12 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
                         ),
                         const SizedBox(height: 18),
                         Row(
-                          mainAxisAlignment:
-                              MainAxisAlignment.spaceAround,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            _buildStatChip(Icons.school_outlined,
-                                'Kozi Zote', '${_courses.length}'),
-                            _buildStatChip(Icons.people_outline,
-                                'Wanafunzi', '$totalStudents'),
+                            _buildStatChip(Icons.school_outlined, 'Kozi Zote',
+                                '${_courses.length}'),
+                            _buildStatChip(Icons.people_outline, 'Wanafunzi',
+                                '$totalStudents'),
                             _buildStatChip(Icons.check_circle_outline,
                                 'Zilizochapishwa', '$published'),
                             _buildStatChip(
@@ -579,15 +573,14 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(
-                        color:
-                            const Color(0xFFE87722).withValues(alpha: 0.28),
+                        color: const Color(0xFFE87722).withValues(alpha: 0.28),
                         blurRadius: 16,
                         offset: const Offset(0, 6),
                       ),
                     ],
                   ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(children: [
                     Container(
                       width: 32,
@@ -613,8 +606,7 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
                               style: GoogleFonts.montserrat(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w500,
-                                  color: Colors.white
-                                      .withValues(alpha: 0.88))),
+                                  color: Colors.white.withValues(alpha: 0.88))),
                         ],
                       ),
                     ),

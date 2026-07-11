@@ -176,243 +176,253 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                      const SizedBox(height: 28),
-                      Center(
-                        child: Container(
-                          width: 88,
-                          height: 88,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Image.asset(
-                              'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) => Center(
-                                child: Text(
-                                  'K',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        'Karakana',
-                        style: GoogleFonts.poppins(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      Container(
-                        constraints: const BoxConstraints(maxWidth: 420),
-                        padding: EdgeInsets.all(compact ? 18 : 22),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.06),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.08),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.18),
-                              blurRadius: 28,
-                              offset: const Offset(0, 16),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Thibitisha\nBarua Pepe',
-                              style: GoogleFonts.montserrat(
-                                fontSize: compact ? 26 : 30,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                                height: 1.1,
-                              ),
-                            ),
-                            SizedBox(height: compact ? 10 : 12),
-                            Text(
-                              'Weka msimbo wa tarakimu 6 tuliokutumia kwenye:',
-                              style: GoogleFonts.montserrat(
-                                fontSize: compact
-                                    ? 12.5
-                                    : AppTextStyles.bodySmall.fontSize,
-                                color: Colors.white.withValues(alpha: 0.55),
-                                height: 1.4,
-                              ),
-                            ),
-                            const SizedBox(height: AppSpacing.xs),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.mail_outline_rounded,
-                                  size: 14,
-                                  color: AppColors.primaryMid,
-                                ),
-                                const SizedBox(width: 6),
-                                Flexible(
-                                  child: Text(
-                                    _email,
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: compact ? 12.5 : 13,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.primaryMid,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: compact ? 20 : 24),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: List.generate(
-                                6,
-                                (i) => _buildOtpBox(i, compact),
-                              ),
-                            ),
-                            SizedBox(height: compact ? 18 : 20),
-                            SizedBox(
-                              width: double.infinity,
-                              child: GradientButton(
-                                text: 'Thibitisha',
-                                height: compact ? 50 : 56,
-                                isLoading: authProvider.isLoading,
-                                onTap: _handleVerify,
-                              ),
-                            ),
-                            SizedBox(height: compact ? 14 : 16),
+                            const SizedBox(height: 28),
                             Center(
-                              child: _isResending
-                                  ? const SizedBox(
-                                      width: 18,
-                                      height: 18,
-                                      child: KarakanaWaveLoader(
-                                        color: AppColors.primaryMid,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : GestureDetector(
-                                      onTap: _handleResend,
-                                      child: Container(
-                                        width: double.infinity,
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: compact ? 20 : 24,
-                                          vertical: compact ? 12 : 14,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white
-                                              .withValues(alpha: 0.05),
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          border: Border.all(
-                                            color: Colors.white
-                                                .withValues(alpha: 0.10),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                'Hukupokea msimbo?',
-                                                maxLines: 2,
-                                                softWrap: true,
-                                                style: GoogleFonts.montserrat(
-                                                  fontSize: compact ? 13 : 14,
-                                                  color: Colors.white
-                                                      .withValues(alpha: 0.74),
-                                                  height: 1.2,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 10),
-                                            Flexible(
-                                              child: FittedBox(
-                                                fit: BoxFit.scaleDown,
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        compact ? 12 : 14,
-                                                    vertical: compact ? 5 : 6,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    gradient:
-                                                        const LinearGradient(
-                                                      colors: [
-                                                        AppColors.primary,
-                                                        Color(0xFFE07A2F)
-                                                      ],
-                                                      begin: Alignment.topLeft,
-                                                      end:
-                                                          Alignment.bottomRight,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                  ),
-                                                  child: Text(
-                                                    'Tuma tena',
-                                                    style:
-                                                        GoogleFonts.montserrat(
-                                                      fontSize:
-                                                          compact ? 12 : 13,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                              child: Container(
+                                width: 88,
+                                height: 88,
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Image.asset(
+                                    'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (_, __, ___) => Center(
+                                      child: Text(
+                                        'K',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColors.primary,
                                         ),
                                       ),
                                     ),
+                                  ),
+                                ),
+                              ),
                             ),
                             const SizedBox(height: AppSpacing.sm),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: TextButton.icon(
-                                onPressed: () => context.go('/signup'),
-                                icon: const Icon(
-                                  Icons.arrow_back_ios_new_rounded,
-                                  size: 16,
-                                  color: AppColors.primaryMid,
-                                ),
-                                label: Text(
-                                  'Rudi kujisajili',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: compact ? 12 : 12.5,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.primaryMid,
-                                  ),
-                                ),
-                                style: TextButton.styleFrom(
-                                  visualDensity: VisualDensity.compact,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
+                            Text(
+                              'Karakana',
+                              style: GoogleFonts.poppins(
+                                fontSize: 32,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
                               ),
                             ),
-                          ],
-                        ),
-                      ),
+                            const SizedBox(height: AppSpacing.md),
+                            Container(
+                              constraints: const BoxConstraints(maxWidth: 420),
+                              padding: EdgeInsets.all(compact ? 18 : 22),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.06),
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.08),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.18),
+                                    blurRadius: 28,
+                                    offset: const Offset(0, 16),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Thibitisha\nBarua Pepe',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: compact ? 26 : 30,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                      height: 1.1,
+                                    ),
+                                  ),
+                                  SizedBox(height: compact ? 10 : 12),
+                                  Text(
+                                    'Weka msimbo wa tarakimu 6 tuliokutumia kwenye:',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: compact
+                                          ? 12.5
+                                          : AppTextStyles.bodySmall.fontSize,
+                                      color:
+                                          Colors.white.withValues(alpha: 0.55),
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                  const SizedBox(height: AppSpacing.xs),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.mail_outline_rounded,
+                                        size: 14,
+                                        color: AppColors.primaryMid,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Flexible(
+                                        child: Text(
+                                          _email,
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: compact ? 12.5 : 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.primaryMid,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: compact ? 20 : 24),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: List.generate(
+                                      6,
+                                      (i) => _buildOtpBox(i, compact),
+                                    ),
+                                  ),
+                                  SizedBox(height: compact ? 18 : 20),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: GradientButton(
+                                      text: 'Thibitisha',
+                                      height: compact ? 50 : 56,
+                                      isLoading: authProvider.isLoading,
+                                      onTap: _handleVerify,
+                                    ),
+                                  ),
+                                  SizedBox(height: compact ? 14 : 16),
+                                  Center(
+                                    child: _isResending
+                                        ? const SizedBox(
+                                            width: 18,
+                                            height: 18,
+                                            child: KarakanaWaveLoader(
+                                              color: AppColors.primaryMid,
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                        : GestureDetector(
+                                            onTap: _handleResend,
+                                            child: Container(
+                                              width: double.infinity,
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: compact ? 20 : 24,
+                                                vertical: compact ? 12 : 14,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white
+                                                    .withValues(alpha: 0.05),
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                                border: Border.all(
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.10),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Hukupokea msimbo?',
+                                                      maxLines: 2,
+                                                      softWrap: true,
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        fontSize:
+                                                            compact ? 13 : 14,
+                                                        color: Colors.white
+                                                            .withValues(
+                                                                alpha: 0.74),
+                                                        height: 1.2,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Flexible(
+                                                    child: FittedBox(
+                                                      fit: BoxFit.scaleDown,
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      child: Container(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                          horizontal:
+                                                              compact ? 12 : 14,
+                                                          vertical:
+                                                              compact ? 5 : 6,
+                                                        ),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          gradient:
+                                                              const LinearGradient(
+                                                            colors: [
+                                                              AppColors.primary,
+                                                              Color(0xFFE07A2F)
+                                                            ],
+                                                            begin: Alignment
+                                                                .topLeft,
+                                                            end: Alignment
+                                                                .bottomRight,
+                                                          ),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(50),
+                                                        ),
+                                                        child: Text(
+                                                          'Tuma tena',
+                                                          style: GoogleFonts
+                                                              .montserrat(
+                                                            fontSize: compact
+                                                                ? 12
+                                                                : 13,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                  ),
+                                  const SizedBox(height: AppSpacing.sm),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: TextButton.icon(
+                                      onPressed: () => context.go('/signup'),
+                                      icon: const Icon(
+                                        Icons.arrow_back_ios_new_rounded,
+                                        size: 16,
+                                        color: AppColors.primaryMid,
+                                      ),
+                                      label: Text(
+                                        'Rudi kujisajili',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: compact ? 12 : 12.5,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.primaryMid,
+                                        ),
+                                      ),
+                                      style: TextButton.styleFrom(
+                                        visualDensity: VisualDensity.compact,
+                                        tapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),

@@ -74,8 +74,7 @@ class ZanaData {
       fullName: 'Business Insurance',
       nameSwahili: 'Bima ya Biashara',
       description: 'Insurance tailored for small Tanzanian entrepreneurs.',
-      descriptionSwahili:
-          'Bima zilizoundwa kwa wajasiriamali wadogo Tanzania.',
+      descriptionSwahili: 'Bima zilizoundwa kwa wajasiriamali wadogo Tanzania.',
       status: ZanaStatus.live,
       gradient: [Color(0xFF1A0A00), Color(0xFF3D1800), Color(0xFF7B3A10)],
       icon: Icons.security_outlined,

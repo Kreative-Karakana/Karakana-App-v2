@@ -60,8 +60,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
 
   // ── ACTIONS ───────────────────────────────────────────────────────────────
 
-  Future<void> _refresh() =>
-      context.read<EbookProvider>().fetchMyEbooks();
+  Future<void> _refresh() => context.read<EbookProvider>().fetchMyEbooks();
 
   Future<void> _togglePublish(Ebook e) async {
     final isPublished = e.status == 'published';
@@ -97,8 +96,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
             ),
             child: Text(
               isPublished ? 'Ndiyo, Ficha' : 'Chapisha',
-              style:
-                  GoogleFonts.montserrat(fontWeight: FontWeight.w700),
+              style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
             ),
           ),
         ],
@@ -172,8 +170,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? const Color(0xFF1A0A00) : const Color(0xFFFFF8F4);
+    final bgColor = isDark ? const Color(0xFF1A0A00) : const Color(0xFFFFF8F4);
     final surfaceColor = isDark ? const Color(0xFF2A1400) : Colors.white;
     final textPrimary = isDark ? Colors.white : const Color(0xFF1A0A00);
 
@@ -215,12 +212,9 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
 
   Widget _buildAppBar(EbookProvider provider) {
     final ebooks = provider.myEbooks;
-    final totalReaders =
-        ebooks.fold<int>(0, (s, e) => s + e.buyersCount);
-    final totalRevenue =
-        ebooks.fold<double>(0, (s, e) => s + e.totalRevenue);
-    final published =
-        ebooks.where((e) => e.status == 'published').length;
+    final totalReaders = ebooks.fold<int>(0, (s, e) => s + e.buyersCount);
+    final totalRevenue = ebooks.fold<double>(0, (s, e) => s + e.totalRevenue);
+    final published = ebooks.where((e) => e.status == 'published').length;
 
     return SliverAppBar(
       expandedHeight: 200,
@@ -233,8 +227,8 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.refresh_rounded,
-              color: Colors.white, size: 22),
+          icon:
+              const Icon(Icons.refresh_rounded, color: Colors.white, size: 22),
           onPressed: _refresh,
         ),
       ],
@@ -250,8 +244,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
           ),
           child: SafeArea(
             child: Padding(
-              padding:
-                  const EdgeInsets.fromLTRB(20, 12, 20, 0),
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -276,24 +269,16 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                   // ── 4-chip stats strip ──
                   Row(
                     children: [
-                      _heroChip(
-                          Icons.menu_book_outlined,
-                          '${ebooks.length}',
+                      _heroChip(Icons.menu_book_outlined, '${ebooks.length}',
                           'Vitabu'),
                       const SizedBox(width: 8),
                       _heroChip(
-                          Icons.people_outline,
-                          _fmt(totalReaders),
-                          'Wasomaji'),
+                          Icons.people_outline, _fmt(totalReaders), 'Wasomaji'),
                       const SizedBox(width: 8),
-                      _heroChip(
-                          Icons.payments_outlined,
-                          _fmtRevenue(totalRevenue),
-                          'Mapato'),
+                      _heroChip(Icons.payments_outlined,
+                          _fmtRevenue(totalRevenue), 'Mapato'),
                       const SizedBox(width: 8),
-                      _heroChip(
-                          Icons.check_circle_outline,
-                          '$published',
+                      _heroChip(Icons.check_circle_outline, '$published',
                           'Zilizochapishwa'),
                     ],
                   ),
@@ -321,8 +306,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-              color: Colors.white.withValues(alpha: 0.15)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -357,8 +341,8 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
 
   // ── LIST ──────────────────────────────────────────────────────────────────
 
-  Widget _buildList(EbookProvider provider, Color bgColor,
-      Color surfaceColor, Color textPrimary) {
+  Widget _buildList(EbookProvider provider, Color bgColor, Color surfaceColor,
+      Color textPrimary) {
     final ebooks = provider.myEbooks;
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
@@ -372,8 +356,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
 
   // ── EBOOK CARD ────────────────────────────────────────────────────────────
 
-  Widget _buildEbookCard(
-      Ebook e, Color surfaceColor, Color textPrimary) {
+  Widget _buildEbookCard(Ebook e, Color surfaceColor, Color textPrimary) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final statusColor = _statusColor(e.status);
     final label = _statusLabel(e.status);
@@ -391,8 +374,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color:
-                  const Color(0xFFE87722).withValues(alpha: 0.08),
+              color: const Color(0xFFE87722).withValues(alpha: 0.08),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -412,15 +394,15 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                   SizedBox(
                     height: 130,
                     width: double.infinity,
-                    child: e.coverImageUrl != null &&
-                            e.coverImageUrl!.isNotEmpty
-                        ? Image.network(
-                            e.coverImageUrl!,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) =>
-                                _coverFallback(isDark),
-                          )
-                        : _coverFallback(isDark),
+                    child:
+                        e.coverImageUrl != null && e.coverImageUrl!.isNotEmpty
+                            ? Image.network(
+                                e.coverImageUrl!,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) =>
+                                    _coverFallback(isDark),
+                              )
+                            : _coverFallback(isDark),
                   ),
                   // gradient scrim
                   Positioned(
@@ -433,8 +415,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                         gradient: LinearGradient(
                           colors: [
                             Colors.transparent,
-                            const Color(0xFF1A0A00)
-                                .withValues(alpha: 0.55),
+                            const Color(0xFF1A0A00).withValues(alpha: 0.55),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -461,8 +442,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                             height: 6,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.white
-                                  .withValues(alpha: 0.85),
+                              color: Colors.white.withValues(alpha: 0.85),
                             ),
                           ),
                           const SizedBox(width: 5),
@@ -543,10 +523,8 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(
-                            Icons.account_balance_wallet_outlined,
-                            size: 13,
-                            color: Color(0xFF7B3A10)),
+                        const Icon(Icons.account_balance_wallet_outlined,
+                            size: 13, color: Color(0xFF7B3A10)),
                         const SizedBox(width: 4),
                         Text(
                           'Mapato: TZS ${_currency.format(e.totalRevenue)}',
@@ -563,9 +541,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                   const SizedBox(height: 12),
                   Divider(
                     height: 1,
-                    color: isDark
-                        ? Colors.white10
-                        : const Color(0xFFF5E6D8),
+                    color: isDark ? Colors.white10 : const Color(0xFFF5E6D8),
                   ),
                   const SizedBox(height: 10),
 
@@ -576,20 +552,15 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                     children: [
                       // Publish/unpublish toggle
                       GestureDetector(
-                        onTap: isPending
-                            ? null
-                            : () => _togglePublish(e),
+                        onTap: isPending ? null : () => _togglePublish(e),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 7),
                           decoration: BoxDecoration(
-                            color: statusColor
-                                .withValues(alpha: 0.08),
-                            borderRadius:
-                                BorderRadius.circular(20),
+                            color: statusColor.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                                color: statusColor
-                                    .withValues(alpha: 0.35)),
+                                color: statusColor.withValues(alpha: 0.35)),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -598,10 +569,8 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                                 isPublished
                                     ? Icons.visibility_outlined
                                     : isPending
-                                        ? Icons
-                                            .hourglass_top_rounded
-                                        : Icons
-                                            .visibility_off_outlined,
+                                        ? Icons.hourglass_top_rounded
+                                        : Icons.visibility_off_outlined,
                                 size: 13,
                                 color: statusColor,
                               ),
@@ -622,8 +591,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                         'Hariri',
                         Icons.edit_outlined,
                         () async {
-                          await context.push(
-                              '/trainer/ebooks/${e.id}/edit');
+                          await context.push('/trainer/ebooks/${e.id}/edit');
                           if (mounted) await _refresh();
                         },
                         isDark: isDark,
@@ -632,8 +600,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                         'Maelezo',
                         Icons.bar_chart_rounded,
                         () async {
-                          await context
-                              .push('/trainer/ebooks/${e.id}');
+                          await context.push('/trainer/ebooks/${e.id}');
                           if (mounted) await _refresh();
                         },
                         isDark: isDark,
@@ -658,9 +625,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
 
   Widget _coverFallback(bool isDark) {
     return Container(
-      color: isDark
-          ? const Color(0xFF2A1A0A)
-          : const Color(0xFFF5E6D8),
+      color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
       alignment: Alignment.center,
       child: const Icon(Icons.menu_book_outlined,
           color: Color(0xFFE87722), size: 44),
@@ -677,14 +642,11 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
         decoration: BoxDecoration(
           color: isDanger
               ? const Color(0xFFB71C1C).withValues(alpha: 0.08)
-              : (isDark
-                  ? const Color(0xFF2A1A0A)
-                  : const Color(0xFFF5E6D8)),
+              : (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)),
           border: Border.all(
             color: isDanger
                 ? const Color(0xFFB71C1C).withValues(alpha: 0.25)
@@ -758,8 +720,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                 icon: const Icon(Icons.add_rounded, size: 18),
                 label: Text(
                   'Pakia eBook',
-                  style: GoogleFonts.montserrat(
-                      fontWeight: FontWeight.w700),
+                  style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFE87722),
@@ -767,8 +728,8 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(28)),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 28, vertical: 14),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
                 ),
               ),
             ],

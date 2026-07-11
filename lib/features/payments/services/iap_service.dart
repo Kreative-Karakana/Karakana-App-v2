@@ -129,18 +129,18 @@ class IAPService {
     try {
       final token = await SecureStorage().getToken();
       final response = await ApiClient().dio.post(
-        '/api/v1/payments/apple-iap/verify/',
-        data: {
-          'receipt_data': receiptData,
-          'product_id': productId,
-        },
-        options: Options(
-          headers: {
-            'Authorization': 'Token $token',
-            'Content-Type': 'application/json',
-          },
-        ),
-      );
+            '/api/v1/payments/apple-iap/verify/',
+            data: {
+              'receipt_data': receiptData,
+              'product_id': productId,
+            },
+            options: Options(
+              headers: {
+                'Authorization': 'Token $token',
+                'Content-Type': 'application/json',
+              },
+            ),
+          );
 
       if (response.statusCode != null &&
           response.statusCode! >= 200 &&

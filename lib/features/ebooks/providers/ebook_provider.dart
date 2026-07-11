@@ -121,9 +121,10 @@ class EbookProvider extends ChangeNotifier {
       // LRU cap at 15 pages — evict the page furthest from current.
       if (pageCache.length > 15) {
         final keys = pageCache.keys.toList()..sort();
-        final evict = (keys.first - pageNumber).abs() >= (keys.last - pageNumber).abs()
-            ? keys.first
-            : keys.last;
+        final evict =
+            (keys.first - pageNumber).abs() >= (keys.last - pageNumber).abs()
+                ? keys.first
+                : keys.last;
         pageCache.remove(evict);
       }
       notifyListeners();

@@ -143,8 +143,7 @@ class _EBooksScreenState extends State<EBooksScreen> {
                     ),
                     SafeArea(
                       child: Padding(
-                        padding:
-                            const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -169,8 +168,7 @@ class _EBooksScreenState extends State<EBooksScreen> {
                               'Maktaba ya Kidijitali ya Karakana',
                               style: GoogleFonts.inter(
                                 fontSize: 13,
-                                color:
-                                    Colors.white.withValues(alpha: 0.8),
+                                color: Colors.white.withValues(alpha: 0.8),
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -178,12 +176,10 @@ class _EBooksScreenState extends State<EBooksScreen> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                color: Colors.white
-                                    .withValues(alpha: 0.15),
+                                color: Colors.white.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: Colors.white
-                                      .withValues(alpha: 0.3),
+                                  color: Colors.white.withValues(alpha: 0.3),
                                 ),
                               ),
                               child: Row(
@@ -195,8 +191,7 @@ class _EBooksScreenState extends State<EBooksScreen> {
                                   Text(
                                     'Haina Picha za Skrini',
                                     style: GoogleFonts.inter(
-                                        fontSize: 10,
-                                        color: Colors.white),
+                                        fontSize: 10, color: Colors.white),
                                   ),
                                 ],
                               ),
@@ -246,8 +241,7 @@ class _EBooksScreenState extends State<EBooksScreen> {
           SliverPadding(
             padding: const EdgeInsets.all(20),
             sliver: SliverGrid(
-              gridDelegate:
-                  const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
@@ -292,8 +286,7 @@ class _EBooksScreenState extends State<EBooksScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors:
-                          (book['gradient'] as List).cast<Color>(),
+                      colors: (book['gradient'] as List).cast<Color>(),
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -306,14 +299,13 @@ class _EBooksScreenState extends State<EBooksScreen> {
                           children: [
                             Icon(
                               Icons.menu_book,
-                              color:
-                                  Colors.white.withValues(alpha: 0.3),
+                              color: Colors.white.withValues(alpha: 0.3),
                               size: 48,
                             ),
                             const SizedBox(height: 8),
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
                               child: Text(
                                 book['title'] as String,
                                 style: GoogleFonts.poppins(
@@ -428,11 +420,9 @@ class _EBooksScreenState extends State<EBooksScreen> {
           ),
           actions: [
             Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -440,8 +430,7 @@ class _EBooksScreenState extends State<EBooksScreen> {
                 child: Row(
                   children: [
                     Icon(Icons.lock_outline,
-                        color: Colors.white.withValues(alpha: 0.7),
-                        size: 12),
+                        color: Colors.white.withValues(alpha: 0.7), size: 12),
                     const SizedBox(width: 4),
                     Text(
                       'Imelindwa',
@@ -556,5 +545,3 @@ class _EBooksScreenState extends State<EBooksScreen> {
     );
   }
 }
-
-

@@ -70,7 +70,8 @@ class _WalletScreenState extends State<WalletScreen> {
       isScrollControlled: true,
       backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.modal)),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(AppRadius.modal)),
       ),
       builder: (_) => Padding(
         padding: EdgeInsets.fromLTRB(
@@ -239,7 +240,8 @@ class _WalletScreenState extends State<WalletScreen> {
             color: isSuccessful
                 ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8))
                 : const Color(0xFFFFA726).withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
+            borderRadius:
+                BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
           ),
           child: Icon(
             isSuccessful ? Icons.check_circle_outline : Icons.pending_outlined,
@@ -258,7 +260,8 @@ class _WalletScreenState extends State<WalletScreen> {
                   fontWeight: FontWeight.w600, color: const Color(0xFF3D1800))),
           Row(children: [
             Text(formattedDate,
-                style: AppTextStyles.caption.copyWith(color: const Color(0xFF9E8070))),
+                style: AppTextStyles.caption
+                    .copyWith(color: const Color(0xFF9E8070))),
             const SizedBox(width: AppSpacing.sm),
             Container(
               padding: const EdgeInsets.symmetric(
@@ -269,7 +272,8 @@ class _WalletScreenState extends State<WalletScreen> {
                 color: isSuccessful
                     ? const Color(0xFFE87722).withValues(alpha: 0.1)
                     : const Color(0xFFFFA726).withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(AppSpacing.sm - AppSpacing.xs / 2),
+                borderRadius:
+                    BorderRadius.circular(AppSpacing.sm - AppSpacing.xs / 2),
               ),
               child: Text(isSuccessful ? 'Imekamilika' : 'Inasubiri',
                   style: AppTextStyles.labelSmall.copyWith(
@@ -299,15 +303,16 @@ class _WalletScreenState extends State<WalletScreen> {
                   color: isDark
                       ? const Color(0xFF2A1A0A)
                       : const Color(0xFFF5E6D8),
-                  borderRadius: BorderRadius.circular(AppSpacing.sm - AppSpacing.xs / 2),
+                  borderRadius:
+                      BorderRadius.circular(AppSpacing.sm - AppSpacing.xs / 2),
                 ),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   const Icon(Icons.receipt_outlined,
                       size: 11, color: Color(0xFF7B3A10)),
                   const SizedBox(width: AppSpacing.xs - 1),
                   Text('Risiti',
-                      style: AppTextStyles.labelSmall.copyWith(
-                          color: const Color(0xFF7B3A10))),
+                      style: AppTextStyles.labelSmall
+                          .copyWith(color: const Color(0xFF7B3A10))),
                 ]),
               ),
             ),
@@ -323,8 +328,8 @@ class _WalletScreenState extends State<WalletScreen> {
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.xl),
           child: Text(emptyMessage,
-              style: AppTextStyles.bodyMedium.copyWith(
-                  color: const Color(0xFF9E8070)),
+              style: AppTextStyles.bodyMedium
+                  .copyWith(color: const Color(0xFF9E8070)),
               textAlign: TextAlign.center),
         ),
       );
@@ -376,7 +381,8 @@ class _WalletScreenState extends State<WalletScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
+                  borderRadius:
+                      BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
                 ),
                 child: const Icon(Icons.arrow_back_ios_new_rounded,
                     color: Colors.white, size: 16),
@@ -439,16 +445,20 @@ class _WalletScreenState extends State<WalletScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text('Salio Linalopatikana',
-                                              style: AppTextStyles.bodySmall.copyWith(
-                                                  color: Colors.white
-                                                      .withValues(alpha: 0.7))),
-                                          const SizedBox(height: AppSpacing.sm - AppSpacing.xs / 2),
+                                              style: AppTextStyles.bodySmall
+                                                  .copyWith(
+                                                      color: Colors.white
+                                                          .withValues(
+                                                              alpha: 0.7))),
+                                          const SizedBox(
+                                              height: AppSpacing.sm -
+                                                  AppSpacing.xs / 2),
                                           Text(
                                             _balanceVisible
                                                 ? 'TZS ${_formatPrice(_wallet?['balance'] ?? 0)}'
                                                 : 'TZS ••••••',
-                                            style: AppTextStyles.displayMedium.copyWith(
-                                                color: Colors.white),
+                                            style: AppTextStyles.displayMedium
+                                                .copyWith(color: Colors.white),
                                           ),
                                         ]),
                                     GestureDetector(
@@ -487,9 +497,10 @@ class _WalletScreenState extends State<WalletScreen> {
                                         _balanceVisible
                                             ? 'TZS ${_formatPrice(_wallet?['total_income'] ?? 0)}'
                                             : 'TZS ••••',
-                                        style: AppTextStyles.buttonLarge.copyWith(
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white),
+                                        style: AppTextStyles.buttonLarge
+                                            .copyWith(
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.white),
                                       ),
                                     ])),
                                 Container(
@@ -498,23 +509,27 @@ class _WalletScreenState extends State<WalletScreen> {
                                     color: Colors.white.withValues(alpha: 0.2)),
                                 Expanded(
                                     child: Padding(
-                                  padding: const EdgeInsets.only(left: AppSpacing.md),
+                                  padding: const EdgeInsets.only(
+                                      left: AppSpacing.md),
                                   child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text('Iliyotolewa',
-                                            style: AppTextStyles.caption.copyWith(
-                                                color: Colors.white
-                                                    .withValues(alpha: 0.6))),
+                                            style: AppTextStyles.caption
+                                                .copyWith(
+                                                    color:
+                                                        Colors.white.withValues(
+                                                            alpha: 0.6))),
                                         const SizedBox(height: 4),
                                         Text(
                                           _balanceVisible
                                               ? 'TZS ${_formatPrice(_wallet?['total_disbursed'] ?? 0)}'
                                               : 'TZS ••••',
-                                          style: AppTextStyles.buttonLarge.copyWith(
-                                              fontWeight: FontWeight.w700,
-                                              color: Colors.white),
+                                          style: AppTextStyles.buttonLarge
+                                              .copyWith(
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.white),
                                         ),
                                       ]),
                                 )),
@@ -527,15 +542,16 @@ class _WalletScreenState extends State<WalletScreen> {
                                     backgroundColor: Colors.white,
                                     foregroundColor: const Color(0xFFE87722),
                                     shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(AppSpacing.sm + AppSpacing.xs)),
+                                        borderRadius: BorderRadius.circular(
+                                            AppSpacing.sm + AppSpacing.xs)),
                                     minimumSize:
                                         const Size(double.infinity, 48),
                                   ),
                                   onPressed: _showWithdrawSheet,
                                   child: Text('Omba Malipo',
-                                      style: AppTextStyles.buttonMedium.copyWith(
-                                          color: const Color(0xFFE87722))),
+                                      style: AppTextStyles.buttonMedium
+                                          .copyWith(
+                                              color: const Color(0xFFE87722))),
                                 ),
                               ),
                             ]),
@@ -555,15 +571,18 @@ class _WalletScreenState extends State<WalletScreen> {
                           color: isDark
                               ? const Color(0xFF2A1A0A)
                               : const Color(0xFFF5E6D8),
-                          borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs),
+                          borderRadius: BorderRadius.circular(
+                              AppSpacing.sm + AppSpacing.xs),
                         ),
                         child: TabBar(
                           indicator: BoxDecoration(
                             color: const Color(0xFFE87722),
-                            borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
+                            borderRadius: BorderRadius.circular(
+                                AppSpacing.sm + AppSpacing.xs / 2),
                           ),
                           indicatorSize: TabBarIndicatorSize.tab,
-                          labelStyle: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
+                          labelStyle: AppTextStyles.bodySmall
+                              .copyWith(fontWeight: FontWeight.w600),
                           unselectedLabelStyle: AppTextStyles.bodySmall,
                           labelColor: Colors.white,
                           unselectedLabelColor: const Color(0xFF7B3A10),

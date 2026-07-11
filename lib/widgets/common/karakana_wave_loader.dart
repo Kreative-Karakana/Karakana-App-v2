@@ -82,8 +82,8 @@ class _KarakanaWaveLoaderState extends State<KarakanaWaveLoader>
                     final wave = (0.5 - (phase - 0.5).abs()) * 2;
                     final h = minBarHeight + (wave * maxExtraHeight);
                     return Padding(
-                      padding:
-                          EdgeInsets.only(right: i == bars - 1 ? 0 : constrainedGap),
+                      padding: EdgeInsets.only(
+                          right: i == bars - 1 ? 0 : constrainedGap),
                       child: Container(
                         width: barWidth,
                         height: h,

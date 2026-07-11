@@ -30,8 +30,7 @@ class CourseService {
       final response =
           await _dio.get('/api/v1/courses/', queryParameters: params);
       final data = response.data;
-      final results =
-          data is Map ? (data['results'] ?? []) : data;
+      final results = data is Map ? (data['results'] ?? []) : data;
       return (results as List)
           .map((j) => CourseModel.fromJson(j as Map<String, dynamic>))
           .toList();
@@ -43,8 +42,7 @@ class CourseService {
   Future<CourseModel> getCourseDetail(int id) async {
     try {
       final response = await _dio.get('/api/v1/courses/$id/');
-      return CourseModel.fromJson(
-          response.data as Map<String, dynamic>);
+      return CourseModel.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       throw ApiClient().parseError(e);
     }
@@ -56,8 +54,7 @@ class CourseService {
       final data = response.data;
       final list = data is Map ? (data['results'] ?? data) : data;
       return (list as List)
-          .map((j) =>
-              CategoryModel.fromJson(j as Map<String, dynamic>))
+          .map((j) => CategoryModel.fromJson(j as Map<String, dynamic>))
           .toList();
     } catch (e) {
       throw ApiClient().parseError(e);
@@ -66,15 +63,12 @@ class CourseService {
 
   Future<List<SectionModel>> getCourseSections(int courseId) async {
     try {
-      final response =
-          await _dio.get('/api/v1/courses/$courseId/sections/');
+      final response = await _dio.get('/api/v1/courses/$courseId/sections/');
       final data = response.data;
-      final list = data is Map
-          ? (data['results'] ?? data['sections'] ?? [])
-          : data;
+      final list =
+          data is Map ? (data['results'] ?? data['sections'] ?? []) : data;
       return (list as List)
-          .map((j) =>
-              SectionModel.fromJson(j as Map<String, dynamic>))
+          .map((j) => SectionModel.fromJson(j as Map<String, dynamic>))
           .toList();
     } catch (e) {
       throw ApiClient().parseError(e);
@@ -83,8 +77,7 @@ class CourseService {
 
   Future<bool> toggleLessonProgress(int lessonId) async {
     try {
-      final response =
-          await _dio.post('/api/v1/lessons/$lessonId/progress/');
+      final response = await _dio.post('/api/v1/lessons/$lessonId/progress/');
       return response.data['is_completed'] ?? response.data['is_read'] ?? false;
     } catch (e) {
       throw ApiClient().parseError(e);
@@ -114,13 +107,11 @@ class CourseService {
 
   Future<List<ReviewModel>> getCourseReviews(int courseId) async {
     try {
-      final response =
-          await _dio.get('/api/v1/courses/$courseId/reviews/');
+      final response = await _dio.get('/api/v1/courses/$courseId/reviews/');
       final data = response.data;
       final list = data is Map ? (data['results'] ?? []) : data;
       return (list as List)
-          .map((j) =>
-              ReviewModel.fromJson(j as Map<String, dynamic>))
+          .map((j) => ReviewModel.fromJson(j as Map<String, dynamic>))
           .toList();
     } catch (e) {
       throw ApiClient().parseError(e);
@@ -129,13 +120,11 @@ class CourseService {
 
   Future<List<BannerModel>> getBanners() async {
     try {
-      final response =
-          await _dio.get('/api/v1/communications/banners/');
+      final response = await _dio.get('/api/v1/communications/banners/');
       final data = response.data;
       final list = data is Map ? (data['results'] ?? []) : data;
       return (list as List)
-          .map((j) =>
-              BannerModel.fromJson(j as Map<String, dynamic>))
+          .map((j) => BannerModel.fromJson(j as Map<String, dynamic>))
           .toList();
     } catch (_) {
       return [];

@@ -21,7 +21,8 @@ class SecureEbookReaderScreen extends StatefulWidget {
   });
 
   @override
-  State<SecureEbookReaderScreen> createState() => _SecureEbookReaderScreenState();
+  State<SecureEbookReaderScreen> createState() =>
+      _SecureEbookReaderScreenState();
 }
 
 class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
@@ -77,7 +78,8 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
     _startHudTimer();
 
     final provider = context.read<EbookProvider>();
-    final bytes = await provider.fetchReaderPage(ebookId: widget.ebookId, pageNumber: page);
+    final bytes = await provider.fetchReaderPage(
+        ebookId: widget.ebookId, pageNumber: page);
     if (!mounted) return;
 
     if (bytes == null) {
@@ -111,7 +113,8 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
         if (!mounted) return;
         final provider = context.read<EbookProvider>();
         if (!provider.pageCache.containsKey(p)) {
-          unawaited(provider.fetchReaderPage(ebookId: widget.ebookId, pageNumber: p));
+          unawaited(
+              provider.fetchReaderPage(ebookId: widget.ebookId, pageNumber: p));
         }
       });
     }
@@ -161,7 +164,8 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
           child: Stack(
             children: [
               Positioned.fill(child: _buildCanvas()),
-              if (_showHud) Positioned(left: 0, right: 0, bottom: 0, child: _buildHud()),
+              if (_showHud)
+                Positioned(left: 0, right: 0, bottom: 0, child: _buildHud()),
             ],
           ),
         ),
@@ -192,7 +196,9 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
       );
     }
 
-    if (_loading) return const Center(child: KarakanaWaveLoader(color: Colors.white));
+    if (_loading) {
+      return const Center(child: KarakanaWaveLoader(color: Colors.white));
+    }
     if (_error != null) {
       return Center(
         child: Column(
@@ -241,7 +247,8 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
           ),
           decoration: BoxDecoration(
             color: Colors.black.withValues(alpha: 0.72),
-            border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.2))),
+            border: Border(
+                top: BorderSide(color: Colors.white.withValues(alpha: 0.2))),
           ),
           child: Row(
             children: [

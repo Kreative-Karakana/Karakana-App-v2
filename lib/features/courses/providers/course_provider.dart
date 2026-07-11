@@ -208,7 +208,8 @@ class CourseProvider extends ChangeNotifier {
       }
       notifyListeners();
     } else {
-      await loadCourses(search: normalized, categoryName: _selectedCategoryName);
+      await loadCourses(
+          search: normalized, categoryName: _selectedCategoryName);
     }
   }
 
@@ -222,8 +223,8 @@ class CourseProvider extends ChangeNotifier {
       _courses = List.from(_allCourses);
     } else {
       _courses = _allCourses
-          .where((c) => c.categories.any(
-              (cat) => cat.toLowerCase() == categoryName.toLowerCase()))
+          .where((c) => c.categories
+              .any((cat) => cat.toLowerCase() == categoryName.toLowerCase()))
           .toList();
     }
     notifyListeners();
@@ -250,8 +251,7 @@ class CourseProvider extends ChangeNotifier {
   Future<bool> toggleWishlist(int courseId) async {
     try {
       final isWishlisted = await _service.toggleWishlist(courseId);
-      _updateInAllLists(
-          courseId, (c) => c.isWishlisted = isWishlisted);
+      _updateInAllLists(courseId, (c) => c.isWishlisted = isWishlisted);
       if (_selectedCourse?.id == courseId) {
         _selectedCourse!.isWishlisted = isWishlisted;
       }

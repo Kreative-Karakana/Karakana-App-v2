@@ -123,7 +123,9 @@ class ApiClient {
 
   String _localizeErrorMessage(String message) {
     final normalized = message.trim();
-    if (normalized.isEmpty) return 'Kuna hitilafu imetokea. Tafadhali jaribu tena.';
+    if (normalized.isEmpty) {
+      return 'Kuna hitilafu imetokea. Tafadhali jaribu tena.';
+    }
     final lower = normalized.toLowerCase();
 
     if (lower.contains('invalid reference')) {

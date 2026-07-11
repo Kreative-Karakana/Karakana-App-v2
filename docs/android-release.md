@@ -62,6 +62,16 @@ The release APK requires a valid keystore and `android/key.properties`.
 
 ## 4) Build AAB
 
+Preferred production release path:
+
+```text
+.github/workflows/android-release.yml
+```
+
+The protected workflow creates `android/key.properties` and the decoded keystore only on the GitHub runner from production secrets, then removes them during cleanup.
+
+Local fallback:
+
 ```bash
 flutter build appbundle --release
 ```
@@ -75,6 +85,7 @@ Do not commit:
 - any `*.jks` / `*.keystore`
 - `android/local.properties`
 - generated build outputs under `build/`
+- CI signing secrets or decoded CI signing files
 
 ## 6) Firebase config cleanup to review
 
@@ -97,5 +108,5 @@ Do not hand-edit Firebase JSON unless you are intentionally applying a verified 
 - `flutter pub get`
 - `flutter analyze`
 - `flutter build apk --debug`
-- `flutter build apk --release` only after signing is configured
+- `flutter build apk --release` only after signing is configured through the protected workflow or local-only signing files
 - `flutter build appbundle --release` for Play Store submission

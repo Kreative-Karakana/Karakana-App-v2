@@ -50,8 +50,7 @@ class AppTheme {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
-            borderSide:
-                const BorderSide(color: AppColors.primary, width: 1.5),
+            borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
@@ -71,8 +70,8 @@ class AppTheme {
             backgroundColor: AppColors.primary,
             foregroundColor: AppColors.textOnPrimary,
             minimumSize: const Size(64, 56),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
             elevation: 0,
             textStyle: AppTextStyles.buttonLarge,
           ),

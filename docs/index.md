@@ -13,6 +13,7 @@ Use old docs under `old-dev/Karakana-App/docs/` only as reference material after
 - `architecture.md` documents project structure, routing, providers, API integration, secure storage, and UI conventions.
 - `setup.md` documents local setup, environment configuration, platform prerequisites, and validation commands.
 - `flows.md` documents the current user, trainer, payment, notification, profile, support, course, and eBook flows.
+- `ci-cd.md` documents Flutter CI gates, protected release workflows, required secrets, and build environment expectations.
 - `release.md` documents Android and iOS release preparation.
 - `documentation-checklist.md` defines the documentation quality bar for future V2 changes.
 - Existing release/audit notes remain available in this directory for historical context.

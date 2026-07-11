@@ -73,12 +73,14 @@ class PaymentSuccessScreen extends StatelessWidget {
                                 ),
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.sm + AppSpacing.xs / 2,
+                                    horizontal:
+                                        AppSpacing.sm + AppSpacing.xs / 2,
                                     vertical: AppSpacing.xs,
                                   ),
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFE87722),
-                                    borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
+                                    borderRadius: BorderRadius.circular(
+                                        AppSpacing.sm + AppSpacing.xs / 2),
                                   ),
                                   child: Text(
                                     'Imefaulu',
@@ -90,7 +92,8 @@ class PaymentSuccessScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
+                            const SizedBox(
+                                height: AppSpacing.sm + AppSpacing.xs),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -124,7 +127,8 @@ class PaymentSuccessScreen extends StatelessWidget {
                   icon: const Icon(Icons.play_arrow_rounded),
                   label: Text(
                     'Anza Kujifunza',
-                    style: AppTextStyles.buttonLarge.copyWith(color: Colors.white),
+                    style:
+                        AppTextStyles.buttonLarge.copyWith(color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFE87722),

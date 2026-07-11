@@ -59,7 +59,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
             children: [
               Text(
                 'Aina ya Tatizo',
-                style: AppTextStyles.h4.copyWith(color: const Color(0xFF3D1800)),
+                style:
+                    AppTextStyles.h4.copyWith(color: const Color(0xFF3D1800)),
               ),
               const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
               Wrap(
@@ -96,7 +97,8 @@ class _NewTicketScreenState extends State<NewTicketScreen> {
                                 ? Colors.white
                                 : const Color(0xFF9E8070),
                           ),
-                          const SizedBox(width: AppSpacing.sm - AppSpacing.xs / 2),
+                          const SizedBox(
+                              width: AppSpacing.sm - AppSpacing.xs / 2),
                           Text(
                             type[1] as String,
                             style: AppTextStyles.bodyMedium.copyWith(

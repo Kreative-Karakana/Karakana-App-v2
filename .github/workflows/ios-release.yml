@@ -4,13 +4,22 @@ on:
   workflow_dispatch:
     inputs:
       version_name:
-        description: 'Version name (e.g. 1.0.0)'
+        description: 'Version name (e.g. 2.1.1)'
         required: true
-        default: '2.0.2'
+        default: '2.1.0'
+
+permissions:
+  contents: read
+
+env:
+  FLUTTER_VERSION: "3.44.0"
+  FLUTTER_SUPPRESS_ANALYTICS: "true"
 
 jobs:
   build-ios:
     runs-on: macos-15
+    environment: production
+    timeout-minutes: 60
 
     steps:
       - name: Checkout code
@@ -19,7 +28,8 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
           cache: true
 
       - name: Select Xcode version
@@ -51,7 +61,8 @@ jobs:
         run: flutter pub get
 
       - name: Install CocoaPods dependencies
-        run: cd ios && pod install && cd ..
+        working-directory: ios
+        run: pod install
 
       - name: Verify Pods signing overrides
         run: |
@@ -98,8 +109,6 @@ jobs:
             --no-tree-shake-icons \
             --build-number=${{ github.run_number }} \
             --build-name=${{ github.event.inputs.version_name }}
-        env:
-          FLUTTER_SUPPRESS_ANALYTICS: true
 
       - name: Archive with xcodebuild
         env:
@@ -154,3 +163,9 @@ jobs:
           echo "### ✅ iOS Release Complete" >> $GITHUB_STEP_SUMMARY
           echo "- Branch: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- Uploaded to App Store Connect ✅" >> $GITHUB_STEP_SUMMARY
+
+      - name: Clean iOS signing files
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/certificate.p12"
+          rm -f "$RUNNER_TEMP/profile.mobileprovision"

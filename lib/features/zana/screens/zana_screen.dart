@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -89,7 +89,8 @@ class _ZanaScreenState extends State<ZanaScreen> {
                         height: 140,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: const Color(0xFFE87722).withValues(alpha: 0.18),
+                          color:
+                              const Color(0xFFE87722).withValues(alpha: 0.18),
                         ),
                       ),
                     ),
@@ -178,7 +179,11 @@ class _ZanaScreenState extends State<ZanaScreen> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [Color(0xFF1A0A00), Color(0xFF3D1800), Color(0xFF7B3A10)],
+                      colors: [
+                        Color(0xFF1A0A00),
+                        Color(0xFF3D1800),
+                        Color(0xFF7B3A10)
+                      ],
                       begin: Alignment.centerLeft,
                       end: Alignment.centerRight,
                     ),
@@ -287,7 +292,8 @@ class _ZanaScreenState extends State<ZanaScreen> {
                 style: GoogleFonts.montserrat(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).textTheme.bodyLarge?.color ?? const Color(0xFF1A0A00),
+                  color: Theme.of(context).textTheme.bodyLarge?.color ??
+                      const Color(0xFF1A0A00),
                 ),
               ),
             ),

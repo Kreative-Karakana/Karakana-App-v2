@@ -89,7 +89,8 @@ class _SupportScreenState extends State<SupportScreen> {
               children: [
                 Text(
                   'Tunawezaje Kukusaidia?',
-                  style: AppTextStyles.h4.copyWith(color: const Color(0xFF3D1800)),
+                  style:
+                      AppTextStyles.h4.copyWith(color: const Color(0xFF3D1800)),
                 ),
                 const SizedBox(height: AppSpacing.sm + AppSpacing.xs),
                 Row(
@@ -202,11 +203,14 @@ class _SupportScreenState extends State<SupportScreen> {
                                 }
                               },
                               child: Container(
-                                margin: const EdgeInsets.only(bottom: AppSpacing.sm + AppSpacing.xs / 2),
-                                padding: const EdgeInsets.all(AppSpacing.md - AppSpacing.xs / 2),
+                                margin: const EdgeInsets.only(
+                                    bottom: AppSpacing.sm + AppSpacing.xs / 2),
+                                padding: const EdgeInsets.all(
+                                    AppSpacing.md - AppSpacing.xs / 2),
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).cardColor,
-                                  borderRadius: BorderRadius.circular(AppRadius.input),
+                                  borderRadius:
+                                      BorderRadius.circular(AppRadius.input),
                                   boxShadow: const [
                                     BoxShadow(
                                       color: Color(0x0FC4620A),
@@ -224,7 +228,8 @@ class _SupportScreenState extends State<SupportScreen> {
                                         color: isDark
                                             ? const Color(0xFF2A1A0A)
                                             : const Color(0xFFF5E6D8),
-                                        borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs - 1),
+                                        borderRadius: BorderRadius.circular(
+                                            AppSpacing.sm + AppSpacing.xs - 1),
                                       ),
                                       child: const Icon(
                                         Icons.support_agent_outlined,
@@ -232,7 +237,8 @@ class _SupportScreenState extends State<SupportScreen> {
                                         size: 22,
                                       ),
                                     ),
-                                    const SizedBox(width: AppSpacing.sm + AppSpacing.xs),
+                                    const SizedBox(
+                                        width: AppSpacing.sm + AppSpacing.xs),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
@@ -241,16 +247,19 @@ class _SupportScreenState extends State<SupportScreen> {
                                           Text(
                                             'TKT-${ticketId.toString().padLeft(4, '0')}',
                                             style: GoogleFonts.montserrat(
-                                              fontSize: AppTextStyles.caption.fontSize,
+                                              fontSize: AppTextStyles
+                                                  .caption.fontSize,
                                               color: const Color(0xFFBDA99C),
                                             ),
                                           ),
-                                          const SizedBox(height: AppSpacing.xs / 2),
+                                          const SizedBox(
+                                              height: AppSpacing.xs / 2),
                                           Text(
                                             subject,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: AppTextStyles.labelLarge.copyWith(
+                                            style: AppTextStyles.labelLarge
+                                                .copyWith(
                                               color: const Color(0xFF3D1800),
                                             ),
                                           ),
@@ -259,14 +268,16 @@ class _SupportScreenState extends State<SupportScreen> {
                                     ),
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: AppSpacing.sm + AppSpacing.xs / 2,
+                                        horizontal:
+                                            AppSpacing.sm + AppSpacing.xs / 2,
                                         vertical: AppSpacing.xs,
                                       ),
                                       decoration: BoxDecoration(
                                         color: isResolved
                                             ? const Color(0xFFF5E6D8)
                                             : const Color(0xFFFFF8F4),
-                                        borderRadius: BorderRadius.circular(AppSpacing.sm + AppSpacing.xs / 2),
+                                        borderRadius: BorderRadius.circular(
+                                            AppSpacing.sm + AppSpacing.xs / 2),
                                         border: Border.all(
                                           color: isResolved
                                               ? const Color(0xFFE87722)
@@ -275,7 +286,8 @@ class _SupportScreenState extends State<SupportScreen> {
                                       ),
                                       child: Text(
                                         isResolved ? 'Imemalizwa' : 'Wazi',
-                                        style: AppTextStyles.labelSmall.copyWith(
+                                        style:
+                                            AppTextStyles.labelSmall.copyWith(
                                           color: isResolved
                                               ? const Color(0xFFE87722)
                                               : const Color(0xFFE87722),
