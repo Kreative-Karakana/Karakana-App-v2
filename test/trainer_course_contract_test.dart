@@ -27,6 +27,34 @@ void main() {
       expect(CourseContract.normalizeStatus('unsupported'), 'draft');
     });
 
+    test('exposes rejection reason only when present and non-blank', () {
+      expect(CourseContract.rejectionReason({'rejection_reason': 'Fix desc'}),
+          'Fix desc');
+      expect(
+          CourseContract.rejectionReason({'rejection_reason': '   '}), null);
+      expect(CourseContract.rejectionReason({}), null);
+      expect(CourseContract.rejectionReason(null), null);
+    });
+
+    test('identifies rejected status and resubmit action label', () {
+      expect(CourseContract.isRejected('rejected'), isTrue);
+      expect(CourseContract.isRejected('draft'), isFalse);
+      expect(CourseContract.submitActionLabel('rejected'), 'Wasilisha Tena');
+      expect(
+          CourseContract.submitActionLabel('draft'), 'Tuma kwa Ukaguzi');
+    });
+
+    test('provides trainer-facing guidance text for every status', () {
+      for (final status in [
+        CourseContract.statusDraft,
+        CourseContract.statusPendingReview,
+        CourseContract.statusPublished,
+        CourseContract.statusRejected,
+      ]) {
+        expect(CourseContract.statusGuidanceFor(status), isNotEmpty);
+      }
+    });
+
     test('validates required fields and invalid price', () {
       final result = CourseContract.validatePayloadInput(
         const CoursePayloadInput(

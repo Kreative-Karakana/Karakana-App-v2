@@ -35,12 +35,15 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   Map<String, String> _fieldErrors = {};
   List<Map<String, dynamic>> _categories = [];
   File? _coverImage;
+  String? _existingStatus;
+  String? _rejectionReason;
 
   // Step 3 — Quiz (local state, submitted after course is created)
   final List<Map<String, dynamic>> _questions = [];
   final _passingScoreController = TextEditingController(text: '70');
 
   bool get _isEditMode => widget.courseId != null;
+  bool get _isRejected => CourseContract.isRejected(_existingStatus);
 
   @override
   void initState() {
@@ -101,6 +104,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
         _selectedLevel =
             CourseContract.normalizeLevel(data['level'] as String?);
         if (catId != null) _selectedCategory = catId.toString();
+        _existingStatus = data['status'] as String?;
+        _rejectionReason = CourseContract.rejectionReason(data);
         _isLoadingCourse = false;
       });
     } catch (_) {
@@ -194,6 +199,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
       return;
     }
 
+    final wasRejected = _isRejected;
+
     setState(() {
       _fieldErrors = {};
       _isSubmitting = true;
@@ -201,6 +208,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
 
     try {
       final payload = CourseContract.buildPayload(_payloadInput);
+      final editSuccessMessage = wasRejected
+          ? 'Kozi yako imewasilishwa tena kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.'
+          : 'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.';
 
       if (_coverImage != null) {
         // Multipart upload when a cover image is selected
@@ -215,9 +225,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               .dio
               .patch('/api/v1/courses/${widget.courseId}/', data: formData);
           if (!mounted) return;
-          _showSuccess(
-            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.',
-          );
+          _showSuccess(editSuccessMessage);
           context.pop();
         } else {
           final res =
@@ -241,9 +249,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
               .dio
               .patch('/api/v1/courses/${widget.courseId}/', data: payload);
           if (!mounted) return;
-          _showSuccess(
-            'Kozi yako imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.',
-          );
+          _showSuccess(editSuccessMessage);
           context.pop();
         } else {
           final res =
@@ -431,7 +437,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     final surfaceColor = Theme.of(context).cardColor;
     final title = _isEditMode ? 'Hariri Kozi' : 'Unda Kozi Mpya';
     final subtitle = _isEditMode
-        ? 'Safisha maudhui, panga sehemu, na tuma mabadiliko kwa ukaguzi.'
+        ? (_isRejected
+            ? 'Kozi hii ilikataliwa. Rekebisha kulingana na sababu iliyotolewa kisha uwasilishe tena.'
+            : 'Safisha maudhui, panga sehemu, na tuma mabadiliko kwa ukaguzi.')
         : 'Jaza maelezo ya kozi, kisha tuma kwa ukaguzi wa timu ya Kreative Karakana.';
 
     if (_isLoadingCourse) {
@@ -563,6 +571,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 ],
               ),
             ),
+            if (_isRejected) _buildRejectionBanner(),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(14),
@@ -728,7 +737,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                               _currentStep < 3
                                   ? 'Endelea'
                                   : (_isEditMode
-                                      ? 'Tuma Mabadiliko'
+                                      ? (_isRejected
+                                          ? 'Wasilisha Tena kwa Ukaguzi'
+                                          : 'Tuma Mabadiliko')
                                       : 'Tuma kwa Ukaguzi'),
                               style: GoogleFonts.montserrat(
                                 fontSize: 15,
@@ -1463,6 +1474,56 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 Text(subtitle,
                     style: GoogleFonts.montserrat(
                         fontSize: 12, color: const Color(0xFF9E8070))),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRejectionBanner() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFB71C1C).withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border:
+            Border.all(color: const Color(0xFFB71C1C).withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.error_outline_rounded,
+              color: Color(0xFFB71C1C), size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Status: Imekataliwa',
+                    style: GoogleFonts.montserrat(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFFB71C1C))),
+                const SizedBox(height: 4),
+                Text(
+                  _rejectionReason ??
+                      'Timu ya Kreative Karakana haikutoa sababu maalum. Wasiliana nao kwa maelezo zaidi.',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 12.5,
+                      color: const Color(0xFF7B3A10),
+                      height: 1.5),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Rekebisha maudhui hapa chini kisha uwasilishe tena kwa ukaguzi.',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFFB71C1C)),
+                ),
               ],
             ),
           ),

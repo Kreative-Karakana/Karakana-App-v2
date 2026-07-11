@@ -137,19 +137,27 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
 
   Future<void> _showPublishConfirm(Map course) async {
     final id = course['id'] as int? ?? 0;
-    final isPublished = (course['status'] as String? ?? '') == 'published';
+    final statusStr = course['status'] as String? ?? '';
+    final isPublished = statusStr == 'published';
+    final isRejected = CourseContract.isRejected(statusStr);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          isPublished ? 'Ficha Kozi?' : 'Tuma kwa Ukaguzi?',
+          isPublished
+              ? 'Ficha Kozi?'
+              : isRejected
+                  ? 'Wasilisha Tena kwa Ukaguzi?'
+                  : 'Tuma kwa Ukaguzi?',
           style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
         ),
         content: Text(
           isPublished
               ? 'Kozi itafichwa na wanafunzi wapya hawataweza kuisajili.'
-              : 'Kozi itatumwa kwa timu ya Karakana kwa ukaguzi kabla ya kuchapishwa.',
+              : isRejected
+                  ? 'Baada ya kurekebisha maudhui, kozi itatumwa tena kwa timu ya Karakana kwa ukaguzi.'
+                  : 'Kozi itatumwa kwa timu ya Karakana kwa ukaguzi kabla ya kuchapishwa.',
           style: GoogleFonts.montserrat(fontSize: 13, height: 1.5),
         ),
         actions: [
@@ -219,6 +227,8 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
     final statusStr = course['status'] as String? ?? 'draft';
     final isPublished = statusStr == 'published';
     final isPendingReview = statusStr == 'pending_review';
+    final isRejected = CourseContract.isRejected(statusStr);
+    final rejectionReason = CourseContract.rejectionReason(course);
     final title = course['title'] as String? ?? '';
     final thumbnail = course['cover_photo'] as String?;
     final students = course['student_count'] as int? ?? 0;
@@ -343,6 +353,44 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
+            if (isRejected) ...[
+              const SizedBox(height: 8),
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFB71C1C).withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      color: const Color(0xFFB71C1C).withValues(alpha: 0.25)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      const Icon(Icons.error_outline_rounded,
+                          size: 13, color: Color(0xFFB71C1C)),
+                      const SizedBox(width: 5),
+                      Text('Sababu ya Kukataliwa',
+                          style: GoogleFonts.montserrat(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFFB71C1C))),
+                    ]),
+                    const SizedBox(height: 4),
+                    Text(
+                      rejectionReason ??
+                          'Timu ya Kreative Karakana haikutoa sababu maalum. Wasiliana nao kwa maelezo zaidi.',
+                      style: GoogleFonts.montserrat(
+                          fontSize: 11.5,
+                          height: 1.4,
+                          color: const Color(0xFF7B3A10)),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const SizedBox(height: 10),
             Row(children: [
               const Icon(Icons.people_outline,
@@ -393,13 +441,18 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
                     ? 'Imechapishwa'
                     : isPendingReview
                         ? 'Inasubiri'
-                        : 'Tuma kwa Ukaguzi',
+                        : isRejected
+                            ? 'Wasilisha Tena'
+                            : 'Tuma kwa Ukaguzi',
                 isPublished
                     ? Icons.visibility_outlined
                     : isPendingReview
                         ? Icons.hourglass_top_rounded
-                        : Icons.visibility_off_outlined,
+                        : isRejected
+                            ? Icons.refresh_rounded
+                            : Icons.visibility_off_outlined,
                 isPendingReview ? () {} : () => _showPublishConfirm(course),
+                isDanger: isRejected,
               ),
               _buildSmallAction(
                 'Ongeza Somo',

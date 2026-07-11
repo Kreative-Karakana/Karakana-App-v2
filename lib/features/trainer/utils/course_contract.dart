@@ -75,6 +75,16 @@ class CourseContract {
     statusRejected: CourseStatusPresentation('Imekataliwa', 0xFFB71C1C),
   };
 
+  // What the trainer should understand/do next for each lifecycle state.
+  static const statusGuidance = {
+    statusDraft: 'Bado haijawasilishwa. Kamilisha maelezo kisha tuma kwa ukaguzi.',
+    statusPendingReview:
+        'Timu ya Kreative Karakana inaipitia kozi yako. Tutakujulisha baada ya ukaguzi.',
+    statusPublished: 'Kozi yako imechapishwa na inapatikana kwa wanafunzi.',
+    statusRejected:
+        'Kozi yako haikukubaliwa. Rekebisha kulingana na sababu iliyotolewa kisha uwasilishe tena.',
+  };
+
   static String normalizeLevel(String? value) {
     if (levelLabels.containsKey(value)) return value!;
     return levelBeginner;
@@ -92,6 +102,26 @@ class CourseContract {
 
   static CourseStatusPresentation statusPresentation(String? value) {
     return statusPresentations[normalizeStatus(value)]!;
+  }
+
+  static String statusGuidanceFor(String? value) {
+    return statusGuidance[normalizeStatus(value)] ?? '';
+  }
+
+  static bool isRejected(String? value) => normalizeStatus(value) == statusRejected;
+
+  /// Extracts the trainer-facing rejection reason from a raw course JSON map,
+  /// if the backend provided one. Returns null when absent/blank so callers
+  /// only render a reason when it is actually available.
+  static String? rejectionReason(Map? course) {
+    final raw = course?['rejection_reason'];
+    if (raw == null) return null;
+    final text = raw.toString().trim();
+    return text.isEmpty ? null : text;
+  }
+
+  static String submitActionLabel(String? value) {
+    return isRejected(value) ? 'Wasilisha Tena' : 'Tuma kwa Ukaguzi';
   }
 
   static CourseValidationResult validatePayloadInput(
