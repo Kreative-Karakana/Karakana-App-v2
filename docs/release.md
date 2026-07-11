@@ -37,7 +37,7 @@ flutter test
 
 Document any skipped command and why it was skipped.
 
-Pull requests and protected-branch pushes are validated by `.github/workflows/flutter-ci.yml`. See `docs/ci-cd.md` for the full CI/CD policy, pinned Flutter version, required secrets, and protected release workflow details.
+Pull requests are validated by `.github/workflows/flutter-ci.yml`. Merged `main` branch builds are validated by `.github/workflows/flutter-build-validation.yml`. See `docs/ci-cd.md` for the full CI/CD policy, pinned Flutter version, required secrets, and protected release workflow details.
 
 ## Android Release
 

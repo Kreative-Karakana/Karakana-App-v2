@@ -15,19 +15,22 @@ Do not change the workflow Flutter version casually. When the team upgrades Flut
 
 ## Workflow Overview
 
-The repository uses three GitHub Actions workflows:
+The repository uses four GitHub Actions workflows:
 
 - `.github/workflows/flutter-ci.yml`
+- `.github/workflows/flutter-build-validation.yml`
 - `.github/workflows/android-release.yml`
 - `.github/workflows/ios-release.yml`
 
-`flutter-ci.yml` is the normal PR and main-branch quality gate. It must not require production signing secrets.
+`flutter-ci.yml` is the pull request quality gate. It is intentionally fast and must not require production signing secrets.
+
+`flutter-build-validation.yml` validates that merged `main` branch code still builds for Android and iOS without requiring production signing secrets.
 
 `android-release.yml` and `ios-release.yml` are manual production release workflows. They should be protected with the GitHub `production` environment so signing credentials are available only after the required approval process.
 
-## Continuous Integration
+## Pull Request Quality Gate
 
-`flutter-ci.yml` runs on pull requests and pushes to `main` or `master`.
+`flutter-ci.yml` runs on pull requests targeting `main`.
 
 The quality job runs:
 
@@ -38,6 +41,12 @@ flutter analyze
 flutter test
 ```
 
+This workflow is the required pre-merge feedback loop for developers. Configure branch protection so the `Format, analyze, and test` status check from `Flutter CI` is required before merging into `main`.
+
+## Main Branch Build Validation
+
+`flutter-build-validation.yml` runs on pushes to `main` and can also be started manually with `workflow_dispatch`.
+
 The build jobs run:
 
 ```sh
@@ -45,7 +54,7 @@ flutter build apk --debug
 flutter build ios --release --no-codesign
 ```
 
-CI failures must block merge through GitHub branch protection. Configure branch protection so the `Flutter CI` workflow jobs are required before merging into the protected branch.
+These jobs validate merged production code without slowing down every pull request. Build failures on `main` should be treated as release-blocking until fixed.
 
 ## Android Release Workflow
 
