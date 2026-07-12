@@ -7,11 +7,6 @@ import 'app_colors.dart';
 /// Centralized theme state: owns the active [ThemeMode], persists it, and
 /// keeps [AppColors]'s effective brightness in sync so ad-hoc color/style
 /// call sites (that don't go through `Theme.of(context)`) stay correct.
-///
-/// The app currently forces [ThemeMode.light] by default and does not
-/// expose a visible switch — see issue #5. This provider exists so the
-/// underlying light/dark/system machinery is ready before that control is
-/// restored, without changing what users see today.
 class ThemeProvider extends ChangeNotifier {
   static const _prefsKey = 'app_theme_mode';
   // Key used by the old (removed) ThemeProvider; migrated on first load so a
@@ -20,6 +15,13 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeMode _themeMode = ThemeMode.light;
   ThemeMode get themeMode => _themeMode;
+  bool get isDark => AppColors.isDark;
+
+  /// Flips between light and dark. [ThemeMode.system] toggles relative to
+  /// whatever brightness is currently resolved, rather than jumping to a
+  /// fixed mode.
+  Future<void> toggleTheme() =>
+      setThemeMode(isDark ? ThemeMode.light : ThemeMode.dark);
 
   Future<void> initialize() async {
     final prefs = await SharedPreferences.getInstance();
