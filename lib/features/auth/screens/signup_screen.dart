@@ -132,15 +132,15 @@ class _SignupScreenState extends State<SignupScreen>
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18.r),
-          borderSide: const BorderSide(color: AppColors.primaryMid, width: 1.2),
+          borderSide: BorderSide(color: AppColors.primaryMid, width: 1.2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18.r),
-          borderSide: const BorderSide(color: AppColors.error, width: 1.2),
+          borderSide: BorderSide(color: AppColors.error, width: 1.2),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18.r),
-          borderSide: const BorderSide(color: AppColors.error, width: 1.2),
+          borderSide: BorderSide(color: AppColors.error, width: 1.2),
         ),
         contentPadding: EdgeInsets.symmetric(
           horizontal: 16.w,

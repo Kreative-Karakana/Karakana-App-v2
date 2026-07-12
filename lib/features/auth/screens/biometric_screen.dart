@@ -135,9 +135,9 @@ class _BiometricScreenState extends State<BiometricScreen> {
         children: [
           // Background gradient
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.primaryDark, Color(0xFF1A0A00)],
+                colors: [AppColors.primaryDark, const Color(0xFF1A0A00)],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -245,7 +245,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
                     const SizedBox(height: AppSpacing.xxl),
 
                     if (_isAuthenticating)
-                      const KarakanaWaveLoader(
+                      KarakanaWaveLoader(
                         color: AppColors.primaryMid,
                       )
                     else if (_failed)

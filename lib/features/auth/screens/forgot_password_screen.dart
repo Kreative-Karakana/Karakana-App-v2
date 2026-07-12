@@ -64,8 +64,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           fontSize: compact ? 12.5 : 13,
           color: AppColors.textTertiary.withValues(alpha: 0.55),
         ),
-        prefixIcon:
-            const Icon(Icons.email_outlined, color: AppColors.primaryMid),
+        prefixIcon: Icon(Icons.email_outlined, color: AppColors.primaryMid),
         filled: true,
         fillColor: const Color(0xFF5A3525),
         border: OutlineInputBorder(
@@ -78,15 +77,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.cardLg),
-          borderSide: const BorderSide(color: AppColors.primaryMid, width: 1.2),
+          borderSide: BorderSide(color: AppColors.primaryMid, width: 1.2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.cardLg),
-          borderSide: const BorderSide(color: AppColors.error, width: 1.2),
+          borderSide: BorderSide(color: AppColors.error, width: 1.2),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.cardLg),
-          borderSide: const BorderSide(color: AppColors.error, width: 1.2),
+          borderSide: BorderSide(color: AppColors.error, width: 1.2),
         ),
         contentPadding: EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
@@ -291,7 +290,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                                 child: TextButton.icon(
                                                   onPressed: () =>
                                                       context.go('/login'),
-                                                  icon: const Icon(
+                                                  icon: Icon(
                                                     Icons
                                                         .arrow_back_ios_new_rounded,
                                                     size: 16,
@@ -361,7 +360,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                               ),
                                               child: Row(
                                                 children: [
-                                                  const Icon(
+                                                  Icon(
                                                     Icons
                                                         .mark_email_read_rounded,
                                                     color: AppColors.success,

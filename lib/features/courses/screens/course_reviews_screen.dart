@@ -130,7 +130,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
                     borderSide:
-                        const BorderSide(color: AppColors.primary, width: 1.5),
+                        BorderSide(color: AppColors.primary, width: 1.5),
                   ),
                 ),
               ),

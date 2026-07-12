@@ -99,7 +99,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     provider: provider,
                   ),
                   if (provider.isLoading)
-                    const SliverFillRemaining(
+                    SliverFillRemaining(
                       hasScrollBody: false,
                       child: Center(
                         child: KarakanaWaveLoader(color: AppColors.primary),
@@ -371,12 +371,12 @@ class _NotificationsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: AppColors.headerGradient,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          stops: [0.0, 0.5, 1.0],
+          stops: const [0.0, 0.5, 1.0],
         ),
       ),
       child: Stack(
@@ -660,7 +660,7 @@ class _NotificationCard extends StatelessWidget {
                           Container(
                             width: 7,
                             height: 7,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               color: AppColors.primary,
                               shape: BoxShape.circle,
                             ),

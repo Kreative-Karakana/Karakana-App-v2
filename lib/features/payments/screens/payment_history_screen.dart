@@ -346,7 +346,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: _isLoading
-            ? const Center(child: KarakanaWaveLoader(color: AppColors.primary))
+            ? Center(child: KarakanaWaveLoader(color: AppColors.primary))
             : RefreshIndicator(
                 color: AppColors.primary,
                 onRefresh: _loadPayments,
@@ -473,7 +473,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
               hintStyle: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.textHint,
               ),
-              prefixIcon: const Icon(
+              prefixIcon: Icon(
                 Icons.search_rounded,
                 color: AppColors.primary,
               ),
@@ -491,15 +491,15 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppRadius.input),
-                borderSide: const BorderSide(color: AppColors.border),
+                borderSide: BorderSide(color: AppColors.border),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppRadius.input),
-                borderSide: const BorderSide(color: AppColors.border),
+                borderSide: BorderSide(color: AppColors.border),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppRadius.input),
-                borderSide: const BorderSide(color: AppColors.primary),
+                borderSide: BorderSide(color: AppColors.primary),
               ),
             ),
           ),
@@ -713,7 +713,7 @@ class _TransactionsHeaderDelegate extends SliverPersistentHeaderDelegate {
 
     return Container(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: AppColors.headerGradient,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -840,7 +840,7 @@ class _TotalSpentCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: AppColors.cardGradient,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -1068,7 +1068,7 @@ class _TransactionCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: AppSpacing.xs),
-                  const Icon(
+                  Icon(
                     Icons.arrow_forward_ios_rounded,
                     color: AppColors.primary,
                     size: 12,
@@ -1232,7 +1232,7 @@ class _TransactionStatusStyle {
 _TransactionStatusStyle _statusStyle(_TransactionStatus status) {
   switch (status) {
     case _TransactionStatus.successful:
-      return const _TransactionStatusStyle(
+      return _TransactionStatusStyle(
         color: AppColors.primary,
         background: AppColors.primaryLight,
         icon: Icons.check_circle_outline_rounded,
@@ -1244,7 +1244,7 @@ _TransactionStatusStyle _statusStyle(_TransactionStatus status) {
         icon: Icons.schedule_rounded,
       );
     case _TransactionStatus.failed:
-      return const _TransactionStatusStyle(
+      return _TransactionStatusStyle(
         color: AppColors.error,
         background: AppColors.errorLight,
         icon: Icons.error_outline_rounded,

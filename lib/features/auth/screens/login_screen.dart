@@ -293,15 +293,15 @@ class _LoginScreenState extends State<LoginScreen>
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18.r),
-          borderSide: const BorderSide(color: AppColors.primaryMid, width: 1.2),
+          borderSide: BorderSide(color: AppColors.primaryMid, width: 1.2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18.r),
-          borderSide: const BorderSide(color: AppColors.error, width: 1.2),
+          borderSide: BorderSide(color: AppColors.error, width: 1.2),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18.r),
-          borderSide: const BorderSide(color: AppColors.error, width: 1.2),
+          borderSide: BorderSide(color: AppColors.error, width: 1.2),
         ),
         contentPadding: EdgeInsets.symmetric(
           horizontal: 16.w,
@@ -781,8 +781,8 @@ class _SignupFooter extends StatelessWidget {
                 vertical: compact ? 5 : 6,
               ),
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppColors.primary, Color(0xFFE07A2F)],
+                gradient: LinearGradient(
+                  colors: [AppColors.primary, const Color(0xFFE07A2F)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),

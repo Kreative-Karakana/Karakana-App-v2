@@ -185,11 +185,11 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
               Container(
                 width: 80,
                 height: 80,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.primaryLight,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.people_alt_outlined,
                   size: 40,
                   color: AppColors.primary,
@@ -257,7 +257,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
                   ),
                 ),
                 child: _isLoading
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 20,
                         height: 20,
                         child: KarakanaWaveLoader(
@@ -287,11 +287,11 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
           child: Container(
             width: 64,
             height: 64,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.primaryLight,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.badge_outlined,
               size: 32,
               color: AppColors.primary,
@@ -327,8 +327,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
               fontSize: 14,
               color: Colors.grey.shade400,
             ),
-            prefixIcon:
-                const Icon(Icons.tag, color: AppColors.primary, size: 20),
+            prefixIcon: Icon(Icons.tag, color: AppColors.primary, size: 20),
             filled: true,
             fillColor: AppColors.primaryLight.withValues(alpha: 0.4),
             border: OutlineInputBorder(
@@ -343,8 +342,7 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide:
-                  const BorderSide(color: AppColors.primary, width: 1.5),
+              borderSide: BorderSide(color: AppColors.primary, width: 1.5),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.md,

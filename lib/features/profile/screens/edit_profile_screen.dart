@@ -167,7 +167,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       confirmText: 'Thibitisha',
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.light(primary: AppColors.primary),
+          colorScheme: ColorScheme.light(primary: AppColors.primary),
         ),
         child: child!,
       ),
@@ -409,10 +409,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             hintStyle: AppTextStyles.bodyMedium.copyWith(
                               color: Colors.grey.shade400,
                             ),
-                            suffixIcon: const Icon(
-                                Icons.calendar_today_outlined,
-                                size: 18,
-                                color: AppColors.primary),
+                            suffixIcon: Icon(Icons.calendar_today_outlined,
+                                size: 18, color: AppColors.primary),
                           ),
                         ),
                       ),
@@ -525,15 +523,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.input),
-        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        borderSide: BorderSide(color: AppColors.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.input),
-        borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+        borderSide: BorderSide(color: AppColors.error, width: 1.5),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(AppRadius.input),
-        borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+        borderSide: BorderSide(color: AppColors.error, width: 1.5),
       ),
     );
   }
@@ -770,7 +768,7 @@ class _CoverAvatarHeader extends StatelessWidget {
             child: Container(
               width: double.infinity,
               height: 155,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AppColors.primaryDark,
               ),
               child: Stack(
@@ -832,7 +830,7 @@ class _CoverAvatarHeader extends StatelessWidget {
                     child: Container(
                       width: 26,
                       height: 26,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: AppColors.primary,
                         shape: BoxShape.circle,
                       ),

@@ -218,8 +218,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.info_outline,
-                      color: AppColors.primary, size: 20),
+                  Icon(Icons.info_outline, color: AppColors.primary, size: 20),
                   const SizedBox(width: AppSpacing.sm + AppSpacing.xs / 2),
                   Expanded(
                     child: Text(
@@ -261,7 +260,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
             _sectionLabel('Mkoa'),
             const SizedBox(height: AppSpacing.sm),
             if (_loadingRegions)
-              const Center(child: KarakanaWaveLoader(color: AppColors.primary))
+              Center(child: KarakanaWaveLoader(color: AppColors.primary))
             else
               DropdownButtonFormField<int>(
                 initialValue: _selectedRegionCode,
@@ -291,7 +290,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
                     .copyWith(color: Colors.grey.shade400),
               )
             else if (_loadingDistricts)
-              const Center(child: KarakanaWaveLoader(color: AppColors.primary))
+              Center(child: KarakanaWaveLoader(color: AppColors.primary))
             else
               DropdownButtonFormField<int>(
                 initialValue: _selectedDistrictCode,
@@ -406,7 +405,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.input),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          borderSide: BorderSide(color: AppColors.primary, width: 1.5),
         ),
       );
 

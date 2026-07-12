@@ -63,7 +63,7 @@ class CourseListScreen extends StatelessWidget {
           final courses = _getCourses(provider);
 
           if (provider.isLoading && courses.isEmpty) {
-            return const Center(
+            return Center(
               child: KarakanaWaveLoader(color: AppColors.primary),
             );
           }

@@ -2,9 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'core/router/app_router.dart';
+import 'core/theme/app_theme.dart';
+import 'core/theme/theme_provider.dart';
 import 'firebase_options.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/notifications/providers/notification_provider.dart';
@@ -58,18 +59,28 @@ Future<void> main() async {
     debugPrint('AuthProvider init error: $e');
   }
 
+  final themeProvider = ThemeProvider();
+  try {
+    await themeProvider.initialize();
+  } catch (e) {
+    debugPrint('ThemeProvider init error: $e');
+  }
+
   runApp(KarakanaApp(
     authProvider: authProvider,
+    themeProvider: themeProvider,
     firebaseReady: firebaseReady,
   ));
 }
 
 class KarakanaApp extends StatefulWidget {
   final AuthProvider authProvider;
+  final ThemeProvider themeProvider;
   final bool firebaseReady;
   const KarakanaApp({
     super.key,
     required this.authProvider,
+    required this.themeProvider,
     required this.firebaseReady,
   });
 
@@ -77,17 +88,32 @@ class KarakanaApp extends StatefulWidget {
   State<KarakanaApp> createState() => _KarakanaAppState();
 }
 
-class _KarakanaAppState extends State<KarakanaApp> {
+class _KarakanaAppState extends State<KarakanaApp> with WidgetsBindingObserver {
   late final router = AppRouter.createRouter(widget.authProvider);
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (widget.firebaseReady) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _initFCM());
     } else {
       debugPrint('[FCM] Startup setup skipped because Firebase is not ready.');
     }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    super.didChangePlatformBrightness();
+    widget.themeProvider.handlePlatformBrightnessChanged(
+      WidgetsBinding.instance.platformDispatcher.platformBrightness,
+    );
   }
 
   Future<void> _initFCM() async {
@@ -145,6 +171,7 @@ class _KarakanaAppState extends State<KarakanaApp> {
         return MultiProvider(
           providers: [
             ChangeNotifierProvider.value(value: widget.authProvider),
+            ChangeNotifierProvider.value(value: widget.themeProvider),
             ChangeNotifierProvider(create: (_) => CourseProvider()),
             ChangeNotifierProvider(create: (_) => QuizAttemptProvider()),
             ChangeNotifierProvider(create: (_) => NotificationProvider()),
@@ -152,26 +179,17 @@ class _KarakanaAppState extends State<KarakanaApp> {
             ChangeNotifierProvider(create: (_) => FursaProvider()),
             ChangeNotifierProvider(create: (_) => IAPProvider()),
           ],
-          child: MaterialApp.router(
-            title: 'Karakana',
-            debugShowCheckedModeBanner: false,
-            themeMode: ThemeMode.light,
-            theme: ThemeData(
-              brightness: Brightness.light,
-              primaryColor: const Color(0xFFE87722),
-              scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-              colorScheme: const ColorScheme.light(
-                primary: Color(0xFFE87722),
-                secondary: Color(0xFF3D1800),
-                surface: Colors.white,
-              ),
-              textTheme: GoogleFonts.montserratTextTheme(
-                ThemeData.light().textTheme,
-              ),
-              cardColor: Colors.white,
-              iconTheme: const IconThemeData(color: Color(0xFF1A1A1A)),
-            ),
-            routerConfig: router,
+          child: Consumer<ThemeProvider>(
+            builder: (context, themeProvider, _) {
+              return MaterialApp.router(
+                title: 'Karakana',
+                debugShowCheckedModeBanner: false,
+                themeMode: themeProvider.themeMode,
+                theme: AppTheme.light,
+                darkTheme: AppTheme.dark,
+                routerConfig: router,
+              );
+            },
           ),
         );
       },
