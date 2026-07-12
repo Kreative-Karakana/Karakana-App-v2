@@ -134,7 +134,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.error_outline_rounded,
                       size: 48,
                       color: AppColors.primary,

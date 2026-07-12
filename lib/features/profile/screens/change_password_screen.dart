@@ -278,7 +278,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.info_outline_rounded,
                                 color: AppColors.primary,
                                 size: 20,
@@ -361,7 +361,7 @@ class _PasswordField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: AppTextStyles.bodySmall,
-        prefixIcon: const Icon(
+        prefixIcon: Icon(
           Icons.lock_outline_rounded,
           color: AppColors.primary,
         ),
@@ -376,19 +376,19 @@ class _PasswordField extends StatelessWidget {
         fillColor: AppColors.background,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.input),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderSide: BorderSide(color: AppColors.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.input),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderSide: BorderSide(color: AppColors.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.input),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.4),
+          borderSide: BorderSide(color: AppColors.primary, width: 1.4),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.input),
-          borderSide: const BorderSide(color: AppColors.error),
+          borderSide: BorderSide(color: AppColors.error),
         ),
       ),
     );

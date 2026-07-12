@@ -124,13 +124,13 @@ class _LoadingState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           KarakanaWaveLoader(color: AppColors.primary),
-          SizedBox(height: 14),
-          _MutedText('Inapakia taarifa za usajili...'),
+          const SizedBox(height: 14),
+          const _MutedText('Inapakia taarifa za usajili...'),
         ],
       ),
     );
@@ -167,7 +167,7 @@ class _ErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.cloud_off_rounded,
+            Icon(Icons.cloud_off_rounded,
                 color: AppColors.textTertiary, size: 44),
             const SizedBox(height: 14),
             Text(
@@ -457,7 +457,7 @@ class _ExpiredCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.lock_clock_outlined,
+              Icon(Icons.lock_clock_outlined,
                   color: AppColors.warning, size: 22),
               const SizedBox(width: 10),
               Expanded(
@@ -523,7 +523,7 @@ class _NoAccessCard extends StatelessWidget {
                   color: AppColors.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.workspace_premium_outlined,
+                child: Icon(Icons.workspace_premium_outlined,
                     color: AppColors.primary),
               ),
               const SizedBox(width: 12),
@@ -659,8 +659,8 @@ class _PlansSection extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         if (isLoading)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 18),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 18),
             child: Center(
               child: KarakanaWaveLoader(color: AppColors.primary, size: 28),
             ),
@@ -779,7 +779,7 @@ class _PlanCard extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.check_circle_outline,
+                    Icon(Icons.check_circle_outline,
                         color: AppColors.primary, size: 14),
                     const SizedBox(width: 6),
                     Expanded(

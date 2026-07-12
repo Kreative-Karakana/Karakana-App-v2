@@ -24,11 +24,11 @@ class CourseListCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.input),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
             color: AppColors.cardShadow,
             blurRadius: 12,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -61,7 +61,7 @@ class CourseListCard extends StatelessWidget {
                               fit: BoxFit.cover,
                               placeholder: (_, __) => Container(
                                 color: AppColors.primaryLight,
-                                child: const Center(
+                                child: Center(
                                   child: KarakanaWaveLoader(
                                     strokeWidth: 2,
                                     color: AppColors.primary,
@@ -70,14 +70,14 @@ class CourseListCard extends StatelessWidget {
                               ),
                               errorWidget: (_, __, ___) => Container(
                                 color: AppColors.primaryLight,
-                                child: const Icon(
+                                child: Icon(
                                   Icons.school_outlined,
                                   color: AppColors.primary,
                                   size: 28,
                                 ),
                               ),
                             )
-                          : const Center(
+                          : Center(
                               child: Icon(
                                 Icons.school_outlined,
                                 color: AppColors.primary,
@@ -162,7 +162,7 @@ class CourseListCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const Icon(
+                  Icon(
                     Icons.chevron_right,
                     color: AppColors.border,
                     size: 20,

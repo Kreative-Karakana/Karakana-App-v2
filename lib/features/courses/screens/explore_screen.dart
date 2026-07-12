@@ -178,12 +178,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
       ),
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: AppColors.headerGradient,
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              stops: [0.0, 0.5, 1.0],
+              stops: const [0.0, 0.5, 1.0],
             ),
           ),
           child: Stack(
@@ -276,14 +276,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             fontSize: AppTextStyles.bodyMedium.fontSize,
                             color: AppColors.textHint,
                           ),
-                          prefixIcon: const Icon(
+                          prefixIcon: Icon(
                             Icons.search_rounded,
                             color: AppColors.primary,
                             size: 20,
                           ),
                           suffixIcon: _searchQuery.isNotEmpty
                               ? IconButton(
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.clear,
                                     size: 18,
                                     color: AppColors.textTertiary,
@@ -310,7 +310,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
-                            borderSide: const BorderSide(
+                            borderSide: BorderSide(
                               color: AppColors.primary,
                               width: 1.5,
                             ),
@@ -404,7 +404,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
               ),
               PopupMenuButton<String>(
                 onSelected: (val) => setState(() => _sortBy = val),
-                icon: const Icon(
+                icon: Icon(
                   Icons.sort,
                   color: AppColors.primary,
                   size: 20,
@@ -440,7 +440,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.search_off_rounded,
             size: 64,
             color: AppColors.border,
@@ -506,8 +506,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   Widget _buildPaginationFooter(CourseProvider provider) {
     if (provider.isLoadingMore) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 18),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 18),
         child: Center(
           child: KarakanaWaveLoader(color: AppColors.primary),
         ),

@@ -107,7 +107,7 @@ class _ReadOnlyBanner extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.lock_clock_outlined,
+              Icon(Icons.lock_clock_outlined,
                   color: AppColors.warning, size: 20),
               const SizedBox(width: 10),
               Expanded(
@@ -768,7 +768,7 @@ class _HistorySectionState extends State<_HistorySection> {
                     'Tafuta muamala',
                     'k.m. jina la mteja, maelezo...',
                   ).copyWith(
-                    prefixIcon: const Icon(
+                    prefixIcon: Icon(
                       Icons.search_rounded,
                       size: 20,
                       color: AppColors.textTertiary,
@@ -894,7 +894,7 @@ class _FilterIconButton extends StatelessWidget {
                 child: Container(
                   width: 7,
                   height: 7,
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppColors.primary,
                     shape: BoxShape.circle,
                   ),
@@ -1021,8 +1021,8 @@ class _RemovableChip extends StatelessWidget {
           InkWell(
             onTap: onRemoved,
             borderRadius: BorderRadius.circular(999),
-            child: const Padding(
-              padding: EdgeInsets.all(3),
+            child: Padding(
+              padding: const EdgeInsets.all(3),
               child: Icon(
                 Icons.close_rounded,
                 size: 14,
@@ -1102,7 +1102,7 @@ class _TransactionFilterSheetState extends State<_TransactionFilterSheet> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
+            colorScheme: ColorScheme.light(
               primary: AppColors.primary,
               onPrimary: Colors.white,
               onSurface: AppColors.textPrimary,
@@ -1131,9 +1131,10 @@ class _TransactionFilterSheetState extends State<_TransactionFilterSheet> {
         ),
         child: Container(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.background,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1251,7 +1252,7 @@ class _TransactionFilterSheetState extends State<_TransactionFilterSheet> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        side: const BorderSide(color: AppColors.inputBorder),
+                        side: BorderSide(color: AppColors.inputBorder),
                       ),
                       child: Text(
                         'Futa Vichujio',
@@ -1434,9 +1435,10 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.background,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+          borderRadius:
+              const BorderRadius.vertical(top: Radius.circular(18)),
         ),
         padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
         child: SafeArea(
@@ -1591,7 +1593,7 @@ class _EditingBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.edit_note_rounded,
             size: 18,
             color: AppColors.primary,
@@ -1648,9 +1650,10 @@ class _BusinessEditSheetState extends State<_BusinessEditSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.background,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+          borderRadius:
+              const BorderRadius.vertical(top: Radius.circular(18)),
         ),
         padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
         child: SafeArea(
@@ -1751,7 +1754,7 @@ class _BusinessHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: AppColors.headerGradient,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -1826,7 +1829,7 @@ class _HeaderPanel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: AppColors.zanaGradient,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -1902,7 +1905,7 @@ class _StepRow extends StatelessWidget {
           width: 22,
           height: 22,
           alignment: Alignment.center,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.primaryLight,
             shape: BoxShape.circle,
           ),
@@ -1953,7 +1956,7 @@ class _FirstTransactionGuide extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
+          Icon(
             Icons.lightbulb_outline_rounded,
             size: 20,
             color: AppColors.primaryDark,
@@ -1988,8 +1991,8 @@ class _FirstTransactionGuide extends StatelessWidget {
           InkWell(
             onTap: onDismiss,
             borderRadius: BorderRadius.circular(999),
-            child: const Padding(
-              padding: EdgeInsets.all(4),
+            child: Padding(
+              padding: const EdgeInsets.all(4),
               child: Icon(
                 Icons.close_rounded,
                 size: 16,
@@ -2136,7 +2139,7 @@ class _ActionButton extends StatelessWidget {
                 ),
               ),
               if (isLocked)
-                const Icon(
+                Icon(
                   Icons.lock_outline,
                   size: 15,
                   color: AppColors.textSecondary,
@@ -2171,7 +2174,7 @@ class _TransactionTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 11),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           border: Border(bottom: BorderSide(color: AppColors.divider)),
         ),
         child: Row(
@@ -2233,7 +2236,7 @@ class _TransactionTile extends StatelessWidget {
             ),
             if (onTap != null) ...[
               const SizedBox(width: 8),
-              const Icon(
+              Icon(
                 Icons.edit_outlined,
                 size: 16,
                 color: AppColors.textTertiary,
@@ -2252,7 +2255,7 @@ class _TransactionTile extends StatelessWidget {
                     )
                   : IconButton(
                       onPressed: onDelete,
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.delete_outline,
                         size: 18,
                         color: AppColors.error,
@@ -2360,7 +2363,7 @@ class _DatePickerField extends StatelessWidget {
           builder: (context, child) {
             return Theme(
               data: Theme.of(context).copyWith(
-                colorScheme: const ColorScheme.light(
+                colorScheme: ColorScheme.light(
                   primary: AppColors.primary,
                   onPrimary: Colors.white,
                   onSurface: AppColors.textPrimary,
@@ -2377,7 +2380,7 @@ class _DatePickerField extends StatelessWidget {
         decoration: _inputDecoration('Tarehe ya muamala', ''),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.calendar_today_outlined,
               size: 18,
               color: AppColors.primary,
@@ -2623,19 +2626,19 @@ InputDecoration _inputDecoration(String label, String hint) {
     contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.inputBorder),
+      borderSide: BorderSide(color: AppColors.inputBorder),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.primary, width: 1.4),
+      borderSide: BorderSide(color: AppColors.primary, width: 1.4),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.error),
+      borderSide: BorderSide(color: AppColors.error),
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.error, width: 1.4),
+      borderSide: BorderSide(color: AppColors.error, width: 1.4),
     ),
   );
 }

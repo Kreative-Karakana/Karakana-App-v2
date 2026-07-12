@@ -55,7 +55,7 @@ class CourseCardHorizontal extends StatelessWidget {
                             fit: BoxFit.cover,
                             errorWidget: (_, __, ___) => Container(
                               color: AppColors.primaryLight,
-                              child: const Icon(
+                              child: Icon(
                                 Icons.play_circle_outline,
                                 color: AppColors.primary,
                                 size: 32,
@@ -64,7 +64,7 @@ class CourseCardHorizontal extends StatelessWidget {
                           )
                         : Container(
                             color: AppColors.primaryLight,
-                            child: const Icon(
+                            child: Icon(
                               Icons.play_circle_outline,
                               color: AppColors.primary,
                               size: 32,

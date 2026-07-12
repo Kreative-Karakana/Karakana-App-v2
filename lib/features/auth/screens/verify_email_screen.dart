@@ -136,7 +136,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
             borderSide:
-                const BorderSide(color: AppColors.primaryMid, width: 2.0),
+                BorderSide(color: AppColors.primaryMid, width: 2.0),
           ),
           contentPadding: EdgeInsets.zero,
         ),
@@ -259,7 +259,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                   const SizedBox(height: AppSpacing.xs),
                                   Row(
                                     children: [
-                                      const Icon(
+                                      Icon(
                                         Icons.mail_outline_rounded,
                                         size: 14,
                                         color: AppColors.primaryMid,
@@ -300,7 +300,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                   SizedBox(height: compact ? 14 : 16),
                                   Center(
                                     child: _isResending
-                                        ? const SizedBox(
+                                        ? SizedBox(
                                             width: 18,
                                             height: 18,
                                             child: KarakanaWaveLoader(
@@ -361,10 +361,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                                         decoration:
                                                             BoxDecoration(
                                                           gradient:
-                                                              const LinearGradient(
+                                                              LinearGradient(
                                                             colors: [
                                                               AppColors.primary,
-                                                              Color(0xFFE07A2F)
+                                                              const Color(
+                                                                  0xFFE07A2F)
                                                             ],
                                                             begin: Alignment
                                                                 .topLeft,
@@ -400,7 +401,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                     alignment: Alignment.centerLeft,
                                     child: TextButton.icon(
                                       onPressed: () => context.go('/signup'),
-                                      icon: const Icon(
+                                      icon: Icon(
                                         Icons.arrow_back_ios_new_rounded,
                                         size: 16,
                                         color: AppColors.primaryMid,

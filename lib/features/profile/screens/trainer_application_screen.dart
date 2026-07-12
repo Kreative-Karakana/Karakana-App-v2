@@ -416,7 +416,7 @@ class _TrainerApplicationScreenState extends State<TrainerApplicationScreen> {
                                                   ),
                                                 ),
                                               ),
-                                              child: const Icon(
+                                              child: Icon(
                                                 Icons.close,
                                                 color: AppColors.textTertiary,
                                                 size: 18,

@@ -85,9 +85,9 @@ class _TermsDialogState extends State<_TermsDialog> {
           // Header
           Container(
             padding: const EdgeInsets.all(20),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.primaryDark,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(AppRadius.cardLg),
                 topRight: Radius.circular(AppRadius.cardLg),
               ),
@@ -179,7 +179,7 @@ class _TermsDialogState extends State<_TermsDialog> {
           ),
 
           // Divider
-          const Divider(height: 1, color: AppColors.divider),
+          Divider(height: 1, color: AppColors.divider),
 
           // Buttons
           Padding(

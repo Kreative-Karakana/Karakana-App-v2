@@ -78,11 +78,11 @@ class _SplashScreenState extends State<SplashScreen>
           children: [
             // Radial gradient background
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: RadialGradient(
                   center: Alignment.center,
                   radius: 1.2,
-                  colors: [Color(0xFF5C2E10), AppColors.primaryDark],
+                  colors: [const Color(0xFF5C2E10), AppColors.primaryDark],
                 ),
               ),
             ),
