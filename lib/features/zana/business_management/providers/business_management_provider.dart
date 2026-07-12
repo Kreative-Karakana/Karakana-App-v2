@@ -23,17 +23,14 @@ const String kSubscriptionRequiredMessage =
 class BusinessManagementProvider extends ChangeNotifier {
   final BusinessManagementApi _service;
   final SubscriptionApi _subscriptionService;
+  final SecureStorage _storage;
 
   BusinessManagementProvider({
     BusinessManagementApi? service,
     SubscriptionApi? subscriptionService,
+    SecureStorage? storage,
   })  : _service = service ?? BusinessManagementService(),
-        _subscriptionService = subscriptionService ?? SubscriptionService();
-  final SecureStorage _storage;
-
-  BusinessManagementProvider(
-      {BusinessManagementApi? service, SecureStorage? storage})
-      : _service = service ?? BusinessManagementService(),
+        _subscriptionService = subscriptionService ?? SubscriptionService(),
         _storage = storage ?? SecureStorage() {
     _loadOnboardingDismissed();
   }
