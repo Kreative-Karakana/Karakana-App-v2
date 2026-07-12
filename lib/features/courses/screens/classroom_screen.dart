@@ -7,7 +7,9 @@ import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../models/quiz_model.dart';
 import '../providers/course_provider.dart';
+import '../utils/quiz_contract.dart';
 
 class ClassroomScreen extends StatefulWidget {
   final int courseId;
@@ -255,7 +257,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                         ],
                       ),
                     ),
-                    if (progress >= 1.0)
+                    if (provider.certificateEligibility?.isEligible == true)
                       OutlinedButton(
                         onPressed: () => context.push(
                           '/course/${widget.courseId}/complete',
@@ -345,8 +347,18 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                       )
                     : ListView.builder(
                         padding: const EdgeInsets.only(bottom: 80),
-                        itemCount: sections.length,
+                        itemCount: sections.length +
+                            (provider.quizAvailability?.quizAvailable == true
+                                ? 1
+                                : 0),
                         itemBuilder: (context, sectionIndex) {
+                          if (sectionIndex >= sections.length) {
+                            return _FinalQuizTile(
+                              courseId: widget.courseId,
+                              courseTitle: course.title,
+                              availability: provider.quizAvailability!,
+                            );
+                          }
                           final section = sections[sectionIndex];
                           final isExpanded =
                               _expandedSections.contains(sectionIndex);
@@ -591,6 +603,91 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         .where((p) => p.isNotEmpty)
         .toList();
     return parts.isEmpty ? text.trim() : parts.first;
+  }
+}
+
+class _FinalQuizTile extends StatelessWidget {
+  final int courseId;
+  final String courseTitle;
+  final QuizAvailability availability;
+
+  const _FinalQuizTile({
+    required this.courseId,
+    required this.courseTitle,
+    required this.availability,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cooldownText =
+        QuizContract.formatCooldownRemaining(availability.cooldownExpiresAt);
+
+    String subtitle;
+    IconData icon;
+    if (availability.isPassed) {
+      subtitle = 'Umefaulu';
+      icon = Icons.check;
+    } else if (cooldownText != null) {
+      subtitle = cooldownText;
+      icon = Icons.timer_outlined;
+    } else if (!availability.lessonsComplete) {
+      subtitle = 'Kamilisha masomo yote kwanza';
+      icon = Icons.lock_outline;
+    } else if (availability.inProgressAttemptId != null) {
+      subtitle = 'Unaendelea';
+      icon = Icons.play_circle_outline;
+    } else {
+      subtitle = 'Bofya kuanza';
+      icon = Icons.quiz_outlined;
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: availability.isPassed
+            ? (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8))
+            : Theme.of(context).cardColor,
+        border: const Border(
+          bottom: BorderSide(color: Color(0xFFF0E4DA), width: 0.5),
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: ListTile(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+          leading: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE87722).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: const Color(0xFFE87722), size: 20),
+          ),
+          title: Text(
+            'Mtihani wa Mwisho',
+            style: GoogleFonts.montserrat(
+              fontSize: AppTextStyles.bodyMedium.fontSize,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF3D1800),
+            ),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: GoogleFonts.montserrat(
+              fontSize: AppTextStyles.bodySmall.fontSize,
+              color: const Color(0xFF9E8070),
+            ),
+          ),
+          trailing: const Icon(Icons.chevron_right, color: Color(0xFF9E8070)),
+          onTap: () => context.push(
+            '/course/$courseId/quiz',
+            extra: {'courseTitle': courseTitle},
+          ),
+        ),
+      ),
+    );
   }
 }
 

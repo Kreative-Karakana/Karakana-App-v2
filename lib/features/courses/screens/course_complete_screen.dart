@@ -7,12 +7,14 @@ import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart' show Share;
 
-import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../models/quiz_model.dart';
+import '../services/quiz_service.dart';
 import '../utils/certificate_pdf_generator.dart';
+import '../utils/quiz_contract.dart';
 
 class CourseCompleteScreen extends StatefulWidget {
   final int courseId;
@@ -29,7 +31,9 @@ class CourseCompleteScreen extends StatefulWidget {
 }
 
 class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
-  Map<String, dynamic>? _certificate;
+  final _quizService = QuizService();
+  CertificateModel? _certificate;
+  CertificateEligibility? _eligibility;
   bool _isRequestingCert = true;
   bool _isDownloading = false;
 
@@ -39,15 +43,27 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _requestCertificate());
   }
 
+  bool get _isEligible => _eligibility?.isEligible ?? false;
+
   Future<void> _requestCertificate() async {
     try {
-      final res = await ApiClient().dio.post(
-        '/api/v1/certificates/',
-        data: {'course_id': widget.courseId},
-      );
+      // Backend is authoritative: check eligibility first so an
+      // ineligible learner sees a clear reason instead of a fake
+      // congratulations screen.
+      final eligibility =
+          await _quizService.getCertificateEligibility(widget.courseId);
+      if (!mounted) return;
+      setState(() => _eligibility = eligibility);
+
+      if (!eligibility.isEligible) {
+        setState(() => _isRequestingCert = false);
+        return;
+      }
+
+      final cert = await _quizService.requestCertificate(widget.courseId);
       if (!mounted) return;
       setState(() {
-        _certificate = Map<String, dynamic>.from(res.data as Map);
+        _certificate = cert;
         _isRequestingCert = false;
       });
     } catch (_) {
@@ -60,11 +76,9 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
     setState(() => _isDownloading = true);
     try {
       final cert = _certificate;
-      final issuedAt = cert != null && cert['issued_at'] != null
-          ? DateTime.tryParse(cert['issued_at'].toString()) ?? DateTime.now()
-          : DateTime.now();
-      final certNumber = cert?['certificate_number']?.toString() ?? '';
-      final excerpt = cert?['course_excerpt']?.toString() ?? '';
+      final issuedAt = cert?.issuedAt ?? DateTime.now();
+      final certNumber = cert?.certificateNumber ?? '';
+      final excerpt = cert?.courseExcerpt ?? '';
 
       final doc = await CertificatePdfGenerator.generate(
         studentName: auth.userFullName,
@@ -90,6 +104,24 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isRequestingCert) {
+      return const Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Center(
+            child: KarakanaWaveLoader(color: Color(0xFFE87722)),
+          ),
+        ),
+      );
+    }
+
+    if (!_isEligible) {
+      return _IneligibleView(
+        courseId: widget.courseId,
+        reasonCode: _eligibility?.reasonCode,
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -273,25 +305,20 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        _certificate != null &&
-                                _certificate!['issued_at'] != null
-                            ? DateFormat('d MMMM yyyy').format(
-                                DateTime.tryParse(
-                                      _certificate!['issued_at'].toString(),
-                                    )?.toLocal() ??
-                                    DateTime.now(),
-                              )
+                        _certificate?.issuedAt != null
+                            ? DateFormat('d MMMM yyyy')
+                                .format(_certificate!.issuedAt!.toLocal())
                             : DateFormat('d MMMM yyyy').format(DateTime.now()),
                         style: GoogleFonts.montserrat(
                           fontSize: AppTextStyles.bodySmall.fontSize,
                           color: const Color(0xFF9E8070),
                         ),
                       ),
-                      if (_certificate != null &&
-                          _certificate!['certificate_number'] != null) ...[
+                      if ((_certificate?.certificateNumber ?? '')
+                          .isNotEmpty) ...[
                         const SizedBox(height: 6),
                         Text(
-                          'No. ${_certificate!['certificate_number'].toString().toUpperCase().replaceAll('-', '').substring(0, 10)}',
+                          'No. ${_certificate!.certificateNumber.toUpperCase().replaceAll('-', '').substring(0, 10)}',
                           style: GoogleFonts.montserrat(
                             fontSize: AppTextStyles.labelSmall.fontSize,
                             letterSpacing: 1.5,
@@ -402,6 +429,77 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xl),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _IneligibleView extends StatelessWidget {
+  final int courseId;
+  final String? reasonCode;
+
+  const _IneligibleView({required this.courseId, required this.reasonCode});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.workspace_premium_outlined,
+                  size: 56,
+                  color: Color(0xFFE87722),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Text(
+                  'Bado Hujastahili Cheti',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.montserrat(
+                    fontSize: AppTextStyles.h4.fontSize,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF3D1800),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  QuizContract.reasonCodeMessage(reasonCode),
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.montserrat(
+                    fontSize: AppTextStyles.bodyMedium.fontSize,
+                    color: const Color(0xFF5C3D2E),
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.xl),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => context.go('/course/$courseId/classroom'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFE87722),
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(double.infinity, 52),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28),
+                      ),
+                    ),
+                    child: Text(
+                      'Rudi Kwenye Darasa',
+                      style:
+                          GoogleFonts.montserrat(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

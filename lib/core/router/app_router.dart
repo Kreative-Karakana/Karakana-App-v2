@@ -12,6 +12,8 @@ import '../../features/courses/screens/course_detail_screen.dart';
 import '../../features/courses/screens/course_reviews_screen.dart';
 import '../../features/courses/screens/course_list_screen.dart';
 import '../../features/courses/screens/my_courses_screen.dart';
+import '../../features/courses/screens/quiz_result_screen.dart';
+import '../../features/courses/screens/quiz_screen.dart';
 import '../../features/courses/screens/video_lesson_screen.dart';
 import '../../features/courses/screens/wishlist_screen.dart';
 import '../../features/home/screens/main_screen.dart';
@@ -355,6 +357,22 @@ class AppRouter {
             courseId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
             courseTitle:
                 (state.extra as Map?)?['courseTitle']?.toString() ?? 'Kozi',
+          ),
+        ),
+        GoRoute(
+          path: '/course/:id/quiz',
+          builder: (context, state) => QuizScreen(
+            courseId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+            courseTitle:
+                (state.extra as Map?)?['courseTitle']?.toString() ?? 'Kozi',
+          ),
+        ),
+        GoRoute(
+          path: '/course/:id/quiz/result/:attemptId',
+          builder: (context, state) => QuizResultScreen(
+            courseId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+            attemptId:
+                int.tryParse(state.pathParameters['attemptId'] ?? '') ?? 0,
           ),
         ),
 

@@ -1,12 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import '../models/course_model.dart';
+import '../models/quiz_model.dart';
 import '../services/course_service.dart';
+import '../services/quiz_service.dart';
 
 class CourseProvider extends ChangeNotifier {
   final CourseCatalogService _service;
+  final QuizCatalogService _quizService;
 
-  CourseProvider({CourseCatalogService? service})
-      : _service = service ?? CourseService();
+  CourseProvider(
+      {CourseCatalogService? service, QuizCatalogService? quizService})
+      : _service = service ?? CourseService(),
+        _quizService = quizService ?? QuizService();
 
   bool _isLoading = false;
   bool _isLoadingMore = false;
@@ -27,6 +34,8 @@ class CourseProvider extends ChangeNotifier {
   CourseModel? _selectedCourse;
   List<SectionModel> _sections = [];
   List<ReviewModel> _reviews = [];
+  CertificateEligibility? _certificateEligibility;
+  QuizAvailability? _quizAvailability;
   String? _selectedCategoryName;
   String _searchQuery = '';
   int _currentCoursePage = 0;
@@ -53,6 +62,8 @@ class CourseProvider extends ChangeNotifier {
   CourseModel? get selectedCourse => _selectedCourse;
   List<SectionModel> get sections => _sections;
   List<ReviewModel> get reviews => _reviews;
+  CertificateEligibility? get certificateEligibility => _certificateEligibility;
+  QuizAvailability? get quizAvailability => _quizAvailability;
   String? get selectedCategoryName => _selectedCategoryName;
   String get searchQuery => _searchQuery;
   int get courseCount => _courseCount;
@@ -207,6 +218,8 @@ class CourseProvider extends ChangeNotifier {
     _selectedCourse = null;
     _sections = [];
     _reviews = [];
+    _certificateEligibility = null;
+    _quizAvailability = null;
     notifyListeners();
 
     try {
@@ -240,6 +253,36 @@ class CourseProvider extends ChangeNotifier {
 
     _isLoadingDetail = false;
     notifyListeners();
+
+    // Certificate eligibility/quiz availability are backend-authoritative
+    // reads used to gate the certificate button and show a final-quiz
+    // card — loaded after the main detail so a slow/failing quiz backend
+    // never blocks the classroom screen itself from rendering.
+    unawaited(loadCertificateEligibility(id));
+    unawaited(loadQuizAvailability(id));
+  }
+
+  Future<void> loadCertificateEligibility(int courseId) async {
+    try {
+      _certificateEligibility =
+          await _quizService.getCertificateEligibility(courseId);
+      notifyListeners();
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('[CourseProvider] loadCertificateEligibility: $e');
+      }
+    }
+  }
+
+  Future<void> loadQuizAvailability(int courseId) async {
+    try {
+      _quizAvailability = await _quizService.getQuizAvailability(courseId);
+      notifyListeners();
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('[CourseProvider] loadQuizAvailability: $e');
+      }
+    }
   }
 
   // ── Search & filter ────────────────────────────────────────────

@@ -9,6 +9,7 @@ import 'firebase_options.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/notifications/providers/notification_provider.dart';
 import 'features/courses/providers/course_provider.dart';
+import 'features/courses/providers/quiz_attempt_provider.dart';
 import 'features/ebooks/providers/ebook_provider.dart';
 import 'features/fursa/providers/fursa_provider.dart';
 import 'features/payments/providers/iap_provider.dart';
@@ -145,6 +146,7 @@ class _KarakanaAppState extends State<KarakanaApp> {
           providers: [
             ChangeNotifierProvider.value(value: widget.authProvider),
             ChangeNotifierProvider(create: (_) => CourseProvider()),
+            ChangeNotifierProvider(create: (_) => QuizAttemptProvider()),
             ChangeNotifierProvider(create: (_) => NotificationProvider()),
             ChangeNotifierProvider(create: (_) => EbookProvider()),
             ChangeNotifierProvider(create: (_) => FursaProvider()),
