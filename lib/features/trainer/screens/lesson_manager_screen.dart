@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:dio/dio.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../utils/content_contract.dart';
 
 class LessonManagerScreen extends StatefulWidget {
   final int courseId;
@@ -113,34 +113,14 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                     if (ctrl.text.trim().isEmpty) return;
                     final nav = Navigator.of(ctx);
                     try {
-                      try {
-                        await ApiClient().dio.post(
-                            '/api/v1/courses/${widget.courseId}/sections/',
-                            data: {
-                              'title': ctrl.text.trim(),
-                              'order': _sections.length + 1,
-                              'status': 'pending_review',
-                            });
-                      } on DioException catch (e) {
-                        // Some environments expose course-sections as read-only.
-                        if (e.response?.statusCode == 405) {
-                          await ApiClient()
-                              .dio
-                              .post('/api/v1/sections/', data: {
-                            'course': widget.courseId,
-                            'title': ctrl.text.trim(),
-                            'order': _sections.length + 1,
-                            'status': 'pending_review',
-                          });
-                        } else {
-                          rethrow;
-                        }
-                      }
+                      await ApiClient().dio.post(
+                          '/api/v1/courses/${widget.courseId}/sections/',
+                          data: ContentContract.buildSectionPayload(ctrl.text));
                       if (!mounted) return;
                       nav.pop();
                       showTopPopup(
                         context,
-                        'Sehemu imetumwa kwa ukaguzi. Itachapishwa baada ya kupitishwa na timu ya Kreative Karakana.',
+                        'Sehemu imeongezwa.',
                         isError: false,
                       );
                       _loadSections();
@@ -164,7 +144,6 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
   void _showAddLessonSheet(Map section) {
     final titleCtrl = TextEditingController();
     final muxCtrl = TextEditingController();
-    final durationCtrl = TextEditingController();
     final sectionId = section['id'];
 
     showModalBottomSheet<void>(
@@ -236,26 +215,6 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                           color: Color(0xFFE87722), width: 1.5)),
                 ),
               ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: durationCtrl,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: 'Muda (dakika, hiari)',
-                  hintText: 'Mfano: 15',
-                  prefixIcon: const Icon(Icons.timer_outlined,
-                      color: Color(0xFFE87722)),
-                  filled: true,
-                  fillColor: Theme.of(context).scaffoldBackgroundColor,
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(color: Color(0xFFE8D5C8))),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14),
-                      borderSide: const BorderSide(
-                          color: Color(0xFFE87722), width: 1.5)),
-                ),
-              ),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
@@ -270,22 +229,16 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                     if (titleCtrl.text.trim().isEmpty) return;
                     final nav = Navigator.of(ctx);
                     try {
-                      final body = <String, dynamic>{
-                        'title': titleCtrl.text.trim(),
-                        'status': 'pending_review',
-                        if (muxCtrl.text.trim().isNotEmpty)
-                          'mux_playback_id': muxCtrl.text.trim(),
-                        if (durationCtrl.text.trim().isNotEmpty)
-                          'duration': int.tryParse(durationCtrl.text.trim()),
-                      };
                       await ApiClient().dio.post(
                           '/api/v1/sections/$sectionId/lessons/',
-                          data: body);
+                          data: ContentContract.buildLessonPayload(
+                              titleCtrl.text,
+                              muxPlaybackId: muxCtrl.text));
                       if (!mounted) return;
                       nav.pop();
                       showTopPopup(
                         context,
-                        'Somo limetumwa kwa ukaguzi. Litachapishwa baada ya kupitishwa na timu ya Kreative Karakana.',
+                        'Somo limeongezwa.',
                         isError: false,
                       );
                       _loadSections();
@@ -341,9 +294,9 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
     try {
       await ApiClient().dio.delete('/api/v1/sections/${section['id']}/');
       _loadSections();
-    } catch (_) {
+    } catch (e) {
       if (!mounted) return;
-      showTopPopup(context, 'Hitilafu. Jaribu tena.');
+      showTopPopup(context, ApiClient().parseError(e));
     }
   }
 
@@ -381,9 +334,9 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
     try {
       await ApiClient().dio.delete('/api/v1/lessons/${lesson['id']}/');
       _loadSections();
-    } catch (_) {
+    } catch (e) {
       if (!mounted) return;
-      showTopPopup(context, 'Hitilafu. Jaribu tena.');
+      showTopPopup(context, ApiClient().parseError(e));
     }
   }
 
@@ -567,7 +520,6 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = lesson['title'] as String? ?? 'Somo ${idx + 1}';
     final hasMux = (lesson['mux_playback_id'] as String? ?? '').isNotEmpty;
-    final duration = lesson['duration'] as int?;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -602,10 +554,6 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                     fontWeight: FontWeight.w500,
                     color: Theme.of(context).textTheme.bodyLarge?.color ??
                         const Color(0xFF1A0A00))),
-            if (duration != null)
-              Text('$duration dak',
-                  style: GoogleFonts.montserrat(
-                      fontSize: 10, color: const Color(0xFF9E8070))),
           ]),
         ),
         GestureDetector(
