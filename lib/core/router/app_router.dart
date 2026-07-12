@@ -28,6 +28,7 @@ import '../../features/profile/screens/profile_screen.dart';
 import '../../features/profile/screens/terms_screen.dart';
 import '../../features/profile/screens/trainer_application_screen.dart';
 import '../../features/splash/screens/splash_screen.dart';
+import '../../features/subscriptions/screens/subscription_screen.dart';
 import '../../features/support/screens/new_ticket_screen.dart';
 import '../../features/support/screens/support_screen.dart';
 import '../../features/support/screens/ticket_detail_screen.dart';
@@ -88,6 +89,7 @@ class AppRoutes {
   static const String lessonManager = '/trainer/course/:courseId/sections';
   static const String mastercardForm = '/mastercard-form';
   static const String terms = '/terms';
+  static const String subscription = '/subscription';
 }
 
 class AppRouter {
@@ -412,6 +414,10 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.terms,
           builder: (context, state) => const TermsScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.subscription,
+          builder: (context, state) => const SubscriptionScreen(),
         ),
         GoRoute(
           path: AppRoutes.myCourses,
