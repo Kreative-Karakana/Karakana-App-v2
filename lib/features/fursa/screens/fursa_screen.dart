@@ -65,60 +65,12 @@ class _FursaScreenState extends State<FursaScreen> {
   FursaItem? _nearestUpcomingDeadlineItem(List<FursaItem> items) {
     final today = DateUtils.dateOnly(DateTime.now());
     final upcoming = items
-        .map((item) => MapEntry(item, _parseDeadline(item.deadlineText)))
+        .map((item) => MapEntry(item, item.parsedDeadline))
         .where((entry) => entry.value != null && !entry.value!.isBefore(today))
         .toList()
       ..sort((a, b) => a.value!.compareTo(b.value!));
 
     return upcoming.isEmpty ? null : upcoming.first.key;
-  }
-
-  DateTime? _parseDeadline(String value) {
-    final text = value.trim();
-    if (text.isEmpty) return null;
-
-    final match = RegExp(
-      r'^(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]+)\s+(\d{4})$',
-      caseSensitive: false,
-    ).firstMatch(text);
-    if (match == null) return null;
-
-    final day = int.tryParse(match.group(1)!);
-    final month = _monthNumber(match.group(2)!);
-    final year = int.tryParse(match.group(3)!);
-    if (day == null || month == null || year == null) return null;
-
-    return DateTime(year, month, day);
-  }
-
-  int? _monthNumber(String month) {
-    switch (month.toLowerCase()) {
-      case 'january':
-        return 1;
-      case 'february':
-        return 2;
-      case 'march':
-        return 3;
-      case 'april':
-        return 4;
-      case 'may':
-        return 5;
-      case 'june':
-        return 6;
-      case 'july':
-        return 7;
-      case 'august':
-        return 8;
-      case 'september':
-        return 9;
-      case 'october':
-        return 10;
-      case 'november':
-        return 11;
-      case 'december':
-        return 12;
-    }
-    return null;
   }
 
   Future<void> _openItem(FursaItem item) async {
@@ -397,7 +349,9 @@ class _FursaScreenState extends State<FursaScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(24),
                             child: Text(
-                              'Hakuna fursa zinazolingana na utafutaji wako kwa sasa.',
+                              provider.items.isEmpty
+                                  ? 'Hakuna fursa mpya kwa sasa. Tafadhali angalia tena baadaye.'
+                                  : 'Hakuna fursa zinazolingana na utafutaji wako kwa sasa.',
                               style: AppTextStyles.bodyMedium,
                               textAlign: TextAlign.center,
                             ),

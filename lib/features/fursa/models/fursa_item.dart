@@ -49,4 +49,59 @@ class FursaItem {
       publishedAt: json['published_at']?.toString() ?? '',
     );
   }
+
+  /// Parses [deadlineText] (e.g. "5th June 2026") into a [DateTime].
+  /// Returns null when the text is empty or doesn't match the expected
+  /// format — the backend has no structured deadline field, only this
+  /// free-text one, so unparseable values are treated as "unknown" rather
+  /// than expired.
+  DateTime? get parsedDeadline => _parseDeadlineText(deadlineText);
+
+  /// True only when the deadline is known and has passed. Items with no
+  /// parseable deadline are never considered expired, since we can't
+  /// verify their status from free text alone.
+  bool isExpiredAsOf(DateTime now) {
+    final deadline = parsedDeadline;
+    if (deadline == null) return false;
+    return deadline.isBefore(DateTime(now.year, now.month, now.day));
+  }
+
+  bool get isExpired => isExpiredAsOf(DateTime.now());
+}
+
+DateTime? _parseDeadlineText(String value) {
+  final text = value.trim();
+  if (text.isEmpty) return null;
+
+  final match = RegExp(
+    r'^(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]+)\s+(\d{4})$',
+    caseSensitive: false,
+  ).firstMatch(text);
+  if (match == null) return null;
+
+  final day = int.tryParse(match.group(1)!);
+  final month = _monthNumber(match.group(2)!);
+  final year = int.tryParse(match.group(3)!);
+  if (day == null || month == null || year == null) return null;
+
+  return DateTime(year, month, day);
+}
+
+int? _monthNumber(String month) {
+  const months = [
+    'january',
+    'february',
+    'march',
+    'april',
+    'may',
+    'june',
+    'july',
+    'august',
+    'september',
+    'october',
+    'november',
+    'december',
+  ];
+  final index = months.indexOf(month.toLowerCase());
+  return index == -1 ? null : index + 1;
 }

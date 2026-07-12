@@ -267,7 +267,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (fursa.isLoading)
                     SliverToBoxAdapter(child: _fursaShimmer())
                   else if (fursa.items.isEmpty)
-                    SliverToBoxAdapter(child: _empty('Hakuna fursa kwa sasa'))
+                    SliverToBoxAdapter(
+                      child: _empty(
+                        'Hakuna fursa mpya kwa sasa. Tafadhali rudi baadaye.',
+                      ),
+                    )
                   else
                     SliverToBoxAdapter(
                       child: _fursaStrip(_homeFursaItems(fursa.items)),
@@ -621,62 +625,14 @@ class _HomeScreenState extends State<HomeScreen> {
   List<FursaItem> _homeFursaItems(List<FursaItem> items) {
     final sorted = [...items];
     sorted.sort((a, b) {
-      final aDate = _parseFursaDeadline(a.deadlineText);
-      final bDate = _parseFursaDeadline(b.deadlineText);
+      final aDate = a.parsedDeadline;
+      final bDate = b.parsedDeadline;
       if (aDate == null && bDate == null) return 0;
       if (aDate == null) return 1;
       if (bDate == null) return -1;
       return aDate.compareTo(bDate);
     });
     return sorted.take(3).toList();
-  }
-
-  DateTime? _parseFursaDeadline(String value) {
-    final text = value.trim();
-    if (text.isEmpty) return null;
-
-    final match = RegExp(
-      r'^(\d{1,2})(?:st|nd|rd|th)?\s+([A-Za-z]+)\s+(\d{4})$',
-      caseSensitive: false,
-    ).firstMatch(text);
-    if (match == null) return null;
-
-    final day = int.tryParse(match.group(1)!);
-    final month = _monthNumber(match.group(2)!);
-    final year = int.tryParse(match.group(3)!);
-    if (day == null || month == null || year == null) return null;
-
-    return DateTime(year, month, day);
-  }
-
-  int? _monthNumber(String month) {
-    switch (month.toLowerCase()) {
-      case 'january':
-        return 1;
-      case 'february':
-        return 2;
-      case 'march':
-        return 3;
-      case 'april':
-        return 4;
-      case 'may':
-        return 5;
-      case 'june':
-        return 6;
-      case 'july':
-        return 7;
-      case 'august':
-        return 8;
-      case 'september':
-        return 9;
-      case 'october':
-        return 10;
-      case 'november':
-        return 11;
-      case 'december':
-        return 12;
-    }
-    return null;
   }
 
   Widget _empty(String text) {

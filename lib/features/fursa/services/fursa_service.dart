@@ -2,7 +2,14 @@ import '../../../core/network/api_client.dart';
 import '../models/fursa_item.dart';
 
 class FursaService {
-  static const List<FursaItem> _currentPreviewItems = [
+  // Emergency fallback content, owned by the Karakana mobile team.
+  // Shown ONLY when the backend has no usable opportunities (down, empty,
+  // or placeholder-only). Every entry must carry a real `deadlineText` —
+  // once its deadline passes, `FursaItem.isExpired` removes it automatically
+  // so it never lingers as stale content. Refresh these dates/entries
+  // periodically; an empty result here simply falls through to the app's
+  // empty state, which is the safe default.
+  static const List<FursaItem> _emergencyFallbackItems = [
     FursaItem(
       id: -1,
       title: 'Applications for Tanzania Ventures Lab',
@@ -73,11 +80,29 @@ class FursaService {
         .map((item) => FursaItem.fromJson(Map<String, dynamic>.from(item)))
         .toList();
 
-    if (items.isEmpty ||
-        items.every((item) => item.title.startsWith('Fursa ya Instagram'))) {
-      return _currentPreviewItems;
+    return selectItemsToShow(items);
+  }
+
+  /// Decides what to show given the raw backend result. Exposed for
+  /// testing so the fallback/expiry decision can be verified without a
+  /// live network call.
+  List<FursaItem> selectItemsToShow(List<FursaItem> backendItems) {
+    final looksUnusable = backendItems.isEmpty ||
+        backendItems
+            .every((item) => item.title.startsWith('Fursa ya Instagram'));
+
+    final activeBackendItems =
+        looksUnusable ? const <FursaItem>[] : _withoutExpired(backendItems);
+
+    if (activeBackendItems.isNotEmpty) {
+      return activeBackendItems;
     }
 
-    return items;
+    // Backend has nothing usable right now — fall back to the emergency
+    // list, still subject to the same expiry rule.
+    return _withoutExpired(_emergencyFallbackItems);
   }
+
+  List<FursaItem> _withoutExpired(List<FursaItem> items) =>
+      items.where((item) => !item.isExpired).toList();
 }
