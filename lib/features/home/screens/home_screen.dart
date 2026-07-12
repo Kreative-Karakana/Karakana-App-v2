@@ -13,6 +13,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/theme_provider.dart';
 import '../../../widgets/cards/course_card_horizontal.dart';
 import '../../../widgets/cards/shimmer_card.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -404,6 +405,7 @@ class _HomeScreenState extends State<HomeScreen> {
         statusBarBrightness: Brightness.dark,
       ),
       titleSpacing: 0,
+      centerTitle: false,
       title: Padding(
         padding: const EdgeInsets.only(left: AppSpacing.md),
         child: Row(
@@ -424,6 +426,18 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       actions: [
+        Builder(
+          builder: (context) {
+            final themeProvider = context.watch<ThemeProvider>();
+            return _HomeHeaderIconButton(
+              icon: themeProvider.isDark
+                  ? Icons.light_mode_outlined
+                  : Icons.dark_mode_outlined,
+              onTap: () => context.read<ThemeProvider>().toggleTheme(),
+            );
+          },
+        ),
+        const SizedBox(width: AppSpacing.xs),
         _HomeNotificationAction(
           unreadCount: notifications.unreadCount,
           onTap: () async {

@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/theme_provider.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -646,6 +647,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               activeThumbColor: const Color(0xFFE87722),
                               activeTrackColor: const Color(0xFFE87722)
                                   .withValues(alpha: 0.3),
+                            ),
+                          ),
+                          Consumer<ThemeProvider>(
+                            builder: (context, themeProvider, _) => ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 4,
+                              ),
+                              leading: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFE87722)
+                                      .withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(
+                                  themeProvider.isDark
+                                      ? Icons.dark_mode_outlined
+                                      : Icons.light_mode_outlined,
+                                  color: const Color(0xFFE87722),
+                                  size: 18,
+                                ),
+                              ),
+                              title: Text(
+                                'Hali ya Giza',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 14,
+                                  color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color ??
+                                      const Color(0xFF1A0A00),
+                                ),
+                              ),
+                              subtitle: Text(
+                                themeProvider.isDark ? 'Imewashwa' : 'Imezimwa',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 12,
+                                  color: const Color(0xFF9E8070),
+                                ),
+                              ),
+                              trailing: Switch(
+                                value: themeProvider.isDark,
+                                onChanged: (_) => themeProvider.toggleTheme(),
+                                activeThumbColor: const Color(0xFFE87722),
+                                activeTrackColor: const Color(0xFFE87722)
+                                    .withValues(alpha: 0.3),
+                              ),
                             ),
                           ),
                         ],
