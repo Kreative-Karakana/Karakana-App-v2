@@ -83,7 +83,8 @@ class SubscriptionPurchaseProvider extends ChangeNotifier {
     }
   }
 
-  void _applyResult(IAPPurchaseResult result, {required VoidCallback onSuccess}) {
+  void _applyResult(IAPPurchaseResult result,
+      {required VoidCallback onSuccess}) {
     switch (result.result) {
       case IAPResult.success:
         onSuccess();

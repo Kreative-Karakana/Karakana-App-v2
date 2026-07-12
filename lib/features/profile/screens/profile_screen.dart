@@ -547,6 +547,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onTap: () => context.push('/profile/edit'),
                           ),
                           _buildMenuItem(
+                            Icons.workspace_premium_outlined,
+                            const Color(0xFFE87722),
+                            'Usajili Wangu',
+                            subtitle: 'Jaribio, usajili na tarehe ya mwisho',
+                            onTap: () => context.push('/subscription'),
+                          ),
+                          _buildMenuItem(
                             Icons.payment_outlined,
                             const Color(0xFFE87722),
                             'Historia ya Malipo',
