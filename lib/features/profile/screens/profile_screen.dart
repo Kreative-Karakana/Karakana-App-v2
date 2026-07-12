@@ -683,9 +683,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                               subtitle: Text(
-                                themeProvider.isDark
-                                    ? 'Imewashwa'
-                                    : 'Imezimwa',
+                                themeProvider.isDark ? 'Imewashwa' : 'Imezimwa',
                                 style: GoogleFonts.montserrat(
                                   fontSize: 12,
                                   color: const Color(0xFF9E8070),
