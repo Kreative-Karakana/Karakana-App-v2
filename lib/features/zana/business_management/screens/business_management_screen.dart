@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -26,15 +27,14 @@ class BusinessManagementScreen extends StatelessWidget {
 }
 
 /// Shown wherever a premium action (create/edit/delete) is blocked because
-/// the backend reports no active entitlement (issue #31). There's
-/// deliberately no "upgrade now" button that navigates anywhere — the
-/// actual subscription purchase UI is a separate, not-yet-built issue
-/// (#33); this only tells the user why the action didn't happen and
-/// reassures them their existing data is safe.
+/// the backend reports no active entitlement (issue #31). "Boresha Sasa"
+/// hands off to the subscription status/upgrade screen (issue #33); this
+/// dialog itself only explains why the action didn't happen and reassures
+/// the user their existing data is safe.
 Future<void> showSubscriptionRequiredDialog(BuildContext context) {
   return showDialog<void>(
     context: context,
-    builder: (_) => AlertDialog(
+    builder: (dialogContext) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       title: Text(
         'Boresha Akaunti',
@@ -45,17 +45,42 @@ Future<void> showSubscriptionRequiredDialog(BuildContext context) {
         style: GoogleFonts.montserrat(fontSize: 13, height: 1.5),
       ),
       actions: [
-        FilledButton(
-          onPressed: () => Navigator.pop(context),
-          style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+        TextButton(
+          onPressed: () => Navigator.pop(dialogContext),
           child: Text(
             'Nimeelewa',
+            style: GoogleFonts.montserrat(
+              fontWeight: FontWeight.w700,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ),
+        FilledButton(
+          onPressed: () {
+            Navigator.pop(dialogContext);
+            _goToSubscription(context);
+          },
+          style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+          child: Text(
+            'Boresha Sasa',
             style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
           ),
         ),
       ],
     ),
   );
+}
+
+/// Navigates to the subscription screen (issue #33) and, once the user
+/// comes back, re-syncs entitlement so a completed purchase/trial
+/// immediately clears the read-only state here without waiting for the
+/// next full [BusinessManagementProvider.loadInitial] call.
+Future<void> _goToSubscription(BuildContext context) async {
+  final provider = context.read<BusinessManagementProvider>();
+  await context.push('/subscription');
+  if (context.mounted) {
+    await provider.loadInitial();
+  }
 }
 
 /// Persistent, non-dismissible banner explaining the read-only state
@@ -76,20 +101,44 @@ class _ReadOnlyBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.warning.withValues(alpha: 0.35)),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.lock_clock_outlined,
-              color: AppColors.warning, size: 20),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              message,
-              style: GoogleFonts.montserrat(
-                fontSize: 12.5,
-                height: 1.5,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.lock_clock_outlined,
+                  color: AppColors.warning, size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  message,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 12.5,
+                    height: 1.5,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () => _goToSubscription(context),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                'Boresha Akaunti →',
+                style: GoogleFonts.montserrat(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
+                ),
               ),
             ),
           ),
