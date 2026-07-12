@@ -171,7 +171,8 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                   const _HeaderPanel(
                     title: 'Anza na biashara yako',
                     subtitle:
-                        'Weka jina na aina ya biashara ili uanze kurekodi Mauzo na Matumizi.',
+                        'Usimamizi wa Biashara hukusaidia kufuatilia Mauzo na '
+                        'Matumizi ya biashara yako kwa urahisi, popote ulipo.',
                   ),
                   if (provider.isReadOnly) ...[
                     const SizedBox(height: 14),
@@ -182,6 +183,9 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                     ),
                   ],
                   const SizedBox(height: 16),
+                  const SizedBox(height: 14),
+                  const _HowItWorksCard(),
+                  const SizedBox(height: 14),
                   _BusinessSetupCard(provider: provider),
                 ],
               ),
@@ -208,6 +212,12 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                 ),
                 const SizedBox(height: 14),
                 _DashboardSummary(provider: provider),
+                if (provider.showFirstTransactionGuide) ...[
+                  const SizedBox(height: 14),
+                  _FirstTransactionGuide(
+                    onDismiss: () => provider.dismissFirstTransactionGuide(),
+                  ),
+                ],
                 const SizedBox(height: 14),
                 _ActionRow(
                   onSale: () => _openTransactionSheet(context, isSale: true),
@@ -221,6 +231,8 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                   onEdit: (transaction) =>
                       _openTransactionSheet(context, transaction: transaction),
                   onDelete: _confirmAndDelete,
+                  onRecordSale: () =>
+                      _openTransactionSheet(context, isSale: true),
                   deletingTransactionId: _deletingTransactionId,
                 ),
                 const SizedBox(height: 18),
@@ -229,6 +241,8 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                   onEdit: (transaction) =>
                       _openTransactionSheet(context, transaction: transaction),
                   onDelete: _confirmAndDelete,
+                  onRecordSale: () =>
+                      _openTransactionSheet(context, isSale: true),
                   deletingTransactionId: _deletingTransactionId,
                 ),
               ],
@@ -448,13 +462,16 @@ class _DashboardSummary extends StatelessWidget {
     final currency = provider.business?.currency ??
         provider.dashboardSummary?.currency ??
         'TZS';
+    final hasTransactions = (provider.dashboardSummary?.miamala ?? 0) > 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionTitle(
+        _SectionTitle(
           title: 'Muhtasari',
-          subtitle: 'Takwimu za leo na mwezi huu.',
+          subtitle: hasTransactions
+              ? 'Takwimu za leo na mwezi huu.'
+              : 'Nambari hizi zitasasishwa kila ukirekodi Mauzo au Matumizi.',
         ),
         const SizedBox(height: 10),
         LayoutBuilder(
@@ -546,12 +563,14 @@ class _RecentTransactions extends StatelessWidget {
   final BusinessManagementProvider provider;
   final ValueChanged<BusinessTransaction> onEdit;
   final ValueChanged<BusinessTransaction> onDelete;
+  final VoidCallback onRecordSale;
   final int? deletingTransactionId;
 
   const _RecentTransactions({
     required this.provider,
     required this.onEdit,
     required this.onDelete,
+    required this.onRecordSale,
     this.deletingTransactionId,
   });
 
@@ -572,9 +591,11 @@ class _RecentTransactions extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           if (recent.isEmpty)
-            const _EmptyState(
+            _EmptyState(
               title: 'Hakuna miamala bado',
               message: 'Rekodi Mauzo au Matumizi ili yaonekane hapa.',
+              actionLabel: 'Rekodi Mauzo',
+              onAction: onRecordSale,
             )
           else
             ...recent.map(
@@ -595,12 +616,14 @@ class _HistorySection extends StatefulWidget {
   final BusinessManagementProvider provider;
   final ValueChanged<BusinessTransaction> onEdit;
   final ValueChanged<BusinessTransaction> onDelete;
+  final VoidCallback onRecordSale;
   final int? deletingTransactionId;
 
   const _HistorySection({
     required this.provider,
     required this.onEdit,
     required this.onDelete,
+    required this.onRecordSale,
     this.deletingTransactionId,
   });
 
@@ -763,9 +786,11 @@ class _HistorySectionState extends State<_HistorySection> {
                         'Jaribu kubadilisha vichujio au neno la utafutaji, '
                         'au gusa "Futa Vichujio" kuona miamala yote.',
                   )
-                : const _EmptyState(
+                : _EmptyState(
                     title: 'Hakuna historia bado',
                     message: 'Miamala utakayorekodi itaonekana hapa.',
+                    actionLabel: 'Rekodi Mauzo',
+                    onAction: widget.onRecordSale,
                   )
           else ...[
             ...provider.transactions.map(
@@ -1786,6 +1811,149 @@ class _HeaderPanel extends StatelessWidget {
   }
 }
 
+class _HowItWorksCard extends StatelessWidget {
+  const _HowItWorksCard();
+
+  static const _steps = [
+    ('1', 'Weka jina na aina ya biashara yako.'),
+    ('2', 'Rekodi Mauzo na Matumizi unapotokea.'),
+    ('3', 'Ona Faida au Hasara yako papo kwa hapo.'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return _SurfaceCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const _SectionTitle(title: 'Jinsi inavyofanya kazi'),
+          const SizedBox(height: 12),
+          for (final step in _steps) ...[
+            _StepRow(number: step.$1, text: step.$2),
+            if (step != _steps.last) const SizedBox(height: 10),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _StepRow extends StatelessWidget {
+  final String number;
+  final String text;
+
+  const _StepRow({required this.number, required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 22,
+          height: 22,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            color: AppColors.primaryLight,
+            shape: BoxShape.circle,
+          ),
+          child: Text(
+            number,
+            style: GoogleFonts.montserrat(
+              color: AppColors.primaryDark,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(
+              text,
+              style: GoogleFonts.montserrat(
+                color: AppColors.textSecondary,
+                fontSize: 12.5,
+                height: 1.4,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FirstTransactionGuide extends StatelessWidget {
+  final VoidCallback onDismiss;
+
+  const _FirstTransactionGuide({required this.onDismiss});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.primaryLight,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.lightbulb_outline_rounded,
+            size: 20,
+            color: AppColors.primaryDark,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Hatua inayofuata',
+                  style: GoogleFonts.montserrat(
+                    color: AppColors.primaryDark,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  'Rekodi Mauzo au Matumizi yako ya kwanza hapa chini ili '
+                  'uanze kuona takwimu za biashara yako.',
+                  style: GoogleFonts.montserrat(
+                    color: AppColors.textSecondary,
+                    fontSize: 11.5,
+                    height: 1.4,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          InkWell(
+            onTap: onDismiss,
+            borderRadius: BorderRadius.circular(999),
+            child: const Padding(
+              padding: EdgeInsets.all(4),
+              child: Icon(
+                Icons.close_rounded,
+                size: 16,
+                color: AppColors.textTertiary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _SurfaceCard extends StatelessWidget {
   final Widget child;
 
@@ -2294,8 +2462,15 @@ class _SectionTitle extends StatelessWidget {
 class _EmptyState extends StatelessWidget {
   final String title;
   final String message;
+  final String? actionLabel;
+  final VoidCallback? onAction;
 
-  const _EmptyState({required this.title, required this.message});
+  const _EmptyState({
+    required this.title,
+    required this.message,
+    this.actionLabel,
+    this.onAction,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -2328,6 +2503,25 @@ class _EmptyState extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
+          if (actionLabel != null && onAction != null) ...[
+            const SizedBox(height: 12),
+            TextButton.icon(
+              onPressed: onAction,
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                visualDensity: VisualDensity.compact,
+                foregroundColor: AppColors.primaryDark,
+              ),
+              icon: const Icon(Icons.add_circle_outline, size: 16),
+              label: Text(
+                actionLabel!,
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

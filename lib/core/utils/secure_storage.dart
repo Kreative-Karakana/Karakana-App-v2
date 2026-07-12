@@ -214,6 +214,23 @@ class SecureStorage implements AuthSessionStore {
     return prefs.getBool(AppConstants.mastercardDoneKey) ?? false;
   }
 
+  Future<void> setBusinessOnboardingDismissed() async {
+    try {
+      final prefs = await _prefs;
+      await prefs.setBool(AppConstants.businessOnboardingDismissedKey, true);
+    } catch (_) {}
+  }
+
+  Future<bool> isBusinessOnboardingDismissed() async {
+    try {
+      final prefs = await _prefs;
+      return prefs.getBool(AppConstants.businessOnboardingDismissedKey) ??
+          false;
+    } catch (_) {
+      return false;
+    }
+  }
+
   Future<void> setMastercardDone() async {
     final prefs = await _prefs;
     await prefs.setBool(AppConstants.mastercardDoneKey, true);
