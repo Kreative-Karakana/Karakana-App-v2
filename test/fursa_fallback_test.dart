@@ -56,7 +56,10 @@ void main() {
 
     test('returns backend items when present and unexpired', () {
       final backendItems = [
-        _item(id: 10, title: 'Real opportunity', deadlineText: '1st January 2099'),
+        _item(
+            id: 10,
+            title: 'Real opportunity',
+            deadlineText: '1st January 2099'),
       ];
 
       final result = service.selectItemsToShow(backendItems);
@@ -85,7 +88,9 @@ void main() {
       expect(result, isEmpty);
     });
 
-    test('falls back to emergency content when backend returns only placeholders', () {
+    test(
+        'falls back to emergency content when backend returns only placeholders',
+        () {
       final backendItems = [
         _item(id: 1, title: 'Fursa ya Instagram #1'),
         _item(id: 2, title: 'Fursa ya Instagram #2'),
@@ -98,7 +103,10 @@ void main() {
 
     test('never returns an expired opportunity from either source', () {
       final backendItems = [
-        _item(id: 1, title: 'Expired backend item', deadlineText: '1st January 2000'),
+        _item(
+            id: 1,
+            title: 'Expired backend item',
+            deadlineText: '1st January 2000'),
       ];
 
       final result = service.selectItemsToShow(backendItems);

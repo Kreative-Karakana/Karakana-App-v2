@@ -88,7 +88,8 @@ class FursaService {
   /// live network call.
   List<FursaItem> selectItemsToShow(List<FursaItem> backendItems) {
     final looksUnusable = backendItems.isEmpty ||
-        backendItems.every((item) => item.title.startsWith('Fursa ya Instagram'));
+        backendItems
+            .every((item) => item.title.startsWith('Fursa ya Instagram'));
 
     final activeBackendItems =
         looksUnusable ? const <FursaItem>[] : _withoutExpired(backendItems);
