@@ -10,6 +10,8 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../../courses/models/quiz_model.dart';
+import '../../courses/services/quiz_service.dart';
 import '../utils/course_contract.dart';
 
 class CourseBuilderScreen extends StatefulWidget {
@@ -41,6 +43,8 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   // Step 3 — Quiz (local state, submitted after course is created)
   final List<Map<String, dynamic>> _questions = [];
   final _passingScoreController = TextEditingController(text: '70');
+  final _cooldownController = TextEditingController(text: '15');
+  bool _requiredForCertificate = false;
 
   bool get _isEditMode => widget.courseId != null;
   bool get _isRejected => CourseContract.isRejected(_existingStatus);
@@ -58,6 +62,7 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
     _descController.dispose();
     _priceController.dispose();
     _passingScoreController.dispose();
+    _cooldownController.dispose();
     super.dispose();
   }
 
@@ -170,22 +175,33 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
   Future<void> _saveQuiz(int courseId) async {
     if (_questions.isEmpty) return;
     try {
-      final passingScore =
-          int.tryParse(_passingScoreController.text.trim()) ?? 70;
-      await ApiClient().dio.post(
-        '/api/v1/courses/$courseId/quiz/',
-        data: {
-          'passing_score': passingScore,
-          'questions': _questions
-              .map((q) => {
-                    'question': q['question'],
-                    'options': q['options'],
-                    'correct_answer': q['correct'],
-                  })
-              .toList(),
-        },
+      final payload = QuizDraftPayload(
+        passingScore: int.tryParse(_passingScoreController.text.trim()) ?? 70,
+        failedRetryCooldownMinutes:
+            int.tryParse(_cooldownController.text.trim()) ?? 15,
+        requiredForCertificate: _requiredForCertificate,
+        questions: _questions
+            .map((q) => QuizDraftQuestionInput(
+                  question: q['question'] as String,
+                  options: List<String>.from(q['options'] as List),
+                  correctAnswer: q['correct'] as int,
+                  explanation: q['explanation'] as String? ?? '',
+                ))
+            .toList(),
       );
-    } catch (_) {}
+      await QuizService().createQuizDraft(courseId, payload);
+    } catch (e) {
+      // Course creation already succeeded at this point — a quiz-save
+      // failure shouldn't undo that, so this is a non-blocking warning
+      // rather than an error that stops the flow. The trainer can finish
+      // authoring the quiz from the quiz manager screen afterwards.
+      if (mounted) {
+        showTopPopup(
+          context,
+          'Kozi imehifadhiwa lakini mtihani haukuhifadhiwa: $e',
+        );
+      }
+    }
   }
 
   Future<void> _submitCourse() async {
@@ -930,6 +946,38 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
             label: 'Asilimia ya Kufaulu',
             hint: '70',
             keyboardType: TextInputType.number,
+          ),
+
+          const SizedBox(height: 16),
+          Text('Muda wa Kusubiri Baada ya Kushindwa (dakika)',
+              style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF3D1800))),
+          const SizedBox(height: 8),
+          _field(
+            controller: _cooldownController,
+            label: 'Dakika za Kusubiri',
+            hint: '15',
+            keyboardType: TextInputType.number,
+          ),
+
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: Text('Hitajika kwa Cheti',
+                    style: GoogleFonts.montserrat(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF3D1800))),
+              ),
+              Switch(
+                value: _requiredForCertificate,
+                activeThumbColor: const Color(0xFFE87722),
+                onChanged: (v) => setState(() => _requiredForCertificate = v),
+              ),
+            ],
           ),
 
           const SizedBox(height: 24),
