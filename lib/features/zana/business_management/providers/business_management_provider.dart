@@ -1,20 +1,36 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../../core/network/api_client.dart';
+import '../../../subscriptions/models/entitlement_status.dart';
+import '../../../subscriptions/services/subscription_service.dart';
 import '../../../../core/utils/secure_storage.dart';
 import '../models/business.dart';
 import '../models/business_dashboard_summary.dart';
 import '../models/business_transaction.dart';
 import '../services/business_management_service.dart';
 
+/// Shown when a write is blocked because the backend reports no active
+/// entitlement (issue #31) — distinct from [BusinessManagementProvider]'s
+/// generic [errorMessage] so screens can offer an upgrade CTA instead of a
+/// plain error toast.
+const String kSubscriptionRequiredMessage =
+    'Muda wa jaribio au usajili wako umeisha. Taarifa zako za biashara '
+    'zipo salama — boresha akaunti yako ili kuendelea kuongeza au kuhariri.';
+
 class BusinessManagementProvider extends ChangeNotifier {
   final BusinessManagementApi _service;
+  final SubscriptionApi _subscriptionService;
   final SecureStorage _storage;
 
-  BusinessManagementProvider(
-      {BusinessManagementApi? service, SecureStorage? storage})
-      : _service = service ?? BusinessManagementService(),
+  BusinessManagementProvider({
+    BusinessManagementApi? service,
+    SubscriptionApi? subscriptionService,
+    SecureStorage? storage,
+  })  : _service = service ?? BusinessManagementService(),
+        _subscriptionService = subscriptionService ?? SubscriptionService(),
         _storage = storage ?? SecureStorage() {
     _loadOnboardingDismissed();
   }
@@ -22,6 +38,7 @@ class BusinessManagementProvider extends ChangeNotifier {
   static const int _transactionPageSize = 20;
 
   Business? _business;
+  EntitlementStatus? _entitlement;
   BusinessDashboardSummary? _dashboardSummary;
   List<BusinessTransaction> _transactions = [];
   bool _isLoading = false;
@@ -44,6 +61,14 @@ class BusinessManagementProvider extends ChangeNotifier {
   bool _onboardingDismissed = false;
 
   Business? get business => _business;
+  EntitlementStatus? get entitlement => _entitlement;
+
+  /// True once the backend has told us the user has no active trial or
+  /// subscription. `null`/unloaded entitlement defaults to `false` (not
+  /// read-only) so the dashboard doesn't flash a locked state while
+  /// `subscriptions/me/` is still in flight — the backend enforces the
+  /// real restriction on every write regardless of what this says.
+  bool get isReadOnly => _entitlement?.hasActiveSubscription == false;
   BusinessDashboardSummary? get dashboardSummary => _dashboardSummary;
   List<BusinessTransaction> get transactions =>
       List.unmodifiable(_transactions);
@@ -85,6 +110,12 @@ class BusinessManagementProvider extends ChangeNotifier {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
+
+    // Runs alongside the business fetch below rather than blocking on it —
+    // a failure here (network hiccup, etc.) never should prevent the rest
+    // of the screen from loading; it just leaves isReadOnly at its
+    // not-yet-known (false) default until the next successful refresh.
+    unawaited(_loadEntitlement());
 
     try {
       _business = await _service.getMyBusiness();
@@ -133,7 +164,7 @@ class BusinessManagementProvider extends ChangeNotifier {
       ]);
       return true;
     } catch (e) {
-      _errorMessage = ApiClient().parseError(e);
+      await _handleWriteError(e);
       return false;
     } finally {
       _isSubmitting = false;
@@ -157,7 +188,7 @@ class BusinessManagementProvider extends ChangeNotifier {
       await loadDashboard(notify: false);
       return true;
     } catch (e) {
-      _errorMessage = ApiClient().parseError(e);
+      await _handleWriteError(e);
       return false;
     } finally {
       _isSubmitting = false;
@@ -337,7 +368,7 @@ class BusinessManagementProvider extends ChangeNotifier {
       ]);
       return true;
     } catch (e) {
-      _errorMessage = ApiClient().parseError(e);
+      await _handleWriteError(e);
       return false;
     } finally {
       _isSubmitting = false;
@@ -358,7 +389,7 @@ class BusinessManagementProvider extends ChangeNotifier {
       ]);
       return true;
     } catch (e) {
-      _errorMessage = ApiClient().parseError(e);
+      await _handleWriteError(e);
       return false;
     } finally {
       _isSubmitting = false;
@@ -452,8 +483,12 @@ class BusinessManagementProvider extends ChangeNotifier {
       ]);
       return true;
     } catch (e) {
-      final parsed = ApiClient().parseError(e);
-      _errorMessage = parsed.isEmpty ? fallbackError : parsed;
+      if (_isForbidden(e)) {
+        await _handleWriteError(e);
+      } else {
+        final parsed = ApiClient().parseError(e);
+        _errorMessage = parsed.isEmpty ? fallbackError : parsed;
+      }
       return false;
     } finally {
       _isSubmitting = false;
@@ -480,5 +515,37 @@ class BusinessManagementProvider extends ChangeNotifier {
 
   bool _isNotFound(Object error) {
     return error is DioException && error.response?.statusCode == 404;
+  }
+
+  bool _isForbidden(Object error) {
+    return error is DioException && error.response?.statusCode == 403;
+  }
+
+  Future<void> _loadEntitlement() async {
+    try {
+      _entitlement = await _subscriptionService.getEntitlementStatus();
+      notifyListeners();
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('[BusinessManagementProvider] _loadEntitlement: $e');
+      }
+    }
+  }
+
+  /// A write call came back `403`: the backend is the actual boundary
+  /// (see docs/apps/subscriptions.md, Security) — this never trusts a
+  /// locally cached [isReadOnly] to decide whether to block a request, it
+  /// only reacts after the backend already has. Awaiting the entitlement
+  /// refetch here (rather than firing it and moving on) means [isReadOnly]
+  /// is already in sync by the time the failed write's own Future
+  /// resolves, so the UI greys out the same moment the error is shown
+  /// instead of a moment later.
+  Future<void> _handleWriteError(Object error) async {
+    if (_isForbidden(error)) {
+      _errorMessage = kSubscriptionRequiredMessage;
+      await _loadEntitlement();
+    } else {
+      _errorMessage = ApiClient().parseError(error);
+    }
   }
 }
