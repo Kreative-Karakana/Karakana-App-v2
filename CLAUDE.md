@@ -48,10 +48,10 @@ Version 2.0 — complete rebuild from design spec.
 - Token stored in FlutterSecureStorage
 
 ## Zana Section
-- 4 tools: POS (live), Business Manager (live), Insurance (live), e-KIKOBA (coming soon)
+- 4 tools: Business Manager (live), eBooks (live), Insurance (coming soon), e-KIKOBA (coming soon)
+- "live" tools must have a real working destination screen, not a waitlist stub — a tool is only "live" once its feature is actually built
 - Zana is the 3rd tab: /zana
 - Model: lib/features/zana/models/zana_model.dart
-- No backend API yet — static data
 
 ## Video Player
 - Use video_player package (already in pubspec)

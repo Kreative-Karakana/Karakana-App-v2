@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/constants/app_constants.dart';
@@ -1180,7 +1181,14 @@ class _BannerCarouselState extends State<_BannerCarousel> {
               final title = banner['title'] as String?;
 
               return GestureDetector(
-                onTap: link != null ? () {} : null,
+                onTap: link != null
+                    ? () {
+                        final uri = Uri.tryParse(link);
+                        if (uri != null) {
+                          launchUrl(uri, mode: LaunchMode.externalApplication);
+                        }
+                      }
+                    : null,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 6),
                   child: ClipRRect(
