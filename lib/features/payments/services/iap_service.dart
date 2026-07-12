@@ -8,6 +8,12 @@ import '../../../core/utils/secure_storage.dart';
 
 enum IAPResult { success, error, pending, cancelled }
 
+/// What a product id purchased through [IAPService] should be verified as.
+/// [course] hits the existing one-time course-purchase endpoint (Apple
+/// only, unchanged); [subscription] hits the Apple/Google subscription
+/// verify endpoints added for issue #32 — see [IAPService._verifyWithBackend].
+enum IAPProductKind { course, subscription }
+
 class IAPPurchaseResult {
   final IAPResult result;
   final String? message;
@@ -23,10 +29,19 @@ class IAPService {
 
   final Map<String, ProductDetails> _products = {};
 
+  // purchaseStream delivers PurchaseDetails, not whatever call site started
+  // it — this is how _onPurchaseUpdate recovers "was this a course or a
+  // subscription purchase" to pick the right backend verify endpoint. Set
+  // by purchase() before buying; also the fallback IAPProductKind.restore
+  // deliveries (which never went through purchase() this session) resolve
+  // to, since every restorable product Karakana sells today is a
+  // subscription (courses are non-restorable one-time purchases).
+  final Map<String, IAPProductKind> _productKinds = {};
+
   Completer<IAPPurchaseResult>? _pendingCompleter;
 
   Future<bool> initialize() async {
-    if (!Platform.isIOS) return false;
+    if (!Platform.isIOS && !Platform.isAndroid) return false;
 
     final bool available = await _iap.isAvailable();
     if (!available) return false;
@@ -55,18 +70,25 @@ class IAPService {
 
   ProductDetails? getProduct(String productId) => _products[productId];
 
-  Future<IAPPurchaseResult> purchase(String productId) async {
+  Future<IAPPurchaseResult> purchase(
+    String productId, {
+    IAPProductKind kind = IAPProductKind.course,
+  }) async {
     final product = _products[productId];
     if (product == null) {
       await loadProducts({productId});
       final retried = _products[productId];
       if (retried == null) {
-        return const IAPPurchaseResult(
+        return IAPPurchaseResult(
           IAPResult.error,
-          message: 'Bidhaa hii haikupatikana kwenye App Store.',
+          message: kind == IAPProductKind.subscription
+              ? 'Bidhaa hii haikupatikana. Jaribu tena baadaye.'
+              : 'Bidhaa hii haikupatikana kwenye App Store.',
         );
       }
     }
+
+    _productKinds[productId] = kind;
 
     final PurchaseParam param =
         PurchaseParam(productDetails: _products[productId]!);
@@ -74,12 +96,32 @@ class IAPService {
     _pendingCompleter = Completer<IAPPurchaseResult>();
 
     try {
+      // Play Billing/StoreKit both purchase auto-renewable subscriptions
+      // through the same non-consumable entry point as a one-time
+      // purchase — there is no separate "buy subscription" call.
       await _iap.buyNonConsumable(purchaseParam: param);
     } catch (e) {
       _pendingCompleter = null;
       return IAPPurchaseResult(IAPResult.error, message: e.toString());
     }
 
+    return _pendingCompleter!.future;
+  }
+
+  /// Replays the user's existing store purchases through [purchaseStream]
+  /// (each arrives as [PurchaseStatus.restored]) so a reinstalled app or a
+  /// new device can recover an active subscription. There is no separate
+  /// backend "restore" call — a restored purchase is verified exactly like
+  /// a fresh one (see docs/apps/subscriptions.md, Payment provider
+  /// integration), which is naturally idempotent on the backend.
+  Future<IAPPurchaseResult> restorePurchases() async {
+    _pendingCompleter = Completer<IAPPurchaseResult>();
+    try {
+      await _iap.restorePurchases();
+    } catch (e) {
+      _pendingCompleter = null;
+      return IAPPurchaseResult(IAPResult.error, message: e.toString());
+    }
     return _pendingCompleter!.future;
   }
 
@@ -95,7 +137,9 @@ class IAPService {
 
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
-          final result = await _verifyWithBackend(purchase);
+          final kind =
+              _productKinds[purchase.productID] ?? IAPProductKind.subscription;
+          final result = await _verifyWithBackend(purchase, kind);
           await _iap.completePurchase(purchase);
           _pendingCompleter?.complete(result);
           _pendingCompleter = null;
@@ -122,17 +166,30 @@ class IAPService {
     }
   }
 
-  Future<IAPPurchaseResult> _verifyWithBackend(PurchaseDetails purchase) async {
-    final receiptData = purchase.verificationData.serverVerificationData;
-    final productId = purchase.productID;
+  Future<IAPPurchaseResult> _verifyWithBackend(
+    PurchaseDetails purchase,
+    IAPProductKind kind,
+  ) {
+    if (kind == IAPProductKind.subscription) {
+      return _verifySubscriptionWithBackend(purchase);
+    }
+    return _verifyCourseWithBackend(purchase);
+  }
 
+  /// One-time course purchase verification — unchanged from before issue
+  /// #32, kept under its own name now that [_verifyWithBackend] branches
+  /// on product kind. Apple-only, matching `AppleIAPVerifyView` on the
+  /// backend (course purchases are not sold as Google Play subscriptions).
+  Future<IAPPurchaseResult> _verifyCourseWithBackend(
+    PurchaseDetails purchase,
+  ) async {
     try {
       final token = await SecureStorage().getToken();
       final response = await ApiClient().dio.post(
             '/api/v1/payments/apple-iap/verify/',
             data: {
-              'receipt_data': receiptData,
-              'product_id': productId,
+              'receipt_data': purchase.verificationData.serverVerificationData,
+              'product_id': purchase.productID,
             },
             options: Options(
               headers: {
@@ -146,12 +203,61 @@ class IAPService {
           response.statusCode! >= 200 &&
           response.statusCode! < 300) {
         return const IAPPurchaseResult(IAPResult.success);
-      } else {
-        return const IAPPurchaseResult(
-          IAPResult.error,
-          message: 'Uthibitisho wa malipo umeshindwa. Wasiliana na msaada.',
-        );
       }
+      return const IAPPurchaseResult(
+        IAPResult.error,
+        message: 'Uthibitisho wa malipo umeshindwa. Wasiliana na msaada.',
+      );
+    } catch (e) {
+      return const IAPPurchaseResult(
+        IAPResult.error,
+        message: 'Hitilafu ya mtandao. Jaribu tena baadaye.',
+      );
+    }
+  }
+
+  /// Subscription purchase/restore verification (issue #32) — posts to
+  /// the Apple or Google subscription verify endpoint depending on
+  /// platform. The backend is the only party that decides entitlement
+  /// (see docs/apps/subscriptions.md, Security): this call reports
+  /// success only once the backend has itself verified the purchase with
+  /// Apple/Google and updated `UserSubscription`.
+  Future<IAPPurchaseResult> _verifySubscriptionWithBackend(
+    PurchaseDetails purchase,
+  ) async {
+    final bool isIOS = Platform.isIOS;
+    final String path = isIOS
+        ? '/api/v1/subscriptions/verify/apple/'
+        : '/api/v1/subscriptions/verify/google/';
+    final Map<String, dynamic> data = isIOS
+        ? {'receipt_data': purchase.verificationData.serverVerificationData}
+        : {
+            'purchase_token': purchase.verificationData.serverVerificationData,
+            'product_id': purchase.productID,
+          };
+
+    try {
+      final token = await SecureStorage().getToken();
+      final response = await ApiClient().dio.post(
+            path,
+            data: data,
+            options: Options(
+              headers: {
+                'Authorization': 'Token $token',
+                'Content-Type': 'application/json',
+              },
+            ),
+          );
+
+      if (response.statusCode != null &&
+          response.statusCode! >= 200 &&
+          response.statusCode! < 300) {
+        return const IAPPurchaseResult(IAPResult.success);
+      }
+      return const IAPPurchaseResult(
+        IAPResult.error,
+        message: 'Uthibitisho wa usajili umeshindwa. Wasiliana na msaada.',
+      );
     } catch (e) {
       return const IAPPurchaseResult(
         IAPResult.error,
