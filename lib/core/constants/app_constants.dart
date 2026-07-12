@@ -12,6 +12,8 @@ class AppConstants {
   static const String ambassadorCodeKey = 'ambassador_code_state';
   static const String mastercardDoneKey = 'mastercard_done';
   static const String rolesKey = 'user_roles';
+  static const String businessOnboardingDismissedKey =
+      'business_onboarding_dismissed';
 }
 
 class AppStrings {
