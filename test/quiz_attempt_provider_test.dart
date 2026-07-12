@@ -30,7 +30,8 @@ void main() {
   });
 
   group('QuizAttemptProvider start/resume', () {
-    test('starts a new attempt and clears prior local answers/result', () async {
+    test('starts a new attempt and clears prior local answers/result',
+        () async {
       final service = _FakeQuizService()
         ..startResumeToReturn = _attemptDetail(id: 5, questionIds: [1, 2]);
       final provider = QuizAttemptProvider(service: service);
@@ -43,7 +44,8 @@ void main() {
       expect(provider.isStarting, isFalse);
     });
 
-    test('surfaces a QuizActionException code (e.g. LESSONS_INCOMPLETE)', () async {
+    test('surfaces a QuizActionException code (e.g. LESSONS_INCOMPLETE)',
+        () async {
       final service = _FakeQuizService()
         ..startError =
             QuizActionException('LESSONS_INCOMPLETE', 'Kamilisha masomo.');
@@ -68,7 +70,8 @@ void main() {
   });
 
   group('QuizAttemptProvider answering', () {
-    test('selecting an option autosaves the full cumulative answer set', () async {
+    test('selecting an option autosaves the full cumulative answer set',
+        () async {
       final service = _FakeQuizService()
         ..startResumeToReturn = _attemptDetail(id: 5, questionIds: [1, 2]);
       final provider = QuizAttemptProvider(service: service);
@@ -83,7 +86,8 @@ void main() {
       expect(provider.saveError, isNull);
     });
 
-    test('allQuestionsAnswered is only true once every question has an answer', () async {
+    test('allQuestionsAnswered is only true once every question has an answer',
+        () async {
       final service = _FakeQuizService()
         ..startResumeToReturn = _attemptDetail(id: 5, questionIds: [1, 2]);
       final provider = QuizAttemptProvider(service: service);
@@ -96,7 +100,8 @@ void main() {
       expect(provider.allQuestionsAnswered, isTrue);
     });
 
-    test('keeps the optimistic local selection even if autosave fails', () async {
+    test('keeps the optimistic local selection even if autosave fails',
+        () async {
       final service = _FakeQuizService()
         ..startResumeToReturn = _attemptDetail(id: 5, questionIds: [1])
         ..saveAnswersError = Exception('offline');
@@ -153,7 +158,8 @@ QuizAvailability _availability({required bool quizAvailable}) {
   );
 }
 
-QuizAttemptDetail _attemptDetail({required int id, required List<int> questionIds}) {
+QuizAttemptDetail _attemptDetail(
+    {required int id, required List<int> questionIds}) {
   return QuizAttemptDetail(
     id: id,
     quizVersion: 1,

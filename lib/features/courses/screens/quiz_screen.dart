@@ -14,7 +14,8 @@ class QuizScreen extends StatefulWidget {
   final int courseId;
   final String courseTitle;
 
-  const QuizScreen({super.key, required this.courseId, required this.courseTitle});
+  const QuizScreen(
+      {super.key, required this.courseId, required this.courseTitle});
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();
@@ -97,7 +98,8 @@ class _AvailabilityView extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
           child: Text(
-            provider.availabilityError ?? 'Hatukuweza kupata taarifa za mtihani.',
+            provider.availabilityError ??
+                'Hatukuweza kupata taarifa za mtihani.',
             textAlign: TextAlign.center,
             style: GoogleFonts.montserrat(color: const Color(0xFF5C3D2E)),
           ),
@@ -112,7 +114,8 @@ class _AvailabilityView extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.quiz_outlined, size: 56, color: Color(0xFFE8D5C8)),
+              const Icon(Icons.quiz_outlined,
+                  size: 56, color: Color(0xFFE8D5C8)),
               const SizedBox(height: 16),
               Text(
                 'Mtihani wa kozi hii haupatikani kwa sasa.',
@@ -143,7 +146,10 @@ class _AvailabilityView extends StatelessWidget {
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(16),
               boxShadow: const [
-                BoxShadow(color: Color(0x0FC4620A), blurRadius: 10, offset: Offset(0, 3)),
+                BoxShadow(
+                    color: Color(0x0FC4620A),
+                    blurRadius: 10,
+                    offset: Offset(0, 3)),
               ],
             ),
             child: Column(
@@ -176,7 +182,8 @@ class _AvailabilityView extends StatelessWidget {
                 if (!availability.lessonsComplete)
                   const _InfoRow(
                     icon: Icons.error_outline,
-                    text: 'Kamilisha masomo yote ya kozi kabla ya kuanza mtihani.',
+                    text:
+                        'Kamilisha masomo yote ya kozi kabla ya kuanza mtihani.',
                     color: Color(0xFFB71C1C),
                   ),
                 if (cooldownText != null)
@@ -199,17 +206,20 @@ class _AvailabilityView extends StatelessWidget {
                 backgroundColor: const Color(0xFFE87722),
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 52),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(28)),
               ),
               child: provider.isStarting
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: KarakanaWaveLoader(color: Colors.white, strokeWidth: 2),
+                      child: KarakanaWaveLoader(
+                          color: Colors.white, strokeWidth: 2),
                     )
                   : Text(
                       hasInProgress ? 'Endelea Mtihani' : 'Anza Mtihani',
-                      style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
+                      style:
+                          GoogleFonts.montserrat(fontWeight: FontWeight.w600),
                     ),
             ),
           ),
@@ -221,7 +231,8 @@ class _AvailabilityView extends StatelessWidget {
                 fallback: provider.startErrorMessage,
               ),
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(color: const Color(0xFFB71C1C), fontSize: 13),
+              style: GoogleFonts.montserrat(
+                  color: const Color(0xFFB71C1C), fontSize: 13),
             ),
           ],
           if (provider.history.isNotEmpty) ...[
@@ -301,7 +312,8 @@ class _HistoryTile extends StatelessWidget {
           Expanded(
             child: Text(
               'Jaribio ${attempt.attemptNumber}',
-              style: GoogleFonts.montserrat(fontSize: 13, color: const Color(0xFF3D1800)),
+              style: GoogleFonts.montserrat(
+                  fontSize: 13, color: const Color(0xFF3D1800)),
             ),
           ),
           if (attempt.score != null)
@@ -310,7 +322,8 @@ class _HistoryTile extends StatelessWidget {
               style: GoogleFonts.montserrat(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: passed ? const Color(0xFF2E7D32) : const Color(0xFFB71C1C),
+                color:
+                    passed ? const Color(0xFF2E7D32) : const Color(0xFFB71C1C),
               ),
             ),
         ],
@@ -378,24 +391,28 @@ class _AttemptForm extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: provider.allQuestionsAnswered && !provider.isSubmitting
-                        ? onSubmit
-                        : null,
+                    onPressed:
+                        provider.allQuestionsAnswered && !provider.isSubmitting
+                            ? onSubmit
+                            : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFE87722),
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 52),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28)),
                     ),
                     child: provider.isSubmitting
                         ? const SizedBox(
                             width: 20,
                             height: 20,
-                            child: KarakanaWaveLoader(color: Colors.white, strokeWidth: 2),
+                            child: KarakanaWaveLoader(
+                                color: Colors.white, strokeWidth: 2),
                           )
                         : Text(
                             'Wasilisha',
-                            style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
+                            style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.w600),
                           ),
                   ),
                 ),
@@ -431,7 +448,8 @@ class _QuestionForm extends StatelessWidget {
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(14),
         boxShadow: const [
-          BoxShadow(color: Color(0x0FC4620A), blurRadius: 8, offset: Offset(0, 2)),
+          BoxShadow(
+              color: Color(0x0FC4620A), blurRadius: 8, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -453,23 +471,32 @@ class _QuestionForm extends StatelessWidget {
               child: GestureDetector(
                 onTap: () => onSelect(option.id),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? const Color(0xFFE87722).withValues(alpha: 0.1)
-                        : (isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8)),
+                        : (isDark
+                            ? const Color(0xFF2A1A0A)
+                            : const Color(0xFFF5E6D8)),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isSelected ? const Color(0xFFE87722) : Colors.transparent,
+                      color: isSelected
+                          ? const Color(0xFFE87722)
+                          : Colors.transparent,
                       width: 1.5,
                     ),
                   ),
                   child: Row(
                     children: [
                       Icon(
-                        isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+                        isSelected
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_off,
                         size: 20,
-                        color: isSelected ? const Color(0xFFE87722) : const Color(0xFF9E8070),
+                        color: isSelected
+                            ? const Color(0xFFE87722)
+                            : const Color(0xFF9E8070),
                       ),
                       const SizedBox(width: 10),
                       Expanded(

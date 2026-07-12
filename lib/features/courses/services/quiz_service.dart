@@ -85,8 +85,7 @@ class QuizService implements QuizCatalogService {
         '/api/v1/courses/$courseId/quiz/',
         data: payload.toJson(),
       );
-      return QuizVersionSummary.fromJson(
-          response.data as Map<String, dynamic>);
+      return QuizVersionSummary.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       _rethrow(e);
     }
@@ -100,8 +99,7 @@ class QuizService implements QuizCatalogService {
         '/api/v1/courses/$courseId/quiz/',
         data: payload.toJson(),
       );
-      return QuizVersionSummary.fromJson(
-          response.data as Map<String, dynamic>);
+      return QuizVersionSummary.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       _rethrow(e);
     }
@@ -121,8 +119,7 @@ class QuizService implements QuizCatalogService {
     try {
       final response =
           await _dio.post('/api/v1/courses/$courseId/quiz/submit-review/');
-      return QuizVersionSummary.fromJson(
-          response.data as Map<String, dynamic>);
+      return QuizVersionSummary.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       _rethrow(e);
     }
@@ -144,8 +141,7 @@ class QuizService implements QuizCatalogService {
     try {
       final response =
           await _dio.post('/api/v1/courses/$courseId/quiz/attempts/');
-      return QuizAttemptDetail.fromJson(
-          response.data as Map<String, dynamic>);
+      return QuizAttemptDetail.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       _rethrow(e);
     }
@@ -163,8 +159,7 @@ class QuizService implements QuizCatalogService {
               .toList(),
         },
       );
-      return QuizAttemptDetail.fromJson(
-          response.data as Map<String, dynamic>);
+      return QuizAttemptDetail.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       _rethrow(e);
     }
@@ -175,8 +170,7 @@ class QuizService implements QuizCatalogService {
     try {
       final response =
           await _dio.post('/api/v1/quiz-attempts/$attemptId/submit/');
-      return QuizAttemptResult.fromJson(
-          response.data as Map<String, dynamic>);
+      return QuizAttemptResult.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       _rethrow(e);
     }
@@ -191,8 +185,7 @@ class QuizService implements QuizCatalogService {
       final list = data is List ? data : const [];
       return list
           .whereType<Map>()
-          .map((j) =>
-              QuizAttemptSummary.fromJson(Map<String, dynamic>.from(j)))
+          .map((j) => QuizAttemptSummary.fromJson(Map<String, dynamic>.from(j)))
           .toList();
     } catch (e) {
       _rethrow(e);
@@ -204,19 +197,17 @@ class QuizService implements QuizCatalogService {
     try {
       final response =
           await _dio.get('/api/v1/quiz-attempts/$attemptId/result/');
-      return QuizAttemptResult.fromJson(
-          response.data as Map<String, dynamic>);
+      return QuizAttemptResult.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       _rethrow(e);
     }
   }
 
   @override
-  Future<CertificateEligibility> getCertificateEligibility(
-      int courseId) async {
+  Future<CertificateEligibility> getCertificateEligibility(int courseId) async {
     try {
-      final response = await _dio
-          .get('/api/v1/courses/$courseId/certificate-eligibility/');
+      final response =
+          await _dio.get('/api/v1/courses/$courseId/certificate-eligibility/');
       return CertificateEligibility.fromJson(
           response.data as Map<String, dynamic>);
     } catch (e) {

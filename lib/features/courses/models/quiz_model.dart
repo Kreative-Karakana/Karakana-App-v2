@@ -100,8 +100,8 @@ class QuizVersionSummary {
     final questions = rawQuestions is List
         ? rawQuestions
             .whereType<Map>()
-            .map((q) =>
-                QuizQuestionModel.fromJson(Map<String, dynamic>.from(q)))
+            .map(
+                (q) => QuizQuestionModel.fromJson(Map<String, dynamic>.from(q)))
             .toList()
         : <QuizQuestionModel>[];
     return QuizVersionSummary(
@@ -266,8 +266,8 @@ class QuizAttemptDetail extends QuizAttemptSummary {
     final questions = rawQuestions is List
         ? rawQuestions
             .whereType<Map>()
-            .map((q) =>
-                QuizQuestionModel.fromJson(Map<String, dynamic>.from(q)))
+            .map(
+                (q) => QuizQuestionModel.fromJson(Map<String, dynamic>.from(q)))
             .toList()
         : <QuizQuestionModel>[];
     return QuizAttemptDetail(
@@ -357,8 +357,7 @@ class QuizAttemptResult {
     final answers = rawAnswers is List
         ? rawAnswers
             .whereType<Map>()
-            .map((a) =>
-                QuizAnswerResult.fromJson(Map<String, dynamic>.from(a)))
+            .map((a) => QuizAnswerResult.fromJson(Map<String, dynamic>.from(a)))
             .toList()
         : <QuizAnswerResult>[];
     return QuizAttemptResult(

@@ -314,7 +314,8 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                           color: const Color(0xFF9E8070),
                         ),
                       ),
-                      if ((_certificate?.certificateNumber ?? '').isNotEmpty) ...[
+                      if ((_certificate?.certificateNumber ?? '')
+                          .isNotEmpty) ...[
                         const SizedBox(height: 6),
                         Text(
                           'No. ${_certificate!.certificateNumber.toUpperCase().replaceAll('-', '').substring(0, 10)}',
@@ -483,8 +484,7 @@ class _IneligibleView extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () =>
-                        context.go('/course/$courseId/classroom'),
+                    onPressed: () => context.go('/course/$courseId/classroom'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFE87722),
                       foregroundColor: Colors.white,
@@ -495,7 +495,8 @@ class _IneligibleView extends StatelessWidget {
                     ),
                     child: Text(
                       'Rudi Kwenye Darasa',
-                      style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
+                      style:
+                          GoogleFonts.montserrat(fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),

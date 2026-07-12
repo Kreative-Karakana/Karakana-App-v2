@@ -85,11 +85,14 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline_rounded, size: 48, color: Color(0xFFE87722)),
+              const Icon(Icons.error_outline_rounded,
+                  size: 48, color: Color(0xFFE87722)),
               const SizedBox(height: 12),
-              Text(_error ?? 'Hatukuweza kupata matokeo.', textAlign: TextAlign.center),
+              Text(_error ?? 'Hatukuweza kupata matokeo.',
+                  textAlign: TextAlign.center),
               const SizedBox(height: 16),
-              ElevatedButton(onPressed: _load, child: const Text('Jaribu tena')),
+              ElevatedButton(
+                  onPressed: _load, child: const Text('Jaribu tena')),
             ],
           ),
         ),
@@ -97,7 +100,8 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     }
 
     final result = _result!;
-    final retryText = QuizContract.formatCooldownRemaining(result.retryAvailableAt);
+    final retryText =
+        QuizContract.formatCooldownRemaining(result.retryAvailableAt);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -120,12 +124,14 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () => context.go('/course/${widget.courseId}/classroom'),
+              onPressed: () =>
+                  context.go('/course/${widget.courseId}/classroom'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFE87722),
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 52),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(28)),
               ),
               child: Text(
                 'Rudi Kwenye Darasa',
@@ -226,7 +232,9 @@ class _AnswerCard extends StatelessWidget {
               Icon(
                 answer.isCorrect ? Icons.check_circle : Icons.cancel_outlined,
                 size: 18,
-                color: answer.isCorrect ? const Color(0xFF2E7D32) : const Color(0xFFB71C1C),
+                color: answer.isCorrect
+                    ? const Color(0xFF2E7D32)
+                    : const Color(0xFFB71C1C),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -254,7 +262,8 @@ class _AnswerCard extends StatelessWidget {
               }
               return Container(
                 margin: const EdgeInsets.only(top: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
                   color: bg,
                   borderRadius: BorderRadius.circular(8),
@@ -262,16 +271,19 @@ class _AnswerCard extends StatelessWidget {
                 child: Row(
                   children: [
                     if (isCorrectOption)
-                      const Icon(Icons.check, size: 14, color: Color(0xFF2E7D32))
+                      const Icon(Icons.check,
+                          size: 14, color: Color(0xFF2E7D32))
                     else if (isSelected)
-                      const Icon(Icons.close, size: 14, color: Color(0xFFB71C1C))
+                      const Icon(Icons.close,
+                          size: 14, color: Color(0xFFB71C1C))
                     else
                       const SizedBox(width: 14),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
                         option.text,
-                        style: GoogleFonts.montserrat(fontSize: 13, color: const Color(0xFF5C3D2E)),
+                        style: GoogleFonts.montserrat(
+                            fontSize: 13, color: const Color(0xFF5C3D2E)),
                       ),
                     ),
                   ],

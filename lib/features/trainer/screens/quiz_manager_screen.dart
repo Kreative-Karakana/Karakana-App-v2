@@ -295,7 +295,8 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                     controller: explanationController,
                     maxLines: 2,
                     decoration: InputDecoration(
-                      labelText: 'Maelezo (hiari) — yanaonekana baada ya kufaulu',
+                      labelText:
+                          'Maelezo (hiari) — yanaonekana baada ya kufaulu',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -420,7 +421,8 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
               const SizedBox(height: 12),
               Text(_loadError!, textAlign: TextAlign.center),
               const SizedBox(height: 16),
-              ElevatedButton(onPressed: _load, child: const Text('Jaribu tena')),
+              ElevatedButton(
+                  onPressed: _load, child: const Text('Jaribu tena')),
             ],
           ),
         ),
@@ -535,7 +537,8 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                   const SizedBox(width: 12),
                   SizedBox(
                     width: 80,
-                    child: _NumberField(controller: _passingScoreController, suffix: '%'),
+                    child: _NumberField(
+                        controller: _passingScoreController, suffix: '%'),
                   ),
                 ],
               ),
@@ -568,7 +571,8 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                   const SizedBox(width: 12),
                   SizedBox(
                     width: 80,
-                    child: _NumberField(controller: _cooldownController, suffix: 'dq'),
+                    child: _NumberField(
+                        controller: _cooldownController, suffix: 'dq'),
                   ),
                 ],
               ),
@@ -616,9 +620,8 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                         style: GoogleFonts.montserrat(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          color:
-                              Theme.of(context).textTheme.bodyLarge?.color ??
-                                  const Color(0xFF1A0A00),
+                          color: Theme.of(context).textTheme.bodyLarge?.color ??
+                              const Color(0xFF1A0A00),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -706,7 +709,8 @@ class _QuizManagerScreenState extends State<QuizManagerScreen> {
                   onPressed: _deleteDraft,
                   child: Text(
                     'Futa Rasimu',
-                    style: GoogleFonts.montserrat(color: const Color(0xFFB71C1C)),
+                    style:
+                        GoogleFonts.montserrat(color: const Color(0xFFB71C1C)),
                   ),
                 ),
               ],
@@ -781,7 +785,8 @@ class _QuestionCard extends StatelessWidget {
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(14),
         boxShadow: const [
-          BoxShadow(color: Color(0x0FC4620A), blurRadius: 8, offset: Offset(0, 2)),
+          BoxShadow(
+              color: Color(0x0FC4620A), blurRadius: 8, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -892,7 +897,8 @@ class _StatusBanner extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: Color(presentation.colorValue),
                   borderRadius: BorderRadius.circular(20),

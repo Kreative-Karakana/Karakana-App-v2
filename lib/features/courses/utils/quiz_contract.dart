@@ -51,7 +51,8 @@ class QuizContract {
     return statusPresentations[normalizeStatus(value)]!;
   }
 
-  static bool isRejected(String? value) => normalizeStatus(value) == statusRejected;
+  static bool isRejected(String? value) =>
+      normalizeStatus(value) == statusRejected;
 
   /// Swahili copy for every backend reason/error code this contract's
   /// endpoints can return — certificate-eligibility `reason_code`s and
@@ -71,7 +72,8 @@ class QuizContract {
     'QUIZ_NOT_AVAILABLE': 'Mtihani wa kozi hii haupatikani kwa sasa.',
     'COOLDOWN_ACTIVE':
         'Umeshindwa mtihani mara ya mwisho. Subiri muda uliobaki kabla ya kujaribu tena.',
-    'ATTEMPT_NOT_IN_PROGRESS': 'Jaribio hili halipo tena katika hali ya kuendelea.',
+    'ATTEMPT_NOT_IN_PROGRESS':
+        'Jaribio hili halipo tena katika hali ya kuendelea.',
     'QUIZ_EMPTY': 'Mtihani huu haujawa na maswali.',
   };
 
@@ -79,7 +81,9 @@ class QuizContract {
     if (code == null || code.isEmpty) {
       return fallback ?? 'Huna ruhusa ya kupata cheti kwa sasa.';
     }
-    return _reasonCodeMessages[code] ?? fallback ?? 'Huna ruhusa ya kupata cheti kwa sasa.';
+    return _reasonCodeMessages[code] ??
+        fallback ??
+        'Huna ruhusa ya kupata cheti kwa sasa.';
   }
 
   /// Human-readable remaining-cooldown copy, or null once it has expired.
@@ -108,13 +112,15 @@ class QuizContract {
     return const QuizValidationResult({});
   }
 
-  static QuizValidationResult validateQuestion(QuizDraftQuestionInput question) {
+  static QuizValidationResult validateQuestion(
+      QuizDraftQuestionInput question) {
     final errors = <String, String>{};
     if (question.question.trim().isEmpty) {
       errors['question'] = 'Jaza swali.';
     }
     if (question.options.length != requiredOptionCount) {
-      errors['options'] = 'Swali linahitaji chaguo $requiredOptionCount kamili.';
+      errors['options'] =
+          'Swali linahitaji chaguo $requiredOptionCount kamili.';
     } else if (question.options.any((o) => o.trim().isEmpty)) {
       errors['options'] = 'Jaza chaguo zote $requiredOptionCount.';
     }

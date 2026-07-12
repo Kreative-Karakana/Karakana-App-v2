@@ -28,7 +28,8 @@ void main() {
       await Future<void>.delayed(Duration.zero);
 
       expect(provider.certificateEligibility?.isEligible, isTrue);
-      expect(provider.certificateEligibility?.reasonCode, 'ELIGIBLE_LESSONS_ONLY');
+      expect(
+          provider.certificateEligibility?.reasonCode, 'ELIGIBLE_LESSONS_ONLY');
       expect(provider.quizAvailability?.quizAvailable, isFalse);
     });
 
@@ -39,7 +40,8 @@ void main() {
           isEligible: false,
           reasonCode: 'QUIZ_NOT_ATTEMPTED',
         )
-        ..availability = _availability(quizAvailable: true, requiredForCertificate: true);
+        ..availability =
+            _availability(quizAvailable: true, requiredForCertificate: true);
       final provider = CourseProvider(
         service: courseService,
         quizService: quizService,
@@ -52,9 +54,11 @@ void main() {
       expect(provider.quizAvailability?.requiredForCertificate, isTrue);
     });
 
-    test('failure to load eligibility does not block course detail loading', () async {
+    test('failure to load eligibility does not block course detail loading',
+        () async {
       final courseService = _FakeCourseService();
-      final quizService = _FakeQuizService()..eligibilityError = Exception('down');
+      final quizService = _FakeQuizService()
+        ..eligibilityError = Exception('down');
       final provider = CourseProvider(
         service: courseService,
         quizService: quizService,

@@ -10,7 +10,8 @@ class CourseProvider extends ChangeNotifier {
   final CourseCatalogService _service;
   final QuizCatalogService _quizService;
 
-  CourseProvider({CourseCatalogService? service, QuizCatalogService? quizService})
+  CourseProvider(
+      {CourseCatalogService? service, QuizCatalogService? quizService})
       : _service = service ?? CourseService(),
         _quizService = quizService ?? QuizService();
 
