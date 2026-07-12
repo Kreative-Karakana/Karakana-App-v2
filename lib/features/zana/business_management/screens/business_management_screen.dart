@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -32,7 +34,6 @@ class _BusinessManagementView extends StatefulWidget {
 }
 
 class _BusinessManagementViewState extends State<_BusinessManagementView> {
-  String? _historyFilter;
   int? _deletingTransactionId;
   final ScrollController _scrollController = ScrollController();
 
@@ -135,12 +136,6 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                 const SizedBox(height: 18),
                 _HistorySection(
                   provider: provider,
-                  filter: _historyFilter,
-                  onFilterChanged: (value) async {
-                    setState(() => _historyFilter = value);
-                    provider.clearFilters();
-                    await provider.loadTransactions(transactionType: value);
-                  },
                   onEdit: (transaction) =>
                       _openTransactionSheet(context, transaction: transaction),
                   onDelete: _confirmAndDelete,
@@ -485,32 +480,137 @@ class _RecentTransactions extends StatelessWidget {
   }
 }
 
-class _HistorySection extends StatelessWidget {
+class _HistorySection extends StatefulWidget {
   final BusinessManagementProvider provider;
-  final String? filter;
-  final ValueChanged<String?> onFilterChanged;
   final ValueChanged<BusinessTransaction> onEdit;
   final ValueChanged<BusinessTransaction> onDelete;
   final int? deletingTransactionId;
 
   const _HistorySection({
     required this.provider,
-    required this.filter,
-    required this.onFilterChanged,
     required this.onEdit,
     required this.onDelete,
     this.deletingTransactionId,
   });
 
   @override
+  State<_HistorySection> createState() => _HistorySectionState();
+}
+
+class _HistorySectionState extends State<_HistorySection> {
+  late final TextEditingController _searchController;
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController =
+        TextEditingController(text: widget.provider.searchQuery);
+  }
+
+  @override
+  void didUpdateWidget(covariant _HistorySection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final query = widget.provider.searchQuery;
+    if (_searchController.text != query) {
+      _searchController.value = TextEditingValue(
+        text: query,
+        selection: TextSelection.collapsed(offset: query.length),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 450), () {
+      widget.provider.loadTransactions(search: value);
+    });
+  }
+
+  Future<void> _openFilterSheet() async {
+    final provider = widget.provider;
+    final result = await showModalBottomSheet<_TransactionFilterResult>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _TransactionFilterSheet(
+        initial: _TransactionFilterResult(
+          transactionType: provider.selectedTransactionType,
+          category: provider.selectedCategory,
+          dateFrom: provider.dateFrom,
+          dateTo: provider.dateTo,
+          ordering: provider.ordering,
+        ),
+      ),
+    );
+    if (result == null) return;
+    await provider.applyFilters(
+      transactionType: result.transactionType,
+      category: result.category,
+      dateFrom: result.dateFrom,
+      dateTo: result.dateTo,
+      search: provider.searchQuery,
+      ordering: result.ordering,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final provider = widget.provider;
+
     return _SurfaceCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const _SectionTitle(
             title: 'Historia ya Miamala',
-            subtitle: 'Angalia Mauzo na Matumizi yote.',
+            subtitle: 'Tafuta na chuja Mauzo na Matumizi yako.',
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: _onSearchChanged,
+                  style: GoogleFonts.montserrat(fontSize: 13),
+                  decoration: _inputDecoration(
+                    'Tafuta muamala',
+                    'k.m. jina la mteja, maelezo...',
+                  ).copyWith(
+                    prefixIcon: const Icon(
+                      Icons.search_rounded,
+                      size: 20,
+                      color: AppColors.textTertiary,
+                    ),
+                    suffixIcon: _searchController.text.isEmpty
+                        ? null
+                        : IconButton(
+                            icon: const Icon(Icons.close_rounded, size: 18),
+                            onPressed: () {
+                              _searchController.clear();
+                              _onSearchChanged('');
+                            },
+                          ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              _FilterIconButton(
+                active: provider.selectedCategory != null ||
+                    provider.dateFrom != null ||
+                    provider.dateTo != null ||
+                    provider.ordering != null,
+                onTap: _openFilterSheet,
+              ),
+            ],
           ),
           const SizedBox(height: 12),
           Wrap(
@@ -519,21 +619,25 @@ class _HistorySection extends StatelessWidget {
             children: [
               _FilterChip(
                 label: 'Yote',
-                selected: filter == null,
-                onTap: () => onFilterChanged(null),
+                selected: provider.selectedTransactionType == null,
+                onTap: () => provider.setTransactionType(null),
               ),
               _FilterChip(
                 label: 'Mauzo',
-                selected: filter == 'sale',
-                onTap: () => onFilterChanged('sale'),
+                selected: provider.selectedTransactionType == 'sale',
+                onTap: () => provider.setTransactionType('sale'),
               ),
               _FilterChip(
                 label: 'Matumizi',
-                selected: filter == 'expense',
-                onTap: () => onFilterChanged('expense'),
+                selected: provider.selectedTransactionType == 'expense',
+                onTap: () => provider.setTransactionType('expense'),
               ),
             ],
           ),
+          if (provider.hasActiveFilters) ...[
+            const SizedBox(height: 10),
+            _ActiveFiltersBar(provider: provider),
+          ],
           const SizedBox(height: 12),
           if (provider.isLoadingTransactions)
             const Padding(
@@ -541,22 +645,501 @@ class _HistorySection extends StatelessWidget {
               child: Center(child: KarakanaWaveLoader(size: 28)),
             )
           else if (provider.transactions.isEmpty)
-            const _EmptyState(
-              title: 'Hakuna historia bado',
-              message: 'Miamala utakayorekodi itaonekana hapa.',
-            )
+            provider.hasActiveFilters
+                ? const _EmptyState(
+                    title: 'Hakuna miamala inayolingana',
+                    message:
+                        'Jaribu kubadilisha vichujio au neno la utafutaji, '
+                        'au gusa "Futa Vichujio" kuona miamala yote.',
+                  )
+                : const _EmptyState(
+                    title: 'Hakuna historia bado',
+                    message: 'Miamala utakayorekodi itaonekana hapa.',
+                  )
           else ...[
             ...provider.transactions.map(
               (item) => _TransactionTile(
                 transaction: item,
-                onTap: () => onEdit(item),
-                onDelete: () => onDelete(item),
-                isDeleting: deletingTransactionId == item.id,
+                onTap: () => widget.onEdit(item),
+                onDelete: () => widget.onDelete(item),
+                isDeleting: widget.deletingTransactionId == item.id,
               ),
             ),
             _HistoryPaginationFooter(provider: provider),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _FilterIconButton extends StatelessWidget {
+  final bool active;
+  final VoidCallback onTap;
+
+  const _FilterIconButton({required this.active, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: 46,
+        height: 46,
+        decoration: BoxDecoration(
+          color: active ? AppColors.primaryDark : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: active ? AppColors.primaryDark : AppColors.inputBorder,
+          ),
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Icon(
+              Icons.tune_rounded,
+              size: 20,
+              color: active ? Colors.white : AppColors.textSecondary,
+            ),
+            if (active)
+              Positioned(
+                top: 8,
+                right: 9,
+                child: Container(
+                  width: 7,
+                  height: 7,
+                  decoration: const BoxDecoration(
+                    color: AppColors.primary,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ActiveFiltersBar extends StatelessWidget {
+  final BusinessManagementProvider provider;
+
+  const _ActiveFiltersBar({required this.provider});
+
+  @override
+  Widget build(BuildContext context) {
+    final chips = <Widget>[];
+
+    if (provider.selectedCategory != null) {
+      chips.add(
+        _RemovableChip(
+          label: _categoryLabel(provider.selectedCategory!),
+          onRemoved: () => provider.applyFilters(
+            transactionType: provider.selectedTransactionType,
+            dateFrom: provider.dateFrom,
+            dateTo: provider.dateTo,
+            search: provider.searchQuery,
+            ordering: provider.ordering,
+          ),
+        ),
+      );
+    }
+    if (provider.dateFrom != null || provider.dateTo != null) {
+      final from = provider.dateFrom;
+      final to = provider.dateTo;
+      final label = from != null && to != null
+          ? '${_formatDate(from)} - ${_formatDate(to)}'
+          : from != null
+              ? 'Tangu ${_formatDate(from)}'
+              : 'Hadi ${_formatDate(to)}';
+      chips.add(
+        _RemovableChip(
+          label: label,
+          onRemoved: () => provider.applyFilters(
+            transactionType: provider.selectedTransactionType,
+            category: provider.selectedCategory,
+            search: provider.searchQuery,
+            ordering: provider.ordering,
+          ),
+        ),
+      );
+    }
+    if (provider.ordering != null) {
+      chips.add(
+        _RemovableChip(
+          label: _sortLabel(provider.ordering!),
+          onRemoved: () => provider.applyFilters(
+            transactionType: provider.selectedTransactionType,
+            category: provider.selectedCategory,
+            dateFrom: provider.dateFrom,
+            dateTo: provider.dateTo,
+            search: provider.searchQuery,
+          ),
+        ),
+      );
+    }
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        ...chips,
+        TextButton.icon(
+          onPressed: provider.resetFilters,
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            visualDensity: VisualDensity.compact,
+          ),
+          icon: const Icon(Icons.filter_alt_off_rounded, size: 16),
+          label: Text(
+            'Futa Vichujio',
+            style: GoogleFonts.montserrat(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _RemovableChip extends StatelessWidget {
+  final String label;
+  final VoidCallback onRemoved;
+
+  const _RemovableChip({required this.label, required this.onRemoved});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(left: 11, right: 6, top: 6, bottom: 6),
+      decoration: BoxDecoration(
+        color: AppColors.primaryLight,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: GoogleFonts.montserrat(
+              color: AppColors.primaryDark,
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(width: 4),
+          InkWell(
+            onTap: onRemoved,
+            borderRadius: BorderRadius.circular(999),
+            child: const Padding(
+              padding: EdgeInsets.all(3),
+              child: Icon(
+                Icons.close_rounded,
+                size: 14,
+                color: AppColors.primaryDark,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TransactionFilterResult {
+  final String? transactionType;
+  final String? category;
+  final DateTime? dateFrom;
+  final DateTime? dateTo;
+  final String? ordering;
+
+  const _TransactionFilterResult({
+    this.transactionType,
+    this.category,
+    this.dateFrom,
+    this.dateTo,
+    this.ordering,
+  });
+}
+
+class _TransactionFilterSheet extends StatefulWidget {
+  final _TransactionFilterResult initial;
+
+  const _TransactionFilterSheet({required this.initial});
+
+  @override
+  State<_TransactionFilterSheet> createState() =>
+      _TransactionFilterSheetState();
+}
+
+class _TransactionFilterSheetState extends State<_TransactionFilterSheet> {
+  late String? _transactionType;
+  late String _category;
+  late DateTime? _dateFrom;
+  late DateTime? _dateTo;
+  late String _ordering;
+
+  @override
+  void initState() {
+    super.initState();
+    _transactionType = widget.initial.transactionType;
+    _category = widget.initial.category ?? '';
+    _dateFrom = widget.initial.dateFrom;
+    _dateTo = widget.initial.dateTo;
+    _ordering = widget.initial.ordering ?? '';
+  }
+
+  Map<String, String> get _categoryOptions {
+    final Map<String, String> options = {'': 'Zote'};
+    if (_transactionType == 'sale') {
+      options.addAll(_saleCategories);
+    } else if (_transactionType == 'expense') {
+      options.addAll(_expenseCategories);
+    } else {
+      options.addAll(_saleCategories);
+      options.addAll(_expenseCategories);
+    }
+    return options;
+  }
+
+  Future<void> _pickDate({required bool isFrom}) async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: (isFrom ? _dateFrom : _dateTo) ?? now,
+      firstDate: DateTime(2020),
+      lastDate: now,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.primary,
+              onPrimary: Colors.white,
+              onSurface: AppColors.textPrimary,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked == null) return;
+    setState(() {
+      if (isFrom) {
+        _dateFrom = picked;
+      } else {
+        _dateTo = picked;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+          decoration: const BoxDecoration(
+            color: AppColors.background,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                ),
+              ),
+              Text(
+                'Chuja Miamala',
+                style: GoogleFonts.montserrat(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Aina',
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _FilterChip(
+                    label: 'Yote',
+                    selected: _transactionType == null,
+                    onTap: () => setState(() {
+                      _transactionType = null;
+                      _category = '';
+                    }),
+                  ),
+                  _FilterChip(
+                    label: 'Mauzo',
+                    selected: _transactionType == 'sale',
+                    onTap: () => setState(() {
+                      _transactionType = 'sale';
+                      _category = '';
+                    }),
+                  ),
+                  _FilterChip(
+                    label: 'Matumizi',
+                    selected: _transactionType == 'expense',
+                    onTap: () => setState(() {
+                      _transactionType = 'expense';
+                      _category = '';
+                    }),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _KarakanaDropdown(
+                label: 'Aina ndogo (Category)',
+                value: _category,
+                items: _categoryOptions,
+                onChanged: (value) => setState(() => _category = value ?? ''),
+              ),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: _OptionalDateField(
+                      label: 'Kuanzia tarehe',
+                      date: _dateFrom,
+                      onTap: () => _pickDate(isFrom: true),
+                      onClear: () => setState(() => _dateFrom = null),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _OptionalDateField(
+                      label: 'Hadi tarehe',
+                      date: _dateTo,
+                      onTap: () => _pickDate(isFrom: false),
+                      onClear: () => setState(() => _dateTo = null),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              _KarakanaDropdown(
+                label: 'Panga kwa',
+                value: _ordering,
+                items: _sortOptions,
+                onChanged: (value) => setState(() => _ordering = value ?? ''),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => setState(() {
+                        _transactionType = null;
+                        _category = '';
+                        _dateFrom = null;
+                        _dateTo = null;
+                        _ordering = '';
+                      }),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        side: const BorderSide(color: AppColors.inputBorder),
+                      ),
+                      child: Text(
+                        'Futa Vichujio',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _PrimaryButton(
+                      label: 'Tumia Vichujio',
+                      isLoading: false,
+                      onPressed: () => Navigator.pop(
+                        context,
+                        _TransactionFilterResult(
+                          transactionType: _transactionType,
+                          category: _category.isEmpty ? null : _category,
+                          dateFrom: _dateFrom,
+                          dateTo: _dateTo,
+                          ordering: _ordering.isEmpty ? null : _ordering,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _OptionalDateField extends StatelessWidget {
+  final String label;
+  final DateTime? date;
+  final VoidCallback onTap;
+  final VoidCallback onClear;
+
+  const _OptionalDateField({
+    required this.label,
+    required this.date,
+    required this.onTap,
+    required this.onClear,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: InputDecorator(
+        decoration: _inputDecoration(label, 'Chagua tarehe').copyWith(
+          suffixIcon: date == null
+              ? null
+              : IconButton(
+                  icon: const Icon(Icons.close_rounded, size: 16),
+                  onPressed: onClear,
+                ),
+        ),
+        child: Text(
+          date == null ? 'Chagua tarehe' : _formatDate(date),
+          style: GoogleFonts.montserrat(
+            color: date == null ? AppColors.textHint : AppColors.textPrimary,
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ),
     );
   }
@@ -1787,6 +2370,15 @@ String _labelFor(Map<String, String> items, String value) {
 String _categoryLabel(String value) {
   return _saleCategories[value] ?? _expenseCategories[value] ?? value;
 }
+
+String _sortLabel(String value) => _sortOptions[value] ?? value;
+
+const Map<String, String> _sortOptions = {
+  '': 'Tarehe (Mpya kwanza)',
+  'transaction_date': 'Tarehe (Zamani kwanza)',
+  '-amount': 'Kiasi (Kikubwa kwanza)',
+  'amount': 'Kiasi (Kidogo kwanza)',
+};
 
 const Map<String, String> _businessTypes = {
   'kinyozi': 'Kinyozi',

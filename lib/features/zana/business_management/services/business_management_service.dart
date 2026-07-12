@@ -67,6 +67,8 @@ abstract class BusinessManagementApi {
     String? category,
     DateTime? dateFrom,
     DateTime? dateTo,
+    String? search,
+    String? ordering,
     int page = 1,
     int pageSize = 20,
   });
@@ -148,6 +150,8 @@ class BusinessManagementService implements BusinessManagementApi {
     String? category,
     DateTime? dateFrom,
     DateTime? dateTo,
+    String? search,
+    String? ordering,
     int page = 1,
     int pageSize = 20,
   }) async {
@@ -161,6 +165,8 @@ class BusinessManagementService implements BusinessManagementApi {
         if (category != null && category.isNotEmpty) 'category': category,
         if (dateFrom != null) 'date_from': _dateOnly(dateFrom),
         if (dateTo != null) 'date_to': _dateOnly(dateTo),
+        if (search != null && search.isNotEmpty) 'search': search,
+        if (ordering != null && ordering.isNotEmpty) 'ordering': ordering,
       },
     );
     return PaginatedTransactions.fromJson(response.data);
