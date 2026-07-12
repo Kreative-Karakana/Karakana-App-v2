@@ -6,11 +6,19 @@ import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/utils/secure_storage.dart';
+import '../services/auth_service.dart';
+import '../services/auth_session_store.dart';
 
 class AuthProvider extends ChangeNotifier {
+  AuthProvider({AuthApi? api, AuthSessionStore? storage})
+      : _api = api ?? AuthService(),
+        _storage = storage ?? SecureStorage();
+
+  final AuthApi _api;
+  final AuthSessionStore _storage;
+
   bool _isLoading = false;
   bool _isAuthenticated = false;
   Map<String, dynamic>? _user;
@@ -80,21 +88,20 @@ class AuthProvider extends ChangeNotifier {
   Future<void> _syncBiometricSessionForCurrentUser() async {
     final accountId = userId?.toString();
     if (accountId == null || accountId.isEmpty) return;
-    final storage = SecureStorage();
-    if (await storage.isBiometricEnabledForAccount(accountId)) {
-      final token = await storage.getToken();
+    if (await _storage.isBiometricEnabledForAccount(accountId)) {
+      final token = await _storage.getToken();
       if (token != null && token.isNotEmpty) {
-        await storage.saveBiometricTokenForAccount(accountId, token);
-        await storage.setActiveBiometricAccountId(accountId);
+        await _storage.saveBiometricTokenForAccount(accountId, token);
+        await _storage.setActiveBiometricAccountId(accountId);
       }
     }
   }
 
   Future<void> initialize() async {
-    _isOnboardingComplete = await SecureStorage().isOnboardingComplete();
-    final hasToken = await SecureStorage().hasToken();
+    _isOnboardingComplete = await _storage.isOnboardingComplete();
+    final hasToken = await _storage.hasToken();
     if (hasToken) {
-      _roles = await SecureStorage().loadRoles();
+      _roles = await _storage.loadRoles();
       // Trust local session immediately for fast startup; refresh profile in background.
       _isAuthenticated = true;
       unawaited(getCurrentUser());
@@ -108,7 +115,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await SecureStorage().deleteToken();
+      await _storage.deleteToken();
       String? deviceToken;
       try {
         deviceToken = await FirebaseMessaging.instance
@@ -119,22 +126,19 @@ class AuthProvider extends ChangeNotifier {
         deviceToken = null;
       }
       final platform = Platform.isIOS ? 'ios' : 'android';
-      final response = await ApiClient().dio.post(
-        ApiEndpoints.login,
-        data: {
-          'email': email,
-          'password': password,
-          'platform': platform,
-          if (deviceToken != null) 'device_token': deviceToken,
-        },
+      final data = await _api.login(
+        email: email,
+        password: password,
+        platform: platform,
+        deviceToken: deviceToken,
       );
-      final token = response.data['token'] ?? response.data['key'];
+      final token = data['token'] ?? data['key'];
       if (token != null) {
-        await SecureStorage().saveToken(token.toString());
-        _roles = _extractRoles(response.data);
+        await _storage.saveToken(token.toString());
+        _roles = _extractRoles(data);
         debugPrint('[AUTH] Signin roles: $_roles');
-        if (_roles != null) await SecureStorage().saveRoles(_roles!);
-        _user = _extractUser(response.data);
+        if (_roles != null) await _storage.saveRoles(_roles!);
+        _user = _extractUser(data);
         await getCurrentUser();
         await _syncBiometricSessionForCurrentUser();
         _isAuthenticated = true;
@@ -165,13 +169,10 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await ApiClient().dio.post(
-        ApiEndpoints.signup,
-        data: {
-          'first_name': firstName,
-          'email': email,
-          'password': password,
-        },
+      await _api.signup(
+        firstName: firstName,
+        email: email,
+        password: password,
       );
       _isLoading = false;
       notifyListeners();
@@ -207,20 +208,17 @@ class AuthProvider extends ChangeNotifier {
         deviceToken = null;
       }
       final platform = Platform.isIOS ? 'ios' : 'android';
-      final response = await ApiClient().dio.post(
-        ApiEndpoints.verifyEmail,
-        data: {
-          'email': email,
-          'code': code,
-          'platform': platform,
-          if (deviceToken != null) 'device_token': deviceToken,
-        },
+      final data = await _api.verifyEmail(
+        email: email,
+        code: code,
+        platform: platform,
+        deviceToken: deviceToken,
       );
-      final token = response.data['token'] ?? response.data['key'];
+      final token = data['token'] ?? data['key'];
       if (token != null) {
-        await SecureStorage().saveToken(token.toString());
-        _roles = _extractRoles(response.data);
-        if (_roles != null) await SecureStorage().saveRoles(_roles!);
+        await _storage.saveToken(token.toString());
+        _roles = _extractRoles(data);
+        if (_roles != null) await _storage.saveRoles(_roles!);
         await getCurrentUser();
         await _syncBiometricSessionForCurrentUser();
         _isAuthenticated = true;
@@ -246,10 +244,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await ApiClient().dio.post(
-        ApiEndpoints.forgotPassword,
-        data: {'email': email},
-      );
+      await _api.forgotPassword(email: email);
       _isLoading = false;
       notifyListeners();
       return true;
@@ -262,7 +257,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    await SecureStorage().clearAll();
+    await _storage.clearAll();
     _isAuthenticated = false;
     _user = null;
     _roles = null;
@@ -272,7 +267,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> deleteAccount() async {
     try {
-      await ApiClient().dio.delete('/api/v1/auth/user/delete/');
+      await _api.deleteAccount();
       await logout();
     } catch (e) {
       rethrow;
@@ -280,7 +275,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> completeOnboarding() async {
-    await SecureStorage().setOnboardingComplete();
+    await _storage.setOnboardingComplete();
     _isOnboardingComplete = true;
     notifyListeners();
   }
@@ -290,10 +285,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await ApiClient().dio.post(
-        ApiEndpoints.resendOTP,
-        data: {'email': email},
-      );
+      await _api.resendOTP(email: email);
       return true;
     } catch (e) {
       _errorMessage = ApiClient().parseError(e);
@@ -351,17 +343,13 @@ class AuthProvider extends ChangeNotifier {
       }
       final platform = Platform.isIOS ? 'ios' : 'android';
 
-      final response = await ApiClient().dio.post(
-        ApiEndpoints.googleAuth,
-        data: {
-          if (idToken != null && idToken.isNotEmpty) 'id_token': idToken,
-          if (accessToken != null && accessToken.isNotEmpty)
-            'access_token': accessToken,
-          'platform': platform,
-          if (deviceToken != null) 'device_token': deviceToken,
-        },
+      final data = await _api.exchangeGoogleToken(
+        idToken: idToken,
+        accessToken: accessToken,
+        platform: platform,
+        deviceToken: deviceToken,
       );
-      return await _handleOAuthResponse(response.data);
+      return await _handleOAuthResponse(data);
     } catch (e, stackTrace) {
       if (kDebugMode) {
         debugPrint('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -422,15 +410,12 @@ class AuthProvider extends ChangeNotifier {
       final idToken = credential.identityToken;
       if (idToken == null) throw Exception('No identity token from Apple');
 
-      final response = await ApiClient().dio.post(
-        ApiEndpoints.appleAuth,
-        data: {
-          'id_token': idToken,
-          if (credential.givenName != null) 'first_name': credential.givenName,
-          if (credential.familyName != null) 'last_name': credential.familyName,
-        },
+      final data = await _api.exchangeAppleToken(
+        idToken: idToken,
+        firstName: credential.givenName,
+        lastName: credential.familyName,
       );
-      return await _handleOAuthResponse(response.data);
+      return await _handleOAuthResponse(data);
     } on SignInWithAppleAuthorizationException catch (e) {
       if (e.code == AuthorizationErrorCode.canceled) {
         _isLoading = false;
@@ -453,9 +438,9 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> _handleOAuthResponse(dynamic data) async {
     final token = data['token'] ?? data['key'];
     if (token != null) {
-      await SecureStorage().saveToken(token.toString());
+      await _storage.saveToken(token.toString());
       _roles = _extractRoles(data);
-      if (_roles != null) await SecureStorage().saveRoles(_roles!);
+      if (_roles != null) await _storage.saveRoles(_roles!);
       _user = _extractUser(data);
       await getCurrentUser();
       await _syncBiometricSessionForCurrentUser();
@@ -472,15 +457,15 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> getCurrentUser() async {
     try {
-      final response = await ApiClient().dio.get(ApiEndpoints.profileMe);
-      debugPrint('[AUTH] Profile response: ${response.data}');
+      final profileData = await _api.fetchProfile();
+      debugPrint('[AUTH] Profile response: $profileData');
       final currentUser = _user;
-      final profileUser = response.data is Map<String, dynamic>
-          ? response.data
-          : Map<String, dynamic>.from(response.data);
+      final profileUser = profileData is Map<String, dynamic>
+          ? profileData
+          : Map<String, dynamic>.from(profileData);
       _user = _mergeUserState(currentUser, profileUser);
       if (_user?['id'] != null) {
-        await SecureStorage().saveUserId(_user!['id'].toString());
+        await _storage.saveUserId(_user!['id'].toString());
       }
       _isAuthenticated = true;
     } catch (e) {
@@ -491,12 +476,11 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> loginWithBiometricSession() async {
     try {
-      final storage = SecureStorage();
-      final accountId = await storage.getActiveBiometricAccountId();
+      final accountId = await _storage.getActiveBiometricAccountId();
       if (accountId == null || accountId.isEmpty) return false;
-      final token = await storage.getBiometricTokenForAccount(accountId);
+      final token = await _storage.getBiometricTokenForAccount(accountId);
       if (token == null || token.isEmpty) return false;
-      await storage.saveToken(token);
+      await _storage.saveToken(token);
       await getCurrentUser();
       final currentUserId = userId?.toString();
       if (currentUserId == null || currentUserId != accountId) {

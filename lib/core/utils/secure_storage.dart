@@ -1,8 +1,9 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../features/auth/services/auth_session_store.dart';
 import '../constants/app_constants.dart';
 
-class SecureStorage {
+class SecureStorage implements AuthSessionStore {
   static final SecureStorage _instance = SecureStorage._internal();
   static const String _biometricAccountIdKey = 'biometric_account_id';
   factory SecureStorage() => _instance;
@@ -27,6 +28,7 @@ class SecureStorage {
     } catch (_) {}
   }
 
+  @override
   Future<void> saveToken(String token) async {
     try {
       await _storage.write(key: AppConstants.tokenKey, value: token);
@@ -38,6 +40,7 @@ class SecureStorage {
     }
   }
 
+  @override
   Future<String?> getToken() async {
     try {
       return await _storage.read(key: AppConstants.tokenKey);
@@ -47,6 +50,7 @@ class SecureStorage {
     }
   }
 
+  @override
   Future<void> deleteToken() async {
     try {
       await _storage.delete(key: AppConstants.tokenKey);
@@ -55,6 +59,7 @@ class SecureStorage {
     }
   }
 
+  @override
   Future<bool> hasToken() async {
     try {
       final t = await getToken();
@@ -64,6 +69,7 @@ class SecureStorage {
     }
   }
 
+  @override
   Future<void> saveUserId(String id) async {
     final prefs = await _prefs;
     await prefs.setString(AppConstants.userIdKey, id);
@@ -74,11 +80,13 @@ class SecureStorage {
     return prefs.getString(AppConstants.userIdKey);
   }
 
+  @override
   Future<void> setOnboardingComplete() async {
     final prefs = await _prefs;
     await prefs.setBool(AppConstants.onboardingKey, true);
   }
 
+  @override
   Future<bool> isOnboardingComplete() async {
     final prefs = await _prefs;
     return prefs.getBool(AppConstants.onboardingKey) ?? false;
@@ -120,11 +128,13 @@ class SecureStorage {
     await clearBiometricTokenForAccount(accountId);
   }
 
+  @override
   Future<String?> getActiveBiometricAccountId() async {
     final prefs = await _prefs;
     return prefs.getString(_biometricAccountIdKey);
   }
 
+  @override
   Future<void> setActiveBiometricAccountId(String? accountId) async {
     final prefs = await _prefs;
     if (accountId == null || accountId.isEmpty) {
@@ -154,11 +164,13 @@ class SecureStorage {
     }
   }
 
+  @override
   Future<bool> isBiometricEnabledForAccount(String accountId) async {
     final prefs = await _prefs;
     return prefs.getBool(_biometricEnabledKey(accountId)) ?? false;
   }
 
+  @override
   Future<void> saveBiometricTokenForAccount(
       String accountId, String token) async {
     try {
@@ -166,6 +178,7 @@ class SecureStorage {
     } catch (_) {}
   }
 
+  @override
   Future<String?> getBiometricTokenForAccount(String accountId) async {
     try {
       return await _storage.read(key: _biometricTokenKey(accountId));
@@ -206,11 +219,13 @@ class SecureStorage {
     await prefs.setBool(AppConstants.mastercardDoneKey, true);
   }
 
+  @override
   Future<void> saveRoles(List<dynamic> roles) async {
     final prefs = await _prefs;
     await prefs.setString(AppConstants.rolesKey, roles.join(','));
   }
 
+  @override
   Future<List<dynamic>?> loadRoles() async {
     final prefs = await _prefs;
     final raw = prefs.getString(AppConstants.rolesKey);
@@ -232,6 +247,7 @@ class SecureStorage {
     }
   }
 
+  @override
   Future<void> clearAll() async {
     final prefs = await _prefs;
     try {
