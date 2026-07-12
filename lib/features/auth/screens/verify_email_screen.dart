@@ -135,8 +135,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
-            borderSide:
-                BorderSide(color: AppColors.primaryMid, width: 2.0),
+            borderSide: BorderSide(color: AppColors.primaryMid, width: 2.0),
           ),
           contentPadding: EdgeInsets.zero,
         ),

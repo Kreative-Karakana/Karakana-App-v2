@@ -64,8 +64,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           fontSize: compact ? 12.5 : 13,
           color: AppColors.textTertiary.withValues(alpha: 0.55),
         ),
-        prefixIcon:
-            Icon(Icons.email_outlined, color: AppColors.primaryMid),
+        prefixIcon: Icon(Icons.email_outlined, color: AppColors.primaryMid),
         filled: true,
         fillColor: const Color(0xFF5A3525),
         border: OutlineInputBorder(

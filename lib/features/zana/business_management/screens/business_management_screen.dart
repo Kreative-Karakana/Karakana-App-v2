@@ -1133,8 +1133,7 @@ class _TransactionFilterSheetState extends State<_TransactionFilterSheet> {
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
           decoration: BoxDecoration(
             color: AppColors.background,
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1437,8 +1436,7 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.background,
-          borderRadius:
-              const BorderRadius.vertical(top: Radius.circular(18)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
         ),
         padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
         child: SafeArea(
@@ -1652,8 +1650,7 @@ class _BusinessEditSheetState extends State<_BusinessEditSheet> {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.background,
-          borderRadius:
-              const BorderRadius.vertical(top: Radius.circular(18)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
         ),
         padding: const EdgeInsets.fromLTRB(18, 16, 18, 18),
         child: SafeArea(

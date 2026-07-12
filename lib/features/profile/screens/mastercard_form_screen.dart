@@ -218,8 +218,7 @@ class _MastercardFormScreenState extends State<MastercardFormScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.info_outline,
-                      color: AppColors.primary, size: 20),
+                  Icon(Icons.info_outline, color: AppColors.primary, size: 20),
                   const SizedBox(width: AppSpacing.sm + AppSpacing.xs / 2),
                   Expanded(
                     child: Text(

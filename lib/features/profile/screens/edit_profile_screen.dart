@@ -409,10 +409,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             hintStyle: AppTextStyles.bodyMedium.copyWith(
                               color: Colors.grey.shade400,
                             ),
-                            suffixIcon: Icon(
-                                Icons.calendar_today_outlined,
-                                size: 18,
-                                color: AppColors.primary),
+                            suffixIcon: Icon(Icons.calendar_today_outlined,
+                                size: 18, color: AppColors.primary),
                           ),
                         ),
                       ),
