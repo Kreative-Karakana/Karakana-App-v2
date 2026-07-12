@@ -94,11 +94,12 @@ class _AmbassadorCodeSheetState extends State<_AmbassadorCodeSheet>
         data: {'declined': true},
       );
       await SecureStorage().setAmbassadorCodeState(false);
-    } catch (_) {
-      // Silently fail — we still dismiss so the user isn't blocked
-      await SecureStorage().setAmbassadorCodeState(false);
-    } finally {
       if (mounted) Navigator.of(context).pop();
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        showTopPopup(context, ApiClient().parseError(e));
+      }
     }
   }
 
