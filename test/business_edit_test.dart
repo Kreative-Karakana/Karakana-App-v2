@@ -6,6 +6,8 @@ import 'package:karakana_app/features/zana/business_management/models/business_t
 import 'package:karakana_app/features/zana/business_management/providers/business_management_provider.dart';
 import 'package:karakana_app/features/zana/business_management/services/business_management_service.dart';
 
+import 'support/fake_subscription_api.dart';
+
 void main() {
   group('BusinessManagementProvider.updateBusiness', () {
     test('successful edit updates local state and refreshes dashboard',
@@ -14,7 +16,8 @@ void main() {
         business: _business(name: 'Duka la Zamani', businessType: 'duka'),
         dashboard: _dashboard(name: 'Duka la Zamani', businessType: 'duka'),
       );
-      final provider = BusinessManagementProvider(service: service);
+      final provider = BusinessManagementProvider(
+          service: service, subscriptionService: FakeSubscriptionApi());
       await provider.loadInitial();
 
       final ok = await provider.updateBusiness(
@@ -49,7 +52,8 @@ void main() {
               },
             ),
           );
-        final provider = BusinessManagementProvider(service: service);
+        final provider = BusinessManagementProvider(
+            service: service, subscriptionService: FakeSubscriptionApi());
         await provider.loadInitial();
 
         final ok = await provider.updateBusiness(
@@ -72,7 +76,8 @@ void main() {
           business: _business(name: 'Duka la Zamani', businessType: 'duka'),
           dashboard: _dashboard(name: 'Duka la Zamani', businessType: 'duka'),
         );
-        final provider = BusinessManagementProvider(service: service);
+        final provider = BusinessManagementProvider(
+            service: service, subscriptionService: FakeSubscriptionApi());
         await provider.loadInitial();
 
         final future = provider.updateBusiness(

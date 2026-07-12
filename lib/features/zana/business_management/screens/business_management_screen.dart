@@ -25,6 +25,80 @@ class BusinessManagementScreen extends StatelessWidget {
   }
 }
 
+/// Shown wherever a premium action (create/edit/delete) is blocked because
+/// the backend reports no active entitlement (issue #31). There's
+/// deliberately no "upgrade now" button that navigates anywhere — the
+/// actual subscription purchase UI is a separate, not-yet-built issue
+/// (#33); this only tells the user why the action didn't happen and
+/// reassures them their existing data is safe.
+Future<void> showSubscriptionRequiredDialog(BuildContext context) {
+  return showDialog<void>(
+    context: context,
+    builder: (_) => AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Text(
+        'Boresha Akaunti',
+        style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
+      ),
+      content: Text(
+        kSubscriptionRequiredMessage,
+        style: GoogleFonts.montserrat(fontSize: 13, height: 1.5),
+      ),
+      actions: [
+        FilledButton(
+          onPressed: () => Navigator.pop(context),
+          style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+          child: Text(
+            'Nimeelewa',
+            style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+/// Persistent, non-dismissible banner explaining the read-only state
+/// (issue #31) — shown above the dashboard/setup-form content rather than
+/// as a one-off toast, since it describes a standing condition, not a
+/// single event.
+class _ReadOnlyBanner extends StatelessWidget {
+  final String message;
+
+  const _ReadOnlyBanner({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.warningLight,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.warning.withValues(alpha: 0.35)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.lock_clock_outlined,
+              color: AppColors.warning, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              message,
+              style: GoogleFonts.montserrat(
+                fontSize: 12.5,
+                height: 1.5,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _BusinessManagementView extends StatefulWidget {
   const _BusinessManagementView();
 
@@ -99,6 +173,14 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                     subtitle:
                         'Weka jina na aina ya biashara ili uanze kurekodi Mauzo na Matumizi.',
                   ),
+                  if (provider.isReadOnly) ...[
+                    const SizedBox(height: 14),
+                    const _ReadOnlyBanner(
+                      message:
+                          'Huna usajili amilifu kwa sasa, hivyo huwezi kuanzisha biashara mpya. '
+                          'Boresha akaunti yako ili uanze.',
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   _BusinessSetupCard(provider: provider),
                 ],
@@ -113,6 +195,13 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
               controller: _scrollController,
               padding: const EdgeInsets.fromLTRB(18, 18, 18, 28),
               children: [
+                if (provider.isReadOnly) ...[
+                  _ReadOnlyBanner(
+                      message: provider.entitlement?.isExpired == true
+                          ? 'Muda wa jaribio au usajili wako umeisha. Taarifa zako zipo salama — boresha akaunti yako ili kuendelea kuongeza au kuhariri.'
+                          : 'Huna usajili amilifu kwa sasa. Taarifa zako zipo salama — boresha akaunti yako ili kuendelea kuongeza au kuhariri.'),
+                  const SizedBox(height: 14),
+                ],
                 _BusinessHeader(
                   business: provider.business!,
                   onEdit: () => _openBusinessEditSheet(context),
@@ -124,6 +213,7 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                   onSale: () => _openTransactionSheet(context, isSale: true),
                   onExpense: () =>
                       _openTransactionSheet(context, isSale: false),
+                  isLocked: provider.isReadOnly,
                 ),
                 const SizedBox(height: 18),
                 _RecentTransactions(
@@ -154,6 +244,9 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
     bool isSale = true,
     BusinessTransaction? transaction,
   }) {
+    if (context.read<BusinessManagementProvider>().isReadOnly) {
+      return showSubscriptionRequiredDialog(context);
+    }
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -169,6 +262,9 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
   }
 
   Future<void> _openBusinessEditSheet(BuildContext context) {
+    if (context.read<BusinessManagementProvider>().isReadOnly) {
+      return showSubscriptionRequiredDialog(context);
+    }
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -181,6 +277,10 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
   }
 
   Future<void> _confirmAndDelete(BusinessTransaction transaction) async {
+    if (context.read<BusinessManagementProvider>().isReadOnly) {
+      await showSubscriptionRequiredDialog(context);
+      return;
+    }
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
@@ -307,6 +407,10 @@ class _BusinessSetupCardState extends State<_BusinessSetupCard> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    if (widget.provider.isReadOnly) {
+      await showSubscriptionRequiredDialog(context);
+      return;
+    }
 
     final ok = await widget.provider.createBusiness(
       name: _nameController.text.trim(),
@@ -404,8 +508,13 @@ class _DashboardSummary extends StatelessWidget {
 class _ActionRow extends StatelessWidget {
   final VoidCallback onSale;
   final VoidCallback onExpense;
+  final bool isLocked;
 
-  const _ActionRow({required this.onSale, required this.onExpense});
+  const _ActionRow({
+    required this.onSale,
+    required this.onExpense,
+    this.isLocked = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -416,6 +525,7 @@ class _ActionRow extends StatelessWidget {
             icon: Icons.add_circle_outline,
             label: 'Rekodi Mauzo',
             onTap: onSale,
+            isLocked: isLocked,
           ),
         ),
         const SizedBox(width: 10),
@@ -424,6 +534,7 @@ class _ActionRow extends StatelessWidget {
             icon: Icons.remove_circle_outline,
             label: 'Rekodi Matumizi',
             onTap: onExpense,
+            isLocked: isLocked,
           ),
         ),
       ],
@@ -1764,15 +1875,18 @@ class _ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final bool isLocked;
 
   const _ActionButton({
     required this.icon,
     required this.label,
     required this.onTap,
+    this.isLocked = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final iconColor = isLocked ? AppColors.textSecondary : AppColors.primary;
     return Material(
       color: AppColors.surface,
       borderRadius: BorderRadius.circular(14),
@@ -1788,7 +1902,7 @@ class _ActionButton extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(icon, color: AppColors.primary, size: 24),
+              Icon(icon, color: iconColor, size: 24),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -1796,12 +1910,20 @@ class _ActionButton extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.montserrat(
-                    color: AppColors.textPrimary,
+                    color: isLocked
+                        ? AppColors.textSecondary
+                        : AppColors.textPrimary,
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
               ),
+              if (isLocked)
+                const Icon(
+                  Icons.lock_outline,
+                  size: 15,
+                  color: AppColors.textSecondary,
+                ),
             ],
           ),
         ),
