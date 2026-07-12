@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../../core/network/api_client.dart';
+import '../../../../core/utils/secure_storage.dart';
 import '../models/business.dart';
 import '../models/business_dashboard_summary.dart';
 import '../models/business_transaction.dart';
@@ -9,9 +10,14 @@ import '../services/business_management_service.dart';
 
 class BusinessManagementProvider extends ChangeNotifier {
   final BusinessManagementApi _service;
+  final SecureStorage _storage;
 
-  BusinessManagementProvider({BusinessManagementApi? service})
-      : _service = service ?? BusinessManagementService();
+  BusinessManagementProvider(
+      {BusinessManagementApi? service, SecureStorage? storage})
+      : _service = service ?? BusinessManagementService(),
+        _storage = storage ?? SecureStorage() {
+    _loadOnboardingDismissed();
+  }
 
   static const int _transactionPageSize = 20;
 
@@ -35,6 +41,7 @@ class BusinessManagementProvider extends ChangeNotifier {
   int _currentTransactionPage = 0;
   int _transactionCount = 0;
   bool _hasMoreTransactions = false;
+  bool _onboardingDismissed = false;
 
   Business? get business => _business;
   BusinessDashboardSummary? get dashboardSummary => _dashboardSummary;
@@ -56,6 +63,16 @@ class BusinessManagementProvider extends ChangeNotifier {
   String? get ordering => _ordering;
   int get transactionCount => _transactionCount;
   bool get hasMoreTransactions => _hasMoreTransactions;
+
+  /// True once a business exists but has never had a sale or expense
+  /// recorded, and the user hasn't dismissed the first-transaction nudge.
+  /// Naturally stops being true the moment a transaction is recorded, since
+  /// it reads live server data rather than only a local dismiss flag.
+  bool get showFirstTransactionGuide =>
+      !_hasNoBusiness &&
+      _business != null &&
+      (_dashboardSummary?.miamala ?? 0) == 0 &&
+      !_onboardingDismissed;
   bool get hasActiveFilters =>
       _selectedTransactionType != null ||
       _selectedCategory != null ||
@@ -352,6 +369,21 @@ class BusinessManagementProvider extends ChangeNotifier {
   void clearError() {
     _errorMessage = null;
     notifyListeners();
+  }
+
+  Future<void> _loadOnboardingDismissed() async {
+    try {
+      _onboardingDismissed = await _storage.isBusinessOnboardingDismissed();
+      notifyListeners();
+    } catch (_) {
+      // Ignore; guidance simply stays visible until dismissed.
+    }
+  }
+
+  Future<void> dismissFirstTransactionGuide() async {
+    _onboardingDismissed = true;
+    notifyListeners();
+    await _storage.setBusinessOnboardingDismissed();
   }
 
   /// Replaces every transaction-history filter/search/sort dimension in one
