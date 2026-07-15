@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -9,9 +7,12 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../../payments/utils/mobile_money.dart';
 import '../../payments/services/iap_service.dart';
+import '../config/subscription_checkout_config.dart';
 import '../models/entitlement_status.dart';
 import '../models/subscription_plan.dart';
+import '../providers/subscription_checkout_provider.dart';
 import '../providers/subscription_purchase_provider.dart';
 import '../providers/subscription_status_provider.dart';
 
@@ -31,6 +32,7 @@ class SubscriptionScreen extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => SubscriptionStatusProvider()..load(),
         ),
+        ChangeNotifierProvider(create: (_) => SubscriptionCheckoutProvider()),
         ChangeNotifierProvider(create: (_) => SubscriptionPurchaseProvider()),
       ],
       child: const _SubscriptionView(),
@@ -38,8 +40,38 @@ class SubscriptionScreen extends StatelessWidget {
   }
 }
 
-class _SubscriptionView extends StatelessWidget {
+class _SubscriptionView extends StatefulWidget {
   const _SubscriptionView();
+
+  @override
+  State<_SubscriptionView> createState() => _SubscriptionViewState();
+}
+
+class _SubscriptionViewState extends State<_SubscriptionView>
+    with WidgetsBindingObserver {
+  final SubscriptionCheckoutConfig _checkoutConfig =
+      SubscriptionCheckoutConfig.forPlatform();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed || !mounted) return;
+    final checkout = context.read<SubscriptionCheckoutProvider>();
+    checkout.handleAppResumed(
+      refreshEntitlement: context.read<SubscriptionStatusProvider>().load,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +123,7 @@ class _SubscriptionView extends StatelessWidget {
                       plans: provider.plans,
                       isLoading: provider.isLoadingPlans,
                       errorMessage: provider.plansErrorMessage,
+                      checkoutConfig: _checkoutConfig,
                       onRetry: provider.loadPlans),
                 const SizedBox(height: 18),
                 const _RestorePurchasesButton(),
@@ -635,12 +668,14 @@ class _PlansSection extends StatelessWidget {
   final List<SubscriptionPlan> plans;
   final bool isLoading;
   final String? errorMessage;
+  final SubscriptionCheckoutConfig checkoutConfig;
   final Future<void> Function() onRetry;
 
   const _PlansSection({
     required this.plans,
     required this.isLoading,
     required this.errorMessage,
+    required this.checkoutConfig,
     required this.onRetry,
   });
 
@@ -672,7 +707,7 @@ class _PlansSection extends StatelessWidget {
         else
           ...plans.map((p) => Padding(
                 padding: const EdgeInsets.only(bottom: 12),
-                child: _PlanCard(plan: p),
+                child: _PlanCard(plan: p, checkoutConfig: checkoutConfig),
               )),
       ],
     );
@@ -718,15 +753,13 @@ class _PlansErrorRow extends StatelessWidget {
 
 class _PlanCard extends StatelessWidget {
   final SubscriptionPlan plan;
-  const _PlanCard({required this.plan});
+  final SubscriptionCheckoutConfig checkoutConfig;
+  const _PlanCard({required this.plan, required this.checkoutConfig});
 
   @override
   Widget build(BuildContext context) {
-    final productId = Platform.isIOS
-        ? plan.appleIapProductId
-        : Platform.isAndroid
-            ? plan.googlePlayProductId
-            : null;
+    final availability = _purchaseAvailability(plan, checkoutConfig);
+    final productId = availability.storeProductId;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -797,53 +830,32 @@ class _PlanCard extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: productId == null || productId.isEmpty
-                ? OutlinedButton(
-                    onPressed: null,
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 13),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.button),
-                      ),
-                    ),
-                    child: Text(
-                      'Bidhaa hii haijasanidiwa bado',
-                      style: GoogleFonts.montserrat(
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textTertiary,
-                      ),
-                    ),
-                  )
-                : Consumer<SubscriptionPurchaseProvider>(
-                    builder: (context, purchase, _) => FilledButton(
-                      onPressed: purchase.isLoading
-                          ? null
-                          : () => _purchase(context, productId),
-                      style: FilledButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        padding: const EdgeInsets.symmetric(vertical: 13),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.button),
-                        ),
-                      ),
-                      child: purchase.isLoading
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white),
-                            )
-                          : Text(
-                              'Nunua Sasa',
-                              style: GoogleFonts.montserrat(
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white),
-                            ),
-                    ),
-                  ),
-          ),
+          if (availability.canUseExternalCheckout) ...[
+            _ExternalCheckoutButton(plan: plan),
+            if (availability.canUseStorePurchase &&
+                productId != null &&
+                productId.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              _StorePurchaseButton(
+                productId: productId,
+                label: 'Nunua kupitia Duka',
+                onPurchase: _purchase,
+              ),
+            ],
+          ] else if (availability.canUseStorePurchase &&
+              productId != null &&
+              productId.isNotEmpty)
+            _StorePurchaseButton(
+              productId: productId,
+              label: 'Nunua Sasa',
+              onPurchase: _purchase,
+            )
+          else
+            _UnavailablePurchaseButton(
+              message: availability.canUseStorePurchase
+                  ? 'Ununuzi wa App Store haujasanidiwa bado'
+                  : 'Ununuzi haupatikani kwenye kifaa hiki',
+            ),
         ],
       ),
     );
@@ -869,6 +881,390 @@ class _PlanCard extends StatelessWidget {
     } else if (purchase.errorMessage != null) {
       showTopPopup(context, purchase.errorMessage!);
     }
+  }
+}
+
+SubscriptionPurchaseAvailability _purchaseAvailability(
+  SubscriptionPlan plan,
+  SubscriptionCheckoutConfig config,
+) {
+  final productId = config.enableAppleIap
+      ? plan.appleIapProductId
+      : config.enableGooglePlayBilling
+          ? plan.googlePlayProductId
+          : null;
+  return SubscriptionPurchaseAvailability(
+    canUseExternalCheckout: config.enableExternalSubscriptionCheckout,
+    canUseStorePurchase:
+        config.enableAppleIap || config.enableGooglePlayBilling,
+    storeProductId: productId,
+  );
+}
+
+class _ExternalCheckoutButton extends StatelessWidget {
+  final SubscriptionPlan plan;
+
+  const _ExternalCheckoutButton({required this.plan});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SubscriptionCheckoutProvider>(
+      builder: (context, checkout, _) {
+        final isCurrentPending = checkout.pendingPlanSlug == plan.slug &&
+            checkout.isWaitingForPayment;
+        final label = isCurrentPending
+            ? 'Nimekamilisha malipo / Angalia hali'
+            : 'Lipa kwa Mobile Money';
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            FilledButton.icon(
+              onPressed: checkout.isBusy && !isCurrentPending
+                  ? null
+                  : () => isCurrentPending
+                      ? _checkStatus(context)
+                      : _showMobileMoneySheet(context, plan),
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.button),
+                ),
+              ),
+              icon: checkout.state == SubscriptionCheckoutState.creatingCheckout
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Icon(Icons.phone_android_rounded, size: 18),
+              label: Text(
+                label,
+                style: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            if (isCurrentPending) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Malipo yakithibitishwa, tutasasisha usajili kutoka kwenye seva.',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.montserrat(
+                  fontSize: 11.5,
+                  color: AppColors.textTertiary,
+                ),
+              ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _checkStatus(BuildContext context) async {
+    final checkout = context.read<SubscriptionCheckoutProvider>();
+    await checkout.checkPendingPayment(
+      refreshEntitlement: context.read<SubscriptionStatusProvider>().load,
+    );
+    if (!context.mounted) return;
+    _showCheckoutState(context, checkout);
+  }
+
+  Future<void> _showMobileMoneySheet(
+      BuildContext context, SubscriptionPlan plan) async {
+    final result = await showModalBottomSheet<_MobileMoneySelection>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).cardColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.modal),
+      ),
+      builder: (_) => _MobileMoneyCheckoutSheet(plan: plan),
+    );
+    if (result == null || !context.mounted) return;
+
+    final checkout = context.read<SubscriptionCheckoutProvider>();
+    await checkout.startCheckout(
+      plan: plan,
+      rawPhoneNumber: result.phoneNumber,
+      provider: result.provider,
+      refreshEntitlement: context.read<SubscriptionStatusProvider>().load,
+    );
+    if (!context.mounted) return;
+    _showCheckoutState(context, checkout);
+  }
+}
+
+void _showCheckoutState(
+  BuildContext context,
+  SubscriptionCheckoutProvider checkout,
+) {
+  switch (checkout.state) {
+    case SubscriptionCheckoutState.successful:
+      showTopPopup(context, 'Usajili wako umefanikiwa!', isError: false);
+      checkout.reset();
+      break;
+    case SubscriptionCheckoutState.failed:
+    case SubscriptionCheckoutState.timedOut:
+      if (checkout.errorMessage != null) {
+        showTopPopup(context, checkout.errorMessage!);
+      }
+      break;
+    case SubscriptionCheckoutState.idle:
+    case SubscriptionCheckoutState.creatingCheckout:
+    case SubscriptionCheckoutState.waitingForPayment:
+      showTopPopup(
+        context,
+        'Malipo yanasubiri uthibitisho. Angalia hali baada ya kuthibitisha.',
+        isError: false,
+      );
+      break;
+  }
+}
+
+class _StorePurchaseButton extends StatelessWidget {
+  final String productId;
+  final String label;
+  final Future<void> Function(BuildContext context, String productId)
+      onPurchase;
+
+  const _StorePurchaseButton({
+    required this.productId,
+    required this.label,
+    required this.onPurchase,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SubscriptionPurchaseProvider>(
+      builder: (context, purchase, _) => SizedBox(
+        width: double.infinity,
+        child: FilledButton(
+          onPressed:
+              purchase.isLoading ? null : () => onPurchase(context, productId),
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            padding: const EdgeInsets.symmetric(vertical: 13),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.button),
+            ),
+          ),
+          child: purchase.isLoading
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: Colors.white),
+                )
+              : Text(
+                  label,
+                  style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.w700, color: Colors.white),
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+class _UnavailablePurchaseButton extends StatelessWidget {
+  final String message;
+
+  const _UnavailablePurchaseButton({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton(
+        onPressed: null,
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 13),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.button),
+          ),
+        ),
+        child: Text(
+          message,
+          style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w600,
+            color: AppColors.textTertiary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MobileMoneySelection {
+  final String provider;
+  final String phoneNumber;
+
+  const _MobileMoneySelection({
+    required this.provider,
+    required this.phoneNumber,
+  });
+}
+
+class _MobileMoneyCheckoutSheet extends StatefulWidget {
+  final SubscriptionPlan plan;
+
+  const _MobileMoneyCheckoutSheet({required this.plan});
+
+  @override
+  State<_MobileMoneyCheckoutSheet> createState() =>
+      _MobileMoneyCheckoutSheetState();
+}
+
+class _MobileMoneyCheckoutSheetState extends State<_MobileMoneyCheckoutSheet> {
+  final TextEditingController _phoneController = TextEditingController();
+  String _selectedProvider = MobileMoney.providers.first.id;
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(18, 18, 18, bottomInset + 18),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.plan.name,
+              style: GoogleFonts.montserrat(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '${_formatMoney(widget.plan.price)} ${widget.plan.currency} ${_billingPeriodLabel(widget.plan)}',
+              style: GoogleFonts.montserrat(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Chagua Njia ya Malipo',
+              style: GoogleFonts.montserrat(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 10),
+            ...MobileMoney.providers.map(_providerTile),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _phoneController,
+              keyboardType: TextInputType.phone,
+              decoration: InputDecoration(
+                labelText: 'Nambari ya Simu',
+                hintText: '0712345678',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.input),
+                ),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Mfano: 0712345678 au 712345678. Kiasi hakiwezi kubadilishwa.',
+              style: GoogleFonts.montserrat(
+                fontSize: 11.5,
+                color: AppColors.textTertiary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () {
+                  Navigator.pop(
+                    context,
+                    _MobileMoneySelection(
+                      provider: _selectedProvider,
+                      phoneNumber: _phoneController.text,
+                    ),
+                  );
+                },
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.button),
+                  ),
+                ),
+                child: Text(
+                  'Endelea Kulipa',
+                  style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _providerTile(MobileMoneyProviderOption provider) {
+    final isSelected = provider.id == _selectedProvider;
+    return GestureDetector(
+      onTap: () => setState(() => _selectedProvider = provider.id),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppRadius.input),
+          border: Border.all(
+            color: isSelected ? provider.color : AppColors.border,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Image.asset(
+              provider.logoAsset,
+              width: 34,
+              height: 34,
+              errorBuilder: (_, __, ___) => Icon(
+                Icons.phone_android_rounded,
+                color: provider.color,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                provider.name,
+                style: GoogleFonts.montserrat(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            Icon(
+              isSelected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              color: isSelected ? provider.color : AppColors.textTertiary,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
