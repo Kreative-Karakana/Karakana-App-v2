@@ -31,6 +31,13 @@ class ApiEndpoints {
   static const String wallet = '/api/v1/wallet/me/';
   static const String walletCheckout = '/api/v1/wallet/checkouts/';
 
+  // Subscriptions
+  static const String subscriptionsMe = '/api/v1/subscriptions/me/';
+  static const String subscriptionPlans = '/api/v1/subscriptions/plans/';
+  static const String subscriptionTrialActivate =
+      '/api/v1/subscriptions/trial/activate/';
+  static const String subscriptionCheckout = '/api/v1/subscriptions/checkout/';
+
   // Communications
   static const String banners = '/api/v1/communications/banners/';
   static const String notifications =
