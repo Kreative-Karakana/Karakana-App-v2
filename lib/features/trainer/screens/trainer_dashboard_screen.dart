@@ -26,6 +26,13 @@ class TrainerDashboardScreen extends StatefulWidget {
 
 class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     with TickerProviderStateMixin {
+  static const double _overviewHeroContentHeight = 252;
+  static const double _toolbarHeight = 56;
+  // Full floating nav footprint, including the raised center wallet button.
+  static const double _floatingNavVisualHeight = 86;
+  static const double _floatingNavBottomMargin = 12;
+  static const double _floatingNavContentClearance = 56;
+
   late TabController _tabController;
   List _courses = [];
   List _shuffledCourses = [];
@@ -63,6 +70,18 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     _tabController.dispose();
     super.dispose();
   }
+
+  double _systemTopInset(BuildContext context) =>
+      MediaQuery.viewPaddingOf(context).top;
+
+  double _systemBottomInset(BuildContext context) =>
+      MediaQuery.viewPaddingOf(context).bottom;
+
+  double _bottomNavContentPadding(BuildContext context) =>
+      _floatingNavVisualHeight +
+      _floatingNavBottomMargin +
+      _systemBottomInset(context) +
+      _floatingNavContentClearance;
 
   Future<void> _loadAll() async {
     if (!mounted) return;
@@ -586,7 +605,12 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(18, 0, 18, 12),
+          padding: const EdgeInsets.fromLTRB(
+            18,
+            0,
+            18,
+            _floatingNavBottomMargin,
+          ),
           child: Stack(
             clipBehavior: Clip.none,
             alignment: Alignment.center,
@@ -781,19 +805,22 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       onRefresh: () async => _loadAll(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 120),
+        padding: EdgeInsets.fromLTRB(
+          20,
+          12,
+          20,
+          _bottomNavContentPadding(context),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildQuickActionsRow(),
             const SizedBox(height: 22),
-            Text(
+            _statsSectionTitle(
               'Takwimu za Jumla',
-              style: GoogleFonts.montserrat(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: textPrimary,
-              ),
+              'Muhtasari wa kozi, wanafunzi, na utendaji wako.',
+              Icons.analytics_outlined,
+              textPrimary,
             ),
             const SizedBox(height: 12),
             _buildStatsGrid(surfaceColor, textPrimary),
@@ -909,8 +936,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       ),
                     ),
                   ),
-
-            const SizedBox(height: 100),
           ],
         ),
       ),
@@ -976,8 +1001,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 _formatNumber(_stats['total_students'] ?? 0),
                 Icons.people_outlined,
                 const Color(0xFF3D1800),
-                '${_stats['total_courses'] ?? 0} kozi',
-                true,
                 surfaceColor,
                 textPrimary,
               ),
@@ -989,8 +1012,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 _formatNumber(_stats['published_courses'] ?? 0),
                 Icons.check_circle_outline,
                 const Color(0xFFE87722),
-                'hai',
-                true,
                 surfaceColor,
                 textPrimary,
               ),
@@ -1008,8 +1029,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 _formatNumber(_stats['draft_courses'] ?? 0),
                 Icons.edit_outlined,
                 const Color(0xFF7B3A10),
-                'zinasubiri',
-                true,
                 surfaceColor,
                 textPrimary,
               ),
@@ -1021,36 +1040,19 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 (_stats['avg_rating'] as double? ?? 0.0).toStringAsFixed(1),
                 Icons.star_outline,
                 const Color(0xFFFFA726),
-                'kwa kozi',
-                true,
                 surfaceColor,
                 textPrimary,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
         // ── EBOOK SECTION DIVIDER ──
-        Row(
-          children: [
-            Container(
-              width: 4,
-              height: 16,
-              decoration: BoxDecoration(
-                color: const Color(0xFFE87722),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'Vitabu vya Kidijitali',
-              style: GoogleFonts.montserrat(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: textPrimary,
-              ),
-            ),
-          ],
+        _statsSectionTitle(
+          'Vitabu vya Kidijitali',
+          'Wasomaji, mauzo, na hali ya eBooks zako.',
+          Icons.menu_book_outlined,
+          textPrimary,
         ),
         const SizedBox(height: 12),
         // ── ROW 3: ebook readers + revenue ──
@@ -1063,8 +1065,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 _formatNumber(_stats['total_ebook_readers'] ?? 0),
                 Icons.people_outlined,
                 const Color(0xFF3D1800),
-                '${_stats['total_ebooks'] ?? 0} vitabu',
-                true,
                 surfaceColor,
                 textPrimary,
               ),
@@ -1076,8 +1076,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 ebookRevenueStr,
                 Icons.payments_outlined,
                 const Color(0xFF2E7D32),
-                'jumla',
-                true,
                 surfaceColor,
                 textPrimary,
               ),
@@ -1095,8 +1093,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 _formatNumber(_stats['published_ebooks'] ?? 0),
                 Icons.check_circle_outline,
                 const Color(0xFFE87722),
-                'zinaonekana',
-                true,
                 surfaceColor,
                 textPrimary,
               ),
@@ -1108,13 +1104,61 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 _formatNumber(_stats['total_ebooks'] ?? 0),
                 Icons.menu_book_outlined,
                 const Color(0xFF1565C0),
-                'zilizopakiwa',
-                true,
                 surfaceColor,
                 textPrimary,
               ),
             ),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _statsSectionTitle(
+    String title,
+    String subtitle,
+    IconData icon,
+    Color textPrimary,
+  ) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: const Color(0xFFE87722).withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(icon, color: const Color(0xFFE87722), size: 19),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.montserrat(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w800,
+                  color: textPrimary,
+                  height: 1.1,
+                ),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                subtitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.montserrat(
+                  fontSize: 11,
+                  height: 1.25,
+                  color: const Color(0xFF9E8070),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -1254,80 +1298,60 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     String value,
     IconData icon,
     Color color,
-    String trend,
-    bool trendUp,
     Color surfaceColor,
     Color textPrimary,
   ) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      constraints: const BoxConstraints(minHeight: 148),
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 13),
       decoration: BoxDecoration(
         color: surfaceColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: const Color(0xFFE87722).withValues(alpha: 0.15),
+          color: const Color(0xFFE87722).withValues(alpha: 0.12),
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF3D1800).withValues(alpha: 0.08),
-            blurRadius: 16,
+            color: const Color(0xFF3D1800).withValues(alpha: 0.06),
+            blurRadius: 18,
             spreadRadius: 0,
-            offset: const Offset(0, 4),
-          ),
-          BoxShadow(
-            color: const Color(0xFF3D1800).withValues(alpha: 0.04),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+            offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: color, size: 20),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF0EAE3),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  trend,
-                  style: GoogleFonts.montserrat(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF9E8070),
-                  ),
-                ),
-              ),
-            ],
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.09),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: color, size: 21),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 26),
           Text(
             value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: GoogleFonts.montserrat(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
+              fontSize: 23,
+              fontWeight: FontWeight.w800,
               color: textPrimary,
+              height: 1.0,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 7),
           Text(
             title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: GoogleFonts.montserrat(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
+              fontSize: 11.5,
+              height: 1.2,
+              fontWeight: FontWeight.w600,
               color: const Color(0xFF7B3A10),
             ),
           ),
@@ -1407,6 +1431,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
         color: const Color(0xFFE87722),
         onRefresh: () async => _loadAll(),
         child: ListView(
+          padding: EdgeInsets.only(bottom: _bottomNavContentPadding(context)),
           children: [
             // CTA banner even when empty
             Padding(
@@ -1430,7 +1455,12 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       color: const Color(0xFFE87722),
       onRefresh: () async => _loadAll(),
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(0, 14, 0, 100),
+        padding: EdgeInsets.fromLTRB(
+          0,
+          14,
+          0,
+          _bottomNavContentPadding(context),
+        ),
         children: [
           // ── CTA BANNER ──
           Padding(
@@ -2630,7 +2660,12 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
             )
           : SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
+              padding: EdgeInsets.fromLTRB(
+                20,
+                16,
+                20,
+                _bottomNavContentPadding(context),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -3064,7 +3099,12 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       onRefresh: () async => _loadAll(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
+        padding: EdgeInsets.fromLTRB(
+          20,
+          16,
+          20,
+          _bottomNavContentPadding(context),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -3744,12 +3784,13 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       );
     }
     // ── Main overview / students tab — industry-standard collapsing hero ──
-    // The SliverAppBar's own title+actions are ALWAYS visible (no fading).
-    // The flexibleSpace contains only greeting+name+tagline+stats, which fades
-    // out smoothly as the user scrolls. No duplicate branding.
+    // The toolbar is positioned manually inside flexibleSpace so the top
+    // safe-area inset is applied once while the greeting content fades on scroll.
+    final topInset = _systemTopInset(context);
     return SliverAppBar(
-      toolbarHeight: 56,
-      expandedHeight: 268,
+      primary: false,
+      toolbarHeight: topInset + _toolbarHeight,
+      expandedHeight: topInset + _overviewHeroContentHeight,
       pinned: true,
       floating: false,
       forceElevated: innerBoxIsScrolled,
@@ -3760,66 +3801,9 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
       shadowColor: Colors.transparent,
       backgroundColor: const Color(0xFF201008),
 
-      // ── ALWAYS-VISIBLE top bar (logo + Karakana + actions) ──
+      // ── Top bar is drawn in flexibleSpace so top safe-area ownership stays explicit. ──
       titleSpacing: 0,
-      title: Padding(
-        padding: const EdgeInsets.only(left: 16),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 34,
-              height: 34,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(4),
-                child: Image.asset(
-                  'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => Center(
-                    child: Text(
-                      'K',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFFE87722),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Text(
-              'Karakana',
-              style: GoogleFonts.montserrat(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: Colors.white,
-                letterSpacing: 0.1,
-              ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        _buildHeaderIconButton(Icons.notifications_outlined, () {
-          context.read<NotificationProvider>().loadNotifications(
-                isTrainer: true,
-              );
-          context.push('/notifications');
-        }, veryCompact: false),
-        const SizedBox(width: 6),
-        _buildHeaderIconButton(
-          Icons.settings_outlined,
-          _openAccountTab,
-          veryCompact: false,
-        ),
-        const SizedBox(width: 14),
-      ],
+      title: const SizedBox.shrink(),
 
       // ── FLEXIBLE SPACE: greeting+name+tagline+stats (fades on scroll) ──
       flexibleSpace: Container(
@@ -3859,7 +3843,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 ),
                 Positioned(
                   right: 22,
-                  top: 76,
+                  top: topInset + _toolbarHeight + 20,
                   child: Opacity(
                     opacity: 0.04,
                     child: Image.asset(
@@ -3867,6 +3851,64 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       width: 110,
                       fit: BoxFit.contain,
                     ),
+                  ),
+                ),
+                Positioned(
+                  top: topInset,
+                  left: 16,
+                  right: 14,
+                  height: _toolbarHeight,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 34,
+                        height: 34,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Image.asset(
+                            'assets/images/Kreative_Karakana_-_Official_Logo_Icon.png',
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => Center(
+                              child: Text(
+                                'K',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFFE87722),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Karakana',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          letterSpacing: 0.1,
+                        ),
+                      ),
+                      const Spacer(),
+                      _buildHeaderIconButton(Icons.notifications_outlined, () {
+                        context.read<NotificationProvider>().loadNotifications(
+                              isTrainer: true,
+                            );
+                        context.push('/notifications');
+                      }, veryCompact: false),
+                      const SizedBox(width: 6),
+                      _buildHeaderIconButton(
+                        Icons.settings_outlined,
+                        _openAccountTab,
+                        veryCompact: false,
+                      ),
+                    ],
                   ),
                 ),
 
@@ -3878,19 +3920,14 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       child: OverflowBox(
                         alignment: Alignment.topCenter,
                         maxHeight: double.infinity,
-                        child: Builder(
-                          builder: (ctx2) {
-                            final statusBarH = MediaQuery.of(ctx2).padding.top;
-                            return Padding(
-                              padding: EdgeInsets.fromLTRB(
-                                18,
-                                statusBarH + 56 + 8,
-                                18,
-                                0,
-                              ),
-                              child: _buildHeroGreetingContent(),
-                            );
-                          },
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            18,
+                            topInset + _toolbarHeight + 8,
+                            18,
+                            0,
+                          ),
+                          child: _buildHeroGreetingContent(),
                         ),
                       ),
                     ),
