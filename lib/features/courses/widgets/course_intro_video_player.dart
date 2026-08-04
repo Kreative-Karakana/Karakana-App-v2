@@ -33,6 +33,12 @@ class _CourseIntroVideoPlayerState extends State<CourseIntroVideoPlayer> {
     if (_isInitialized || _isError) {
       _controller.removeListener(_onPlayerChanged);
       await _controller.dispose();
+      if (mounted) {
+        setState(() {
+          _isInitialized = false;
+          _isError = false;
+        });
+      }
     }
     final streamUrl = _resolvePlaybackUrl(widget.playbackUrl);
     final streamUri = Uri.parse(streamUrl);
@@ -142,13 +148,7 @@ class _CourseIntroVideoPlayerState extends State<CourseIntroVideoPlayer> {
                 ),
                 const SizedBox(height: 10),
                 TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _isError = false;
-                      _isInitialized = false;
-                    });
-                    _initPlayer();
-                  },
+                  onPressed: _initPlayer,
                   child: Text(
                     'Jaribu tena',
                     style: GoogleFonts.montserrat(
@@ -311,15 +311,40 @@ class _FullscreenCourseVideoPlayerState
   @override
   void initState() {
     super.initState();
+    widget.controller.addListener(_onPlayerChanged);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+    _scheduleHideControls();
+  }
+
+  void _onPlayerChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _scheduleHideControls() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted && widget.controller.value.isPlaying) {
+        setState(() => _showControls = false);
+      }
+    });
+  }
+
+  void _togglePlayPause() {
+    setState(() => _showControls = true);
+    if (widget.controller.value.isPlaying) {
+      widget.controller.pause();
+    } else {
+      widget.controller.play();
+      _scheduleHideControls();
+    }
   }
 
   @override
   void dispose() {
+    widget.controller.removeListener(_onPlayerChanged);
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
@@ -345,7 +370,10 @@ class _FullscreenCourseVideoPlayerState
       child: Scaffold(
         backgroundColor: Colors.black,
         body: GestureDetector(
-          onTap: () => setState(() => _showControls = !_showControls),
+          onTap: () {
+            setState(() => _showControls = !_showControls);
+            if (_showControls && value.isPlaying) _scheduleHideControls();
+          },
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -379,15 +407,7 @@ class _FullscreenCourseVideoPlayerState
                       child: IconButton(
                         iconSize: 48,
                         color: Colors.white,
-                        onPressed: () {
-                          setState(() {
-                            if (widget.controller.value.isPlaying) {
-                              widget.controller.pause();
-                            } else {
-                              widget.controller.play();
-                            }
-                          });
-                        },
+                        onPressed: _togglePlayPause,
                         icon: Icon(
                           widget.controller.value.isPlaying
                               ? Icons.pause

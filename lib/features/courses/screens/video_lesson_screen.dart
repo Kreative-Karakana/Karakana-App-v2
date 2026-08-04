@@ -366,6 +366,16 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
   }
 
   Future<void> _initPlayer() async {
+    if (_isInitialized || _isError) {
+      _controller.removeListener(_onPlayerChanged);
+      await _controller.dispose();
+      if (mounted) {
+        setState(() {
+          _isInitialized = false;
+          _isError = false;
+        });
+      }
+    }
     final url = widget.playbackUrl;
     _controller = VideoPlayerController.networkUrl(Uri.parse(url));
 
@@ -471,10 +481,7 @@ class _MuxVideoPlayerState extends State<_MuxVideoPlayer> {
                 ),
                 const SizedBox(height: 12),
                 TextButton(
-                  onPressed: () {
-                    setState(() => _isError = false);
-                    _initPlayer();
-                  },
+                  onPressed: _initPlayer,
                   child: Text(
                     'Jaribu tena',
                     style: GoogleFonts.montserrat(
