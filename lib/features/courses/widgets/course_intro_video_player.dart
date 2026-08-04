@@ -337,103 +337,109 @@ class _FullscreenCourseVideoPlayerState
     final position = value.position;
     final duration = value.duration;
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: GestureDetector(
-        onTap: () => setState(() => _showControls = !_showControls),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Center(
-              child: AspectRatio(
-                aspectRatio: widget.controller.value.aspectRatio == 0
-                    ? 16 / 9
-                    : widget.controller.value.aspectRatio,
-                child: VideoPlayer(widget.controller),
-              ),
-            ),
-            if (_showControls)
-              Positioned(
-                top: 32,
-                left: 16,
-                child: IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  color: Colors.white,
-                  icon: const Icon(Icons.arrow_back),
+    return PopScope(
+      onPopInvokedWithResult: (_, __) {
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: GestureDetector(
+          onTap: () => setState(() => _showControls = !_showControls),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Center(
+                child: AspectRatio(
+                  aspectRatio: widget.controller.value.aspectRatio == 0
+                      ? 16 / 9
+                      : widget.controller.value.aspectRatio,
+                  child: VideoPlayer(widget.controller),
                 ),
               ),
-            if (_showControls)
-              Container(
-                color: Colors.black.withValues(alpha: 0.18),
-                child: Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.45),
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      iconSize: 48,
-                      color: Colors.white,
-                      onPressed: () {
-                        setState(() {
-                          if (widget.controller.value.isPlaying) {
-                            widget.controller.pause();
-                          } else {
-                            widget.controller.play();
-                          }
-                        });
-                      },
-                      icon: Icon(
-                        widget.controller.value.isPlaying
-                            ? Icons.pause
-                            : Icons.play_arrow,
+              if (_showControls)
+                Positioned(
+                  top: 32,
+                  left: 16,
+                  child: IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    color: Colors.white,
+                    icon: const Icon(Icons.arrow_back),
+                  ),
+                ),
+              if (_showControls)
+                Container(
+                  color: Colors.black.withValues(alpha: 0.18),
+                  child: Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.45),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        iconSize: 48,
+                        color: Colors.white,
+                        onPressed: () {
+                          setState(() {
+                            if (widget.controller.value.isPlaying) {
+                              widget.controller.pause();
+                            } else {
+                              widget.controller.play();
+                            }
+                          });
+                        },
+                        icon: Icon(
+                          widget.controller.value.isPlaying
+                              ? Icons.pause
+                              : Icons.play_arrow,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            if (_showControls)
-              Positioned(
-                left: 20,
-                right: 20,
-                bottom: 24,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    VideoProgressIndicator(
-                      widget.controller,
-                      allowScrubbing: true,
-                      padding: EdgeInsets.zero,
-                      colors: const VideoProgressColors(
-                        playedColor: Color(0xFFE87722),
-                        bufferedColor: Colors.white30,
-                        backgroundColor: Colors.white12,
+              if (_showControls)
+                Positioned(
+                  left: 20,
+                  right: 20,
+                  bottom: 24,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      VideoProgressIndicator(
+                        widget.controller,
+                        allowScrubbing: true,
+                        padding: EdgeInsets.zero,
+                        colors: const VideoProgressColors(
+                          playedColor: Color(0xFFE87722),
+                          bufferedColor: Colors.white30,
+                          backgroundColor: Colors.white12,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Text(
-                          _formatDuration(position),
-                          style: GoogleFonts.montserrat(
-                            fontSize: 12,
-                            color: Colors.white,
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Text(
+                            _formatDuration(position),
+                            style: GoogleFonts.montserrat(
+                              fontSize: 12,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        const Spacer(),
-                        Text(
-                          _formatDuration(duration),
-                          style: GoogleFonts.montserrat(
-                            fontSize: 12,
-                            color: Colors.white,
+                          const Spacer(),
+                          Text(
+                            _formatDuration(duration),
+                            style: GoogleFonts.montserrat(
+                              fontSize: 12,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
