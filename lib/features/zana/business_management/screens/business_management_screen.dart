@@ -160,6 +160,12 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
   int? _deletingTransactionId;
   final ScrollController _scrollController = ScrollController();
 
+  /// Guards the auto-redirect below so it fires at most once per visit to
+  /// this screen — without it, every rebuild while still read-only (e.g.
+  /// after the user backs out of the subscription screen without
+  /// upgrading) would bounce them straight back into it.
+  bool _subscriptionPromptShown = false;
+
   @override
   void initState() {
     super.initState();
@@ -207,6 +213,22 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
               if (!mounted) return;
               showTopPopup(context, error, type: TopPopupType.error);
               provider.clearError();
+            });
+          }
+
+          // Entitlement resolves asynchronously after loadInitial() kicks
+          // off; once it comes back with no active trial/subscription, jump
+          // straight to the subscription screen instead of waiting for the
+          // user to hit a blocked action first. Skipped entirely while
+          // there's an active trial/subscription (isReadOnly stays false),
+          // and only fires once per visit via [_subscriptionPromptShown].
+          if (!_subscriptionPromptShown &&
+              provider.entitlement != null &&
+              provider.isReadOnly) {
+            _subscriptionPromptShown = true;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!mounted) return;
+              _goToSubscription(context);
             });
           }
 
