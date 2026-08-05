@@ -10,9 +10,9 @@ class ZanaTool {
   final String description;
   final String descriptionSwahili;
   final ZanaStatus status;
-  final List<Color> gradient;
   final IconData icon;
   final String route;
+  final bool isRecommended;
 
   const ZanaTool({
     required this.id,
@@ -22,9 +22,9 @@ class ZanaTool {
     required this.description,
     required this.descriptionSwahili,
     required this.status,
-    required this.gradient,
     required this.icon,
     required this.route,
+    this.isRecommended = false,
   });
 }
 
@@ -39,9 +39,9 @@ class ZanaData {
       descriptionSwahili:
           'Simamia operesheni na mauzo ya biashara yako kwa urahisi.',
       status: ZanaStatus.live,
-      gradient: [Color(0xFF1A0A00), Color(0xFF3D1800), Color(0xFF7B3A10)],
       icon: Icons.business_center_outlined,
       route: '/zana/biz-manager',
+      isRecommended: true,
     ),
     ZanaTool(
       id: 'kikoba',
@@ -52,7 +52,6 @@ class ZanaData {
       descriptionSwahili:
           'Vikundi vya Kuweka na Kukopa kwa njia ya kidijitali.',
       status: ZanaStatus.comingSoon,
-      gradient: [Color(0xFF1A0A00), Color(0xFF3D1800), Color(0xFF7B3A10)],
       icon: Icons.account_balance_outlined,
       route: '/zana/kikoba',
     ),
@@ -64,7 +63,6 @@ class ZanaData {
       description: 'Business and entrepreneurship eBooks.',
       descriptionSwahili: 'Vitabu vya biashara na ujasiriamali.',
       status: ZanaStatus.live,
-      gradient: [Color(0xFF1A0A00), Color(0xFF3D1800), Color(0xFF7B3A10)],
       icon: Icons.menu_book_outlined,
       route: '/zana/ebooks',
     ),
@@ -76,7 +74,6 @@ class ZanaData {
       description: 'Insurance tailored for small Tanzanian entrepreneurs.',
       descriptionSwahili: 'Bima zilizoundwa kwa wajasiriamali wadogo Tanzania.',
       status: ZanaStatus.comingSoon,
-      gradient: [Color(0xFF1A0A00), Color(0xFF3D1800), Color(0xFF7B3A10)],
       icon: Icons.security_outlined,
       route: '/zana/insurance',
     ),
