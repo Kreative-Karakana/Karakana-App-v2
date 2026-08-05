@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../models/course_model.dart';
 import '../models/quiz_model.dart';
 import '../providers/course_provider.dart';
 import '../utils/quiz_contract.dart';
@@ -430,6 +431,23 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                           ],
                                         ),
                                       ),
+                                      if (section.materials.isNotEmpty)
+                                        IconButton(
+                                          icon: Badge(
+                                            label: Text(
+                                              '${section.materials.length}',
+                                            ),
+                                            backgroundColor:
+                                                const Color(0xFFE87722),
+                                            textColor: Colors.white,
+                                            child: const Icon(
+                                              Icons.picture_as_pdf_outlined,
+                                              color: Color(0xFFE87722),
+                                            ),
+                                          ),
+                                          onPressed: () =>
+                                              _showMaterialsSheet(context, section),
+                                        ),
                                       Icon(
                                         isExpanded
                                             ? Icons.expand_less
@@ -603,6 +621,61 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
         .where((p) => p.isNotEmpty)
         .toList();
     return parts.isEmpty ? text.trim() : parts.first;
+  }
+
+  void _showMaterialsSheet(BuildContext context, SectionModel section) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).cardColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Nyenzo za Somo',
+                  style: GoogleFonts.montserrat(
+                    fontSize: AppTextStyles.bodyLarge.fontSize,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF3D1800),
+                  ),
+                ),
+              ),
+            ),
+            ...section.materials.map(
+              (material) => ListTile(
+                leading: const Icon(
+                  Icons.picture_as_pdf_outlined,
+                  color: Color(0xFFE87722),
+                ),
+                title: Text(material.name, style: GoogleFonts.montserrat()),
+                trailing: const Icon(
+                  Icons.chevron_right,
+                  color: Color(0xFF9E8070),
+                ),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.push(
+                    '/course-material-viewer',
+                    extra: {
+                      'downloadUrl': material.downloadUrl,
+                      'materialName': material.name,
+                    },
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
   }
 }
 
