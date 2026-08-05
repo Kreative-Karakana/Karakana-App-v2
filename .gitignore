@@ -44,6 +44,10 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Local release/export artifacts
+/release/
+/ios/ExportOptionsAutomatic.plist
+
 android/key.properties
 *.jks
 *.keystore
