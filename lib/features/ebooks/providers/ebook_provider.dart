@@ -4,7 +4,9 @@ import '../models/ebook.dart';
 import '../services/ebook_service.dart';
 
 class EbookProvider extends ChangeNotifier {
-  final EbookService _service = EbookService();
+  final EbookService _service;
+
+  EbookProvider({EbookService? service}) : _service = service ?? EbookService();
 
   bool isLoadingStore = false;
   bool isLoadingLibrary = false;
@@ -19,7 +21,7 @@ class EbookProvider extends ChangeNotifier {
   List<Ebook> store = [];
   List<EbookPurchase> library = [];
   List<Ebook> myEbooks = [];
-  final Map<int, Uint8List> pageCache = {};
+  final Map<(int ebookId, int pageNumber), Uint8List> pageCache = {};
   int currentEbookPage = 1;
   int totalPages = 1;
   String? watermarkText;
@@ -106,8 +108,12 @@ class EbookProvider extends ChangeNotifier {
     required int ebookId,
     required int pageNumber,
   }) async {
-    if (pageCache.containsKey(pageNumber)) {
-      return pageCache[pageNumber];
+    final cacheKey = (ebookId, pageNumber);
+    final cached = pageCache.remove(cacheKey);
+    if (cached != null) {
+      // Reinsert on access so the insertion-ordered map behaves as an LRU.
+      pageCache[cacheKey] = cached;
+      return cached;
     }
     try {
       final payload =
@@ -117,21 +123,23 @@ class EbookProvider extends ChangeNotifier {
       watermarkText = payload['watermark_text'] as String?;
       currentEbookPage = payload['page'] as int? ?? pageNumber;
 
-      pageCache[pageNumber] = bytes;
-      // LRU cap at 15 pages — evict the page furthest from current.
+      pageCache[cacheKey] = bytes;
+      // Keep only the 15 most recently used pages across all eBooks.
       if (pageCache.length > 15) {
-        final keys = pageCache.keys.toList()..sort();
-        final evict =
-            (keys.first - pageNumber).abs() >= (keys.last - pageNumber).abs()
-                ? keys.first
-                : keys.last;
-        pageCache.remove(evict);
+        pageCache.remove(pageCache.keys.first);
       }
       notifyListeners();
       return bytes;
     } catch (_) {
       return null;
     }
+  }
+
+  bool hasCachedReaderPage({
+    required int ebookId,
+    required int pageNumber,
+  }) {
+    return pageCache.containsKey((ebookId, pageNumber));
   }
 
   void clearReaderCache() {

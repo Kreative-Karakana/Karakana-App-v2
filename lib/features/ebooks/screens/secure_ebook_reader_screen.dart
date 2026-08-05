@@ -32,7 +32,10 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
   bool _showHud = true;
   Timer? _hudTimer;
   Timer? _captureTimer;
+  final List<Timer> _prefetchTimers = [];
   bool _screenCaptured = false;
+  bool _protectionReady = false;
+  bool _protectionFailed = false;
   int _displayedPage = 1;
 
   // Saved in didChangeDependencies so dispose() can call it without context.
@@ -47,10 +50,34 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
   @override
   void initState() {
     super.initState();
-    ScreenshotPrevention.enable();
-    _loadPage(1);
+    unawaited(_initializeSecureReader());
     _startHudTimer();
+  }
+
+  Future<void> _initializeSecureReader() async {
+    if (mounted) {
+      setState(() {
+        _protectionReady = false;
+        _protectionFailed = false;
+      });
+    }
+
+    final enabled = await ScreenshotPrevention.enable();
+    if (!mounted) {
+      if (enabled) await ScreenshotPrevention.disable();
+      return;
+    }
+    if (!enabled) {
+      setState(() {
+        _protectionFailed = true;
+        _loading = false;
+      });
+      return;
+    }
+
+    setState(() => _protectionReady = true);
     _startCapturePolling();
+    await _loadPage(_displayedPage);
   }
 
   void _startCapturePolling() {
@@ -102,6 +129,11 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
   }
 
   void _scheduleStaggeredPrefetch(int currentPage, int total) {
+    for (final timer in _prefetchTimers) {
+      timer.cancel();
+    }
+    _prefetchTimers.clear();
+
     final targets = <int>[];
     if (currentPage + 1 <= total) targets.add(currentPage + 1);
     if (currentPage - 1 >= 1) targets.add(currentPage - 1);
@@ -109,14 +141,18 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
 
     for (var i = 0; i < targets.length; i++) {
       final p = targets[i];
-      Future.delayed(Duration(milliseconds: 600 + i * 600), () {
+      final timer = Timer(Duration(milliseconds: 600 + i * 600), () {
         if (!mounted) return;
         final provider = context.read<EbookProvider>();
-        if (!provider.pageCache.containsKey(p)) {
+        if (!provider.hasCachedReaderPage(
+          ebookId: widget.ebookId,
+          pageNumber: p,
+        )) {
           unawaited(
               provider.fetchReaderPage(ebookId: widget.ebookId, pageNumber: p));
         }
       });
+      _prefetchTimers.add(timer);
     }
   }
 
@@ -138,8 +174,12 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
   void dispose() {
     _hudTimer?.cancel();
     _captureTimer?.cancel();
+    for (final timer in _prefetchTimers) {
+      timer.cancel();
+    }
+    _prefetchTimers.clear();
     _ebookProvider.clearReaderCache();
-    ScreenshotPrevention.disable();
+    unawaited(ScreenshotPrevention.disable());
     super.dispose();
   }
 
@@ -174,6 +214,35 @@ class _SecureEbookReaderScreenState extends State<SecureEbookReaderScreen> {
   }
 
   Widget _buildCanvas() {
+    if (_protectionFailed) {
+      return Container(
+        color: Colors.black,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.gpp_bad_outlined, color: Colors.white54, size: 48),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              'Imeshindikana kuwasha ulinzi wa eBook kwenye kifaa hiki.',
+              style: AppTextStyles.bodyMedium.copyWith(color: Colors.white70),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            OutlinedButton(
+              onPressed: () => unawaited(_initializeSecureReader()),
+              child: const Text('Jaribu Tena'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (!_protectionReady) {
+      return const Center(child: KarakanaWaveLoader(color: Colors.white));
+    }
+
     if (_screenCaptured) {
       // Full opaque black-out — same behaviour as WhatsApp view-once.
       // On iOS the UITextField secure layer already blacks out the content
