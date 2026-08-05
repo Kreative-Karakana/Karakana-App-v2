@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../widgets/common/fullscreen_video_orientation.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 
 class CourseIntroVideoPlayer extends StatefulWidget {
@@ -305,23 +306,21 @@ class _FullscreenCourseVideoPlayer extends StatefulWidget {
 }
 
 class _FullscreenCourseVideoPlayerState
-    extends State<_FullscreenCourseVideoPlayer> {
+    extends State<_FullscreenCourseVideoPlayer>
+    with FullscreenVideoOrientation {
   bool _showControls = true;
+  bool _isExiting = false;
+  bool _canPop = false;
 
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    enterFullscreenOrientation();
   }
 
   @override
   void dispose() {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    restorePortraitOrientation();
     super.dispose();
   }
 
@@ -331,109 +330,161 @@ class _FullscreenCourseVideoPlayerState
     return '$minutes:$seconds';
   }
 
+  Future<void> _exitFullscreen() async {
+    if (_isExiting) return;
+    _isExiting = true;
+
+    await restorePortraitOrientation();
+    if (!mounted) return;
+
+    setState(() => _canPop = true);
+    await WidgetsBinding.instance.endOfFrame;
+    if (mounted) Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     final value = widget.controller.value;
-    final position = value.position;
-    final duration = value.duration;
+    final aspectRatio = value.aspectRatio == 0 ? 16 / 9 : value.aspectRatio;
+    final padding = MediaQuery.paddingOf(context);
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: GestureDetector(
-        onTap: () => setState(() => _showControls = !_showControls),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Center(
-              child: AspectRatio(
-                aspectRatio: widget.controller.value.aspectRatio == 0
-                    ? 16 / 9
-                    : widget.controller.value.aspectRatio,
-                child: VideoPlayer(widget.controller),
-              ),
-            ),
-            if (_showControls)
-              Positioned(
-                top: 32,
-                left: 16,
-                child: IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  color: Colors.white,
-                  icon: const Icon(Icons.arrow_back),
+    return PopScope(
+      canPop: _canPop,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _exitFullscreen();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => setState(() => _showControls = !_showControls),
+          child: Stack(
+            fit: StackFit.expand,
+            alignment: Alignment.center,
+            children: [
+              Center(
+                child: AspectRatio(
+                  aspectRatio: aspectRatio,
+                  child: VideoPlayer(widget.controller),
                 ),
               ),
-            if (_showControls)
-              Container(
-                color: Colors.black.withValues(alpha: 0.18),
-                child: Center(
+              AnimatedOpacity(
+                opacity: _showControls ? 1 : 0,
+                duration: const Duration(milliseconds: 180),
+                child: IgnorePointer(
+                  ignoring: !_showControls,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.45),
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      iconSize: 48,
-                      color: Colors.white,
-                      onPressed: () {
-                        setState(() {
-                          if (widget.controller.value.isPlaying) {
-                            widget.controller.pause();
-                          } else {
-                            widget.controller.play();
-                          }
-                        });
-                      },
-                      icon: Icon(
-                        widget.controller.value.isPlaying
-                            ? Icons.pause
-                            : Icons.play_arrow,
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withValues(alpha: 0.55),
+                          Colors.transparent,
+                          Colors.transparent,
+                          Colors.black.withValues(alpha: 0.65),
+                        ],
+                        stops: const [0, 0.24, 0.68, 1],
                       ),
                     ),
-                  ),
-                ),
-              ),
-            if (_showControls)
-              Positioned(
-                left: 20,
-                right: 20,
-                bottom: 24,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    VideoProgressIndicator(
-                      widget.controller,
-                      allowScrubbing: true,
-                      padding: EdgeInsets.zero,
-                      colors: const VideoProgressColors(
-                        playedColor: Color(0xFFE87722),
-                        bufferedColor: Colors.white30,
-                        backgroundColor: Colors.white12,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
+                    child: Stack(
                       children: [
-                        Text(
-                          _formatDuration(position),
-                          style: GoogleFonts.montserrat(
-                            fontSize: 12,
-                            color: Colors.white,
+                        Positioned(
+                          top: padding.top + 12,
+                          left: padding.left + 16,
+                          child: IconButton(
+                            onPressed: _exitFullscreen,
+                            icon: const Icon(
+                              Icons.arrow_back_rounded,
+                              color: Colors.white,
+                              size: 28,
+                            ),
                           ),
                         ),
-                        const Spacer(),
-                        Text(
-                          _formatDuration(duration),
-                          style: GoogleFonts.montserrat(
-                            fontSize: 12,
-                            color: Colors.white,
+                        Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (widget.controller.value.isPlaying) {
+                                  widget.controller.pause();
+                                } else {
+                                  widget.controller.play();
+                                }
+                              });
+                            },
+                            child: Container(
+                              width: 68,
+                              height: 68,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                value.isPlaying
+                                    ? Icons.pause_rounded
+                                    : Icons.play_arrow_rounded,
+                                color: Colors.white,
+                                size: 40,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: padding.left + 24,
+                          right: padding.right + 24,
+                          bottom: padding.bottom + 16,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              VideoProgressIndicator(
+                                widget.controller,
+                                allowScrubbing: true,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                                colors: const VideoProgressColors(
+                                  playedColor: Color(0xFFE87722),
+                                  bufferedColor: Colors.white38,
+                                  backgroundColor: Colors.white12,
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    _formatDuration(value.position),
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 12,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Text(
+                                    _formatDuration(value.duration),
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 12,
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  GestureDetector(
+                                    onTap: _exitFullscreen,
+                                    child: const Icon(
+                                      Icons.fullscreen_exit,
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );

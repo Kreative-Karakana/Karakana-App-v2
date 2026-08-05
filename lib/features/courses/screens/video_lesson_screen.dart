@@ -7,6 +7,7 @@ import 'package:video_player/video_player.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../widgets/common/fullscreen_video_orientation.dart';
 import '../../../widgets/common/top_popup.dart';
 
 class VideoLessonScreen extends StatefulWidget {
@@ -638,18 +639,15 @@ class _FullscreenVideoPlayer extends StatefulWidget {
   State<_FullscreenVideoPlayer> createState() => _FullscreenVideoPlayerState();
 }
 
-class _FullscreenVideoPlayerState extends State<_FullscreenVideoPlayer> {
+class _FullscreenVideoPlayerState extends State<_FullscreenVideoPlayer>
+    with FullscreenVideoOrientation {
   bool _showControls = true;
 
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(_onPlayerChanged);
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    enterFullscreenOrientation();
     _scheduleHideControls();
   }
 
@@ -684,8 +682,7 @@ class _FullscreenVideoPlayerState extends State<_FullscreenVideoPlayer> {
   @override
   void dispose() {
     widget.controller.removeListener(_onPlayerChanged);
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    restorePortraitOrientation();
     super.dispose();
   }
 
@@ -696,10 +693,7 @@ class _FullscreenVideoPlayerState extends State<_FullscreenVideoPlayer> {
     final padding = MediaQuery.paddingOf(context);
 
     return PopScope(
-      onPopInvokedWithResult: (_, __) {
-        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-      },
+      onPopInvokedWithResult: (_, __) => restorePortraitOrientation(),
       child: Scaffold(
         backgroundColor: Colors.black,
         body: GestureDetector(
