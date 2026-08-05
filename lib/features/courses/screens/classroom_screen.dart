@@ -435,7 +435,8 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                         IconButton(
                                           icon: Badge(
                                             label: Text(
-                                                '${section.materials.length}'),
+                                              '${section.materials.length}',
+                                            ),
                                             backgroundColor:
                                                 const Color(0xFFE87722),
                                             textColor: Colors.white,
@@ -445,8 +446,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                             ),
                                           ),
                                           onPressed: () =>
-                                              _showMaterialsSheet(
-                                                  context, section),
+                                              _showMaterialsSheet(context, section),
                                         ),
                                       Icon(
                                         isExpanded
@@ -648,23 +648,29 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                 ),
               ),
             ),
-            ...section.materials.map((material) => ListTile(
-                  leading: const Icon(Icons.picture_as_pdf_outlined,
-                      color: Color(0xFFE87722)),
-                  title: Text(material.name, style: GoogleFonts.montserrat()),
-                  trailing: const Icon(Icons.chevron_right,
-                      color: Color(0xFF9E8070)),
-                  onTap: () {
-                    Navigator.of(sheetContext).pop();
-                    context.push(
-                      '/course-material-viewer',
-                      extra: {
-                        'downloadUrl': material.downloadUrl,
-                        'materialName': material.name,
-                      },
-                    );
-                  },
-                )),
+            ...section.materials.map(
+              (material) => ListTile(
+                leading: const Icon(
+                  Icons.picture_as_pdf_outlined,
+                  color: Color(0xFFE87722),
+                ),
+                title: Text(material.name, style: GoogleFonts.montserrat()),
+                trailing: const Icon(
+                  Icons.chevron_right,
+                  color: Color(0xFF9E8070),
+                ),
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.push(
+                    '/course-material-viewer',
+                    extra: {
+                      'downloadUrl': material.downloadUrl,
+                      'materialName': material.name,
+                    },
+                  );
+                },
+              ),
+            ),
             const SizedBox(height: 8),
           ],
         ),
