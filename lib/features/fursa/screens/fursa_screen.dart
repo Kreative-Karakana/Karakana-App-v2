@@ -6,6 +6,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../models/fursa_item.dart';
 import '../providers/fursa_provider.dart';
+import '../widgets/fursa_thumbnail.dart';
 
 class FursaScreen extends StatefulWidget {
   const FursaScreen({super.key});
@@ -400,20 +401,37 @@ class _FeaturedFursaCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: 220,
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(28),
-          gradient: const LinearGradient(
-            colors: [
-              Color(0xFF1A0A00),
-              Color(0xFF3D1800),
-              Color(0xFF7B3A10),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: const Color(0xFF1A0A00),
         ),
         child: Stack(
           children: [
+            Positioned.fill(
+              child: Center(
+                child: FursaThumbnail(
+                  imageUrl: item.imageUrl,
+                  semanticLabel: item.title,
+                  borderRadius: BorderRadius.zero,
+                ),
+              ),
+            ),
+            const Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xF21A0A00),
+                      Color(0xC23D1800),
+                      Color(0x667B3A10),
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  ),
+                ),
+              ),
+            ),
             Positioned(
               top: -42,
               right: -36,
@@ -542,6 +560,11 @@ class _FursaListCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              FursaThumbnail(
+                imageUrl: item.imageUrl,
+                semanticLabel: item.title,
+              ),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   if (item.badgeText.isNotEmpty)

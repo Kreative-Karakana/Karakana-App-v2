@@ -32,6 +32,7 @@ class FursaItem {
   });
 
   factory FursaItem.fromJson(Map<String, dynamic> json) {
+    final rawImageUrl = json['image']?.toString().trim();
     return FursaItem(
       id: json['id'] ?? 0,
       title: json['title']?.toString() ?? '',
@@ -44,7 +45,7 @@ class FursaItem {
       category: json['category']?.toString() ?? '',
       badgeText: json['badge_text']?.toString() ?? '',
       amountText: json['amount_text']?.toString() ?? '',
-      imageUrl: json['image']?.toString(),
+      imageUrl: rawImageUrl == null || rawImageUrl.isEmpty ? null : rawImageUrl,
       isFeatured: json['is_featured'] == true,
       publishedAt: json['published_at']?.toString() ?? '',
     );

@@ -21,6 +21,7 @@ import '../../courses/models/course_model.dart';
 import '../../courses/providers/course_provider.dart';
 import '../../fursa/models/fursa_item.dart';
 import '../../fursa/providers/fursa_provider.dart';
+import '../../fursa/widgets/fursa_thumbnail.dart';
 import '../../notifications/providers/notification_provider.dart';
 import '../widgets/ambassador_code_sheet.dart';
 
@@ -788,47 +789,50 @@ class _HomeFursaCard extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(14),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                if (label.isNotEmpty)
-                  Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.labelSmall.copyWith(
-                      color: const Color(0xFFE87722),
-                    ),
-                  ),
-                if (label.isNotEmpty) const SizedBox(height: 6),
-                Text(
-                  item.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.montserrat(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    height: 1.22,
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                SizedBox(
+                  width: 76,
+                  child: FursaThumbnail(
+                    imageUrl: item.imageUrl,
+                    semanticLabel: item.title,
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                const Spacer(),
-                Row(
-                  children: [
-                    Text(
-                      'Fungua Fursa',
-                      style: AppTextStyles.labelMedium.copyWith(
-                        color: AppColors.primary,
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (label.isNotEmpty)
+                        Text(
+                          label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.labelSmall.copyWith(
+                            color: const Color(0xFFE87722),
+                          ),
+                        ),
+                      if (label.isNotEmpty) const SizedBox(height: 4),
+                      Text(
+                        item.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          height: 1.18,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
                       ),
-                    ),
-                    const Spacer(),
-                    Icon(
-                      Icons.arrow_forward_rounded,
-                      size: 18,
-                      color: Colors.grey[600],
-                    ),
-                  ],
+                      const Spacer(),
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 18,
+                        color: Colors.grey[600],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
