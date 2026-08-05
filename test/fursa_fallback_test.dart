@@ -26,6 +26,30 @@ FursaItem _item({
 }
 
 void main() {
+  group('FursaItem image parsing', () {
+    Map<String, dynamic> jsonWithImage(Object? image) => {
+          'id': 1,
+          'title': 'Opportunity',
+          'image': image,
+        };
+
+    test('keeps a backend thumbnail URL', () {
+      final item = FursaItem.fromJson(
+        jsonWithImage('https://beta.kreativekarakana.co.tz/media/fursa.jpg'),
+      );
+
+      expect(
+        item.imageUrl,
+        'https://beta.kreativekarakana.co.tz/media/fursa.jpg',
+      );
+    });
+
+    test('normalizes null and blank image values to missing', () {
+      expect(FursaItem.fromJson(jsonWithImage(null)).imageUrl, isNull);
+      expect(FursaItem.fromJson(jsonWithImage('  ')).imageUrl, isNull);
+    });
+  });
+
   group('FursaItem expiry', () {
     test('is not expired when the deadline is in the future', () {
       final item = _item(id: 1, deadlineText: '1st January 2099');
