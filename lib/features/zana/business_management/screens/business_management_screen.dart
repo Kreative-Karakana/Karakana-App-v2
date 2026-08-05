@@ -13,6 +13,7 @@ import '../models/business.dart';
 import '../models/business_dashboard_summary.dart';
 import '../models/business_transaction.dart';
 import '../providers/business_management_provider.dart';
+import 'debt_management_screen.dart';
 
 class BusinessManagementScreen extends StatelessWidget {
   const BusinessManagementScreen({super.key});
@@ -296,6 +297,12 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                       _openTransactionSheet(context, isSale: false),
                   isLocked: provider.isReadOnly,
                 ),
+                const SizedBox(height: 10),
+                _ActionButton(
+                  icon: Icons.receipt_long_outlined,
+                  label: 'Madeni ya Wateja',
+                  onTap: () => _openDebtScreen(context),
+                ),
                 const SizedBox(height: 18),
                 _RecentTransactions(
                   provider: provider,
@@ -357,6 +364,19 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
       builder: (_) => ChangeNotifierProvider.value(
         value: context.read<BusinessManagementProvider>(),
         child: const _BusinessEditSheet(),
+      ),
+    );
+  }
+
+  Future<void> _openDebtScreen(BuildContext context) {
+    final provider = context.read<BusinessManagementProvider>();
+    return Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => DebtManagementScreen(
+          currency: provider.business?.currency ?? 'TZS',
+          isReadOnly: provider.isReadOnly,
+          onLockedAction: () => showSubscriptionRequiredDialog(context),
+        ),
       ),
     );
   }
