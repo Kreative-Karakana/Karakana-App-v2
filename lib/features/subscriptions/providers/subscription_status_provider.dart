@@ -50,15 +50,28 @@ class SubscriptionStatusProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _loadEntitlement() async {
+  Future<EntitlementStatus?> _loadEntitlement() async {
     try {
-      _entitlement = await _service.getEntitlementStatus();
+      final entitlement = await _service.getEntitlementStatus();
+      _entitlement = entitlement;
+      return entitlement;
     } catch (e) {
       _errorMessage = ApiClient().parseError(e);
       if (kDebugMode) {
         debugPrint('[SubscriptionStatusProvider] load: $e');
       }
+      return null;
     }
+  }
+
+  /// Re-fetches only the backend-owned entitlement. Unlike [load], this does
+  /// not reload the plan catalog and returns the fresh response so callers can
+  /// make a backend-confirmed post-activation navigation decision.
+  Future<EntitlementStatus?> refreshEntitlement() async {
+    _errorMessage = null;
+    final entitlement = await _loadEntitlement();
+    notifyListeners();
+    return entitlement;
   }
 
   Future<void> loadPlans() async {

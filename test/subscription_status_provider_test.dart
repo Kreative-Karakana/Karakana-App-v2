@@ -81,6 +81,41 @@ void main() {
     });
   });
 
+  group('SubscriptionStatusProvider.refreshEntitlement', () {
+    test('returns the fresh backend entitlement without reloading plans',
+        () async {
+      const active = EntitlementStatus(
+        hasActiveSubscription: true,
+        status: 'active',
+        expiryDate: null,
+      );
+      final api = FakeSubscriptionApi(status: active);
+      final provider = SubscriptionStatusProvider(service: api);
+
+      final result = await provider.refreshEntitlement();
+
+      expect(result, same(active));
+      expect(provider.entitlement, same(active));
+      expect(api.entitlementStatusCalls, 1);
+    });
+
+    test('returns null on failure instead of authorizing from stale state',
+        () async {
+      final api = FakeSubscriptionApi();
+      final provider = SubscriptionStatusProvider(service: api);
+      await provider.refreshEntitlement();
+      api.failNext = DioException(
+        requestOptions: RequestOptions(path: '/api/v1/subscriptions/me/'),
+      );
+
+      final result = await provider.refreshEntitlement();
+
+      expect(result, isNull);
+      expect(provider.entitlement?.hasActiveSubscription, isTrue);
+      expect(provider.errorMessage, isNotNull);
+    });
+  });
+
   group('SubscriptionStatusProvider.activateTrial', () {
     test('a fresh trial returns true and refreshes entitlement', () async {
       const trialEntitlement = EntitlementStatus(

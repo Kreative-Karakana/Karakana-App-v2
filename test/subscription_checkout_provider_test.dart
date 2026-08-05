@@ -103,6 +103,30 @@ void main() {
     expect(refreshes, 0);
   });
 
+  test('timed-out payment remains available for a later status check',
+      () async {
+    final api = FakeSubscriptionApi();
+    final provider = SubscriptionCheckoutProvider(
+      service: api,
+      urlLauncher: launcher(),
+      pollInterval: const Duration(days: 1),
+      maxPollAttempts: 1,
+    );
+
+    await provider.startCheckout(
+      plan: plan,
+      rawPhoneNumber: '0712345678',
+      provider: 'mpesa',
+      refreshEntitlement: () async {},
+    );
+    await provider.checkPendingPayment(refreshEntitlement: () async {});
+
+    expect(provider.state, SubscriptionCheckoutState.timedOut);
+    expect(provider.hasPendingCheckout, isTrue);
+    expect(provider.pendingPlanSlug, plan.slug);
+    provider.dispose();
+  });
+
   test('duplicate polling does not duplicate state transitions', () async {
     final api = FakeSubscriptionApi();
     final provider = SubscriptionCheckoutProvider(

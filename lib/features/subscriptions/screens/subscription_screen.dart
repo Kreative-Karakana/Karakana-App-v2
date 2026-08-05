@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +18,7 @@ import '../models/subscription_plan.dart';
 import '../providers/subscription_checkout_provider.dart';
 import '../providers/subscription_purchase_provider.dart';
 import '../providers/subscription_status_provider.dart';
+import '../utils/post_activation_redirect.dart';
 
 /// Subscription status + upgrade screen (issue #33) — the single place in
 /// Flutter that shows a user what their entitlement actually is. Purely a
@@ -51,6 +55,11 @@ class _SubscriptionViewState extends State<_SubscriptionView>
     with WidgetsBindingObserver {
   final SubscriptionCheckoutConfig _checkoutConfig =
       SubscriptionCheckoutConfig.forPlatform();
+  final PostActivationRedirectCoordinator _redirectCoordinator =
+      PostActivationRedirectCoordinator();
+  SubscriptionCheckoutProvider? _checkoutProvider;
+  SubscriptionPurchaseProvider? _purchaseProvider;
+  bool _activationExpected = false;
 
   @override
   void initState() {
@@ -59,17 +68,84 @@ class _SubscriptionViewState extends State<_SubscriptionView>
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final checkout = context.read<SubscriptionCheckoutProvider>();
+    if (!identical(checkout, _checkoutProvider)) {
+      _checkoutProvider?.removeListener(_onCheckoutChanged);
+      _checkoutProvider = checkout..addListener(_onCheckoutChanged);
+    }
+
+    final purchase = context.read<SubscriptionPurchaseProvider>();
+    if (!identical(purchase, _purchaseProvider)) {
+      _purchaseProvider?.removeListener(_onPurchaseChanged);
+      _purchaseProvider = purchase..addListener(_onPurchaseChanged);
+    }
+  }
+
+  @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _checkoutProvider?.removeListener(_onCheckoutChanged);
+    _purchaseProvider?.removeListener(_onPurchaseChanged);
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed || !mounted) return;
-    final checkout = context.read<SubscriptionCheckoutProvider>();
-    checkout.handleAppResumed(
-      refreshEntitlement: context.read<SubscriptionStatusProvider>().load,
+    unawaited(_handleAppResumed());
+  }
+
+  Future<void> _handleAppResumed() async {
+    final status = context.read<SubscriptionStatusProvider>();
+    await context.read<SubscriptionCheckoutProvider>().handleAppResumed(
+      refreshEntitlement: () async {
+        await status.refreshEntitlement();
+      },
+    );
+    if (mounted && _activationExpected) {
+      await _confirmAndEnterBusiness();
+    }
+  }
+
+  void _onCheckoutChanged() {
+    final state = _checkoutProvider?.state;
+    if (state == SubscriptionCheckoutState.creatingCheckout ||
+        state == SubscriptionCheckoutState.waitingForPayment ||
+        state == SubscriptionCheckoutState.timedOut) {
+      _activationExpected = true;
+    } else if (state == SubscriptionCheckoutState.successful) {
+      _activationExpected = true;
+      unawaited(_confirmAndEnterBusiness());
+    } else if (state == SubscriptionCheckoutState.failed) {
+      _activationExpected = false;
+    }
+  }
+
+  void _onPurchaseChanged() {
+    final purchase = _purchaseProvider;
+    if (purchase == null) return;
+    if (purchase.isLoading || purchase.isPending) {
+      _activationExpected = true;
+    } else if (purchase.purchaseSuccess || purchase.restoreSuccess) {
+      _activationExpected = true;
+      unawaited(_confirmAndEnterBusiness());
+    } else {
+      _activationExpected = false;
+    }
+  }
+
+  Future<bool> _confirmAndEnterBusiness() {
+    if (!mounted || !_activationExpected) return Future.value(false);
+    return _redirectCoordinator.confirmAndRedirect(
+      refreshEntitlement:
+          context.read<SubscriptionStatusProvider>().refreshEntitlement,
+      redirect: () async {
+        if (!mounted) return;
+        context.go(businessManagementRoute);
+      },
     );
   }
 
@@ -137,6 +213,7 @@ class _SubscriptionViewState extends State<_SubscriptionView>
 
   Future<void> _activateTrial(BuildContext context) async {
     final provider = context.read<SubscriptionStatusProvider>();
+    _activationExpected = true;
     final started = await provider.activateTrial();
     if (!context.mounted) return;
     if (started) {
@@ -145,9 +222,13 @@ class _SubscriptionViewState extends State<_SubscriptionView>
         'Jaribio lako la siku 3 limeanza! Karibu ujaribu Usimamizi wa Biashara.',
         isError: false,
       );
+      await _confirmAndEnterBusiness();
     } else if (provider.trialErrorMessage != null) {
+      _activationExpected = false;
       showTopPopup(context, provider.trialErrorMessage!);
       provider.clearTrialError();
+    } else {
+      _activationExpected = false;
     }
   }
 }
@@ -877,7 +958,6 @@ class _PlanCard extends StatelessWidget {
 
     if (purchase.purchaseSuccess) {
       showTopPopup(context, 'Usajili wako umefanikiwa!', isError: false);
-      await context.read<SubscriptionStatusProvider>().load();
     } else if (purchase.errorMessage != null) {
       showTopPopup(context, purchase.errorMessage!);
     }
@@ -911,7 +991,7 @@ class _ExternalCheckoutButton extends StatelessWidget {
     return Consumer<SubscriptionCheckoutProvider>(
       builder: (context, checkout, _) {
         final isCurrentPending = checkout.pendingPlanSlug == plan.slug &&
-            checkout.isWaitingForPayment;
+            checkout.hasPendingCheckout;
         final label = isCurrentPending
             ? 'Nimekamilisha malipo / Angalia hali'
             : 'Lipa kwa Mobile Money';
@@ -967,7 +1047,9 @@ class _ExternalCheckoutButton extends StatelessWidget {
   Future<void> _checkStatus(BuildContext context) async {
     final checkout = context.read<SubscriptionCheckoutProvider>();
     await checkout.checkPendingPayment(
-      refreshEntitlement: context.read<SubscriptionStatusProvider>().load,
+      refreshEntitlement: () async {
+        await context.read<SubscriptionStatusProvider>().refreshEntitlement();
+      },
     );
     if (!context.mounted) return;
     _showCheckoutState(context, checkout);
@@ -991,7 +1073,9 @@ class _ExternalCheckoutButton extends StatelessWidget {
       plan: plan,
       rawPhoneNumber: result.phoneNumber,
       provider: result.provider,
-      refreshEntitlement: context.read<SubscriptionStatusProvider>().load,
+      refreshEntitlement: () async {
+        await context.read<SubscriptionStatusProvider>().refreshEntitlement();
+      },
     );
     if (!context.mounted) return;
     _showCheckoutState(context, checkout);
@@ -1304,7 +1388,6 @@ class _RestorePurchasesButton extends StatelessWidget {
 
     if (purchase.restoreSuccess) {
       showTopPopup(context, 'Ununuzi wako umerejeshwa!', isError: false);
-      await context.read<SubscriptionStatusProvider>().load();
     } else if (purchase.errorMessage != null) {
       showTopPopup(context, purchase.errorMessage!);
     }
