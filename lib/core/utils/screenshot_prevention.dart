@@ -3,10 +3,15 @@ import 'package:flutter/services.dart';
 class ScreenshotPrevention {
   static const _channel = MethodChannel('karakana/screenshot');
 
-  static Future<void> enable() async {
+  static Future<bool> enable() async {
     try {
-      await _channel.invokeMethod('enableScreenshotPrevention');
-    } catch (_) {}
+      final enabled = await _channel.invokeMethod<bool>(
+        'enableScreenshotPrevention',
+      );
+      return enabled ?? false;
+    } catch (_) {
+      return false;
+    }
   }
 
   static Future<void> disable() async {
