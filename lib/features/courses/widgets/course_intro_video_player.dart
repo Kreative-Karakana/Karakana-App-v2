@@ -34,6 +34,12 @@ class _CourseIntroVideoPlayerState extends State<CourseIntroVideoPlayer> {
     if (_isInitialized || _isError) {
       _controller.removeListener(_onPlayerChanged);
       await _controller.dispose();
+      if (mounted) {
+        setState(() {
+          _isInitialized = false;
+          _isError = false;
+        });
+      }
     }
     final streamUrl = _resolvePlaybackUrl(widget.playbackUrl);
     final streamUri = Uri.parse(streamUrl);
@@ -143,13 +149,7 @@ class _CourseIntroVideoPlayerState extends State<CourseIntroVideoPlayer> {
                 ),
                 const SizedBox(height: 10),
                 TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _isError = false;
-                      _isInitialized = false;
-                    });
-                    _initPlayer();
-                  },
+                  onPressed: _initPlayer,
                   child: Text(
                     'Jaribu tena',
                     style: GoogleFonts.montserrat(
@@ -315,11 +315,36 @@ class _FullscreenCourseVideoPlayerState
   @override
   void initState() {
     super.initState();
+    widget.controller.addListener(_onPlayerChanged);
     enterFullscreenOrientation();
+    _scheduleHideControls();
+  }
+
+  void _onPlayerChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _scheduleHideControls() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted && widget.controller.value.isPlaying) {
+        setState(() => _showControls = false);
+      }
+    });
+  }
+
+  void _togglePlayPause() {
+    setState(() => _showControls = true);
+    if (widget.controller.value.isPlaying) {
+      widget.controller.pause();
+    } else {
+      widget.controller.play();
+      _scheduleHideControls();
+    }
   }
 
   @override
   void dispose() {
+    widget.controller.removeListener(_onPlayerChanged);
     restorePortraitOrientation();
     super.dispose();
   }
@@ -357,7 +382,10 @@ class _FullscreenCourseVideoPlayerState
         backgroundColor: Colors.black,
         body: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () => setState(() => _showControls = !_showControls),
+          onTap: () {
+            setState(() => _showControls = !_showControls);
+            if (_showControls && value.isPlaying) _scheduleHideControls();
+          },
           child: Stack(
             fit: StackFit.expand,
             alignment: Alignment.center,
@@ -403,15 +431,7 @@ class _FullscreenCourseVideoPlayerState
                         ),
                         Center(
                           child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                if (widget.controller.value.isPlaying) {
-                                  widget.controller.pause();
-                                } else {
-                                  widget.controller.play();
-                                }
-                              });
-                            },
+                            onTap: _togglePlayPause,
                             child: Container(
                               width: 68,
                               height: 68,
