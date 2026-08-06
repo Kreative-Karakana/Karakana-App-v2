@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../services/zana_lead_capture_service.dart';
+import '../utils/lead_capture_validators.dart';
 
 class InsuranceScreen extends StatefulWidget {
   final ZanaLeadCaptureService? leadCaptureService;
@@ -20,14 +22,17 @@ class InsuranceScreen extends StatefulWidget {
 class _InsuranceScreenState extends State<InsuranceScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final FocusNode _nameFocusNode = FocusNode();
+  final FocusNode _phoneFocusNode = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final ZanaLeadCaptureService _leadCaptureService;
   bool _isSubmitting = false;
   bool _isSubmitted = false;
   String? _submitError;
+  String? _nameServerError;
+  String? _phoneServerError;
 
   static const _color = Color(0xFF3D1800);
-  static const _colorLight = Color(0xFFF5E8E8);
 
   @override
   void initState() {
@@ -37,8 +42,13 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
   }
 
   Future<void> _submitLead() async {
+    if (_isSubmitting || _isSubmitted) return;
+
     FocusScope.of(context).unfocus();
-    if (!_formKey.currentState!.validate()) return;
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      _focusFirstInvalidField();
+      return;
+    }
 
     setState(() {
       _isSubmitting = true;
@@ -48,7 +58,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
     try {
       await _leadCaptureService.captureLead(
         name: _nameController.text.trim(),
-        phone: _phoneController.text.trim(),
+        phone: LeadCaptureValidators.normalizePhone(_phoneController.text),
         source: 'insurance',
       );
       if (!mounted) return;
@@ -58,19 +68,50 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
       });
     } catch (error) {
       if (!mounted) return;
+      final exception = error is ZanaLeadCaptureException ? error : null;
+      final fieldErrors = exception?.fieldErrors ?? const <String, String>{};
       setState(() {
         _isSubmitting = false;
-        _submitError = error is ZanaLeadCaptureException
-            ? error.message
-            : 'Imeshindikana kutuma taarifa. Tafadhali jaribu tena.';
+        _nameServerError = fieldErrors['name'];
+        _phoneServerError = fieldErrors['phone'];
+        _submitError = fieldErrors.isEmpty
+            ? exception?.message ??
+                'Imeshindikana kutuma taarifa. Tafadhali jaribu tena.'
+            : null;
       });
+      if (fieldErrors.isNotEmpty) {
+        _formKey.currentState?.validate();
+        _focusFirstInvalidField();
+      }
     }
+  }
+
+  void _focusFirstInvalidField() {
+    final nameError =
+        _nameServerError ?? LeadCaptureValidators.name(_nameController.text);
+    if (nameError != null) {
+      _nameFocusNode.requestFocus();
+      return;
+    }
+    _phoneFocusNode.requestFocus();
+  }
+
+  void _clearNameServerError(String _) {
+    if (_nameServerError == null) return;
+    setState(() => _nameServerError = null);
+  }
+
+  void _clearPhoneServerError(String _) {
+    if (_phoneServerError == null) return;
+    setState(() => _phoneServerError = null);
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
+    _nameFocusNode.dispose();
+    _phoneFocusNode.dispose();
     super.dispose();
   }
 
@@ -128,7 +169,8 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
             // ── Hero header ──────────────────────────────────────────────
             Container(
               key: const Key('insurance-hero'),
-              height: 260,
+              constraints: const BoxConstraints(minHeight: 260),
+              padding: const EdgeInsets.symmetric(vertical: 28),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: AppColors.zanaGradient,
@@ -230,7 +272,12 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
             ),
 
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.fromLTRB(
+                MediaQuery.sizeOf(context).width <= 375 ? 16 : 24,
+                24,
+                MediaQuery.sizeOf(context).width <= 375 ? 16 : 24,
+                24,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -240,7 +287,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                     style: GoogleFonts.montserrat(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFF1A0A00),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -248,7 +295,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                     'Biashara yoyote inaweza kukabiliana na hatari zisizotarajiwa — moto, wizi, magonjwa, au majanga ya asili. Bima inahakikisha hata wakati mgumu haufutu jasho lako la miaka.',
                     style: GoogleFonts.montserrat(
                       fontSize: 14,
-                      color: const Color(0xFF5C3D2E),
+                      color: AppColors.textSecondary,
                       height: 1.6,
                     ),
                   ),
@@ -260,7 +307,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                     style: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFF1A0A00),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -269,7 +316,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: const [
                           BoxShadow(
@@ -285,7 +332,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                             width: 44,
                             height: 44,
                             decoration: BoxDecoration(
-                              color: _colorLight,
+                              color: AppColors.surfaceWarm,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Icon(
@@ -304,7 +351,8 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                   style: GoogleFonts.montserrat(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF1A0A00),
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
                                 const SizedBox(height: 2),
@@ -312,7 +360,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                   item[2] as String,
                                   style: GoogleFonts.montserrat(
                                     fontSize: 12,
-                                    color: const Color(0xFF9E8070),
+                                    color: AppColors.textTertiary,
                                     height: 1.4,
                                   ),
                                 ),
@@ -332,7 +380,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                     style: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFF1A0A00),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -369,7 +417,9 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                     style: GoogleFonts.montserrat(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF1A0A00),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
                                     ),
                                   ),
                                   const SizedBox(height: 2),
@@ -377,7 +427,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                     step[2],
                                     style: GoogleFonts.montserrat(
                                       fontSize: 13,
-                                      color: const Color(0xFF9E8070),
+                                      color: AppColors.textTertiary,
                                       height: 1.4,
                                     ),
                                   ),
@@ -397,7 +447,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                       style: GoogleFonts.montserrat(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: const Color(0xFF1A0A00),
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -405,17 +455,26 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                       'Jisajili kupata taarifa na bei maalum za awali.',
                       style: GoogleFonts.montserrat(
                         fontSize: 14,
-                        color: const Color(0xFF9E8070),
+                        color: AppColors.textTertiary,
                       ),
                     ),
                     const SizedBox(height: 20),
                     Form(
                       key: _formKey,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
                       child: Column(
                         children: [
                           TextFormField(
                             key: const Key('insurance-name-field'),
                             controller: _nameController,
+                            focusNode: _nameFocusNode,
+                            enabled: !_isSubmitting,
+                            textInputAction: TextInputAction.next,
+                            textCapitalization: TextCapitalization.words,
+                            autofillHints: const [AutofillHints.name],
+                            onChanged: _clearNameServerError,
+                            onFieldSubmitted: (_) =>
+                                _phoneFocusNode.requestFocus(),
                             decoration: InputDecoration(
                               labelText: 'Jina Lako',
                               prefixIcon: const Icon(
@@ -424,12 +483,6 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                               ),
                               filled: true,
                               fillColor: Theme.of(context).cardColor,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(14),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFE8D5C8),
-                                ),
-                              ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: const BorderSide(
@@ -438,15 +491,29 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                 ),
                               ),
                             ),
-                            validator: (v) => v == null || v.isEmpty
-                                ? 'Weka jina lako'
-                                : null,
+                            validator: (value) =>
+                                _nameServerError ??
+                                LeadCaptureValidators.name(value),
                           ),
                           const SizedBox(height: 14),
                           TextFormField(
                             key: const Key('insurance-phone-field'),
                             controller: _phoneController,
+                            focusNode: _phoneFocusNode,
+                            enabled: !_isSubmitting,
                             keyboardType: TextInputType.phone,
+                            textInputAction: TextInputAction.done,
+                            autofillHints: const [
+                              AutofillHints.telephoneNumber,
+                            ],
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                RegExp(r'[0-9+\-() ]'),
+                              ),
+                              LengthLimitingTextInputFormatter(20),
+                            ],
+                            onChanged: _clearPhoneServerError,
+                            onFieldSubmitted: (_) => _submitLead(),
                             decoration: InputDecoration(
                               labelText: 'Nambari ya Simu',
                               prefixIcon: const Icon(
@@ -455,12 +522,6 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                               ),
                               filled: true,
                               fillColor: Theme.of(context).cardColor,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(14),
-                                borderSide: const BorderSide(
-                                  color: Color(0xFFE8D5C8),
-                                ),
-                              ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: const BorderSide(
@@ -469,23 +530,46 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                 ),
                               ),
                             ),
-                            validator: (v) => v == null || v.isEmpty
-                                ? 'Weka nambari ya simu'
-                                : null,
+                            validator: (value) =>
+                                _phoneServerError ??
+                                LeadCaptureValidators.phone(value),
                           ),
                           const SizedBox(height: 24),
                           if (_submitError != null) ...[
                             Semantics(
                               liveRegion: true,
-                              child: Text(
-                                _submitError!,
+                              container: true,
+                              label: 'Hitilafu ya kutuma taarifa',
+                              child: Container(
                                 key: const Key('insurance-submit-error'),
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 13,
-                                  color: Theme.of(context).colorScheme.error,
-                                  height: 1.4,
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: AppColors.errorLight,
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(color: AppColors.error),
                                 ),
-                                textAlign: TextAlign.center,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      _submitError!,
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 13,
+                                        color: AppColors.error,
+                                        height: 1.4,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    TextButton(
+                                      key: const Key(
+                                        'insurance-submit-retry-button',
+                                      ),
+                                      onPressed: _submitLead,
+                                      child: const Text('Jaribu tena'),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             const SizedBox(height: 12),
@@ -504,73 +588,100 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                 elevation: 0,
                               ),
                               onPressed: _isSubmitting ? null : _submitLead,
-                              child: _isSubmitting
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: KarakanaWaveLoader(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
+                              child: Semantics(
+                                liveRegion: _isSubmitting,
+                                label: _isSubmitting
+                                    ? 'Inatuma taarifa zako'
+                                    : 'Niarifu bima inapozinduliwa',
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (_isSubmitting) ...[
+                                      const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: KarakanaWaveLoader(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
                                       ),
-                                    )
-                                  : Text(
-                                      'Niarifu Ninapozinduliwa',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
+                                      const SizedBox(width: 10),
+                                    ],
+                                    Flexible(
+                                      child: Text(
+                                        _isSubmitting
+                                            ? 'Inatuma...'
+                                            : 'Niarifu Ninapozinduliwa',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                     ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ] else ...[
-                    Container(
-                      key: const Key('insurance-submit-success'),
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        color: _colorLight,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: _color.withValues(alpha: 0.3),
+                    Semantics(
+                      liveRegion: true,
+                      container: true,
+                      label:
+                          'Umesajiliwa. Tutakuwasiliana nawe bima inapopatikana.',
+                      child: Container(
+                        key: const Key('insurance-submit-success'),
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: AppColors.successLight,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: AppColors.primary.withValues(alpha: 0.45),
+                          ),
                         ),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            width: 72,
-                            height: 72,
-                            decoration: const BoxDecoration(
-                              color: _color,
-                              shape: BoxShape.circle,
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 72,
+                              height: 72,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.check_rounded,
+                                color: Colors.white,
+                                size: 36,
+                              ),
                             ),
-                            child: const Icon(
-                              Icons.check_rounded,
-                              color: Colors.white,
-                              size: 36,
+                            const SizedBox(height: 16),
+                            Text(
+                              'Umesajiliwa!',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w700,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Umesajiliwa!',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w700,
-                              color: _color,
+                            const SizedBox(height: 8),
+                            Text(
+                              'Asante! Tutakuwasiliana nawe mara Bima inapopatikana.',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 14,
+                                color: AppColors.textSecondary,
+                                height: 1.5,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Asante! Tutakuwasiliana nawe mara Bima inapopatikana.',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 14,
-                              color: const Color(0xFF5C3D2E),
-                              height: 1.5,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],
