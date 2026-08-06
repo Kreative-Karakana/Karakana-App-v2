@@ -365,39 +365,29 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 6,
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.play_circle_outline_rounded,
+                                      size: 19,
+                                      color: Color(0xFFE87722),
                                     ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFE87722)
-                                          .withValues(alpha: 0.12),
-                                      borderRadius: BorderRadius.circular(999),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Utangulizi wa Kozi',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700,
+                                        color: isDark
+                                            ? Colors.white
+                                            : const Color(0xFF3D1800),
+                                      ),
                                     ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const Icon(
-                                          Icons.play_circle_outline,
-                                          size: 16,
-                                          color: Color(0xFFE87722),
-                                        ),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          'Utangulizi wa Kozi',
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w700,
-                                            color: const Color(0xFFE87722),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                               const SizedBox(height: 12),
                               CourseIntroVideoPlayer(
