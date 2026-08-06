@@ -7,7 +7,6 @@ import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/signup_screen.dart';
 import '../../features/auth/screens/verify_email_screen.dart';
 import '../../features/courses/screens/classroom_screen.dart';
-import '../../features/courses/screens/course_material_viewer_screen.dart';
 import '../../features/courses/screens/course_complete_screen.dart';
 import '../../features/courses/screens/course_detail_screen.dart';
 import '../../features/courses/screens/course_reviews_screen.dart';
@@ -72,7 +71,6 @@ class AppRoutes {
   static const String classroom = '/course/:id/classroom';
   static const String courseComplete = '/course/:id/complete';
   static const String lesson = '/lesson/:id';
-  static const String courseMaterialViewer = '/course-material-viewer';
   static const String payment = '/payment/:courseId';
   static const String paymentSuccess = '/payment/success';
   static const String paymentHistory = '/payment/history';
@@ -354,18 +352,6 @@ class AppRouter {
           builder: (context, state) => VideoLessonScreen(
             lessonId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
           ),
-        ),
-        GoRoute(
-          path: AppRoutes.courseMaterialViewer,
-          builder: (context, state) {
-            final extra = state.extra is Map
-                ? Map<String, dynamic>.from(state.extra as Map)
-                : <String, dynamic>{};
-            return CourseMaterialViewerScreen(
-              downloadUrl: (extra['downloadUrl'] as String?) ?? '',
-              materialName: (extra['materialName'] as String?) ?? 'Nyenzo',
-            );
-          },
         ),
         GoRoute(
           path: '/course/:id/complete',
