@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/theme/app_colors.dart';
+
 class InsuranceScreen extends StatefulWidget {
   const InsuranceScreen({super.key});
 
@@ -79,14 +81,11 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
           children: [
             // ── Hero header ──────────────────────────────────────────────
             Container(
+              key: const Key('insurance-hero'),
               height: 260,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF3A0A0A),
-                    Color(0xFF3D1800),
-                    Color(0xFF8A2A2A),
-                  ],
+                  colors: AppColors.zanaGradient,
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),

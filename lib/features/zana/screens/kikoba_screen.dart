@@ -3,6 +3,8 @@ import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/theme/app_colors.dart';
+
 class KikobaScreen extends StatefulWidget {
   const KikobaScreen({super.key});
 
@@ -72,14 +74,11 @@ class _KikobaScreenState extends State<KikobaScreen> {
         child: Column(
           children: [
             Container(
+              key: const Key('kikoba-hero'),
               height: 240,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFE87722),
-                    Color(0xFFE87722),
-                    Color(0xFFBF360C),
-                  ],
+                  colors: AppColors.zanaGradient,
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
