@@ -215,39 +215,17 @@ class BannerModel {
   }
 }
 
-class CourseMaterialModel {
-  final int id;
-  final String name;
-  final String downloadUrl;
-
-  CourseMaterialModel({
-    required this.id,
-    required this.name,
-    required this.downloadUrl,
-  });
-
-  factory CourseMaterialModel.fromJson(Map<String, dynamic> json) {
-    return CourseMaterialModel(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      downloadUrl: json['download_url']?.toString() ?? '',
-    );
-  }
-}
-
 class SectionModel {
   final int id;
   final String title;
   final int ordering;
   final List<LessonModel> lessons;
-  final List<CourseMaterialModel> materials;
 
   SectionModel({
     required this.id,
     required this.title,
     required this.ordering,
     required this.lessons,
-    required this.materials,
   });
 
   factory SectionModel.fromJson(Map<String, dynamic> json) {
@@ -257,18 +235,11 @@ class SectionModel {
             .map((l) => LessonModel.fromJson(l as Map<String, dynamic>))
             .toList()
         : <LessonModel>[];
-    final rawMaterials = json['materials'];
-    final materials = rawMaterials is List
-        ? rawMaterials
-            .map((m) => CourseMaterialModel.fromJson(m as Map<String, dynamic>))
-            .toList()
-        : <CourseMaterialModel>[];
     return SectionModel(
       id: json['id'] ?? 0,
       title: json['title'] ?? '',
       ordering: json['ordering'] ?? 0,
       lessons: lessons,
-      materials: materials,
     );
   }
 }
