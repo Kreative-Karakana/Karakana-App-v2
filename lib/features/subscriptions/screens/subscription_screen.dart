@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +19,7 @@ import '../models/subscription_plan.dart';
 import '../providers/subscription_checkout_provider.dart';
 import '../providers/subscription_purchase_provider.dart';
 import '../providers/subscription_status_provider.dart';
+import '../services/subscription_service.dart';
 import '../utils/post_activation_redirect.dart';
 
 /// Subscription status + upgrade screen (issue #33) — the single place in
@@ -27,16 +29,20 @@ import '../utils/post_activation_redirect.dart';
 /// [IAPService]; it never itself decides whether a feature is unlocked
 /// (see docs/apps/subscriptions.md, Security).
 class SubscriptionScreen extends StatelessWidget {
-  const SubscriptionScreen({super.key});
+  final SubscriptionApi? service;
+
+  const SubscriptionScreen({super.key, this.service});
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => SubscriptionStatusProvider()..load(),
+          create: (_) => SubscriptionStatusProvider(service: service)..load(),
         ),
-        ChangeNotifierProvider(create: (_) => SubscriptionCheckoutProvider()),
+        ChangeNotifierProvider(
+          create: (_) => SubscriptionCheckoutProvider(service: service),
+        ),
         ChangeNotifierProvider(create: (_) => SubscriptionPurchaseProvider()),
       ],
       child: const _SubscriptionView(),
@@ -188,19 +194,17 @@ class _SubscriptionViewState extends State<_SubscriptionView>
               children: [
                 _StatusCard(entitlement: entitlement),
                 const SizedBox(height: 18),
-                if (entitlement.isNone)
-                  _TrialOfferCard(
-                    isActivating: provider.isActivatingTrial,
-                    onStart: () => _activateTrial(context),
-                  ),
-                if (entitlement.isNone) const SizedBox(height: 18),
                 if (!entitlement.isActive || entitlement.isTrial)
                   _PlansSection(
-                      plans: provider.plans,
-                      isLoading: provider.isLoadingPlans,
-                      errorMessage: provider.plansErrorMessage,
-                      checkoutConfig: _checkoutConfig,
-                      onRetry: provider.loadPlans),
+                    plans: provider.plans,
+                    isLoading: provider.isLoadingPlans,
+                    errorMessage: provider.plansErrorMessage,
+                    checkoutConfig: _checkoutConfig,
+                    onRetry: provider.loadPlans,
+                    showTrial: entitlement.isNone,
+                    isActivatingTrial: provider.isActivatingTrial,
+                    onStartTrial: () => _activateTrial(context),
+                  ),
                 const SizedBox(height: 18),
                 const _RestorePurchasesButton(),
               ],
@@ -716,28 +720,106 @@ class _TrialOfferCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton.icon(
-        onPressed: isActivating ? null : onStart,
-        icon: isActivating
-            ? const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                    strokeWidth: 2, color: Colors.white),
-              )
-            : const Icon(Icons.rocket_launch_outlined, size: 18),
-        label: Text(
-          isActivating ? 'Inaanzisha...' : 'Anza Jaribio la Siku 3',
-          style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-        ),
-        style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.button),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Semantics(
+      label: 'Jaribio la siku 3 bila malipo',
+      container: true,
+      child: Material(
+        key: const Key('subscription-choice-trial'),
+        color: Theme.of(context).cardColor,
+        elevation: 2,
+        shadowColor: AppColors.cardShadow,
+        borderRadius: BorderRadius.circular(AppRadius.cardLg),
+        child: Container(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(AppRadius.cardLg),
+            border: Border.all(
+              color: AppColors.primary.withValues(alpha: isDark ? 0.72 : 0.5),
+              width: 1.5,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: AppColors.headerGradient,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(AppRadius.input),
+                ),
+                child: const Icon(
+                  Icons.rocket_launch_outlined,
+                  color: Colors.white,
+                  size: 23,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                'Jaribio la Siku 3',
+                style: GoogleFonts.montserrat(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                'BURE',
+                style: GoogleFonts.montserrat(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                'Jaribu Usimamizi wa Biashara bila malipo kabla ya kuchagua mpango.',
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
+                  height: 1.45,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const Spacer(),
+              const SizedBox(height: AppSpacing.md),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  key: const Key('start-subscription-trial'),
+                  onPressed: isActivating ? null : onStart,
+                  icon: isActivating
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(Icons.arrow_forward_rounded, size: 18),
+                  label: Text(
+                    isActivating ? 'Inaanzisha...' : 'Anza Sasa',
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(46),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.button),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -751,6 +833,9 @@ class _PlansSection extends StatelessWidget {
   final String? errorMessage;
   final SubscriptionCheckoutConfig checkoutConfig;
   final Future<void> Function() onRetry;
+  final bool showTrial;
+  final bool isActivatingTrial;
+  final VoidCallback onStartTrial;
 
   const _PlansSection({
     required this.plans,
@@ -758,6 +843,9 @@ class _PlansSection extends StatelessWidget {
     required this.errorMessage,
     required this.checkoutConfig,
     required this.onRetry,
+    required this.showTrial,
+    required this.isActivatingTrial,
+    required this.onStartTrial,
   });
 
   @override
@@ -765,15 +853,64 @@ class _PlansSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Mipango ya Usajili',
-          style: GoogleFonts.montserrat(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
+        Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.11),
+                borderRadius: BorderRadius.circular(AppRadius.input),
+              ),
+              child: Icon(
+                Icons.workspace_premium_outlined,
+                color: AppColors.primary,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Chagua Mpango Wako',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    'Linganisha chaguo na uchague linalokufaa.',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
+                      color: AppColors.textTertiary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: AppSpacing.md),
+        _AlignedSubscriptionGrid(
+          children: [
+            if (showTrial)
+              _TrialOfferCard(
+                isActivating: isActivatingTrial,
+                onStart: onStartTrial,
+              ),
+            if (!isLoading && errorMessage == null)
+              ...plans.map(
+                (plan) => _PlanCard(
+                  key: Key('subscription-choice-${plan.slug}'),
+                  plan: plan,
+                  checkoutConfig: checkoutConfig,
+                ),
+              ),
+          ],
+        ),
         if (isLoading)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 18),
@@ -781,16 +918,75 @@ class _PlansSection extends StatelessWidget {
               child: KarakanaWaveLoader(color: AppColors.primary, size: 28),
             ),
           )
-        else if (errorMessage != null)
-          _PlansErrorRow(message: errorMessage!, onRetry: onRetry)
-        else if (plans.isEmpty)
-          const _MutedText('Hakuna mipango ya usajili inayopatikana kwa sasa.')
-        else
-          ...plans.map((p) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: _PlanCard(plan: p, checkoutConfig: checkoutConfig),
-              )),
+        else if (errorMessage != null) ...[
+          if (showTrial) const SizedBox(height: AppSpacing.md),
+          _PlansErrorRow(message: errorMessage!, onRetry: onRetry),
+        ] else if (plans.isEmpty && !showTrial)
+          const _MutedText(
+            'Hakuna mipango ya usajili inayopatikana kwa sasa.',
+          ),
       ],
+    );
+  }
+}
+
+class _AlignedSubscriptionGrid extends StatelessWidget {
+  final List<Widget> children;
+
+  const _AlignedSubscriptionGrid({required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    if (children.isEmpty) return const SizedBox.shrink();
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final textScale = MediaQuery.textScalerOf(context).scale(1);
+        final columns = textScale > 1.25 || constraints.maxWidth < 320
+            ? 1
+            : constraints.maxWidth >= 820
+                ? 3
+                : 2;
+        const spacing = AppSpacing.md;
+        final baseRowHeight = columns == 1
+            ? 440.0
+            : columns == 2
+                ? 450.0
+                : 400.0;
+        final rowHeight = baseRowHeight + (math.max(0, textScale - 1) * 160);
+        final rows = <Widget>[];
+
+        for (var start = 0; start < children.length; start += columns) {
+          final rowChildren = <Widget>[];
+          for (var column = 0; column < columns; column++) {
+            final index = start + column;
+            if (column > 0) rowChildren.add(const SizedBox(width: spacing));
+            rowChildren.add(
+              Expanded(
+                child: index < children.length
+                    ? SizedBox.expand(
+                        key: Key('subscription-choice-slot-$index'),
+                        child: children[index],
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            );
+          }
+          rows.add(
+            SizedBox(
+              height: rowHeight,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: rowChildren,
+              ),
+            ),
+          );
+          if (start + columns < children.length) {
+            rows.add(const SizedBox(height: spacing));
+          }
+        }
+
+        return Column(children: rows);
+      },
     );
   }
 }
@@ -835,7 +1031,11 @@ class _PlansErrorRow extends StatelessWidget {
 class _PlanCard extends StatelessWidget {
   final SubscriptionPlan plan;
   final SubscriptionCheckoutConfig checkoutConfig;
-  const _PlanCard({required this.plan, required this.checkoutConfig});
+  const _PlanCard({
+    super.key,
+    required this.plan,
+    required this.checkoutConfig,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -843,101 +1043,120 @@ class _PlanCard extends StatelessWidget {
     final productId = availability.storeProductId;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(
-          color: isDark ? Colors.white10 : AppColors.border,
+    return Material(
+      color: Theme.of(context).cardColor,
+      elevation: 1,
+      shadowColor: AppColors.cardShadow,
+      borderRadius: BorderRadius.circular(AppRadius.cardLg),
+      child: Container(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppRadius.cardLg),
+          border: Border.all(
+            color: isDark ? Colors.white10 : AppColors.border,
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  plan.name,
-                  style: GoogleFonts.montserrat(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.11),
+                borderRadius: BorderRadius.circular(AppRadius.input),
+              ),
+              child: Icon(
+                Icons.workspace_premium_outlined,
+                color: AppColors.primary,
+                size: 23,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              plan.name,
+              style: GoogleFonts.montserrat(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              '${_formatMoney(plan.price)} ${plan.currency}',
+              style: GoogleFonts.montserrat(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              _billingPeriodLabel(plan),
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                color: AppColors.textTertiary,
+              ),
+            ),
+            if (plan.features.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sm),
+              ...plan.features.map(
+                (feature) => Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        color: AppColors.primary,
+                        size: 14,
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Expanded(
+                        child: Text(
+                          feature.name.isNotEmpty ? feature.name : feature.code,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 12,
+                            height: 1.35,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              Text(
-                '${_formatMoney(plan.price)} ${plan.currency}',
-                style: GoogleFonts.montserrat(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.primary,
-                ),
-              ),
             ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            _billingPeriodLabel(plan),
-            style: GoogleFonts.montserrat(
-              fontSize: 12,
-              color: AppColors.textTertiary,
-            ),
-          ),
-          if (plan.features.isNotEmpty) ...[
-            const SizedBox(height: 10),
-            ...plan.features.map(
-              (f) => Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.check_circle_outline,
-                        color: AppColors.primary, size: 14),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        f.name.isNotEmpty ? f.name : f.code,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ),
-                  ],
+            const Spacer(),
+            const SizedBox(height: AppSpacing.md),
+            if (availability.canUseExternalCheckout) ...[
+              _ExternalCheckoutButton(plan: plan),
+              if (availability.canUseStorePurchase &&
+                  productId != null &&
+                  productId.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.sm),
+                _StorePurchaseButton(
+                  productId: productId,
+                  label: 'Nunua kupitia Duka',
+                  onPurchase: _purchase,
                 ),
-              ),
-            ),
-          ],
-          const SizedBox(height: 12),
-          if (availability.canUseExternalCheckout) ...[
-            _ExternalCheckoutButton(plan: plan),
-            if (availability.canUseStorePurchase &&
+              ],
+            ] else if (availability.canUseStorePurchase &&
                 productId != null &&
-                productId.isNotEmpty) ...[
-              const SizedBox(height: 8),
+                productId.isNotEmpty)
               _StorePurchaseButton(
                 productId: productId,
-                label: 'Nunua kupitia Duka',
+                label: 'Nunua Sasa',
                 onPurchase: _purchase,
+              )
+            else
+              _UnavailablePurchaseButton(
+                message: availability.canUseStorePurchase
+                    ? 'Ununuzi wa App Store haujasanidiwa bado'
+                    : 'Ununuzi haupatikani kwenye kifaa hiki',
               ),
-            ],
-          ] else if (availability.canUseStorePurchase &&
-              productId != null &&
-              productId.isNotEmpty)
-            _StorePurchaseButton(
-              productId: productId,
-              label: 'Nunua Sasa',
-              onPurchase: _purchase,
-            )
-          else
-            _UnavailablePurchaseButton(
-              message: availability.canUseStorePurchase
-                  ? 'Ununuzi wa App Store haujasanidiwa bado'
-                  : 'Ununuzi haupatikani kwenye kifaa hiki',
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

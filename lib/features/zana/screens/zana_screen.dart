@@ -17,12 +17,12 @@ class ZanaScreen extends StatefulWidget {
 }
 
 class _ZanaScreenState extends State<ZanaScreen> {
-  static const double _portraitHeaderHeight = 164;
-  static const double _landscapeHeaderHeight = 136;
+  static const double _portraitHeaderHeight = 170;
+  static const double _landscapeHeaderHeight = 150;
   static const double _maxContentWidth = 1040;
-  static const double _minimumCardWidth = 190;
-  static const double _cardHeight = 228;
-  static const double _narrowCardHeight = 304;
+  static const double _minimumCardWidth = 184;
+  static const double _cardHeight = 230;
+  static const double _narrowCardHeight = 286;
 
   final ScrollController _scrollController = ScrollController();
 
@@ -34,9 +34,9 @@ class _ZanaScreenState extends State<ZanaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isLandscape =
-        MediaQuery.orientationOf(context) == Orientation.landscape;
-    final textScale = MediaQuery.textScalerOf(context).scale(1);
+    final mediaQuery = MediaQuery.of(context);
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
+    final textScale = mediaQuery.textScaler.scale(1);
     final baseHeaderHeight =
         isLandscape ? _landscapeHeaderHeight : _portraitHeaderHeight;
     final expandedHeight = baseHeaderHeight + math.max(0, textScale - 1) * 96;
@@ -46,6 +46,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
       body: CustomScrollView(
         key: const Key('zana-scroll-view'),
         controller: _scrollController,
+        physics: const BouncingScrollPhysics(),
         slivers: [
           _ZanaHeader(
             scrollController: _scrollController,
@@ -53,11 +54,9 @@ class _ZanaScreenState extends State<ZanaScreen> {
           ),
           SliverLayoutBuilder(
             builder: (context, constraints) {
-              final layout = _ZanaGridLayout.fromWidth(
-                constraints.crossAxisExtent,
-              );
-              final textScale = MediaQuery.textScalerOf(context).scale(1);
-              final extraTextHeight = math.max(0.0, textScale - 1) * 88;
+              final layout =
+                  _ZanaGridLayout.fromWidth(constraints.crossAxisExtent);
+              final extraTextHeight = math.max(0.0, textScale - 1) * 104;
               final baseCardHeight = constraints.crossAxisExtent < 360
                   ? _narrowCardHeight
                   : _cardHeight;
@@ -65,12 +64,23 @@ class _ZanaScreenState extends State<ZanaScreen> {
               return SliverPadding(
                 padding: EdgeInsets.fromLTRB(
                   layout.horizontalInset,
-                  AppSpacing.lg,
+                  AppSpacing.md,
                   layout.horizontalInset,
                   0,
                 ),
                 sliver: SliverMainAxisGroup(
                   slivers: [
+                    SliverToBoxAdapter(
+                      child: Text(
+                        'Zana Zinazopatikana',
+                        style: AppTextStyles.h3.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                    const SliverToBoxAdapter(
+                      child: SizedBox(height: AppSpacing.md),
+                    ),
                     SliverGrid(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: layout.columnCount,
@@ -146,17 +156,28 @@ class _ZanaHeader extends StatelessWidget {
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.pin,
         background: DecoratedBox(
-          decoration: BoxDecoration(color: AppColors.zanaPrimary),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: AppColors.zanaGradient,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
           child: Stack(
             fit: StackFit.expand,
             children: [
+              const Positioned(
+                top: -54,
+                right: -42,
+                child: _HeaderOrb(size: 190, opacity: 0.05),
+              ),
               Positioned(
-                right: -18,
-                bottom: -24,
+                right: 14,
+                top: 28,
                 child: Icon(
-                  Icons.widgets_outlined,
-                  size: 138,
-                  color: AppColors.textOnDark.withValues(alpha: 0.055),
+                  Icons.business_center_outlined,
+                  size: 112,
+                  color: AppColors.textOnDark.withValues(alpha: 0.05),
                 ),
               ),
               SafeArea(
@@ -164,9 +185,9 @@ class _ZanaHeader extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(
                     AppSpacing.screenPadding.left,
-                    AppSpacing.md,
-                    isNarrow ? AppSpacing.xl : AppSpacing.xxxl + AppSpacing.xl,
-                    AppSpacing.md,
+                    AppSpacing.sm,
+                    isNarrow ? AppSpacing.xl : 116,
+                    AppSpacing.sm,
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -176,17 +197,19 @@ class _ZanaHeader extends StatelessWidget {
                         'Zana',
                         style: AppTextStyles.displayLarge.copyWith(
                           color: AppColors.textOnDark,
-                          fontSize: 34,
+                          fontSize: isNarrow ? 36 : 42,
                           fontWeight: FontWeight.w800,
+                          height: 1,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.xs),
                       Text(
-                        'Zana rahisi na za kuaminika kwa ukuaji wa biashara yako.',
+                        'Zana za Biashara kwa Ujasiriamali',
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textOnDark.withValues(alpha: 0.78),
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.textOnDark.withValues(alpha: 0.72),
+                          height: 1.3,
                         ),
                       ),
                     ],
@@ -195,6 +218,27 @@ class _ZanaHeader extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HeaderOrb extends StatelessWidget {
+  final double size;
+  final double opacity;
+
+  const _HeaderOrb({required this.size, required this.opacity});
+
+  @override
+  Widget build(BuildContext context) {
+    return ExcludeSemantics(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: AppColors.textOnDark.withValues(alpha: opacity),
         ),
       ),
     );
@@ -213,19 +257,11 @@ class _ZanaToolCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
-    final hasLargeText = MediaQuery.textScalerOf(context).scale(1) > 1.25;
-    final isPhoneWidth = MediaQuery.sizeOf(context).width < 600;
-    final useCompactRecommendation =
-        hasLargeText || MediaQuery.sizeOf(context).width < 360;
-    final cardPadding = isPhoneWidth
-        ? const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md - AppSpacing.xs,
-            vertical: AppSpacing.md,
-          )
-        : AppSpacing.cardPadding;
+    final isLive = tool.status == ZanaStatus.live;
+    final isNarrow = MediaQuery.sizeOf(context).width < 360;
+    final cardPadding = isNarrow
+        ? const EdgeInsets.all(AppSpacing.sm)
+        : const EdgeInsets.all(AppSpacing.md);
 
     return Semantics(
       button: true,
@@ -233,145 +269,121 @@ class _ZanaToolCard extends StatelessWidget {
           '${tool.descriptionSwahili}',
       child: Material(
         key: Key('zana-material-${tool.id}'),
-        color: colors.surface,
-        elevation: tool.isRecommended ? 2 : 0,
-        shadowColor: AppColors.cardShadow,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.cardLg),
-          side: BorderSide(
-            color: tool.isRecommended
-                ? AppColors.primary.withValues(alpha: isDark ? 0.78 : 0.58)
-                : colors.outlineVariant.withValues(alpha: isDark ? 0.72 : 0.8),
-            width: tool.isRecommended ? 1.5 : 1,
-          ),
-        ),
+        elevation: 4,
+        shadowColor: AppColors.zanaGradient.first.withValues(alpha: 0.30),
+        borderRadius: BorderRadius.circular(AppRadius.cardLg),
         clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          splashColor: AppColors.primary.withValues(alpha: 0.10),
-          highlightColor: AppColors.primary.withValues(alpha: 0.06),
-          child: Padding(
-            padding: cardPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(
-                          alpha: isDark ? 0.16 : 0.10,
-                        ),
-                        borderRadius: BorderRadius.circular(AppRadius.input),
-                      ),
-                      child: Icon(
-                        tool.icon,
-                        color: AppColors.primary,
-                        size: 24,
-                      ),
-                    ),
-                    const Spacer(),
-                    if (tool.isRecommended)
-                      _ZanaRecommendationBadge(
-                        compact: useCompactRecommendation,
-                      )
-                    else
-                      Container(
-                        key: Key('zana-arrow-${tool.id}'),
-                        width: AppSpacing.xl,
-                        height: AppSpacing.xl,
-                        decoration: BoxDecoration(
-                          color: colors.surfaceContainerHighest,
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.arrow_forward_rounded,
-                          size: 20,
-                          color: colors.onSurfaceVariant,
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Text(
-                  tool.nameSwahili,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.labelLarge.copyWith(
-                    color: colors.onSurface,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Expanded(
-                  child: Text(
-                    tool.descriptionSwahili,
-                    maxLines: 10,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: colors.onSurfaceVariant,
-                      height: 1.45,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ZanaRecommendationBadge extends StatelessWidget {
-  final bool compact;
-
-  const _ZanaRecommendationBadge({required this.compact});
-
-  @override
-  Widget build(BuildContext context) {
-    if (!compact) {
-      return Semantics(
-        label: 'Imependekezwa',
-        excludeSemantics: true,
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 28),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm,
-            vertical: AppSpacing.xs,
-          ),
+        child: Ink(
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(AppRadius.chip),
-          ),
-          child: Text(
-            'Bora',
-            style: AppTextStyles.labelSmall.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.1,
+            gradient: LinearGradient(
+              colors: AppColors.zanaGradient,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
-        ),
-      );
-    }
-
-    return Semantics(
-      label: 'Imependekezwa',
-      child: Container(
-        width: 28,
-        height: 28,
-        decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.10),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          Icons.star_rounded,
-          size: 16,
-          color: AppColors.primary,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              const Positioned(
+                top: -22,
+                right: -22,
+                child: _HeaderOrb(size: 86, opacity: 0.06),
+              ),
+              InkWell(
+                onTap: onTap,
+                splashColor: AppColors.textOnDark.withValues(alpha: 0.10),
+                highlightColor: AppColors.textOnDark.withValues(alpha: 0.06),
+                child: Padding(
+                  padding: cardPadding,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: AppColors.textOnDark.withValues(alpha: 0.14),
+                          borderRadius: BorderRadius.circular(AppRadius.input),
+                        ),
+                        child: Icon(
+                          tool.icon,
+                          color: AppColors.textOnDark,
+                          size: 25,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      Text(
+                        tool.nameSwahili,
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.labelLarge.copyWith(
+                          color: AppColors.textOnDark,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          height: 1.25,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Expanded(
+                        child: Text(
+                          tool.descriptionSwahili,
+                          maxLines: 8,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.textOnDark.withValues(alpha: 0.72),
+                            fontSize: 11,
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      if (isLive)
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Fungua',
+                              style: AppTextStyles.labelSmall.copyWith(
+                                color: AppColors.textOnDark,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.xs),
+                            Icon(
+                              Icons.arrow_forward_rounded,
+                              size: 15,
+                              color: AppColors.textOnDark,
+                            ),
+                          ],
+                        )
+                      else
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.sm,
+                            vertical: AppSpacing.xs,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.textOnDark.withValues(alpha: 0.14),
+                            borderRadius: BorderRadius.circular(AppRadius.chip),
+                            border: Border.all(
+                              color:
+                                  AppColors.textOnDark.withValues(alpha: 0.24),
+                            ),
+                          ),
+                          child: Text(
+                            'Niarifu',
+                            style: AppTextStyles.labelSmall.copyWith(
+                              color: AppColors.textOnDark,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

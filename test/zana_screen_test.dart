@@ -28,6 +28,17 @@ void main() {
     );
   });
 
+  test('Zana uses the approved deep historical gradient', () {
+    expect(
+      AppColors.zanaGradient,
+      const [
+        Color(0xFF1A0A00),
+        Color(0xFF3D1800),
+        Color(0xFF7B3A10),
+      ],
+    );
+  });
+
   testWidgets('small phones render a consistent two-column tool grid',
       (tester) async {
     await _pumpZana(tester, size: const Size(375, 812));
@@ -45,7 +56,7 @@ void main() {
         tester.getTopLeft(third).dy, greaterThan(tester.getTopLeft(first).dy));
     expect(tester.getSize(first).height, tester.getSize(second).height);
     expect(tester.getSize(first).width, greaterThan(160));
-    expect(tester.getSize(first).height, 228);
+    expect(tester.getSize(first).height, 230);
 
     final primaryTitle = tester.renderObject<RenderParagraph>(
       find.text('Usimamizi wa Biashara'),
@@ -54,19 +65,22 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('compact hero and arrow treatment preserve visual balance',
-      (tester) async {
+  testWidgets('restored hero and cards match visual identity', (tester) async {
     await _pumpZana(tester, size: const Size(375, 812));
 
     final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
-    final arrow = find.byKey(const Key('zana-arrow-kikoba'));
     final primaryMaterial = tester.widget<Material>(
       find.byKey(const Key('zana-material-biz-manager')),
     );
 
-    expect(appBar.expandedHeight, 164);
-    expect(tester.getSize(arrow), const Size.square(32));
-    expect(primaryMaterial.elevation, 2);
+    expect(appBar.expandedHeight, 170);
+    expect(find.text('BETA'), findsNothing);
+    expect(find.byKey(const Key('zana-kikoba-announcement')), findsNothing);
+    expect(find.text('e-KIKOBA'), findsNothing);
+    expect(find.text('INAKUJA'), findsNothing);
+    expect(find.text('Arifiwa Unapopatikana'), findsNothing);
+    expect(primaryMaterial.elevation, 4);
+    expect(find.text('Zana Zinazopatikana'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -105,24 +119,36 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('e-Kikoba appears once and card navigation remains active',
+  testWidgets('e-Kikoba appears once and grid navigation remains active',
       (tester) async {
     await _pumpZana(tester, size: const Size(390, 844));
 
+    expect(find.text('e-KIKOBA'), findsNothing);
     expect(find.text('Akiba ya Kikundi'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('zana-card-kikoba')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('destination: /zana/kikoba'), findsOneWidget);
+  });
+
+  testWidgets('business card navigation remains active', (tester) async {
+    await _pumpZana(tester, size: const Size(390, 844));
+
     await tester.tap(find.byKey(const Key('zana-card-biz-manager')));
     await tester.pumpAndSettle();
 
     expect(find.text('destination: /zana/biz-manager'), findsOneWidget);
   });
 
-  testWidgets('cards omit status labels and repeated section introduction',
+  testWidgets('cards use the approved actions without obsolete labels',
       (tester) async {
     await _pumpZana(tester, size: const Size(390, 844));
 
     expect(find.text('Fursa'), findsNothing);
     expect(find.text('Tayari'), findsNothing);
     expect(find.text('Karibu'), findsNothing);
+    expect(find.text('Fungua'), findsNWidgets(2));
+    expect(find.text('Niarifu'), findsNWidgets(2));
     expect(find.text('Zana za biashara'), findsNothing);
     expect(
       find.text(
