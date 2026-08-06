@@ -199,6 +199,7 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
           style: GoogleFonts.montserrat(
             fontSize: 17,
             fontWeight: FontWeight.w700,
+            color: Colors.white,
           ),
         ),
       ),
@@ -1794,7 +1795,7 @@ class _BusinessHeader extends StatelessWidget {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: AppColors.headerGradient,
+          colors: AppColors.zanaGradient,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
