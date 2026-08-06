@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -201,7 +200,8 @@ class _SubscriptionViewState extends State<_SubscriptionView>
                     errorMessage: provider.plansErrorMessage,
                     checkoutConfig: _checkoutConfig,
                     onRetry: provider.loadPlans,
-                    showTrial: entitlement.isNone,
+                    canStartTrial: entitlement.isNone,
+                    isTrialActive: entitlement.isTrial,
                     isActivatingTrial: provider.isActivatingTrial,
                     onStartTrial: () => _activateTrial(context),
                   ),
@@ -438,13 +438,18 @@ class _TrialActiveCard extends StatelessWidget {
           const _StatusBadge(
               label: 'JARIBIO LINAENDELEA', icon: Icons.timelapse_rounded),
           const SizedBox(height: 16),
-          Text(
-            countdown,
-            style: GoogleFonts.montserrat(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-              height: 1.2,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              countdown,
+              maxLines: 1,
+              style: GoogleFonts.montserrat(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+                height: 1.2,
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -699,12 +704,16 @@ class _InfoRow extends StatelessWidget {
           '$label: ',
           style: GoogleFonts.montserrat(fontSize: 12.5, color: labelColor),
         ),
-        Text(
-          value,
-          style: GoogleFonts.montserrat(
-            fontSize: 12.5,
-            fontWeight: FontWeight.w700,
-            color: color,
+        Expanded(
+          child: Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.montserrat(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
           ),
         ),
       ],
@@ -713,10 +722,17 @@ class _InfoRow extends StatelessWidget {
 }
 
 class _TrialOfferCard extends StatelessWidget {
+  final bool canStart;
+  final bool isActive;
   final bool isActivating;
   final VoidCallback onStart;
 
-  const _TrialOfferCard({required this.isActivating, required this.onStart});
+  const _TrialOfferCard({
+    required this.canStart,
+    required this.isActive,
+    required this.isActivating,
+    required this.onStart,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -731,7 +747,10 @@ class _TrialOfferCard extends StatelessWidget {
         shadowColor: AppColors.cardShadow,
         borderRadius: BorderRadius.circular(AppRadius.cardLg),
         child: Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.sm,
+          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppRadius.cardLg),
             border: Border.all(
@@ -742,58 +761,49 @@ class _TrialOfferCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: AppColors.headerGradient,
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Jaribio (Siku 3)',
+                  maxLines: 1,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textPrimary,
                   ),
-                  borderRadius: BorderRadius.circular(AppRadius.input),
-                ),
-                child: const Icon(
-                  Icons.rocket_launch_outlined,
-                  color: Colors.white,
-                  size: 23,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                'Jaribio la Siku 3',
-                style: GoogleFonts.montserrat(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                'BURE',
-                style: GoogleFonts.montserrat(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                'Jaribu Usimamizi wa Biashara bila malipo kabla ya kuchagua mpango.',
+                '0 TZS',
                 style: GoogleFonts.montserrat(
-                  fontSize: 12,
-                  height: 1.45,
-                  color: AppColors.textSecondary,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primary,
                 ),
               ),
-              const Spacer(),
               const SizedBox(height: AppSpacing.md),
               SizedBox(
                 width: double.infinity,
-                child: FilledButton.icon(
+                child: FilledButton(
                   key: const Key('start-subscription-trial'),
-                  onPressed: isActivating ? null : onStart,
-                  icon: isActivating
+                  onPressed: canStart && !isActivating ? onStart : null,
+                  style: FilledButton.styleFrom(
+                    backgroundColor:
+                        isActive ? AppColors.success : AppColors.primary,
+                    disabledBackgroundColor: isActive
+                        ? AppColors.success.withValues(alpha: 0.16)
+                        : AppColors.textTertiary.withValues(alpha: 0.1),
+                    disabledForegroundColor:
+                        isActive ? AppColors.success : AppColors.textTertiary,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(46),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.button),
+                    ),
+                  ),
+                  child: isActivating
                       ? const SizedBox(
                           width: 16,
                           height: 16,
@@ -802,21 +812,17 @@ class _TrialOfferCard extends StatelessWidget {
                             color: Colors.white,
                           ),
                         )
-                      : const Icon(Icons.arrow_forward_rounded, size: 18),
-                  label: Text(
-                    isActivating ? 'Inaanzisha...' : 'Anza Sasa',
-                    style: GoogleFonts.montserrat(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size.fromHeight(46),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.button),
-                    ),
-                  ),
+                      : Text(
+                          isActive
+                              ? 'Imeamilishwa'
+                              : canStart
+                                  ? 'Anza Jaribio'
+                                  : 'Haipatikani',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                 ),
               ),
             ],
@@ -833,7 +839,8 @@ class _PlansSection extends StatelessWidget {
   final String? errorMessage;
   final SubscriptionCheckoutConfig checkoutConfig;
   final Future<void> Function() onRetry;
-  final bool showTrial;
+  final bool canStartTrial;
+  final bool isTrialActive;
   final bool isActivatingTrial;
   final VoidCallback onStartTrial;
 
@@ -843,13 +850,16 @@ class _PlansSection extends StatelessWidget {
     required this.errorMessage,
     required this.checkoutConfig,
     required this.onRetry,
-    required this.showTrial,
+    required this.canStartTrial,
+    required this.isTrialActive,
     required this.isActivatingTrial,
     required this.onStartTrial,
   });
 
   @override
   Widget build(BuildContext context) {
+    final paidPlans = plans.where((plan) => !_isTrialPlan(plan)).toList()
+      ..sort((a, b) => a.durationDays.compareTo(b.durationDays));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -896,13 +906,14 @@ class _PlansSection extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         _AlignedSubscriptionGrid(
           children: [
-            if (showTrial)
-              _TrialOfferCard(
-                isActivating: isActivatingTrial,
-                onStart: onStartTrial,
-              ),
+            _TrialOfferCard(
+              canStart: canStartTrial,
+              isActive: isTrialActive,
+              isActivating: isActivatingTrial,
+              onStart: onStartTrial,
+            ),
             if (!isLoading && errorMessage == null)
-              ...plans.map(
+              ...paidPlans.map(
                 (plan) => _PlanCard(
                   key: Key('subscription-choice-${plan.slug}'),
                   plan: plan,
@@ -919,9 +930,9 @@ class _PlansSection extends StatelessWidget {
             ),
           )
         else if (errorMessage != null) ...[
-          if (showTrial) const SizedBox(height: AppSpacing.md),
+          const SizedBox(height: AppSpacing.md),
           _PlansErrorRow(message: errorMessage!, onRetry: onRetry),
-        ] else if (plans.isEmpty && !showTrial)
+        ] else if (paidPlans.isEmpty)
           const _MutedText(
             'Hakuna mipango ya usajili inayopatikana kwa sasa.',
           ),
@@ -941,18 +952,12 @@ class _AlignedSubscriptionGrid extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final textScale = MediaQuery.textScalerOf(context).scale(1);
-        final columns = textScale > 1.25 || constraints.maxWidth < 320
+        final columns = textScale > 1.25 || constraints.maxWidth < 340
             ? 1
-            : constraints.maxWidth >= 820
+            : constraints.maxWidth >= 960
                 ? 3
                 : 2;
         const spacing = AppSpacing.md;
-        final baseRowHeight = columns == 1
-            ? 440.0
-            : columns == 2
-                ? 450.0
-                : 400.0;
-        final rowHeight = baseRowHeight + (math.max(0, textScale - 1) * 160);
         final rows = <Widget>[];
 
         for (var start = 0; start < children.length; start += columns) {
@@ -963,7 +968,7 @@ class _AlignedSubscriptionGrid extends StatelessWidget {
             rowChildren.add(
               Expanded(
                 child: index < children.length
-                    ? SizedBox.expand(
+                    ? KeyedSubtree(
                         key: Key('subscription-choice-slot-$index'),
                         child: children[index],
                       )
@@ -972,8 +977,7 @@ class _AlignedSubscriptionGrid extends StatelessWidget {
             );
           }
           rows.add(
-            SizedBox(
-              height: rowHeight,
+            IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: rowChildren,
@@ -1028,6 +1032,22 @@ class _PlansErrorRow extends StatelessWidget {
   }
 }
 
+bool _isTrialPlan(SubscriptionPlan plan) =>
+    plan.slug == 'usimamizi-wa-biashara-trial';
+
+String _planDisplayTitle(SubscriptionPlan plan) {
+  switch (plan.durationDays) {
+    case 1:
+      return 'Siku 1';
+    case 7:
+      return 'Wiki 1';
+    case 30:
+      return 'Mwezi 1';
+    default:
+      return plan.name;
+  }
+}
+
 class _PlanCard extends StatelessWidget {
   final SubscriptionPlan plan;
   final SubscriptionCheckoutConfig checkoutConfig;
@@ -1049,7 +1069,10 @@ class _PlanCard extends StatelessWidget {
       shadowColor: AppColors.cardShadow,
       borderRadius: BorderRadius.circular(AppRadius.cardLg),
       child: Container(
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppRadius.cardLg),
           border: Border.all(
@@ -1059,22 +1082,10 @@ class _PlanCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 46,
-              height: 46,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.11),
-                borderRadius: BorderRadius.circular(AppRadius.input),
-              ),
-              child: Icon(
-                Icons.workspace_premium_outlined,
-                color: AppColors.primary,
-                size: 23,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
             Text(
-              plan.name,
+              _planDisplayTitle(plan),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: GoogleFonts.montserrat(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
@@ -1082,52 +1093,29 @@ class _PlanCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.xs),
-            Text(
-              '${_formatMoney(plan.price)} ${plan.currency}',
-              style: GoogleFonts.montserrat(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              _billingPeriodLabel(plan),
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                color: AppColors.textTertiary,
-              ),
-            ),
-            if (plan.features.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.sm),
-              ...plan.features.map(
-                (feature) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.check_circle_outline,
-                        color: AppColors.primary,
-                        size: 14,
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                      Expanded(
-                        child: Text(
-                          feature.name.isNotEmpty ? feature.name : feature.code,
-                          style: GoogleFonts.montserrat(
-                            fontSize: 12,
-                            height: 1.35,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ),
-                    ],
+            Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: _formatMoney(plan.price),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
-                ),
+                  TextSpan(
+                    text: ' ${plan.currency}',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
               ),
-            ],
-            const Spacer(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: AppColors.primary),
+            ),
             const SizedBox(height: AppSpacing.md),
             if (availability.canUseExternalCheckout) ...[
               _ExternalCheckoutButton(plan: plan),
@@ -1152,8 +1140,8 @@ class _PlanCard extends StatelessWidget {
             else
               _UnavailablePurchaseButton(
                 message: availability.canUseStorePurchase
-                    ? 'Ununuzi wa App Store haujasanidiwa bado'
-                    : 'Ununuzi haupatikani kwenye kifaa hiki',
+                    ? 'App Store bado haijaunganishwa'
+                    : 'Ununuzi haupatikani hapa',
               ),
           ],
         ),
@@ -1207,17 +1195,20 @@ class _ExternalCheckoutButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isCompact = MediaQuery.sizeOf(context).width < 600;
     return Consumer<SubscriptionCheckoutProvider>(
       builder: (context, checkout, _) {
         final isCurrentPending = checkout.pendingPlanSlug == plan.slug &&
             checkout.hasPendingCheckout;
         final label = isCurrentPending
-            ? 'Nimekamilisha malipo / Angalia hali'
-            : 'Lipa kwa Mobile Money';
+            ? isCompact
+                ? 'Angalia Malipo'
+                : 'Nimekamilisha malipo / Angalia hali'
+            : 'Endelea na Malipo';
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            FilledButton.icon(
+            FilledButton(
               onPressed: checkout.isBusy && !isCurrentPending
                   ? null
                   : () => isCurrentPending
@@ -1225,26 +1216,30 @@ class _ExternalCheckoutButton extends StatelessWidget {
                       : _showMobileMoneySheet(context, plan),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
-                padding: const EdgeInsets.symmetric(vertical: 13),
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppRadius.button),
                 ),
               ),
-              icon: checkout.state == SubscriptionCheckoutState.creatingCheckout
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white),
-                    )
-                  : const Icon(Icons.phone_android_rounded, size: 18),
-              label: Text(
-                label,
-                style: GoogleFonts.montserrat(
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
+              child:
+                  checkout.state == SubscriptionCheckoutState.creatingCheckout
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          label,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.montserrat(
+                            fontSize: isCompact ? 11.5 : 14,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
             ),
             if (isCurrentPending) ...[
               const SizedBox(height: 8),
@@ -1380,22 +1375,48 @@ class _UnavailablePurchaseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton(
-        onPressed: null,
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 13),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.button),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Semantics(
+      label: message,
+      child: Container(
+        key: const Key('subscription-purchase-unavailable'),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.textTertiary.withValues(
+            alpha: isDark ? 0.12 : 0.08,
+          ),
+          borderRadius: BorderRadius.circular(AppRadius.input),
+          border: Border.all(
+            color: AppColors.textTertiary.withValues(
+              alpha: isDark ? 0.24 : 0.18,
+            ),
           ),
         ),
-        child: Text(
-          message,
-          style: GoogleFonts.montserrat(
-            fontWeight: FontWeight.w600,
-            color: AppColors.textTertiary,
-          ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              Icons.info_outline_rounded,
+              size: 17,
+              color: AppColors.textTertiary,
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            Expanded(
+              child: Text(
+                message,
+                style: GoogleFonts.montserrat(
+                  fontSize: 11.5,
+                  height: 1.35,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textTertiary,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
