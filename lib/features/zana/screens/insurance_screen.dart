@@ -3,9 +3,15 @@ import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../services/zana_lead_capture_service.dart';
 
 class InsuranceScreen extends StatefulWidget {
-  const InsuranceScreen({super.key});
+  final ZanaLeadCaptureService? leadCaptureService;
+
+  const InsuranceScreen({
+    super.key,
+    this.leadCaptureService,
+  });
 
   @override
   State<InsuranceScreen> createState() => _InsuranceScreenState();
@@ -15,11 +21,51 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late final ZanaLeadCaptureService _leadCaptureService;
   bool _isSubmitting = false;
   bool _isSubmitted = false;
+  String? _submitError;
 
   static const _color = Color(0xFF3D1800);
   static const _colorLight = Color(0xFFF5E8E8);
+
+  @override
+  void initState() {
+    super.initState();
+    _leadCaptureService =
+        widget.leadCaptureService ?? ApiZanaLeadCaptureService();
+  }
+
+  Future<void> _submitLead() async {
+    FocusScope.of(context).unfocus();
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _isSubmitting = true;
+      _submitError = null;
+    });
+
+    try {
+      await _leadCaptureService.captureLead(
+        name: _nameController.text.trim(),
+        phone: _phoneController.text.trim(),
+        source: 'insurance',
+      );
+      if (!mounted) return;
+      setState(() {
+        _isSubmitting = false;
+        _isSubmitted = true;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _isSubmitting = false;
+        _submitError = error is ZanaLeadCaptureException
+            ? error.message
+            : 'Imeshindikana kutuma taarifa. Tafadhali jaribu tena.';
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -368,6 +414,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                       child: Column(
                         children: [
                           TextFormField(
+                            key: const Key('insurance-name-field'),
                             controller: _nameController,
                             decoration: InputDecoration(
                               labelText: 'Jina Lako',
@@ -397,6 +444,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                           ),
                           const SizedBox(height: 14),
                           TextFormField(
+                            key: const Key('insurance-phone-field'),
                             controller: _phoneController,
                             keyboardType: TextInputType.phone,
                             decoration: InputDecoration(
@@ -426,9 +474,26 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                 : null,
                           ),
                           const SizedBox(height: 24),
+                          if (_submitError != null) ...[
+                            Semantics(
+                              liveRegion: true,
+                              child: Text(
+                                _submitError!,
+                                key: const Key('insurance-submit-error'),
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 13,
+                                  color: Theme.of(context).colorScheme.error,
+                                  height: 1.4,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
+                              key: const Key('insurance-submit-button'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: _color,
                                 foregroundColor: Colors.white,
@@ -438,21 +503,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                                 ),
                                 elevation: 0,
                               ),
-                              onPressed: _isSubmitting
-                                  ? null
-                                  : () async {
-                                      if (_formKey.currentState!.validate()) {
-                                        setState(() => _isSubmitting = true);
-                                        await Future.delayed(
-                                          const Duration(milliseconds: 800),
-                                        );
-                                        if (!mounted) return;
-                                        setState(() {
-                                          _isSubmitting = false;
-                                          _isSubmitted = true;
-                                        });
-                                      }
-                                    },
+                              onPressed: _isSubmitting ? null : _submitLead,
                               child: _isSubmitting
                                   ? const SizedBox(
                                       width: 20,
@@ -476,6 +527,7 @@ class _InsuranceScreenState extends State<InsuranceScreen> {
                     ),
                   ] else ...[
                     Container(
+                      key: const Key('insurance-submit-success'),
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         color: _colorLight,
