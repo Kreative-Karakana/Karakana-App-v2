@@ -99,6 +99,15 @@ void main() {
       );
       expect(provider.isSubmitting, isTrue);
 
+      final overlapping = await provider.createSale(
+        amount: '6000.00',
+        category: 'huduma',
+        transactionDate: DateTime(2026, 7, 1),
+      );
+
+      expect(overlapping, isFalse);
+      expect(service.createCalls, hasLength(1));
+
       await future;
       expect(provider.isSubmitting, isFalse);
     });

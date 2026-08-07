@@ -7,6 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_text_styles.dart';
 import '../../../../widgets/common/karakana_wave_loader.dart';
 import '../../../../widgets/common/top_popup.dart';
 import '../models/business.dart';
@@ -16,12 +18,14 @@ import '../providers/business_management_provider.dart';
 import 'debt_management_screen.dart';
 
 class BusinessManagementScreen extends StatelessWidget {
-  const BusinessManagementScreen({super.key});
+  final BusinessManagementProvider? provider;
+
+  const BusinessManagementScreen({super.key, this.provider});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => BusinessManagementProvider()..loadInitial(),
+      create: (_) => (provider ?? BusinessManagementProvider())..loadInitial(),
       child: const _BusinessManagementView(),
     );
   }
@@ -210,6 +214,15 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
           }
 
           final error = provider.errorMessage;
+          if (error != null &&
+              error.isNotEmpty &&
+              provider.business == null &&
+              !provider.hasNoBusiness) {
+            return _BusinessErrorState(
+              message: error,
+              onRetry: provider.loadInitial,
+            );
+          }
           if (error != null && error.isNotEmpty) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (!mounted) return;
@@ -256,7 +269,6 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                     ),
                   ],
                   const SizedBox(height: 16),
-                  const SizedBox(height: 14),
                   const _HowItWorksCard(),
                   const SizedBox(height: 14),
                   _BusinessSetupCard(provider: provider),
@@ -307,6 +319,7 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                 const SizedBox(height: 18),
                 _RecentTransactions(
                   provider: provider,
+                  currency: provider.business?.currency ?? 'TZS',
                   onEdit: (transaction) =>
                       _openTransactionSheet(context, transaction: transaction),
                   onDelete: _confirmAndDelete,
@@ -317,6 +330,7 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
                 const SizedBox(height: 18),
                 _HistorySection(
                   provider: provider,
+                  currency: provider.business?.currency ?? 'TZS',
                   onEdit: (transaction) =>
                       _openTransactionSheet(context, transaction: transaction),
                   onDelete: _confirmAndDelete,
@@ -455,11 +469,13 @@ class _BusinessSetupCard extends StatefulWidget {
 class _BusinessSetupCardState extends State<_BusinessSetupCard> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
+  final _nameFocusNode = FocusNode();
   String _businessType = 'kinyozi';
 
   @override
   void dispose() {
     _nameController.dispose();
+    _nameFocusNode.dispose();
     super.dispose();
   }
 
@@ -468,6 +484,7 @@ class _BusinessSetupCardState extends State<_BusinessSetupCard> {
     return _SurfaceCard(
       child: Form(
         key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -478,8 +495,13 @@ class _BusinessSetupCardState extends State<_BusinessSetupCard> {
             const SizedBox(height: 16),
             _KarakanaTextField(
               controller: _nameController,
+              focusNode: _nameFocusNode,
               label: 'Jina la biashara',
               hint: 'Mfano: Kinyozi cha Mtaa',
+              textCapitalization: TextCapitalization.words,
+              textInputAction: TextInputAction.done,
+              autofillHints: const [AutofillHints.organizationName],
+              onFieldSubmitted: (_) => _submit(),
               validator: (value) {
                 if ((value ?? '').trim().isEmpty) {
                   return 'Weka jina la biashara.';
@@ -512,7 +534,11 @@ class _BusinessSetupCardState extends State<_BusinessSetupCard> {
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (widget.provider.isSubmitting) return;
+    if (!_formKey.currentState!.validate()) {
+      _nameFocusNode.requestFocus();
+      return;
+    }
     if (widget.provider.isReadOnly) {
       await showSubscriptionRequiredDialog(context);
       return;
@@ -569,13 +595,15 @@ class _DashboardSummary extends StatelessWidget {
         LayoutBuilder(
           builder: (context, constraints) {
             final columns = constraints.maxWidth >= 680 ? 3 : 2;
+            final textScale =
+                MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 1.35);
             return GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               crossAxisCount: columns,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
-              childAspectRatio: columns == 3 ? 2.0 : 1.35,
+              childAspectRatio: (columns == 3 ? 2.0 : 1.35) / textScale,
               children: [
                 _MetricCard(
                   label: 'Mauzo ya Leo',
@@ -653,6 +681,7 @@ class _ActionRow extends StatelessWidget {
 
 class _RecentTransactions extends StatelessWidget {
   final BusinessManagementProvider provider;
+  final String currency;
   final ValueChanged<BusinessTransaction> onEdit;
   final ValueChanged<BusinessTransaction> onDelete;
   final VoidCallback onRecordSale;
@@ -660,6 +689,7 @@ class _RecentTransactions extends StatelessWidget {
 
   const _RecentTransactions({
     required this.provider,
+    required this.currency,
     required this.onEdit,
     required this.onDelete,
     required this.onRecordSale,
@@ -693,6 +723,7 @@ class _RecentTransactions extends StatelessWidget {
             ...recent.map(
               (item) => _TransactionTile(
                 transaction: item,
+                currency: currency,
                 onTap: () => onEdit(item),
                 onDelete: () => onDelete(item),
                 isDeleting: deletingTransactionId == item.id,
@@ -706,6 +737,7 @@ class _RecentTransactions extends StatelessWidget {
 
 class _HistorySection extends StatefulWidget {
   final BusinessManagementProvider provider;
+  final String currency;
   final ValueChanged<BusinessTransaction> onEdit;
   final ValueChanged<BusinessTransaction> onDelete;
   final VoidCallback onRecordSale;
@@ -713,6 +745,7 @@ class _HistorySection extends StatefulWidget {
 
   const _HistorySection({
     required this.provider,
+    required this.currency,
     required this.onEdit,
     required this.onDelete,
     required this.onRecordSale,
@@ -806,6 +839,11 @@ class _HistorySectionState extends State<_HistorySection> {
                 child: TextField(
                   controller: _searchController,
                   onChanged: _onSearchChanged,
+                  textInputAction: TextInputAction.search,
+                  onSubmitted: (value) {
+                    _debounce?.cancel();
+                    widget.provider.loadTransactions(search: value);
+                  },
                   style: GoogleFonts.montserrat(fontSize: 13),
                   decoration: _inputDecoration(
                     'Tafuta muamala',
@@ -872,11 +910,14 @@ class _HistorySectionState extends State<_HistorySection> {
             )
           else if (provider.transactions.isEmpty)
             provider.hasActiveFilters
-                ? const _EmptyState(
+                ? _EmptyState(
                     title: 'Hakuna miamala inayolingana',
                     message:
                         'Jaribu kubadilisha vichujio au neno la utafutaji, '
                         'au gusa "Futa Vichujio" kuona miamala yote.',
+                    actionLabel: 'Futa Vichujio',
+                    actionIcon: Icons.filter_alt_off_rounded,
+                    onAction: provider.resetFilters,
                   )
                 : _EmptyState(
                     title: 'Hakuna historia bado',
@@ -888,6 +929,7 @@ class _HistorySectionState extends State<_HistorySection> {
             ...provider.transactions.map(
               (item) => _TransactionTile(
                 transaction: item,
+                currency: widget.currency,
                 onTap: () => widget.onEdit(item),
                 onDelete: () => widget.onDelete(item),
                 isDeleting: widget.deletingTransactionId == item.id,
@@ -909,41 +951,52 @@ class _FilterIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        width: 46,
-        height: 46,
-        decoration: BoxDecoration(
-          color: active ? AppColors.primaryDark : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: active ? AppColors.primaryDark : AppColors.inputBorder,
-          ),
-        ),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Icon(
-              Icons.tune_rounded,
-              size: 20,
-              color: active ? Colors.white : AppColors.textSecondary,
-            ),
-            if (active)
-              Positioned(
-                top: 8,
-                right: 9,
-                child: Container(
-                  width: 7,
-                  height: 7,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
+    return Semantics(
+      button: true,
+      selected: active,
+      label: active ? 'Vichujio vimetumika' : 'Chuja miamala',
+      child: Tooltip(
+        message: 'Chuja miamala',
+        child: Material(
+          color: active ? AppColors.primaryDark : AppColors.surface,
+          borderRadius: BorderRadius.circular(AppRadius.input),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppRadius.input),
+            child: Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppRadius.input),
+                border: Border.all(
+                  color: active ? AppColors.primaryDark : AppColors.inputBorder,
                 ),
               ),
-          ],
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Icon(
+                    Icons.tune_rounded,
+                    size: 20,
+                    color: active ? Colors.white : AppColors.textSecondary,
+                  ),
+                  if (active)
+                    Positioned(
+                      top: 8,
+                      right: 9,
+                      child: Container(
+                        width: 7,
+                        height: 7,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -1061,16 +1114,15 @@ class _RemovableChip extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 4),
-          InkWell(
-            onTap: onRemoved,
-            borderRadius: BorderRadius.circular(999),
-            child: Padding(
-              padding: const EdgeInsets.all(3),
-              child: Icon(
-                Icons.close_rounded,
-                size: 14,
-                color: AppColors.primaryDark,
-              ),
+          IconButton(
+            onPressed: onRemoved,
+            tooltip: 'Ondoa kichujio $label',
+            visualDensity: VisualDensity.compact,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            icon: Icon(
+              Icons.close_rounded,
+              size: 16,
+              color: AppColors.primaryDark,
             ),
           ),
         ],
@@ -1111,6 +1163,7 @@ class _TransactionFilterSheetState extends State<_TransactionFilterSheet> {
   late DateTime? _dateFrom;
   late DateTime? _dateTo;
   late String _ordering;
+  String? _dateError;
 
   @override
   void initState() {
@@ -1142,21 +1195,10 @@ class _TransactionFilterSheetState extends State<_TransactionFilterSheet> {
       initialDate: (isFrom ? _dateFrom : _dateTo) ?? now,
       firstDate: DateTime(2020),
       lastDate: now,
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
-              primary: AppColors.primary,
-              onPrimary: Colors.white,
-              onSurface: AppColors.textPrimary,
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
     if (picked == null) return;
     setState(() {
+      _dateError = null;
       if (isFrom) {
         _dateFrom = picked;
       } else {
@@ -1173,161 +1215,190 @@ class _TransactionFilterSheetState extends State<_TransactionFilterSheet> {
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.sizeOf(context).height * 0.9,
+          ),
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
           decoration: BoxDecoration(
             color: AppColors.background,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: AppColors.border,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                ),
-              ),
-              Text(
-                'Chuja Miamala',
-                style: GoogleFonts.montserrat(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Aina',
-                style: GoogleFonts.montserrat(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _FilterChip(
-                    label: 'Yote',
-                    selected: _transactionType == null,
-                    onTap: () => setState(() {
-                      _transactionType = null;
-                      _category = '';
-                    }),
-                  ),
-                  _FilterChip(
-                    label: 'Mauzo',
-                    selected: _transactionType == 'sale',
-                    onTap: () => setState(() {
-                      _transactionType = 'sale';
-                      _category = '';
-                    }),
-                  ),
-                  _FilterChip(
-                    label: 'Matumizi',
-                    selected: _transactionType == 'expense',
-                    onTap: () => setState(() {
-                      _transactionType = 'expense';
-                      _category = '';
-                    }),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              _KarakanaDropdown(
-                label: 'Aina ndogo (Category)',
-                value: _category,
-                items: _categoryOptions,
-                onChanged: (value) => setState(() => _category = value ?? ''),
-              ),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  Expanded(
-                    child: _OptionalDateField(
-                      label: 'Kuanzia tarehe',
-                      date: _dateFrom,
-                      onTap: () => _pickDate(isFrom: true),
-                      onClear: () => setState(() => _dateFrom = null),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: AppColors.border,
+                      borderRadius: BorderRadius.circular(999),
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _OptionalDateField(
-                      label: 'Hadi tarehe',
-                      date: _dateTo,
-                      onTap: () => _pickDate(isFrom: false),
-                      onClear: () => setState(() => _dateTo = null),
-                    ),
+                ),
+                Text(
+                  'Chuja Miamala',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textPrimary,
                   ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              _KarakanaDropdown(
-                label: 'Panga kwa',
-                value: _ordering,
-                items: _sortOptions,
-                onChanged: (value) => setState(() => _ordering = value ?? ''),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => setState(() {
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Aina',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _FilterChip(
+                      label: 'Yote',
+                      selected: _transactionType == null,
+                      onTap: () => setState(() {
                         _transactionType = null;
                         _category = '';
-                        _dateFrom = null;
-                        _dateTo = null;
-                        _ordering = '';
                       }),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        side: BorderSide(color: AppColors.inputBorder),
-                      ),
-                      child: Text(
-                        'Futa Vichujio',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textSecondary,
-                        ),
+                    ),
+                    _FilterChip(
+                      label: 'Mauzo',
+                      selected: _transactionType == 'sale',
+                      onTap: () => setState(() {
+                        _transactionType = 'sale';
+                        _category = '';
+                      }),
+                    ),
+                    _FilterChip(
+                      label: 'Matumizi',
+                      selected: _transactionType == 'expense',
+                      onTap: () => setState(() {
+                        _transactionType = 'expense';
+                        _category = '';
+                      }),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _KarakanaDropdown(
+                  label: 'Aina ndogo (Category)',
+                  value: _category,
+                  items: _categoryOptions,
+                  onChanged: (value) => setState(() => _category = value ?? ''),
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _OptionalDateField(
+                        label: 'Kuanzia tarehe',
+                        date: _dateFrom,
+                        onTap: () => _pickDate(isFrom: true),
+                        onClear: () => setState(() => _dateFrom = null),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _PrimaryButton(
-                      label: 'Tumia Vichujio',
-                      isLoading: false,
-                      onPressed: () => Navigator.pop(
-                        context,
-                        _TransactionFilterResult(
-                          transactionType: _transactionType,
-                          category: _category.isEmpty ? null : _category,
-                          dateFrom: _dateFrom,
-                          dateTo: _dateTo,
-                          ordering: _ordering.isEmpty ? null : _ordering,
-                        ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _OptionalDateField(
+                        label: 'Hadi tarehe',
+                        date: _dateTo,
+                        onTap: () => _pickDate(isFrom: false),
+                        onClear: () => setState(() => _dateTo = null),
+                      ),
+                    ),
+                  ],
+                ),
+                if (_dateError != null) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      _dateError!,
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.error,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
                 ],
-              ),
-            ],
+                const SizedBox(height: 14),
+                _KarakanaDropdown(
+                  label: 'Panga kwa',
+                  value: _ordering,
+                  items: _sortOptions,
+                  onChanged: (value) => setState(() => _ordering = value ?? ''),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => setState(() {
+                          _transactionType = null;
+                          _category = '';
+                          _dateFrom = null;
+                          _dateTo = null;
+                          _ordering = '';
+                          _dateError = null;
+                        }),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          side: BorderSide(color: AppColors.inputBorder),
+                        ),
+                        child: Text(
+                          'Futa Vichujio',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _PrimaryButton(
+                        label: 'Tumia Vichujio',
+                        isLoading: false,
+                        onPressed: _applyFilters,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  void _applyFilters() {
+    if (_dateFrom != null && _dateTo != null && _dateFrom!.isAfter(_dateTo!)) {
+      setState(() {
+        _dateError = 'Tarehe ya kuanzia lazima iwe kabla ya tarehe ya mwisho.';
+      });
+      return;
+    }
+    Navigator.pop(
+      context,
+      _TransactionFilterResult(
+        transactionType: _transactionType,
+        category: _category.isEmpty ? null : _category,
+        dateFrom: _dateFrom,
+        dateTo: _dateTo,
+        ordering: _ordering.isEmpty ? null : _ordering,
       ),
     );
   }
@@ -1439,6 +1510,8 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _amountFocusNode = FocusNode();
+  final _descriptionFocusNode = FocusNode();
   late String _category;
   late DateTime _date;
 
@@ -1460,6 +1533,8 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
   void dispose() {
     _amountController.dispose();
     _descriptionController.dispose();
+    _amountFocusNode.dispose();
+    _descriptionFocusNode.dispose();
     super.dispose();
   }
 
@@ -1477,6 +1552,9 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.92,
+        ),
         decoration: BoxDecoration(
           color: AppColors.background,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
@@ -1486,79 +1564,92 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
           top: false,
           child: Form(
             key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 42,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: AppColors.border,
-                      borderRadius: BorderRadius.circular(4),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 42,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: AppColors.border,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                _SectionTitle(
-                  title: title,
-                  subtitle: isEditing
-                      ? 'Unahariri muamala uliopo. Mabadiliko yatahifadhiwa baada ya kubonyeza Hifadhi Mabadiliko.'
-                      : 'Jaza taarifa za muamala.',
-                ),
-                if (isEditing) ...[
-                  const SizedBox(height: 12),
-                  _EditingBanner(recordLabel: recordLabel),
-                ],
-                const SizedBox(height: 16),
-                _KarakanaTextField(
-                  controller: _amountController,
-                  label: 'Kiasi',
-                  hint: 'Mfano: 15000',
-                  keyboardType: TextInputType.number,
-                  inputFormatters: const [_ThousandsSeparatorInputFormatter()],
-                  validator: (value) {
-                    final amount = int.tryParse(
-                      _cleanAmount((value ?? '').trim()),
-                    );
-                    if (amount == null || amount <= 0) {
-                      return 'Weka kiasi sahihi.';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 12),
-                _KarakanaDropdown(
-                  label: categoryLabel,
-                  value: _category,
-                  items: widget.isSale ? _saleCategories : _expenseCategories,
-                  onChanged: (value) {
-                    if (value != null) setState(() => _category = value);
-                  },
-                ),
-                const SizedBox(height: 12),
-                _DatePickerField(
-                  date: _date,
-                  onChanged: (date) => setState(() => _date = date),
-                ),
-                const SizedBox(height: 12),
-                _KarakanaTextField(
-                  controller: _descriptionController,
-                  label: 'Maelezo',
-                  hint: 'Si lazima',
-                  maxLines: 2,
-                ),
-                const SizedBox(height: 18),
-                SizedBox(
-                  width: double.infinity,
-                  child: _PrimaryButton(
-                    label: buttonLabel,
-                    isLoading: provider.isSubmitting,
-                    onPressed: _submit,
+                  const SizedBox(height: 16),
+                  _SectionTitle(
+                    title: title,
+                    subtitle: isEditing
+                        ? 'Unahariri muamala uliopo. Mabadiliko yatahifadhiwa baada ya kubonyeza Hifadhi Mabadiliko.'
+                        : 'Jaza taarifa za muamala.',
                   ),
-                ),
-              ],
+                  if (isEditing) ...[
+                    const SizedBox(height: 12),
+                    _EditingBanner(recordLabel: recordLabel),
+                  ],
+                  const SizedBox(height: 16),
+                  _KarakanaTextField(
+                    controller: _amountController,
+                    focusNode: _amountFocusNode,
+                    label: 'Kiasi',
+                    hint: 'Mfano: 15000',
+                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.next,
+                    autofocus: !isEditing,
+                    onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                    inputFormatters: const [
+                      _ThousandsSeparatorInputFormatter()
+                    ],
+                    validator: (value) {
+                      final amount = int.tryParse(
+                        _cleanAmount((value ?? '').trim()),
+                      );
+                      if (amount == null || amount <= 0) {
+                        return 'Weka kiasi sahihi.';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _KarakanaDropdown(
+                    label: categoryLabel,
+                    value: _category,
+                    items: widget.isSale ? _saleCategories : _expenseCategories,
+                    onChanged: (value) {
+                      if (value != null) setState(() => _category = value);
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _DatePickerField(
+                    date: _date,
+                    onChanged: (date) => setState(() => _date = date),
+                  ),
+                  const SizedBox(height: 12),
+                  _KarakanaTextField(
+                    controller: _descriptionController,
+                    focusNode: _descriptionFocusNode,
+                    label: 'Maelezo',
+                    hint: 'Si lazima',
+                    maxLines: 2,
+                    textCapitalization: TextCapitalization.sentences,
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) => _submit(),
+                  ),
+                  const SizedBox(height: 18),
+                  SizedBox(
+                    width: double.infinity,
+                    child: _PrimaryButton(
+                      label: buttonLabel,
+                      isLoading: provider.isSubmitting,
+                      onPressed: _submit,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -1567,9 +1658,13 @@ class _TransactionFormSheetState extends State<_TransactionFormSheet> {
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-
     final provider = context.read<BusinessManagementProvider>();
+    if (provider.isSubmitting) return;
+    if (!_formKey.currentState!.validate()) {
+      _amountFocusNode.requestFocus();
+      return;
+    }
+
     final amount = _cleanAmount(_amountController.text);
     final description = _descriptionController.text.trim();
     final existing = widget.transaction;
@@ -1644,7 +1739,7 @@ class _EditingBanner extends StatelessWidget {
             child: Text(
               'Unahariri $recordLabel yaliyokwisha rekodiwa.',
               style: GoogleFonts.montserrat(
-                color: AppColors.primaryDark,
+                color: AppColors.textPrimary,
                 fontSize: 11.5,
                 fontWeight: FontWeight.w700,
               ),
@@ -1666,6 +1761,7 @@ class _BusinessEditSheet extends StatefulWidget {
 class _BusinessEditSheetState extends State<_BusinessEditSheet> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
+  final _nameFocusNode = FocusNode();
   late String _businessType;
 
   @override
@@ -1679,6 +1775,7 @@ class _BusinessEditSheetState extends State<_BusinessEditSheet> {
   @override
   void dispose() {
     _nameController.dispose();
+    _nameFocusNode.dispose();
     super.dispose();
   }
 
@@ -1691,6 +1788,9 @@ class _BusinessEditSheetState extends State<_BusinessEditSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.92,
+        ),
         decoration: BoxDecoration(
           color: AppColors.background,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
@@ -1700,56 +1800,64 @@ class _BusinessEditSheetState extends State<_BusinessEditSheet> {
           top: false,
           child: Form(
             key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 42,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: AppColors.border,
-                      borderRadius: BorderRadius.circular(4),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 42,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: AppColors.border,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                const _SectionTitle(
-                  title: 'Hariri Biashara',
-                  subtitle: 'Sasisha jina au aina ya biashara yako.',
-                ),
-                const SizedBox(height: 16),
-                _KarakanaTextField(
-                  controller: _nameController,
-                  label: 'Jina la biashara',
-                  hint: 'Mfano: Kinyozi cha Mtaa',
-                  validator: (value) {
-                    if ((value ?? '').trim().isEmpty) {
-                      return 'Weka jina la biashara.';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 14),
-                _KarakanaDropdown(
-                  label: 'Aina ya biashara',
-                  value: _businessType,
-                  items: _businessTypes,
-                  onChanged: (value) {
-                    if (value != null) setState(() => _businessType = value);
-                  },
-                ),
-                const SizedBox(height: 18),
-                SizedBox(
-                  width: double.infinity,
-                  child: _PrimaryButton(
-                    label: 'Hifadhi Mabadiliko',
-                    isLoading: provider.isSubmitting,
-                    onPressed: () => _submit(provider),
+                  const SizedBox(height: 16),
+                  const _SectionTitle(
+                    title: 'Hariri Biashara',
+                    subtitle: 'Sasisha jina au aina ya biashara yako.',
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  _KarakanaTextField(
+                    controller: _nameController,
+                    focusNode: _nameFocusNode,
+                    label: 'Jina la biashara',
+                    hint: 'Mfano: Kinyozi cha Mtaa',
+                    textCapitalization: TextCapitalization.words,
+                    textInputAction: TextInputAction.next,
+                    autofillHints: const [AutofillHints.organizationName],
+                    onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
+                    validator: (value) {
+                      if ((value ?? '').trim().isEmpty) {
+                        return 'Weka jina la biashara.';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 14),
+                  _KarakanaDropdown(
+                    label: 'Aina ya biashara',
+                    value: _businessType,
+                    items: _businessTypes,
+                    onChanged: (value) {
+                      if (value != null) setState(() => _businessType = value);
+                    },
+                  ),
+                  const SizedBox(height: 18),
+                  SizedBox(
+                    width: double.infinity,
+                    child: _PrimaryButton(
+                      label: 'Hifadhi Mabadiliko',
+                      isLoading: provider.isSubmitting,
+                      onPressed: () => _submit(provider),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -1758,7 +1866,11 @@ class _BusinessEditSheetState extends State<_BusinessEditSheet> {
   }
 
   Future<void> _submit(BusinessManagementProvider provider) async {
-    if (!_formKey.currentState!.validate()) return;
+    if (provider.isSubmitting) return;
+    if (!_formKey.currentState!.validate()) {
+      _nameFocusNode.requestFocus();
+      return;
+    }
 
     final ok = await provider.updateBusiness(
       name: _nameController.text.trim(),
@@ -2119,7 +2231,7 @@ class _MetricCard extends StatelessWidget {
                     ? AppColors.error
                     : isPositive
                         ? AppColors.profit
-                        : AppColors.primaryDark,
+                        : AppColors.textPrimary,
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
               ),
@@ -2194,12 +2306,14 @@ class _ActionButton extends StatelessWidget {
 
 class _TransactionTile extends StatelessWidget {
   final BusinessTransaction transaction;
+  final String currency;
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
   final bool isDeleting;
 
   const _TransactionTile({
     required this.transaction,
+    required this.currency,
     this.onTap,
     this.onDelete,
     this.isDeleting = false,
@@ -2210,103 +2324,99 @@ class _TransactionTile extends StatelessWidget {
     final isSale = transaction.isSale;
     final color = isSale ? AppColors.primaryDark : AppColors.error;
 
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 11),
-        decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: AppColors.divider)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
+    return Semantics(
+      button: onTap != null,
+      label: onTap == null ? null : 'Hariri ${transaction.typeLabel}',
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: AppColors.divider)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isSale ? Icons.arrow_upward : Icons.arrow_downward,
+                  size: 18,
+                  color: color,
+                ),
               ),
-              child: Icon(
-                isSale ? Icons.arrow_upward : Icons.arrow_downward,
-                size: 18,
-                color: color,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${transaction.typeLabel} • ${_categoryLabel(transaction.category)}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(
-                      color: AppColors.textPrimary,
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    [
-                      _formatDate(transaction.transactionDate),
-                      if (transaction.description.trim().isNotEmpty)
-                        transaction.description.trim(),
-                    ].join(' • '),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(
-                      color: AppColors.textTertiary,
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 10),
-            Text(
-              _money(transaction.amountValue, 'TZS'),
-              style: GoogleFonts.montserrat(
-                color: color,
-                fontSize: 12.5,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            if (onTap != null) ...[
-              const SizedBox(width: 8),
-              Icon(
-                Icons.edit_outlined,
-                size: 16,
-                color: AppColors.textTertiary,
-              ),
-            ],
-            if (onDelete != null) ...[
-              const SizedBox(width: 4),
-              isDeleting
-                  ? const Padding(
-                      padding: EdgeInsets.all(8),
-                      child: SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: KarakanaWaveLoader(size: 16),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${transaction.typeLabel} • ${_categoryLabel(transaction.category)}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(
+                        color: AppColors.textPrimary,
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w800,
                       ),
-                    )
-                  : IconButton(
-                      onPressed: onDelete,
-                      icon: Icon(
-                        Icons.delete_outline,
-                        size: 18,
-                        color: AppColors.error,
-                      ),
-                      visualDensity: VisualDensity.compact,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      tooltip: 'Futa muamala',
                     ),
+                    const SizedBox(height: 4),
+                    Text(
+                      [
+                        _formatDate(transaction.transactionDate),
+                        if (transaction.description.trim().isNotEmpty)
+                          transaction.description.trim(),
+                      ].join(' • '),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(
+                        color: AppColors.textTertiary,
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      _money(transaction.amountValue, currency),
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: color,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (onTap != null) ...[
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.edit_outlined,
+                  size: 18,
+                  color: AppColors.textTertiary,
+                ),
+              ],
+              if (onDelete != null) ...[
+                const SizedBox(width: 4),
+                SizedBox.square(
+                  dimension: 48,
+                  child: isDeleting
+                      ? const Center(child: KarakanaWaveLoader(size: 18))
+                      : IconButton(
+                          onPressed: onDelete,
+                          icon: Icon(
+                            Icons.delete_outline,
+                            size: 20,
+                            color: AppColors.error,
+                          ),
+                          tooltip: 'Futa muamala',
+                        ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
@@ -2321,6 +2431,12 @@ class _KarakanaTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final String? Function(String?)? validator;
   final int maxLines;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onFieldSubmitted;
+  final TextCapitalization textCapitalization;
+  final Iterable<String>? autofillHints;
+  final bool autofocus;
 
   const _KarakanaTextField({
     required this.controller,
@@ -2330,13 +2446,25 @@ class _KarakanaTextField extends StatelessWidget {
     this.inputFormatters,
     this.validator,
     this.maxLines = 1,
+    this.focusNode,
+    this.textInputAction,
+    this.onFieldSubmitted,
+    this.textCapitalization = TextCapitalization.none,
+    this.autofillHints,
+    this.autofocus = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      focusNode: focusNode,
       keyboardType: keyboardType,
+      textInputAction: textInputAction,
+      onFieldSubmitted: onFieldSubmitted,
+      textCapitalization: textCapitalization,
+      autofillHints: autofillHints,
+      autofocus: autofocus,
       inputFormatters: inputFormatters,
       validator: validator,
       maxLines: maxLines,
@@ -2400,18 +2528,6 @@ class _DatePickerField extends StatelessWidget {
           initialDate: date,
           firstDate: DateTime(2020),
           lastDate: DateTime.now(),
-          builder: (context, child) {
-            return Theme(
-              data: Theme.of(context).copyWith(
-                colorScheme: ColorScheme.light(
-                  primary: AppColors.primary,
-                  onPrimary: Colors.white,
-                  onSurface: AppColors.textPrimary,
-                ),
-              ),
-              child: child!,
-            );
-          },
         );
         if (picked != null) onChanged(picked);
       },
@@ -2454,25 +2570,44 @@ class _PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: isLoading ? null : onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.45),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        elevation: 0,
-      ),
-      child: isLoading
-          ? const KarakanaWaveLoader(color: Colors.white, size: 20)
-          : Text(
-              label,
-              style: GoogleFonts.montserrat(
-                fontSize: 13,
-                fontWeight: FontWeight.w800,
+    return Semantics(
+      liveRegion: isLoading,
+      label: isLoading ? 'Inahifadhi, tafadhali subiri' : label,
+      button: true,
+      child: ElevatedButton(
+        onPressed: isLoading ? null : onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.62),
+          minimumSize: const Size(0, 48),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 0,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (isLoading) ...[
+              const KarakanaWaveLoader(color: Colors.white, size: 18),
+              const SizedBox(width: 10),
+            ],
+            Flexible(
+              child: Text(
+                isLoading ? 'Inahifadhi...' : label,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.montserrat(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -2556,12 +2691,14 @@ class _EmptyState extends StatelessWidget {
   final String message;
   final String? actionLabel;
   final VoidCallback? onAction;
+  final IconData actionIcon;
 
   const _EmptyState({
     required this.title,
     required this.message,
     this.actionLabel,
     this.onAction,
+    this.actionIcon = Icons.add_circle_outline,
   });
 
   @override
@@ -2604,7 +2741,7 @@ class _EmptyState extends StatelessWidget {
                 visualDensity: VisualDensity.compact,
                 foregroundColor: AppColors.primaryDark,
               ),
-              icon: const Icon(Icons.add_circle_outline, size: 16),
+              icon: Icon(actionIcon, size: 16),
               label: Text(
                 actionLabel!,
                 style: GoogleFonts.montserrat(
@@ -2647,6 +2784,53 @@ class _LoadingState extends StatelessWidget {
   }
 }
 
+class _BusinessErrorState extends StatelessWidget {
+  final String message;
+  final Future<void> Function() onRetry;
+
+  const _BusinessErrorState({required this.message, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Semantics(
+          liveRegion: true,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.cloud_off_rounded, color: AppColors.error, size: 42),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                'Imeshindikana kupakia biashara',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.h3.copyWith(
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              FilledButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Jaribu tena'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 InputDecoration _inputDecoration(String label, String hint) {
   return InputDecoration(
     labelText: label,
@@ -2662,7 +2846,7 @@ InputDecoration _inputDecoration(String label, String hint) {
       fontWeight: FontWeight.w500,
     ),
     filled: true,
-    fillColor: Colors.white,
+    fillColor: AppColors.surface,
     contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
