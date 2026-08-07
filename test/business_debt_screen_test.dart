@@ -18,6 +18,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Ongeza Deni'), findsWidgets);
     expect(find.byKey(const Key('debt-customer-field')), findsOneWidget);
+    expect(find.text('Kiasi (TZS) *'), findsOneWidget);
+    expect(find.byKey(const Key('debt-status-field')), findsNothing);
   });
 
   testWidgets('required fields show friendly validation', (tester) async {
@@ -109,8 +111,8 @@ void main() {
 
     final configurations = [
       (const Size(320, 568), Brightness.light, 1.0),
-      (const Size(375, 812), Brightness.dark, 1.5),
-      (const Size(844, 390), Brightness.light, 1.0),
+      (const Size(375, 812), Brightness.dark, 2.0),
+      (const Size(768, 1024), Brightness.light, 1.0),
       (const Size(1024, 768), Brightness.dark, 1.0),
     ];
 

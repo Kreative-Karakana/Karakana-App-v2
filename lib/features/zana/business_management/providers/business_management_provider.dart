@@ -148,6 +148,7 @@ class BusinessManagementProvider extends ChangeNotifier {
     required String name,
     required String businessType,
   }) async {
+    if (_isSubmitting) return false;
     _isSubmitting = true;
     _errorMessage = null;
     notifyListeners();
@@ -176,6 +177,7 @@ class BusinessManagementProvider extends ChangeNotifier {
     required String name,
     required String businessType,
   }) async {
+    if (_isSubmitting) return false;
     _isSubmitting = true;
     _errorMessage = null;
     notifyListeners();
@@ -349,6 +351,7 @@ class BusinessManagementProvider extends ChangeNotifier {
     DateTime? transactionDate,
     String? description,
   }) async {
+    if (_isSubmitting) return false;
     _isSubmitting = true;
     _errorMessage = null;
     notifyListeners();
@@ -377,6 +380,7 @@ class BusinessManagementProvider extends ChangeNotifier {
   }
 
   Future<bool> deleteTransaction(int id) async {
+    if (_isSubmitting) return false;
     _isSubmitting = true;
     _errorMessage = null;
     notifyListeners();
@@ -465,6 +469,7 @@ class BusinessManagementProvider extends ChangeNotifier {
     required String description,
     required String fallbackError,
   }) async {
+    if (_isSubmitting) return false;
     _isSubmitting = true;
     _errorMessage = null;
     notifyListeners();

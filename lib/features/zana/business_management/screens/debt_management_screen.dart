@@ -139,6 +139,7 @@ class _DebtManagementViewState extends State<_DebtManagementView> {
                     child: _DebtEmptyState(
                       filtered: provider.selectedStatus != null,
                       onAdd: _openCreate,
+                      onClearFilter: () => provider.setStatusFilter(null),
                     ),
                   )
                 else
@@ -201,7 +202,7 @@ class _DebtManagementViewState extends State<_DebtManagementView> {
       backgroundColor: Colors.transparent,
       builder: (_) => ChangeNotifierProvider.value(
         value: context.read<DebtManagementProvider>(),
-        child: _DebtFormSheet(debt: debt),
+        child: _DebtFormSheet(debt: debt, currency: widget.currency),
       ),
     );
   }
@@ -566,8 +567,9 @@ class _DateLabel extends StatelessWidget {
 
 class _DebtFormSheet extends StatefulWidget {
   final BusinessDebt? debt;
+  final String currency;
 
-  const _DebtFormSheet({this.debt});
+  const _DebtFormSheet({this.debt, required this.currency});
 
   bool get isEditing => debt != null;
 
@@ -581,9 +583,14 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
   late final TextEditingController _amountController;
   late final TextEditingController _itemController;
   late final TextEditingController _noteController;
+  final _customerFocusNode = FocusNode();
+  final _amountFocusNode = FocusNode();
+  final _itemFocusNode = FocusNode();
+  final _noteFocusNode = FocusNode();
   late DateTime _dateGiven;
   DateTime? _dueDate;
   late String _status;
+  String? _dueDateError;
 
   @override
   void initState() {
@@ -608,6 +615,10 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
     _amountController.dispose();
     _itemController.dispose();
     _noteController.dispose();
+    _customerFocusNode.dispose();
+    _amountFocusNode.dispose();
+    _itemFocusNode.dispose();
+    _noteFocusNode.dispose();
     super.dispose();
   }
 
@@ -634,6 +645,7 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
         top: false,
         child: Form(
           key: _formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -657,9 +669,14 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
                 _DebtTextField(
                   key: const Key('debt-customer-field'),
                   controller: _customerController,
+                  focusNode: _customerFocusNode,
                   label: 'Jina la Mteja *',
                   hint: 'Mfano: Asha Juma',
                   textInputAction: TextInputAction.next,
+                  textCapitalization: TextCapitalization.words,
+                  autofillHints: const [AutofillHints.name],
+                  autofocus: !widget.isEditing,
+                  onFieldSubmitted: (_) => _amountFocusNode.requestFocus(),
                   validator: (value) => value == null || value.trim().isEmpty
                       ? 'Weka jina la mteja.'
                       : null,
@@ -668,13 +685,15 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
                 _DebtTextField(
                   key: const Key('debt-amount-field'),
                   controller: _amountController,
-                  label: 'Kiasi (TZS) *',
+                  focusNode: _amountFocusNode,
+                  label: 'Kiasi (${widget.currency}) *',
                   hint: 'Mfano: 15000',
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
                   inputFormatters: const [_DebtAmountInputFormatter()],
                   textInputAction: TextInputAction.next,
+                  onFieldSubmitted: (_) => _itemFocusNode.requestFocus(),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Weka kiasi cha deni.';
@@ -689,9 +708,12 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
                 const SizedBox(height: AppSpacing.md),
                 _DebtTextField(
                   controller: _itemController,
+                  focusNode: _itemFocusNode,
                   label: 'Bidhaa / Huduma (si lazima)',
                   hint: 'Mfano: Kusuka nywele',
                   textInputAction: TextInputAction.next,
+                  textCapitalization: TextCapitalization.sentences,
+                  onFieldSubmitted: (_) => _noteFocusNode.requestFocus(),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 _DebtDateField(
@@ -705,56 +727,85 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
                   key: const Key('debt-due-date-field'),
                   label: 'Tarehe ya Mwisho (si lazima)',
                   date: _dueDate,
+                  errorText: _dueDateError,
                   onTap: _pickDueDate,
                   onClear: _dueDate == null
                       ? null
-                      : () => setState(() => _dueDate = null),
+                      : () => setState(() {
+                            _dueDate = null;
+                            _dueDateError = null;
+                          }),
                 ),
-                const SizedBox(height: AppSpacing.md),
-                DropdownButtonFormField<String>(
-                  key: const Key('debt-status-field'),
-                  initialValue: _status,
-                  decoration: _debtInputDecoration('Hali', null),
-                  dropdownColor: AppColors.surface,
-                  items: const [
-                    DropdownMenuItem(
-                      value: 'outstanding',
-                      child: Text('Haijalipwa'),
-                    ),
-                    DropdownMenuItem(value: 'paid', child: Text('Imelipwa')),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) setState(() => _status = value);
-                  },
-                ),
+                if (widget.isEditing) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  DropdownButtonFormField<String>(
+                    key: const Key('debt-status-field'),
+                    initialValue: _status,
+                    decoration: _debtInputDecoration('Hali', null),
+                    dropdownColor: AppColors.surface,
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'outstanding',
+                        child: Text('Haijalipwa'),
+                      ),
+                      DropdownMenuItem(value: 'paid', child: Text('Imelipwa')),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) setState(() => _status = value);
+                    },
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.md),
                 _DebtTextField(
                   controller: _noteController,
+                  focusNode: _noteFocusNode,
                   label: 'Maelezo (si lazima)',
                   hint: 'Maelezo mafupi kuhusu deni',
                   maxLines: 3,
-                  textInputAction: TextInputAction.newline,
+                  textCapitalization: TextCapitalization.sentences,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) => _submit(),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                FilledButton(
-                  key: const Key('save-debt-button'),
-                  onPressed: provider.isSubmitting ? null : _submit,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size.fromHeight(48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.input),
+                Semantics(
+                  liveRegion: provider.isSubmitting,
+                  label: provider.isSubmitting
+                      ? 'Inahifadhi, tafadhali subiri'
+                      : null,
+                  child: FilledButton(
+                    key: const Key('save-debt-button'),
+                    onPressed: provider.isSubmitting ? null : _submit,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor:
+                          AppColors.primary.withValues(alpha: 0.62),
+                      minimumSize: const Size.fromHeight(48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.input),
+                      ),
                     ),
-                  ),
-                  child: provider.isSubmitting
-                      ? const KarakanaWaveLoader(color: Colors.white, size: 20)
-                      : Text(
-                          widget.isEditing
-                              ? 'Hifadhi Mabadiliko'
-                              : 'Hifadhi Deni',
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (provider.isSubmitting) ...[
+                          const KarakanaWaveLoader(
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                        ],
+                        Text(
+                          provider.isSubmitting
+                              ? 'Inahifadhi...'
+                              : widget.isEditing
+                                  ? 'Hifadhi Mabadiliko'
+                                  : 'Hifadhi Deni',
                           style: AppTextStyles.buttonMedium,
                         ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -771,7 +822,12 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     );
-    if (picked != null) setState(() => _dateGiven = picked);
+    if (picked != null) {
+      setState(() {
+        _dateGiven = picked;
+        _dueDateError = null;
+      });
+    }
   }
 
   Future<void> _pickDueDate() async {
@@ -781,12 +837,32 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    if (picked != null) setState(() => _dueDate = picked);
+    if (picked != null) {
+      setState(() {
+        _dueDate = picked;
+        _dueDateError = null;
+      });
+    }
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
     final provider = context.read<DebtManagementProvider>();
+    if (provider.isSubmitting) return;
+    if (!_formKey.currentState!.validate()) {
+      if (_customerController.text.trim().isEmpty) {
+        _customerFocusNode.requestFocus();
+      } else {
+        _amountFocusNode.requestFocus();
+      }
+      return;
+    }
+    if (_dueDate != null && _dueDate!.isBefore(_dateGiven)) {
+      setState(() {
+        _dueDateError =
+            'Tarehe ya mwisho lazima iwe sawa au baada ya tarehe iliyotolewa.';
+      });
+      return;
+    }
     final debt = widget.debt;
     final ok = debt == null
         ? await provider.createDebt(
@@ -837,6 +913,11 @@ class _DebtTextField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final String? Function(String?)? validator;
   final int maxLines;
+  final FocusNode? focusNode;
+  final ValueChanged<String>? onFieldSubmitted;
+  final TextCapitalization textCapitalization;
+  final Iterable<String>? autofillHints;
+  final bool autofocus;
 
   const _DebtTextField({
     super.key,
@@ -848,15 +929,25 @@ class _DebtTextField extends StatelessWidget {
     this.textInputAction,
     this.validator,
     this.maxLines = 1,
+    this.focusNode,
+    this.onFieldSubmitted,
+    this.textCapitalization = TextCapitalization.none,
+    this.autofillHints,
+    this.autofocus = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      focusNode: focusNode,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       textInputAction: textInputAction,
+      onFieldSubmitted: onFieldSubmitted,
+      textCapitalization: textCapitalization,
+      autofillHints: autofillHints,
+      autofocus: autofocus,
       validator: validator,
       maxLines: maxLines,
       style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
@@ -870,6 +961,7 @@ class _DebtDateField extends StatelessWidget {
   final DateTime? date;
   final VoidCallback onTap;
   final VoidCallback? onClear;
+  final String? errorText;
 
   const _DebtDateField({
     super.key,
@@ -877,6 +969,7 @@ class _DebtDateField extends StatelessWidget {
     required this.date,
     required this.onTap,
     this.onClear,
+    this.errorText,
   });
 
   @override
@@ -885,7 +978,9 @@ class _DebtDateField extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppRadius.input),
       child: InputDecorator(
-        decoration: _debtInputDecoration(label, null),
+        decoration: _debtInputDecoration(label, null).copyWith(
+          errorText: errorText,
+        ),
         child: Row(
           children: [
             Icon(Icons.calendar_today_outlined,
@@ -917,8 +1012,13 @@ class _DebtDateField extends StatelessWidget {
 class _DebtEmptyState extends StatelessWidget {
   final bool filtered;
   final VoidCallback onAdd;
+  final VoidCallback onClearFilter;
 
-  const _DebtEmptyState({required this.filtered, required this.onAdd});
+  const _DebtEmptyState({
+    required this.filtered,
+    required this.onAdd,
+    required this.onClearFilter,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -944,7 +1044,14 @@ class _DebtEmptyState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: AppTextStyles.bodySmall,
             ),
-            if (!filtered) ...[
+            if (filtered) ...[
+              const SizedBox(height: AppSpacing.md),
+              OutlinedButton.icon(
+                onPressed: onClearFilter,
+                icon: const Icon(Icons.filter_alt_off_rounded),
+                label: const Text('Onyesha Madeni Yote'),
+              ),
+            ] else ...[
               const SizedBox(height: AppSpacing.md),
               OutlinedButton.icon(
                 onPressed: onAdd,

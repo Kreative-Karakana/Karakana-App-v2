@@ -143,6 +143,7 @@ class DebtManagementProvider extends ChangeNotifier {
   }
 
   Future<bool> deleteDebt(int id) async {
+    if (_isSubmitting) return false;
     _isSubmitting = true;
     _errorMessage = null;
     notifyListeners();
@@ -160,6 +161,7 @@ class DebtManagementProvider extends ChangeNotifier {
   }
 
   Future<bool> _submit(Future<BusinessDebt> Function() action) async {
+    if (_isSubmitting) return false;
     _isSubmitting = true;
     _errorMessage = null;
     notifyListeners();
