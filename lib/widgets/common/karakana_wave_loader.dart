@@ -62,7 +62,7 @@ class _KarakanaWaveLoaderState extends State<KarakanaWaveLoader>
     final minBarHeight = containerHeight * 0.32;
     final maxExtraHeight = containerHeight * 0.68;
 
-    return SizedBox(
+    final loader = SizedBox(
       width: containerWidth,
       height: containerHeight,
       child: ClipRect(
@@ -100,6 +100,17 @@ class _KarakanaWaveLoaderState extends State<KarakanaWaveLoader>
           ),
         ),
       ),
+    );
+
+    if (widget.semanticsLabel == null && widget.semanticsValue == null) {
+      return loader;
+    }
+    return Semantics(
+      container: true,
+      liveRegion: true,
+      label: widget.semanticsLabel,
+      value: widget.semanticsValue,
+      child: ExcludeSemantics(child: loader),
     );
   }
 }
