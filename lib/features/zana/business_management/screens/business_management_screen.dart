@@ -594,16 +594,25 @@ class _DashboardSummary extends StatelessWidget {
         const SizedBox(height: 10),
         LayoutBuilder(
           builder: (context, constraints) {
-            final columns = constraints.maxWidth >= 680 ? 3 : 2;
-            final textScale =
-                MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 1.35);
+            final rawTextScale = MediaQuery.textScalerOf(context).scale(1);
+            final textScale = rawTextScale.clamp(1.0, 1.4);
+            final columns = constraints.maxWidth >= 680 && rawTextScale < 1.6
+                ? 3
+                : constraints.maxWidth < 340 || rawTextScale >= 1.6
+                    ? 1
+                    : 2;
+            final baseAspectRatio = switch (columns) {
+              1 => 2.1,
+              2 => 1.35,
+              _ => 2.0,
+            };
             return GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               crossAxisCount: columns,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
-              childAspectRatio: (columns == 3 ? 2.0 : 1.35) / textScale,
+              childAspectRatio: baseAspectRatio / textScale,
               children: [
                 _MetricCard(
                   label: 'Mauzo ya Leo',
@@ -655,26 +664,42 @@ class _ActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: _ActionButton(
-            icon: Icons.add_circle_outline,
-            label: 'Rekodi Mauzo',
-            onTap: onSale,
-            isLocked: isLocked,
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: _ActionButton(
-            icon: Icons.remove_circle_outline,
-            label: 'Rekodi Matumizi',
-            onTap: onExpense,
-            isLocked: isLocked,
-          ),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final shouldStack = constraints.maxWidth < 360 ||
+            MediaQuery.textScalerOf(context).scale(1) > 1.4;
+        final saleButton = _ActionButton(
+          key: const Key('record-sale-action'),
+          icon: Icons.add_circle_outline,
+          label: 'Rekodi Mauzo',
+          onTap: onSale,
+          isLocked: isLocked,
+        );
+        final expenseButton = _ActionButton(
+          icon: Icons.remove_circle_outline,
+          label: 'Rekodi Matumizi',
+          onTap: onExpense,
+          isLocked: isLocked,
+        );
+
+        if (shouldStack) {
+          return Column(
+            children: [
+              saleButton,
+              const SizedBox(height: 10),
+              expenseButton,
+            ],
+          );
+        }
+
+        return Row(
+          children: [
+            Expanded(child: saleButton),
+            const SizedBox(width: 10),
+            Expanded(child: expenseButton),
+          ],
+        );
+      },
     );
   }
 }
@@ -1295,26 +1320,19 @@ class _TransactionFilterSheetState extends State<_TransactionFilterSheet> {
                   onChanged: (value) => setState(() => _category = value ?? ''),
                 ),
                 const SizedBox(height: 14),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _OptionalDateField(
-                        label: 'Kuanzia tarehe',
-                        date: _dateFrom,
-                        onTap: () => _pickDate(isFrom: true),
-                        onClear: () => setState(() => _dateFrom = null),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _OptionalDateField(
-                        label: 'Hadi tarehe',
-                        date: _dateTo,
-                        onTap: () => _pickDate(isFrom: false),
-                        onClear: () => setState(() => _dateTo = null),
-                      ),
-                    ),
-                  ],
+                _ResponsivePair(
+                  first: _OptionalDateField(
+                    label: 'Kuanzia tarehe',
+                    date: _dateFrom,
+                    onTap: () => _pickDate(isFrom: true),
+                    onClear: () => setState(() => _dateFrom = null),
+                  ),
+                  second: _OptionalDateField(
+                    label: 'Hadi tarehe',
+                    date: _dateTo,
+                    onTap: () => _pickDate(isFrom: false),
+                    onClear: () => setState(() => _dateTo = null),
+                  ),
                 ),
                 if (_dateError != null) ...[
                   const SizedBox(height: AppSpacing.sm),
@@ -1337,44 +1355,37 @@ class _TransactionFilterSheetState extends State<_TransactionFilterSheet> {
                   onChanged: (value) => setState(() => _ordering = value ?? ''),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => setState(() {
-                          _transactionType = null;
-                          _category = '';
-                          _dateFrom = null;
-                          _dateTo = null;
-                          _ordering = '';
-                          _dateError = null;
-                        }),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          side: BorderSide(color: AppColors.inputBorder),
-                        ),
-                        child: Text(
-                          'Futa Vichujio',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
+                _ResponsivePair(
+                  first: OutlinedButton(
+                    onPressed: () => setState(() {
+                      _transactionType = null;
+                      _category = '';
+                      _dateFrom = null;
+                      _dateTo = null;
+                      _ordering = '';
+                      _dateError = null;
+                    }),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      side: BorderSide(color: AppColors.inputBorder),
+                    ),
+                    child: Text(
+                      'Futa Vichujio',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textSecondary,
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _PrimaryButton(
-                        label: 'Tumia Vichujio',
-                        isLoading: false,
-                        onPressed: _applyFilters,
-                      ),
-                    ),
-                  ],
+                  ),
+                  second: _PrimaryButton(
+                    label: 'Tumia Vichujio',
+                    isLoading: false,
+                    onPressed: _applyFilters,
+                  ),
                 ),
               ],
             ),
@@ -1440,6 +1451,40 @@ class _OptionalDateField extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ResponsivePair extends StatelessWidget {
+  final Widget first;
+  final Widget second;
+
+  const _ResponsivePair({required this.first, required this.second});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final shouldStack = constraints.maxWidth < 360 ||
+            MediaQuery.textScalerOf(context).scale(1) > 1.4;
+        if (shouldStack) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              first,
+              const SizedBox(height: 10),
+              second,
+            ],
+          );
+        }
+        return Row(
+          children: [
+            Expanded(child: first),
+            const SizedBox(width: 10),
+            Expanded(child: second),
+          ],
+        );
+      },
     );
   }
 }
@@ -2212,8 +2257,6 @@ class _MetricCard extends StatelessWidget {
         children: [
           Text(
             label,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
             style: GoogleFonts.montserrat(
               color: AppColors.textSecondary,
               fontSize: 11.5,
@@ -2250,6 +2293,7 @@ class _ActionButton extends StatelessWidget {
   final bool isLocked;
 
   const _ActionButton({
+    super.key,
     required this.icon,
     required this.label,
     required this.onTap,
@@ -2279,8 +2323,6 @@ class _ActionButton extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.montserrat(
                     color: isLocked
                         ? AppColors.textSecondary
@@ -2356,8 +2398,6 @@ class _TransactionTile extends StatelessWidget {
                   children: [
                     Text(
                       '${transaction.typeLabel} • ${_categoryLabel(transaction.category)}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.montserrat(
                         color: AppColors.textPrimary,
                         fontSize: 12.5,
@@ -2371,8 +2411,6 @@ class _TransactionTile extends StatelessWidget {
                         if (transaction.description.trim().isNotEmpty)
                           transaction.description.trim(),
                       ].join(' • '),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.montserrat(
                         color: AppColors.textTertiary,
                         fontSize: 11.5,
@@ -2542,12 +2580,14 @@ class _DatePickerField extends StatelessWidget {
               color: AppColors.primary,
             ),
             const SizedBox(width: 10),
-            Text(
-              _formatDate(date),
-              style: GoogleFonts.montserrat(
-                color: AppColors.textPrimary,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
+            Expanded(
+              child: Text(
+                _formatDate(date),
+                style: GoogleFonts.montserrat(
+                  color: AppColors.textPrimary,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ],

@@ -302,32 +302,29 @@ class _DebtHeader extends StatelessWidget {
           style: AppTextStyles.bodySmall,
         ),
         const SizedBox(height: AppSpacing.md),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              _StatusChip(
-                key: const Key('debt-filter-all'),
-                label: 'Yote',
-                selected: selectedStatus == null,
-                onTap: () => onStatusChanged(null),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              _StatusChip(
-                key: const Key('debt-filter-outstanding'),
-                label: 'Hayajalipwa',
-                selected: selectedStatus == 'outstanding',
-                onTap: () => onStatusChanged('outstanding'),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              _StatusChip(
-                key: const Key('debt-filter-paid'),
-                label: 'Yamelipwa',
-                selected: selectedStatus == 'paid',
-                onTap: () => onStatusChanged('paid'),
-              ),
-            ],
-          ),
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: [
+            _StatusChip(
+              key: const Key('debt-filter-all'),
+              label: 'Yote',
+              selected: selectedStatus == null,
+              onTap: () => onStatusChanged(null),
+            ),
+            _StatusChip(
+              key: const Key('debt-filter-outstanding'),
+              label: 'Hayajalipwa',
+              selected: selectedStatus == 'outstanding',
+              onTap: () => onStatusChanged('outstanding'),
+            ),
+            _StatusChip(
+              key: const Key('debt-filter-paid'),
+              label: 'Yamelipwa',
+              selected: selectedStatus == 'paid',
+              onTap: () => onStatusChanged('paid'),
+            ),
+          ],
         ),
       ],
     );
@@ -473,61 +470,106 @@ class _DebtCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.sm),
               Text(
                 debt.note,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.bodySmall,
               ),
             ],
             const SizedBox(height: AppSpacing.md),
-            Row(
-              children: [
-                if (debt.isOutstanding)
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      key: Key('mark-paid-${debt.id}'),
-                      onPressed: isBusy ? null : onMarkPaid,
-                      icon: isBusy
-                          ? const KarakanaWaveLoader(size: 16)
-                          : Icon(
-                              isReadOnly
-                                  ? Icons.lock_outline
-                                  : Icons.check_circle_outline,
-                              size: 18,
-                            ),
-                      label: const Text('Weka Imelipwa'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.profit,
-                        side: BorderSide(
-                          color: AppColors.profit.withValues(alpha: 0.45),
-                        ),
-                        minimumSize: const Size(0, 44),
-                      ),
-                    ),
-                  ),
-                if (debt.isOutstanding) const SizedBox(width: AppSpacing.sm),
-                IconButton(
-                  key: Key('edit-debt-${debt.id}'),
-                  onPressed: isBusy ? null : onEdit,
-                  tooltip: 'Hariri deni',
-                  icon: Icon(
-                    isReadOnly ? Icons.lock_outline : Icons.edit_outlined,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                IconButton(
-                  key: Key('delete-debt-${debt.id}'),
-                  onPressed: isBusy ? null : onDelete,
-                  tooltip: 'Futa deni',
-                  icon: Icon(
-                    isReadOnly ? Icons.lock_outline : Icons.delete_outline,
-                    color: AppColors.error,
-                  ),
-                ),
-              ],
+            _DebtCardActions(
+              debt: debt,
+              isBusy: isBusy,
+              isReadOnly: isReadOnly,
+              onEdit: onEdit,
+              onDelete: onDelete,
+              onMarkPaid: onMarkPaid,
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _DebtCardActions extends StatelessWidget {
+  final BusinessDebt debt;
+  final bool isBusy;
+  final bool isReadOnly;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  final VoidCallback onMarkPaid;
+
+  const _DebtCardActions({
+    required this.debt,
+    required this.isBusy,
+    required this.isReadOnly,
+    required this.onEdit,
+    required this.onDelete,
+    required this.onMarkPaid,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final markPaidButton = OutlinedButton.icon(
+      key: Key('mark-paid-${debt.id}'),
+      onPressed: isBusy ? null : onMarkPaid,
+      icon: isBusy
+          ? const KarakanaWaveLoader(size: 16)
+          : Icon(
+              isReadOnly ? Icons.lock_outline : Icons.check_circle_outline,
+              size: 18,
+            ),
+      label: const Text('Weka Imelipwa', textAlign: TextAlign.center),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: AppColors.profit,
+        side: BorderSide(color: AppColors.profit.withValues(alpha: 0.45)),
+        minimumSize: const Size(0, 44),
+      ),
+    );
+    final secondaryActions = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          key: Key('edit-debt-${debt.id}'),
+          onPressed: isBusy ? null : onEdit,
+          tooltip: 'Hariri deni',
+          icon: Icon(
+            isReadOnly ? Icons.lock_outline : Icons.edit_outlined,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        IconButton(
+          key: Key('delete-debt-${debt.id}'),
+          onPressed: isBusy ? null : onDelete,
+          tooltip: 'Futa deni',
+          icon: Icon(
+            isReadOnly ? Icons.lock_outline : Icons.delete_outline,
+            color: AppColors.error,
+          ),
+        ),
+      ],
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final shouldStack = constraints.maxWidth < 320 ||
+            MediaQuery.textScalerOf(context).scale(1) > 1.4;
+        if (shouldStack) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (debt.isOutstanding) markPaidButton,
+              if (debt.isOutstanding) const SizedBox(height: AppSpacing.xs),
+              Align(alignment: Alignment.centerRight, child: secondaryActions),
+            ],
+          );
+        }
+        return Row(
+          children: [
+            if (debt.isOutstanding) Expanded(child: markPaidButton),
+            if (debt.isOutstanding) const SizedBox(width: AppSpacing.sm),
+            secondaryActions,
+          ],
+        );
+      },
     );
   }
 }
@@ -786,7 +828,7 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
                       ),
                     ),
                     child: Row(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         if (provider.isSubmitting) ...[
                           const KarakanaWaveLoader(
@@ -795,13 +837,16 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
                           ),
                           const SizedBox(width: AppSpacing.sm),
                         ],
-                        Text(
-                          provider.isSubmitting
-                              ? 'Inahifadhi...'
-                              : widget.isEditing
-                                  ? 'Hifadhi Mabadiliko'
-                                  : 'Hifadhi Deni',
-                          style: AppTextStyles.buttonMedium,
+                        Flexible(
+                          child: Text(
+                            provider.isSubmitting
+                                ? 'Inahifadhi...'
+                                : widget.isEditing
+                                    ? 'Hifadhi Mabadiliko'
+                                    : 'Hifadhi Deni',
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.buttonMedium,
+                          ),
                         ),
                       ],
                     ),

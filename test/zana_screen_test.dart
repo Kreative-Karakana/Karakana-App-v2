@@ -177,11 +177,10 @@ void main() {
     await _pumpZana(
       tester,
       size: const Size(320, 700),
-      textScale: 1.5,
+      textScale: 2,
     );
 
     expect(find.byKey(const Key('zana-card-biz-manager')), findsOneWidget);
-    expect(find.byKey(const Key('zana-card-kikoba')), findsOneWidget);
     expect(tester.takeException(), isNull);
 
     await tester.drag(
@@ -189,8 +188,40 @@ void main() {
       const Offset(0, -500),
     );
     await tester.pumpAndSettle();
+    expect(find.byKey(const Key('zana-card-kikoba')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  for (final configuration in [
+    (const Size(320, 844), Brightness.light),
+    (const Size(375, 812), Brightness.dark),
+    (const Size(768, 1024), Brightness.light),
+    (const Size(1024, 768), Brightness.dark),
+    (const Size(812, 375), Brightness.light),
+  ]) {
+    testWidgets(
+        '2x text remains responsive at ${configuration.$1.width.toInt()}x${configuration.$1.height.toInt()} in ${configuration.$2.name}',
+        (tester) async {
+      await _pumpZana(
+        tester,
+        size: configuration.$1,
+        brightness: configuration.$2,
+        textScale: 2,
+      );
+
+      final description = find.text(
+        'Simamia operesheni na mauzo ya biashara yako kwa urahisi.',
+      );
+      await tester.scrollUntilVisible(
+        description,
+        160,
+        scrollable: find.byType(Scrollable).first,
+      );
+      final paragraph = tester.renderObject<RenderParagraph>(description);
+      expect(paragraph.didExceedMaxLines, isFalse);
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   testWidgets('dark mode uses the same responsive structure', (tester) async {
     await _pumpZana(
