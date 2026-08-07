@@ -9,11 +9,22 @@ import 'package:karakana_app/features/zana/business_management/services/debt_man
 void main() {
   testWidgets('shows a polished empty state and opens the create form',
       (tester) async {
+    final semantics = tester.ensureSemantics();
     final service = _ScreenDebtService([]);
     await tester.pumpWidget(_app(service));
     await tester.pumpAndSettle();
 
     expect(find.text('Hakuna madeni bado'), findsOneWidget);
+    expect(
+      tester.getSemantics(find.byKey(const Key('debt-filter-all'))),
+      isSemantics(
+        label: 'Yote',
+        isButton: true,
+        isSelected: true,
+        hasTapAction: true,
+      ),
+    );
+    semantics.dispose();
     await tester.tap(find.byKey(const Key('add-debt-button')));
     await tester.pumpAndSettle();
     expect(find.text('Ongeza Deni'), findsWidgets);
