@@ -9,11 +9,22 @@ import 'package:karakana_app/features/zana/business_management/services/debt_man
 void main() {
   testWidgets('shows a polished empty state and opens the create form',
       (tester) async {
+    final semantics = tester.ensureSemantics();
     final service = _ScreenDebtService([]);
     await tester.pumpWidget(_app(service));
     await tester.pumpAndSettle();
 
     expect(find.text('Hakuna madeni bado'), findsOneWidget);
+    expect(
+      tester.getSemantics(find.byKey(const Key('debt-filter-all'))),
+      isSemantics(
+        label: 'Yote',
+        isButton: true,
+        isSelected: true,
+        hasTapAction: true,
+      ),
+    );
+    semantics.dispose();
     await tester.tap(find.byKey(const Key('add-debt-button')));
     await tester.pumpAndSettle();
     expect(find.text('Ongeza Deni'), findsWidgets);
@@ -101,6 +112,34 @@ void main() {
     expect(service.createCalls, 0);
   });
 
+  testWidgets('keyboard inset keeps the debt save action reachable at 2x text',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 568);
+    addTearDown(() {
+      tester.view.resetDevicePixelRatio();
+      tester.view.resetPhysicalSize();
+    });
+
+    await tester.pumpWidget(
+      _app(
+        _ScreenDebtService([]),
+        textScale: 2,
+        viewInsets: const EdgeInsets.only(bottom: 260),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('add-debt-button')));
+    await tester.pumpAndSettle();
+
+    final save = find.byKey(const Key('save-debt-button'));
+    await tester.ensureVisible(save);
+    await tester.pumpAndSettle();
+
+    expect(save, findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('has no overflow across required responsive configurations',
       (tester) async {
     tester.view.devicePixelRatio = 1;
@@ -110,10 +149,12 @@ void main() {
     });
 
     final configurations = [
-      (const Size(320, 568), Brightness.light, 1.0),
+      (const Size(320, 568), Brightness.light, 2.0),
       (const Size(375, 812), Brightness.dark, 2.0),
-      (const Size(768, 1024), Brightness.light, 1.0),
-      (const Size(1024, 768), Brightness.dark, 1.0),
+      (const Size(768, 1024), Brightness.light, 2.0),
+      (const Size(1024, 768), Brightness.dark, 2.0),
+      (const Size(568, 320), Brightness.light, 2.0),
+      (const Size(812, 375), Brightness.dark, 2.0),
     ];
 
     for (final configuration in configurations) {
@@ -125,6 +166,11 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
+      await tester.scrollUntilVisible(
+        find.text('Asha Juma'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       expect(find.text('Asha Juma'), findsOneWidget);
       expect(tester.takeException(), isNull);
     }
@@ -137,6 +183,7 @@ Widget _app(
   Future<void> Function()? onLocked,
   Brightness brightness = Brightness.light,
   double textScale = 1,
+  EdgeInsets viewInsets = EdgeInsets.zero,
 }) {
   AppColors.setBrightness(brightness);
   return MaterialApp(
@@ -146,6 +193,7 @@ Widget _app(
     builder: (context, child) => MediaQuery(
       data: MediaQuery.of(context).copyWith(
         textScaler: TextScaler.linear(textScale),
+        viewInsets: viewInsets,
       ),
       child: child!,
     ),

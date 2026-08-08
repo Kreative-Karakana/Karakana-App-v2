@@ -68,13 +68,13 @@ class _TopPopupAnimatedBannerState extends State<_TopPopupAnimatedBanner>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 420),
-    reverseDuration: const Duration(milliseconds: 300),
+    duration: const Duration(milliseconds: 240),
+    reverseDuration: const Duration(milliseconds: 160),
   );
   late final Animation<double> _fade = CurvedAnimation(
     parent: _controller,
     curve: Curves.easeOutCubic,
-    reverseCurve: Curves.easeInCubic,
+    reverseCurve: Curves.easeOutCubic,
   );
   late final Animation<Offset> _slide = Tween<Offset>(
     begin: const Offset(0.14, -0.08),
@@ -82,7 +82,7 @@ class _TopPopupAnimatedBannerState extends State<_TopPopupAnimatedBanner>
   ).animate(CurvedAnimation(
     parent: _controller,
     curve: Curves.easeOutQuart,
-    reverseCurve: Curves.easeInQuart,
+    reverseCurve: Curves.easeOutQuart,
   ));
   late final Animation<double> _scale = Tween<double>(
     begin: 0.985,
@@ -90,7 +90,7 @@ class _TopPopupAnimatedBannerState extends State<_TopPopupAnimatedBanner>
   ).animate(CurvedAnimation(
     parent: _controller,
     curve: Curves.easeOutCubic,
-    reverseCurve: Curves.easeInCubic,
+    reverseCurve: Curves.easeOutCubic,
   ));
 
   @override
@@ -101,7 +101,8 @@ class _TopPopupAnimatedBannerState extends State<_TopPopupAnimatedBanner>
 
   Future<void> _runAnimation() async {
     await _controller.forward();
-    final hold = widget.duration - const Duration(milliseconds: 720);
+    final hold =
+        widget.duration - _controller.duration! - _controller.reverseDuration!;
     if (hold > Duration.zero) {
       await Future.delayed(hold);
     }
@@ -121,63 +122,73 @@ class _TopPopupAnimatedBannerState extends State<_TopPopupAnimatedBanner>
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _fade,
-      child: SlideTransition(
-        position: _slide,
-        child: ScaleTransition(
-          scale: _scale,
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              constraints: const BoxConstraints(maxWidth: 560),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: widget.style.gradientColors,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(AppRadius.card),
-                border: Border.all(
-                    color: widget.style.accentColor.withValues(alpha: 0.35)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.28),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 26,
-                    height: 26,
-                    decoration: BoxDecoration(
-                      color: widget.style.accentColor.withValues(alpha: 0.2),
-                      shape: BoxShape.circle,
+    return Semantics(
+      container: true,
+      liveRegion: true,
+      label: widget.message,
+      child: ExcludeSemantics(
+        child: FadeTransition(
+          opacity: _fade,
+          child: SlideTransition(
+            position: _slide,
+            child: ScaleTransition(
+              scale: _scale,
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 560),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: widget.style.gradientColors,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                    child: Icon(widget.style.icon,
-                        size: 16,
+                    borderRadius: BorderRadius.circular(AppRadius.card),
+                    border: Border.all(
                         color:
-                            widget.style.accentColor.withValues(alpha: 0.95)),
-                  ),
-                  const SizedBox(width: 10),
-                  Flexible(
-                    child: Text(
-                      widget.message,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                        height: 1.3,
+                            widget.style.accentColor.withValues(alpha: 0.35)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.28),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          color:
+                              widget.style.accentColor.withValues(alpha: 0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(widget.style.icon,
+                            size: 16,
+                            color: widget.style.accentColor
+                                .withValues(alpha: 0.95)),
+                      ),
+                      const SizedBox(width: 10),
+                      Flexible(
+                        child: Text(
+                          widget.message,
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

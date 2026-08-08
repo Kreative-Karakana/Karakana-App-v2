@@ -8,6 +8,7 @@ import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../utils/payment_status.dart';
 
 enum _TransactionFilter {
   all('Zote'),
@@ -21,12 +22,7 @@ enum _TransactionFilter {
   final String label;
 }
 
-enum _TransactionStatus {
-  successful,
-  pending,
-  failed,
-  refunded,
-}
+enum _TransactionStatus { successful, pending, failed, refunded }
 
 class _UserTransaction {
   const _UserTransaction({
@@ -50,13 +46,13 @@ class _UserTransaction {
   final String reference;
 
   String get searchableText => [
-        title,
-        contentType,
-        method,
-        reference,
-        statusLabel,
-        amountText,
-      ].join(' ').toLowerCase();
+    title,
+    contentType,
+    method,
+    reference,
+    statusLabel,
+    amountText,
+  ].join(' ').toLowerCase();
 
   String get statusLabel {
     switch (status) {
@@ -137,18 +133,19 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
       final results = data is Map
           ? (data['results'] as List? ?? [])
           : (data as List? ?? []);
-      final transactions = results
-          .whereType<Map>()
-          .map((item) => _mapTransaction(item.cast<String, dynamic>()))
-          .toList()
-        ..sort((a, b) {
-          final left = a.date;
-          final right = b.date;
-          if (left == null && right == null) return 0;
-          if (left == null) return 1;
-          if (right == null) return -1;
-          return right.compareTo(left);
-        });
+      final transactions =
+          results
+              .whereType<Map>()
+              .map((item) => _mapTransaction(item.cast<String, dynamic>()))
+              .toList()
+            ..sort((a, b) {
+              final left = a.date;
+              final right = b.date;
+              if (left == null && right == null) return 0;
+              if (left == null) return 1;
+              if (right == null) return -1;
+              return right.compareTo(left);
+            });
 
       if (!mounted) return;
       setState(() {
@@ -172,10 +169,10 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     final contentMap = course is Map
         ? course
         : ebook is Map
-            ? ebook
-            : product is Map
-                ? product
-                : null;
+        ? ebook
+        : product is Map
+        ? product
+        : null;
 
     final title = _firstNonEmpty([
       if (contentMap != null) contentMap['title'],
@@ -187,12 +184,14 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
 
     final contentType = _contentTypeFor(payment, course, ebook, product);
     final amount = _amountValue(payment['amount']);
-    final paidAt = _parseDate(_firstNonEmpty([
-      payment['paid_at'],
-      payment['created_at'],
-      payment['updated_at'],
-      payment['initiated_at'],
-    ]));
+    final paidAt = _parseDate(
+      _firstNonEmpty([
+        payment['paid_at'],
+        payment['created_at'],
+        payment['updated_at'],
+        payment['initiated_at'],
+      ]),
+    );
 
     return _UserTransaction(
       title: title,
@@ -241,8 +240,12 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     if (rawStatus.contains('refund') || rawStatus.contains('reversed')) {
       return _TransactionStatus.refunded;
     }
+    if (PaymentStatusContract.isSettled(payment)) {
+      return _TransactionStatus.successful;
+    }
     if (rawStatus.contains('pending') ||
         rawStatus.contains('processing') ||
+        rawStatus == 'success' ||
         rawStatus.contains('created')) {
       return _TransactionStatus.pending;
     }
@@ -253,10 +256,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
       return _TransactionStatus.failed;
     }
 
-    if (payment['is_successful'] == true) {
-      return _TransactionStatus.successful;
-    }
-    if (payment['is_successful'] == false) {
+    if (PaymentStatusContract.isFailed(payment)) {
       return _TransactionStatus.failed;
     }
     if (payment['paid_at'] != null) {
@@ -268,7 +268,8 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
   List<_UserTransaction> get _visibleTransactions {
     return _transactions.where((transaction) {
       final matchesFilter = transaction.matches(_selectedFilter);
-      final matchesSearch = _searchQuery.isEmpty ||
+      final matchesSearch =
+          _searchQuery.isEmpty ||
           transaction.searchableText.contains(_searchQuery);
       return matchesFilter && matchesSearch;
     }).toList();
@@ -392,8 +393,9 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                 const SizedBox(height: AppSpacing.md),
                             itemBuilder: (_, index) => _TransactionCard(
                               transaction: _visibleTransactions[index],
-                              dateText:
-                                  _formatDate(_visibleTransactions[index].date),
+                              dateText: _formatDate(
+                                _visibleTransactions[index].date,
+                              ),
                               onTap: () => _showTransactionDetails(
                                 _visibleTransactions[index],
                               ),
@@ -473,10 +475,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
               hintStyle: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.textHint,
               ),
-              prefixIcon: Icon(
-                Icons.search_rounded,
-                color: AppColors.primary,
-              ),
+              prefixIcon: Icon(Icons.search_rounded, color: AppColors.primary),
               suffixIcon: _searchQuery.isEmpty
                   ? null
                   : IconButton(
@@ -523,8 +522,9 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                     selectedColor: AppColors.primaryDark,
                     backgroundColor: Theme.of(context).cardColor,
                     side: BorderSide(
-                      color:
-                          selected ? AppColors.primaryDark : AppColors.border,
+                      color: selected
+                          ? AppColors.primaryDark
+                          : AppColors.border,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.chip),
@@ -554,7 +554,8 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     return _CenteredState(
       icon: Icons.cloud_off_rounded,
       title: 'Imeshindikana kupakia',
-      message: _errorMessage ??
+      message:
+          _errorMessage ??
           'Hatukuweza kupata historia yako ya malipo kwa sasa.',
       actionLabel: 'Jaribu Tena',
       onAction: _loadPayments,
@@ -583,8 +584,9 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
       isScrollControlled: true,
       backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(AppRadius.modal)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadius.modal),
+        ),
       ),
       builder: (context) {
         return SafeArea(
@@ -629,10 +631,10 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                           Text(
                             transaction.title,
                             style: AppTextStyles.h3.copyWith(
-                              color: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.color ??
+                              color:
+                                  Theme.of(
+                                    context,
+                                  ).textTheme.bodyLarge?.color ??
                                   AppColors.textPrimary,
                             ),
                           ),
@@ -947,7 +949,8 @@ class _MetricCard extends StatelessWidget {
                 Text(
                   value,
                   style: AppTextStyles.h3.copyWith(
-                    color: Theme.of(context).textTheme.bodyLarge?.color ??
+                    color:
+                        Theme.of(context).textTheme.bodyLarge?.color ??
                         AppColors.textPrimary,
                   ),
                 ),
@@ -1027,7 +1030,7 @@ class _TransactionCard extends StatelessWidget {
                           style: AppTextStyles.labelLarge.copyWith(
                             color:
                                 Theme.of(context).textTheme.bodyLarge?.color ??
-                                    AppColors.textPrimary,
+                                AppColors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: AppSpacing.xs),
@@ -1152,7 +1155,8 @@ class _CenteredState extends StatelessWidget {
             title,
             textAlign: TextAlign.center,
             style: AppTextStyles.h2.copyWith(
-              color: Theme.of(context).textTheme.bodyLarge?.color ??
+              color:
+                  Theme.of(context).textTheme.bodyLarge?.color ??
                   AppColors.textPrimary,
             ),
           ),
@@ -1196,9 +1200,7 @@ class _DetailRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Text(label, style: AppTextStyles.bodySmall),
-          ),
+          Expanded(child: Text(label, style: AppTextStyles.bodySmall)),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             flex: 2,
@@ -1206,7 +1208,8 @@ class _DetailRow extends StatelessWidget {
               value,
               textAlign: TextAlign.right,
               style: AppTextStyles.labelMedium.copyWith(
-                color: Theme.of(context).textTheme.bodyLarge?.color ??
+                color:
+                    Theme.of(context).textTheme.bodyLarge?.color ??
                     AppColors.textPrimary,
               ),
             ),

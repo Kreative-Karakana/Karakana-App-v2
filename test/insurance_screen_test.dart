@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:karakana_app/core/constants/api_endpoints.dart';
 import 'package:karakana_app/core/theme/app_colors.dart';
@@ -403,16 +404,66 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     await tester.pumpWidget(
-      MediaQuery(
-        data: const MediaQueryData(
-          size: Size(320, 844),
-          textScaler: TextScaler.linear(2),
-        ),
-        child: _app(service: _FakeZanaLeadCaptureService()),
+      _app(
+        service: _FakeZanaLeadCaptureService(),
+        textScale: 2,
       ),
     );
     await tester.pumpAndSettle();
 
+    expect(tester.takeException(), isNull);
+    final subtitle = tester.renderObject<RenderParagraph>(
+      find.text('Linda biashara yako dhidi ya hatari yoyote'),
+    );
+    expect(subtitle.didExceedMaxLines, isFalse);
+  });
+
+  for (final size in [
+    const Size(568, 320),
+    const Size(812, 375),
+    const Size(1024, 768),
+  ]) {
+    testWidgets(
+        'landscape ${size.width.toInt()}x${size.height.toInt()} remains overflow-free at 2x text',
+        (tester) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        _app(
+          service: _FakeZanaLeadCaptureService(),
+          textScale: 2,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('insurance-hero')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('keyboard inset keeps the insurance submit action reachable',
+      (tester) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      _app(
+        service: _FakeZanaLeadCaptureService(),
+        viewInsets: const EdgeInsets.only(bottom: 260),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final submit = find.byKey(const Key('insurance-submit-button'));
+    await tester.ensureVisible(submit);
+    await tester.pumpAndSettle();
+
+    expect(submit, findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -509,12 +560,21 @@ void main() {
 Widget _app({
   required ZanaLeadCaptureService service,
   Brightness brightness = Brightness.light,
+  double textScale = 1,
+  EdgeInsets viewInsets = EdgeInsets.zero,
 }) {
   AppColors.setBrightness(brightness);
   return MaterialApp(
     theme: AppTheme.light,
     darkTheme: AppTheme.dark,
     themeMode: brightness == Brightness.dark ? ThemeMode.dark : ThemeMode.light,
+    builder: (context, child) => MediaQuery(
+      data: MediaQuery.of(context).copyWith(
+        textScaler: TextScaler.linear(textScale),
+        viewInsets: viewInsets,
+      ),
+      child: child!,
+    ),
     home: InsuranceScreen(leadCaptureService: service),
   );
 }

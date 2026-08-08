@@ -50,6 +50,7 @@ class SubscriptionCheckoutPayment {
   final String? responseDesc;
   final String? orderId;
   final String? source;
+  final String? action;
 
   const SubscriptionCheckoutPayment({
     required this.externalId,
@@ -66,6 +67,7 @@ class SubscriptionCheckoutPayment {
     required this.responseDesc,
     required this.orderId,
     required this.source,
+    this.action,
   });
 
   factory SubscriptionCheckoutPayment.fromJson(Map<String, dynamic> json) {
@@ -87,6 +89,7 @@ class SubscriptionCheckoutPayment {
       responseDesc: json['response_desc']?.toString(),
       orderId: json['order_id']?.toString(),
       source: json['source']?.toString(),
+      action: json['action']?.toString(),
     );
   }
 }
@@ -103,10 +106,17 @@ class PaymentStatus {
   });
 
   factory PaymentStatus.fromJson(Map<String, dynamic> json) {
-    final status = (json['status'] ?? '').toString();
+    final status = (json['payment_state'] ?? json['status'] ?? '')
+        .toString()
+        .toUpperCase();
+    final hasNormalizedState = status.isNotEmpty;
     return PaymentStatus(
-      isSuccessful: json['is_successful'] == true,
-      isFailed: json['is_failed'] == true || status == 'failed',
+      isSuccessful: hasNormalizedState
+          ? status == 'SETTLED'
+          : json['is_successful'] == true,
+      isFailed: hasNormalizedState
+          ? const {'FAILED', 'REFUNDED', 'REVERSED'}.contains(status)
+          : json['is_failed'] == true || json['status'] == 'failed',
       status: status,
     );
   }

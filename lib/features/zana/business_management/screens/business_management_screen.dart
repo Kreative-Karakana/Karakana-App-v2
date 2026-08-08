@@ -15,6 +15,7 @@ import '../models/business.dart';
 import '../models/business_dashboard_summary.dart';
 import '../models/business_transaction.dart';
 import '../providers/business_management_provider.dart';
+import '../widgets/business_confirmation_dialog.dart';
 import 'debt_management_screen.dart';
 
 class BusinessManagementScreen extends StatelessWidget {
@@ -36,44 +37,15 @@ class BusinessManagementScreen extends StatelessWidget {
 /// hands off to the subscription status/upgrade screen (issue #33); this
 /// dialog itself only explains why the action didn't happen and reassures
 /// the user their existing data is safe.
-Future<void> showSubscriptionRequiredDialog(BuildContext context) {
-  return showDialog<void>(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Text(
-        'Boresha Akaunti',
-        style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-      ),
-      content: Text(
-        kSubscriptionRequiredMessage,
-        style: GoogleFonts.montserrat(fontSize: 13, height: 1.5),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext),
-          child: Text(
-            'Nimeelewa',
-            style: GoogleFonts.montserrat(
-              fontWeight: FontWeight.w700,
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ),
-        FilledButton(
-          onPressed: () {
-            Navigator.pop(dialogContext);
-            _goToSubscription(context);
-          },
-          style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
-          child: Text(
-            'Boresha Sasa',
-            style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-          ),
-        ),
-      ],
-    ),
+Future<void> showSubscriptionRequiredDialog(BuildContext context) async {
+  final confirmed = await showBusinessConfirmationDialog(
+    context,
+    title: 'Boresha Akaunti',
+    message: kSubscriptionRequiredMessage,
+    confirmLabel: 'Boresha Sasa',
+    cancelLabel: 'Nimeelewa',
   );
+  if (confirmed && context.mounted) await _goToSubscription(context);
 }
 
 /// Navigates to the subscription screen (issue #33) and, once the user
@@ -100,10 +72,10 @@ class _ReadOnlyBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: AppSpacing.cardPadding,
       decoration: BoxDecoration(
         color: AppColors.warningLight,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         border: Border.all(color: AppColors.warning.withValues(alpha: 0.35)),
       ),
       child: Column(
@@ -200,11 +172,7 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
         foregroundColor: Colors.white,
         title: Text(
           'Usimamizi wa Biashara',
-          style: GoogleFonts.montserrat(
-            fontSize: 17,
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-          ),
+          style: AppTextStyles.h3.copyWith(color: Colors.white),
         ),
       ),
       body: Consumer<BusinessManagementProvider>(
@@ -401,42 +369,17 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
       await showSubscriptionRequiredDialog(context);
       return;
     }
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
-          'Futa Muamala?',
-          style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-        ),
-        content: Text(
+    final confirmed = await showBusinessConfirmationDialog(
+      context,
+      title: 'Futa Muamala?',
+      message:
           'Una uhakika unataka kufuta muamala huu wa ${transaction.typeLabel}? '
           'Hatua hii haiwezi kutenduliwa.',
-          style: GoogleFonts.montserrat(fontSize: 13, height: 1.5),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(
-              'Ghairi',
-              style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
-            ),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFFB71C1C),
-            ),
-            child: Text(
-              'Futa',
-              style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-            ),
-          ),
-        ],
-      ),
+      confirmLabel: 'Futa',
+      isDestructive: true,
     );
 
-    if (confirmed != true || !mounted) return;
+    if (!confirmed || !mounted) return;
 
     setState(() => _deletingTransactionId = transaction.id);
     final provider = context.read<BusinessManagementProvider>();
@@ -594,16 +537,25 @@ class _DashboardSummary extends StatelessWidget {
         const SizedBox(height: 10),
         LayoutBuilder(
           builder: (context, constraints) {
-            final columns = constraints.maxWidth >= 680 ? 3 : 2;
-            final textScale =
-                MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 1.35);
+            final rawTextScale = MediaQuery.textScalerOf(context).scale(1);
+            final textScale = rawTextScale.clamp(1.0, 1.4);
+            final columns = constraints.maxWidth >= 680 && rawTextScale < 1.6
+                ? 3
+                : constraints.maxWidth < 340 || rawTextScale >= 1.6
+                    ? 1
+                    : 2;
+            final baseAspectRatio = switch (columns) {
+              1 => 2.1,
+              2 => 1.35,
+              _ => 2.0,
+            };
             return GridView.count(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               crossAxisCount: columns,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
-              childAspectRatio: (columns == 3 ? 2.0 : 1.35) / textScale,
+              childAspectRatio: baseAspectRatio / textScale,
               children: [
                 _MetricCard(
                   label: 'Mauzo ya Leo',
@@ -655,26 +607,42 @@ class _ActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: _ActionButton(
-            icon: Icons.add_circle_outline,
-            label: 'Rekodi Mauzo',
-            onTap: onSale,
-            isLocked: isLocked,
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: _ActionButton(
-            icon: Icons.remove_circle_outline,
-            label: 'Rekodi Matumizi',
-            onTap: onExpense,
-            isLocked: isLocked,
-          ),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final shouldStack = constraints.maxWidth < 360 ||
+            MediaQuery.textScalerOf(context).scale(1) > 1.4;
+        final saleButton = _ActionButton(
+          key: const Key('record-sale-action'),
+          icon: Icons.add_circle_outline,
+          label: 'Rekodi Mauzo',
+          onTap: onSale,
+          isLocked: isLocked,
+        );
+        final expenseButton = _ActionButton(
+          icon: Icons.remove_circle_outline,
+          label: 'Rekodi Matumizi',
+          onTap: onExpense,
+          isLocked: isLocked,
+        );
+
+        if (shouldStack) {
+          return Column(
+            children: [
+              saleButton,
+              const SizedBox(height: 10),
+              expenseButton,
+            ],
+          );
+        }
+
+        return Row(
+          children: [
+            Expanded(child: saleButton),
+            const SizedBox(width: 10),
+            Expanded(child: expenseButton),
+          ],
+        );
+      },
     );
   }
 }
@@ -716,6 +684,7 @@ class _RecentTransactions extends StatelessWidget {
             _EmptyState(
               title: 'Hakuna miamala bado',
               message: 'Rekodi Mauzo au Matumizi ili yaonekane hapa.',
+              icon: Icons.receipt_long_outlined,
               actionLabel: 'Rekodi Mauzo',
               onAction: onRecordSale,
             )
@@ -857,6 +826,7 @@ class _HistorySectionState extends State<_HistorySection> {
                     suffixIcon: _searchController.text.isEmpty
                         ? null
                         : IconButton(
+                            tooltip: 'Futa utafutaji',
                             icon: const Icon(Icons.close_rounded, size: 18),
                             onPressed: () {
                               _searchController.clear();
@@ -906,7 +876,12 @@ class _HistorySectionState extends State<_HistorySection> {
           if (provider.isLoadingTransactions)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 20),
-              child: Center(child: KarakanaWaveLoader(size: 28)),
+              child: Center(
+                child: KarakanaWaveLoader(
+                  size: 28,
+                  semanticsLabel: 'Inapakia miamala',
+                ),
+              ),
             )
           else if (provider.transactions.isEmpty)
             provider.hasActiveFilters
@@ -915,6 +890,7 @@ class _HistorySectionState extends State<_HistorySection> {
                     message:
                         'Jaribu kubadilisha vichujio au neno la utafutaji, '
                         'au gusa "Futa Vichujio" kuona miamala yote.',
+                    icon: Icons.filter_alt_off_rounded,
                     actionLabel: 'Futa Vichujio',
                     actionIcon: Icons.filter_alt_off_rounded,
                     onAction: provider.resetFilters,
@@ -922,6 +898,7 @@ class _HistorySectionState extends State<_HistorySection> {
                 : _EmptyState(
                     title: 'Hakuna historia bado',
                     message: 'Miamala utakayorekodi itaonekana hapa.',
+                    icon: Icons.receipt_long_outlined,
                     actionLabel: 'Rekodi Mauzo',
                     onAction: widget.onRecordSale,
                   )
@@ -1099,7 +1076,7 @@ class _RemovableChip extends StatelessWidget {
       padding: const EdgeInsets.only(left: 11, right: 6, top: 6, bottom: 6),
       decoration: BoxDecoration(
         color: AppColors.primaryLight,
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(AppRadius.circle),
         border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
       ),
       child: Row(
@@ -1235,7 +1212,7 @@ class _TransactionFilterSheetState extends State<_TransactionFilterSheet> {
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
                       color: AppColors.border,
-                      borderRadius: BorderRadius.circular(999),
+                      borderRadius: BorderRadius.circular(AppRadius.circle),
                     ),
                   ),
                 ),
@@ -1295,26 +1272,19 @@ class _TransactionFilterSheetState extends State<_TransactionFilterSheet> {
                   onChanged: (value) => setState(() => _category = value ?? ''),
                 ),
                 const SizedBox(height: 14),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _OptionalDateField(
-                        label: 'Kuanzia tarehe',
-                        date: _dateFrom,
-                        onTap: () => _pickDate(isFrom: true),
-                        onClear: () => setState(() => _dateFrom = null),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _OptionalDateField(
-                        label: 'Hadi tarehe',
-                        date: _dateTo,
-                        onTap: () => _pickDate(isFrom: false),
-                        onClear: () => setState(() => _dateTo = null),
-                      ),
-                    ),
-                  ],
+                _ResponsivePair(
+                  first: _OptionalDateField(
+                    label: 'Kuanzia tarehe',
+                    date: _dateFrom,
+                    onTap: () => _pickDate(isFrom: true),
+                    onClear: () => setState(() => _dateFrom = null),
+                  ),
+                  second: _OptionalDateField(
+                    label: 'Hadi tarehe',
+                    date: _dateTo,
+                    onTap: () => _pickDate(isFrom: false),
+                    onClear: () => setState(() => _dateTo = null),
+                  ),
                 ),
                 if (_dateError != null) ...[
                   const SizedBox(height: AppSpacing.sm),
@@ -1337,44 +1307,37 @@ class _TransactionFilterSheetState extends State<_TransactionFilterSheet> {
                   onChanged: (value) => setState(() => _ordering = value ?? ''),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => setState(() {
-                          _transactionType = null;
-                          _category = '';
-                          _dateFrom = null;
-                          _dateTo = null;
-                          _ordering = '';
-                          _dateError = null;
-                        }),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          side: BorderSide(color: AppColors.inputBorder),
-                        ),
-                        child: Text(
-                          'Futa Vichujio',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
+                _ResponsivePair(
+                  first: OutlinedButton(
+                    onPressed: () => setState(() {
+                      _transactionType = null;
+                      _category = '';
+                      _dateFrom = null;
+                      _dateTo = null;
+                      _ordering = '';
+                      _dateError = null;
+                    }),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.input),
+                      ),
+                      side: BorderSide(color: AppColors.inputBorder),
+                    ),
+                    child: Text(
+                      'Futa Vichujio',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textSecondary,
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _PrimaryButton(
-                        label: 'Tumia Vichujio',
-                        isLoading: false,
-                        onPressed: _applyFilters,
-                      ),
-                    ),
-                  ],
+                  ),
+                  second: _PrimaryButton(
+                    label: 'Tumia Vichujio',
+                    isLoading: false,
+                    onPressed: _applyFilters,
+                  ),
                 ),
               ],
             ),
@@ -1421,7 +1384,7 @@ class _OptionalDateField extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppRadius.input),
       child: InputDecorator(
         decoration: _inputDecoration(label, 'Chagua tarehe').copyWith(
           suffixIcon: date == null
@@ -1444,6 +1407,40 @@ class _OptionalDateField extends StatelessWidget {
   }
 }
 
+class _ResponsivePair extends StatelessWidget {
+  final Widget first;
+  final Widget second;
+
+  const _ResponsivePair({required this.first, required this.second});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final shouldStack = constraints.maxWidth < 360 ||
+            MediaQuery.textScalerOf(context).scale(1) > 1.4;
+        if (shouldStack) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              first,
+              const SizedBox(height: 10),
+              second,
+            ],
+          );
+        }
+        return Row(
+          children: [
+            Expanded(child: first),
+            const SizedBox(width: 10),
+            Expanded(child: second),
+          ],
+        );
+      },
+    );
+  }
+}
+
 class _HistoryPaginationFooter extends StatelessWidget {
   final BusinessManagementProvider provider;
 
@@ -1454,7 +1451,12 @@ class _HistoryPaginationFooter extends StatelessWidget {
     if (provider.isLoadingMoreTransactions) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 16),
-        child: Center(child: KarakanaWaveLoader(size: 24)),
+        child: Center(
+          child: KarakanaWaveLoader(
+            size: 24,
+            semanticsLabel: 'Inapakia miamala zaidi',
+          ),
+        ),
       );
     }
 
@@ -1904,14 +1906,14 @@ class _BusinessHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: AppSpacing.cardPadding,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: AppColors.zanaGradient,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withValues(alpha: 0.18),
@@ -1948,21 +1950,15 @@ class _BusinessHeader extends StatelessWidget {
             ),
           ),
           if (onEdit != null)
-            Material(
-              color: Colors.white.withValues(alpha: 0.16),
-              shape: const CircleBorder(),
-              child: InkWell(
-                onTap: onEdit,
-                customBorder: const CircleBorder(),
-                child: const Padding(
-                  padding: EdgeInsets.all(8),
-                  child: Icon(
-                    Icons.edit_outlined,
-                    size: 18,
-                    color: Colors.white,
-                  ),
-                ),
+            IconButton(
+              onPressed: onEdit,
+              tooltip: 'Hariri taarifa za biashara',
+              style: IconButton.styleFrom(
+                backgroundColor: Colors.white.withValues(alpha: 0.16),
+                foregroundColor: Colors.white,
+                minimumSize: const Size.square(48),
               ),
+              icon: const Icon(Icons.edit_outlined, size: 20),
             ),
         ],
       ),
@@ -1979,14 +1975,14 @@ class _HeaderPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: AppSpacing.cardPadding,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: AppColors.zanaGradient,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.card),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2099,10 +2095,10 @@ class _FirstTransactionGuide extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(14),
+      padding: AppSpacing.cardPadding,
       decoration: BoxDecoration(
         color: AppColors.primaryLight,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
       ),
       child: Row(
@@ -2140,16 +2136,13 @@ class _FirstTransactionGuide extends StatelessWidget {
               ],
             ),
           ),
-          InkWell(
-            onTap: onDismiss,
-            borderRadius: BorderRadius.circular(999),
-            child: Padding(
-              padding: const EdgeInsets.all(4),
-              child: Icon(
-                Icons.close_rounded,
-                size: 16,
-                color: AppColors.textTertiary,
-              ),
+          IconButton(
+            onPressed: onDismiss,
+            tooltip: 'Funga maelekezo',
+            icon: Icon(
+              Icons.close_rounded,
+              size: 18,
+              color: AppColors.textTertiary,
             ),
           ),
         ],
@@ -2166,10 +2159,10 @@ class _SurfaceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.cardPadding,
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
@@ -2203,7 +2196,7 @@ class _MetricCard extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         border: Border.all(color: AppColors.border),
       ),
       child: Column(
@@ -2212,8 +2205,6 @@ class _MetricCard extends StatelessWidget {
         children: [
           Text(
             label,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
             style: GoogleFonts.montserrat(
               color: AppColors.textSecondary,
               fontSize: 11.5,
@@ -2250,6 +2241,7 @@ class _ActionButton extends StatelessWidget {
   final bool isLocked;
 
   const _ActionButton({
+    super.key,
     required this.icon,
     required this.label,
     required this.onTap,
@@ -2261,15 +2253,15 @@ class _ActionButton extends StatelessWidget {
     final iconColor = isLocked ? AppColors.textSecondary : AppColors.primary;
     return Material(
       color: AppColors.surface,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(AppRadius.card),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         child: Container(
           constraints: const BoxConstraints(minHeight: 76),
-          padding: const EdgeInsets.all(14),
+          padding: AppSpacing.cardPadding,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(AppRadius.card),
             border: Border.all(color: AppColors.border),
           ),
           child: Row(
@@ -2279,8 +2271,6 @@ class _ActionButton extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.montserrat(
                     color: isLocked
                         ? AppColors.textSecondary
@@ -2356,8 +2346,6 @@ class _TransactionTile extends StatelessWidget {
                   children: [
                     Text(
                       '${transaction.typeLabel} • ${_categoryLabel(transaction.category)}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.montserrat(
                         color: AppColors.textPrimary,
                         fontSize: 12.5,
@@ -2371,8 +2359,6 @@ class _TransactionTile extends StatelessWidget {
                         if (transaction.description.trim().isNotEmpty)
                           transaction.description.trim(),
                       ].join(' • '),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.montserrat(
                         color: AppColors.textTertiary,
                         fontSize: 11.5,
@@ -2403,7 +2389,12 @@ class _TransactionTile extends StatelessWidget {
                 SizedBox.square(
                   dimension: 48,
                   child: isDeleting
-                      ? const Center(child: KarakanaWaveLoader(size: 18))
+                      ? const Center(
+                          child: KarakanaWaveLoader(
+                            size: 18,
+                            semanticsLabel: 'Inafuta muamala',
+                          ),
+                        )
                       : IconButton(
                           onPressed: onDelete,
                           icon: Icon(
@@ -2508,7 +2499,7 @@ class _KarakanaDropdown extends StatelessWidget {
         fontWeight: FontWeight.w600,
       ),
       decoration: _inputDecoration(label, ''),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppRadius.input),
     );
   }
 }
@@ -2531,7 +2522,7 @@ class _DatePickerField extends StatelessWidget {
         );
         if (picked != null) onChanged(picked);
       },
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppRadius.input),
       child: InputDecorator(
         decoration: _inputDecoration('Tarehe ya muamala', ''),
         child: Row(
@@ -2542,12 +2533,14 @@ class _DatePickerField extends StatelessWidget {
               color: AppColors.primary,
             ),
             const SizedBox(width: 10),
-            Text(
-              _formatDate(date),
-              style: GoogleFonts.montserrat(
-                color: AppColors.textPrimary,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
+            Expanded(
+              child: Text(
+                _formatDate(date),
+                style: GoogleFonts.montserrat(
+                  color: AppColors.textPrimary,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ],
@@ -2574,16 +2567,16 @@ class _PrimaryButton extends StatelessWidget {
       liveRegion: isLoading,
       label: isLoading ? 'Inahifadhi, tafadhali subiri' : label,
       button: true,
-      child: ElevatedButton(
+      child: FilledButton(
         onPressed: isLoading ? null : onPressed,
-        style: ElevatedButton.styleFrom(
+        style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.62),
           minimumSize: const Size(0, 48),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppRadius.input),
           ),
           elevation: 0,
         ),
@@ -2625,24 +2618,32 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(999),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
-        decoration: BoxDecoration(
-          color: selected ? AppColors.primaryDark : AppColors.surfaceWarm,
-          borderRadius: BorderRadius.circular(999),
-          border: Border.all(
-            color: selected ? AppColors.primaryDark : AppColors.border,
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: label,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.chip),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 44),
+          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
+          decoration: BoxDecoration(
+            color: selected ? AppColors.primaryDark : AppColors.surfaceWarm,
+            borderRadius: BorderRadius.circular(AppRadius.chip),
+            border: Border.all(
+              color: selected ? AppColors.primaryDark : AppColors.border,
+            ),
           ),
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.montserrat(
-            color: selected ? Colors.white : AppColors.textSecondary,
-            fontSize: 12,
-            fontWeight: FontWeight.w800,
+          child: ExcludeSemantics(
+            child: Text(
+              label,
+              style: GoogleFonts.montserrat(
+                color: selected ? Colors.white : AppColors.textSecondary,
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
           ),
         ),
       ),
@@ -2663,20 +2664,14 @@ class _SectionTitle extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.montserrat(
-            color: AppColors.textPrimary,
-            fontSize: 15,
-            fontWeight: FontWeight.w800,
-          ),
+          style: AppTextStyles.h4.copyWith(fontWeight: FontWeight.w800),
         ),
         if (subtitle != null) ...[
           const SizedBox(height: 4),
           Text(
             subtitle!,
-            style: GoogleFonts.montserrat(
+            style: AppTextStyles.bodySmall.copyWith(
               color: AppColors.textSecondary,
-              fontSize: 12,
-              height: 1.35,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -2692,6 +2687,7 @@ class _EmptyState extends StatelessWidget {
   final String? actionLabel;
   final VoidCallback? onAction;
   final IconData actionIcon;
+  final IconData icon;
 
   const _EmptyState({
     required this.title,
@@ -2699,21 +2695,24 @@ class _EmptyState extends StatelessWidget {
     this.actionLabel,
     this.onAction,
     this.actionIcon = Icons.add_circle_outline,
+    this.icon = Icons.receipt_long_outlined,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.cardPadding,
       decoration: BoxDecoration(
         color: AppColors.surfaceWarm,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadius.card),
         border: Border.all(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Icon(icon, size: 28, color: AppColors.textTertiary),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             title,
             style: GoogleFonts.montserrat(
@@ -2768,7 +2767,7 @@ class _LoadingState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const KarakanaWaveLoader(size: 34),
+          KarakanaWaveLoader(size: 34, semanticsLabel: label),
           const SizedBox(height: 12),
           Text(
             label,
@@ -2849,19 +2848,19 @@ InputDecoration _inputDecoration(String label, String hint) {
     fillColor: AppColors.surface,
     contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppRadius.input),
       borderSide: BorderSide(color: AppColors.inputBorder),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppRadius.input),
       borderSide: BorderSide(color: AppColors.primary, width: 1.4),
     ),
     errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppRadius.input),
       borderSide: BorderSide(color: AppColors.error),
     ),
     focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppRadius.input),
       borderSide: BorderSide(color: AppColors.error, width: 1.4),
     ),
   );
