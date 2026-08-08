@@ -26,10 +26,10 @@ class SubscriptionCheckoutProvider extends ChangeNotifier {
     PaymentUrlLauncher? urlLauncher,
     Duration pollInterval = const Duration(seconds: 3),
     int maxPollAttempts = 20,
-  })  : _service = service ?? SubscriptionService(),
-        _urlLauncher = urlLauncher ?? PaymentUrlLauncher(),
-        _pollInterval = pollInterval,
-        _maxPollAttempts = maxPollAttempts;
+  }) : _service = service ?? SubscriptionService(),
+       _urlLauncher = urlLauncher ?? PaymentUrlLauncher(),
+       _pollInterval = pollInterval,
+       _maxPollAttempts = maxPollAttempts;
 
   final SubscriptionApi _service;
   final PaymentUrlLauncher _urlLauncher;
@@ -96,7 +96,9 @@ class SubscriptionCheckoutProvider extends ChangeNotifier {
           _fail('Imeshindikana kufungua ukurasa wa malipo. Jaribu tena.');
           return;
         }
-      } else if (payment.gateway != 'evmak_mno' && payment.success != true) {
+      } else if (payment.action != 'await_ussd' &&
+          payment.gateway != 'evmak_mno' &&
+          payment.success != true) {
         _fail('Kiungo cha malipo hakikupatikana. Jaribu tena.');
         return;
       }
@@ -108,9 +110,7 @@ class SubscriptionCheckoutProvider extends ChangeNotifier {
     }
   }
 
-  void startPolling({
-    required EntitlementRefreshCallback refreshEntitlement,
-  }) {
+  void startPolling({required EntitlementRefreshCallback refreshEntitlement}) {
     if (!hasPendingCheckout || _isPolling) return;
     _isPolling = true;
     _pollTimer?.cancel();
@@ -138,17 +138,21 @@ class SubscriptionCheckoutProvider extends ChangeNotifier {
 
       if (status.isFailed) {
         _stopPolling();
-        _setState(SubscriptionCheckoutState.failed,
-            message: 'Malipo hayakukamilika. Tafadhali jaribu tena.');
+        _setState(
+          SubscriptionCheckoutState.failed,
+          message: 'Malipo hayakukamilika. Tafadhali jaribu tena.',
+        );
         return;
       }
 
       _pollAttempts += 1;
       if (_pollAttempts >= _maxPollAttempts) {
         _stopPolling();
-        _setState(SubscriptionCheckoutState.timedOut,
-            message:
-                'Malipo bado yanasubiri. Unaweza kuangalia hali tena baada ya kuthibitisha.');
+        _setState(
+          SubscriptionCheckoutState.timedOut,
+          message:
+              'Malipo bado yanasubiri. Unaweza kuangalia hali tena baada ya kuthibitisha.',
+        );
       }
     } catch (e) {
       _pollAttempts += 1;
@@ -157,9 +161,11 @@ class SubscriptionCheckoutProvider extends ChangeNotifier {
       }
       if (_pollAttempts >= _maxPollAttempts) {
         _stopPolling();
-        _setState(SubscriptionCheckoutState.timedOut,
-            message:
-                'Hatukuweza kuthibitisha malipo sasa. Angalia hali tena baada ya muda.');
+        _setState(
+          SubscriptionCheckoutState.timedOut,
+          message:
+              'Hatukuweza kuthibitisha malipo sasa. Angalia hali tena baada ya muda.',
+        );
       }
     }
   }
