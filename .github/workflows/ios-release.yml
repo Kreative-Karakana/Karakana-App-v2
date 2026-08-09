@@ -8,6 +8,14 @@ on:
         required: true
         default: '2.1.0'
 
+# No cancel-in-progress: this job signs and uploads a build to App Store
+# Connect. Killing it mid-run can leave a partially-uploaded binary or
+# invalidate the signing session; a duplicate manual trigger is rare enough
+# that letting it queue is the safer trade-off.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: read
 
@@ -40,6 +48,16 @@ jobs:
 
       - name: Print Flutter version
         run: flutter --version
+
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: |
+            ios/Pods
+            ~/Library/Caches/CocoaPods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
 
       - name: Bump version in pubspec.yaml
         run: |

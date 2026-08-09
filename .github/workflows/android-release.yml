@@ -8,6 +8,13 @@ on:
         required: true
         default: "2.1.0"
 
+# No cancel-in-progress: this job signs a release keystore-backed build.
+# Letting a duplicate manual trigger queue behind it is cheaper than risking
+# a killed run leaving signing artifacts half-written.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: read
 
@@ -31,6 +38,7 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+          cache: gradle
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
