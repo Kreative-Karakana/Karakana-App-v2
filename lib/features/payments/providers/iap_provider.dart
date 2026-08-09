@@ -58,6 +58,9 @@ class IAPProvider extends ChangeNotifier {
         case IAPResult.cancelled:
           errorMessage = null;
           break;
+        case IAPResult.nothingToRestore:
+          errorMessage = null;
+          break;
         case IAPResult.error:
           errorMessage = result.message ?? 'Hitilafu ya malipo. Jaribu tena.';
           break;
