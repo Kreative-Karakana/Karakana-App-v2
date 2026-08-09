@@ -31,7 +31,10 @@ class SubscriptionPurchaseProvider extends ChangeNotifier {
         errorMessage = 'Usajili haupatikani kwenye kifaa hiki.';
         return false;
       }
-      await IAPService.instance.loadProducts({productId});
+      await IAPService.instance.loadProducts(
+        {productId},
+        kind: IAPProductKind.subscription,
+      );
       return true;
     } catch (_) {
       errorMessage = 'Hitilafu ya mtandao. Jaribu tena baadaye.';

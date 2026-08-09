@@ -7,6 +7,8 @@ class Ebook {
   final int priceInTzs;
   final int totalPages;
   final bool isPurchased;
+  final bool isPaymentExempt;
+  final String? appleIapProductId;
   final String status;
   final int buyersCount;
   final int successfulPurchasesCount;
@@ -23,6 +25,8 @@ class Ebook {
     required this.priceInTzs,
     required this.totalPages,
     required this.isPurchased,
+    required this.isPaymentExempt,
+    required this.appleIapProductId,
     required this.status,
     required this.buyersCount,
     required this.successfulPurchasesCount,
@@ -50,6 +54,8 @@ class Ebook {
       priceInTzs: parsePrice(json['price']),
       totalPages: (json['total_pages'] as num?)?.toInt() ?? 0,
       isPurchased: json['is_purchased'] == true,
+      isPaymentExempt: json['is_payment_exempt'] == true,
+      appleIapProductId: json['apple_iap_product_id']?.toString(),
       status: (json['status'] ?? '').toString(),
       buyersCount: (json['buyers_count'] as num?)?.toInt() ?? 0,
       successfulPurchasesCount:
