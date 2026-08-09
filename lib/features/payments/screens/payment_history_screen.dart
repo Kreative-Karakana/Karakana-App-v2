@@ -45,14 +45,8 @@ class _UserTransaction {
   final DateTime? date;
   final String reference;
 
-  String get searchableText => [
-    title,
-    contentType,
-    method,
-    reference,
-    statusLabel,
-    amountText,
-  ].join(' ').toLowerCase();
+  String get searchableText =>
+      [title, contentType, method, reference, statusLabel, amountText].join(' ').toLowerCase();
 
   String get statusLabel {
     switch (status) {
@@ -130,9 +124,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     try {
       final res = await ApiClient().dio.get('/api/v1/payments/checkout/');
       final data = res.data;
-      final results = data is Map
-          ? (data['results'] as List? ?? [])
-          : (data as List? ?? []);
+      final results = data is Map ? (data['results'] as List? ?? []) : (data as List? ?? []);
       final transactions =
           results
               .whereType<Map>()
@@ -156,8 +148,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _errorMessage =
-            'Hatukuweza kupakia miamala yako kwa sasa. Tafadhali jaribu tena.';
+        _errorMessage = 'Hatukuweza kupakia miamala yako kwa sasa. Tafadhali jaribu tena.';
       });
     }
   }
@@ -269,8 +260,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     return _transactions.where((transaction) {
       final matchesFilter = transaction.matches(_selectedFilter);
       final matchesSearch =
-          _searchQuery.isEmpty ||
-          transaction.searchableText.contains(_searchQuery);
+          _searchQuery.isEmpty || transaction.searchableText.contains(_searchQuery);
       return matchesFilter && matchesSearch;
     }).toList();
   }
@@ -279,13 +269,11 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
       .where((item) => item.status == _TransactionStatus.successful)
       .fold(0, (total, item) => total + item.amount);
 
-  int get _successfulCount => _transactions
-      .where((item) => item.status == _TransactionStatus.successful)
-      .length;
+  int get _successfulCount =>
+      _transactions.where((item) => item.status == _TransactionStatus.successful).length;
 
-  int get _pendingCount => _transactions
-      .where((item) => item.status == _TransactionStatus.pending)
-      .length;
+  int get _pendingCount =>
+      _transactions.where((item) => item.status == _TransactionStatus.pending).length;
 
   String _formatPrice(dynamic price) {
     try {
@@ -341,9 +329,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? Theme.of(context).scaffoldBackgroundColor
-          : AppColors.background,
+      backgroundColor: isDark ? Theme.of(context).scaffoldBackgroundColor : AppColors.background,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: _isLoading
@@ -362,23 +348,14 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                       ),
                     ),
                     if (_errorMessage != null)
-                      SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: _buildErrorState(context),
-                      )
+                      SliverFillRemaining(hasScrollBody: false, child: _buildErrorState(context))
                     else if (_transactions.isEmpty)
-                      SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: _buildEmptyState(context),
-                      )
+                      SliverFillRemaining(hasScrollBody: false, child: _buildEmptyState(context))
                     else ...[
                       SliverToBoxAdapter(child: _buildSummarySection()),
                       SliverToBoxAdapter(child: _buildSearchAndFilters()),
                       if (_visibleTransactions.isEmpty)
-                        SliverFillRemaining(
-                          hasScrollBody: false,
-                          child: _buildNoResultsState(),
-                        )
+                        SliverFillRemaining(hasScrollBody: false, child: _buildNoResultsState())
                       else
                         SliverPadding(
                           padding: const EdgeInsets.fromLTRB(
@@ -389,16 +366,11 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                           ),
                           sliver: SliverList.separated(
                             itemCount: _visibleTransactions.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: AppSpacing.md),
+                            separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
                             itemBuilder: (_, index) => _TransactionCard(
                               transaction: _visibleTransactions[index],
-                              dateText: _formatDate(
-                                _visibleTransactions[index].date,
-                              ),
-                              onTap: () => _showTransactionDetails(
-                                _visibleTransactions[index],
-                              ),
+                              dateText: _formatDate(_visibleTransactions[index].date),
+                              onTap: () => _showTransactionDetails(_visibleTransactions[index]),
                             ),
                           ),
                         ),
@@ -472,9 +444,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
             textInputAction: TextInputAction.search,
             decoration: InputDecoration(
               hintText: 'Tafuta kwa kozi, ebook, njia au rejea',
-              hintStyle: AppTextStyles.bodySmall.copyWith(
-                color: AppColors.textHint,
-              ),
+              hintStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.textHint),
               prefixIcon: Icon(Icons.search_rounded, color: AppColors.primary),
               suffixIcon: _searchQuery.isEmpty
                   ? null
@@ -521,11 +491,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                     ),
                     selectedColor: AppColors.primaryDark,
                     backgroundColor: Theme.of(context).cardColor,
-                    side: BorderSide(
-                      color: selected
-                          ? AppColors.primaryDark
-                          : AppColors.border,
-                    ),
+                    side: BorderSide(color: selected ? AppColors.primaryDark : AppColors.border),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.chip),
                     ),
@@ -543,8 +509,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     return _CenteredState(
       icon: Icons.receipt_long_outlined,
       title: 'Hakuna miamala bado',
-      message:
-          'Ukianza kununua kozi au ebook, historia ya malipo itaonekana hapa.',
+      message: 'Ukianza kununua kozi au ebook, historia ya malipo itaonekana hapa.',
       actionLabel: 'Tafuta Kozi',
       onAction: () => context.go('/home'),
     );
@@ -554,9 +519,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     return _CenteredState(
       icon: Icons.cloud_off_rounded,
       title: 'Imeshindikana kupakia',
-      message:
-          _errorMessage ??
-          'Hatukuweza kupata historia yako ya malipo kwa sasa.',
+      message: _errorMessage ?? 'Hatukuweza kupata historia yako ya malipo kwa sasa.',
       actionLabel: 'Jaribu Tena',
       onAction: _loadPayments,
     );
@@ -566,8 +529,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
     return _CenteredState(
       icon: Icons.manage_search_rounded,
       title: 'Hakuna matokeo',
-      message:
-          'Badili kichujio au neno la utafutaji ili kuona miamala mingine.',
+      message: 'Badili kichujio au neno la utafutaji ili kuona miamala mingine.',
       actionLabel: 'Futa Utafutaji',
       onAction: () {
         _searchController.clear();
@@ -584,9 +546,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
       isScrollControlled: true,
       backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppRadius.modal),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.modal)),
       ),
       builder: (context) {
         return SafeArea(
@@ -632,17 +592,12 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                             transaction.title,
                             style: AppTextStyles.h3.copyWith(
                               color:
-                                  Theme.of(
-                                    context,
-                                  ).textTheme.bodyLarge?.color ??
+                                  Theme.of(context).textTheme.bodyLarge?.color ??
                                   AppColors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: AppSpacing.xs),
-                          Text(
-                            transaction.contentType,
-                            style: AppTextStyles.bodySmall,
-                          ),
+                          Text(transaction.contentType, style: AppTextStyles.bodySmall),
                         ],
                       ),
                     ),
@@ -652,10 +607,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                 _DetailRow(label: 'Kiasi', value: transaction.amountText),
                 _DetailRow(label: 'Hali', value: transaction.statusLabel),
                 _DetailRow(label: 'Njia ya Malipo', value: transaction.method),
-                _DetailRow(
-                  label: 'Tarehe',
-                  value: _formatDateTime(transaction.date),
-                ),
+                _DetailRow(label: 'Tarehe', value: _formatDateTime(transaction.date)),
                 _DetailRow(label: 'Rejea', value: transaction.reference),
                 const SizedBox(height: AppSpacing.lg),
                 SizedBox(
@@ -672,9 +624,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                     ),
                     child: Text(
                       'Sawa',
-                      style: AppTextStyles.buttonMedium.copyWith(
-                        color: Colors.white,
-                      ),
+                      style: AppTextStyles.buttonMedium.copyWith(color: Colors.white),
                     ),
                   ),
                 ),
@@ -688,10 +638,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
 }
 
 class _TransactionsHeaderDelegate extends SliverPersistentHeaderDelegate {
-  const _TransactionsHeaderDelegate({
-    required this.topInset,
-    required this.onBack,
-  });
+  const _TransactionsHeaderDelegate({required this.topInset, required this.onBack});
 
   final double topInset;
   final VoidCallback onBack;
@@ -703,11 +650,7 @@ class _TransactionsHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => topInset + 258;
 
   @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     final progress = (shrinkOffset / (maxExtent - minExtent)).clamp(0.0, 1.0);
     final expandedOpacity = (1 - (progress * 1.35)).clamp(0.0, 1.0);
     final compactOpacity = ((progress - 0.55) / 0.45).clamp(0.0, 1.0);
@@ -735,10 +678,7 @@ class _TransactionsHeaderDelegate extends SliverPersistentHeaderDelegate {
                 children: [
                   IconButton(
                     onPressed: onBack,
-                    icon: const Icon(
-                      Icons.arrow_back_rounded,
-                      color: Colors.white,
-                    ),
+                    icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
                   ),
                   Expanded(
                     child: Opacity(
@@ -764,24 +704,16 @@ class _TransactionsHeaderDelegate extends SliverPersistentHeaderDelegate {
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.14),
                         borderRadius: BorderRadius.circular(AppRadius.chip),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.18),
-                        ),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
-                            Icons.lock_outline_rounded,
-                            color: Colors.white,
-                            size: 14,
-                          ),
+                          const Icon(Icons.lock_outline_rounded, color: Colors.white, size: 14),
                           const SizedBox(width: AppSpacing.xs),
                           Text(
                             'Salama',
-                            style: AppTextStyles.labelSmall.copyWith(
-                              color: Colors.white,
-                            ),
+                            style: AppTextStyles.labelSmall.copyWith(color: Colors.white),
                           ),
                         ],
                       ),
@@ -804,9 +736,7 @@ class _TransactionsHeaderDelegate extends SliverPersistentHeaderDelegate {
                   children: [
                     Text(
                       'Miamala Yangu',
-                      style: AppTextStyles.displayMedium.copyWith(
-                        color: Colors.white,
-                      ),
+                      style: AppTextStyles.displayMedium.copyWith(color: Colors.white),
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
@@ -869,10 +799,7 @@ class _TotalSpentCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                Text(
-                  totalText,
-                  style: AppTextStyles.h1.copyWith(color: Colors.white),
-                ),
+                Text(totalText, style: AppTextStyles.h1.copyWith(color: Colors.white)),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   'Malipo yaliyothibitishwa pekee',
@@ -890,10 +817,7 @@ class _TotalSpentCard extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.14),
               borderRadius: BorderRadius.circular(AppRadius.card),
             ),
-            child: const Icon(
-              Icons.account_balance_wallet_outlined,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.account_balance_wallet_outlined, color: Colors.white),
           ),
         ],
       ),
@@ -949,9 +873,7 @@ class _MetricCard extends StatelessWidget {
                 Text(
                   value,
                   style: AppTextStyles.h3.copyWith(
-                    color:
-                        Theme.of(context).textTheme.bodyLarge?.color ??
-                        AppColors.textPrimary,
+                    color: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.textPrimary,
                   ),
                 ),
                 Text(
@@ -970,11 +892,7 @@ class _MetricCard extends StatelessWidget {
 }
 
 class _TransactionCard extends StatelessWidget {
-  const _TransactionCard({
-    required this.transaction,
-    required this.dateText,
-    required this.onTap,
-  });
+  const _TransactionCard({required this.transaction, required this.dateText, required this.onTap});
 
   final _UserTransaction transaction;
   final String dateText;
@@ -1049,9 +967,7 @@ class _TransactionCard extends StatelessWidget {
                     children: [
                       Text(
                         transaction.amountText,
-                        style: AppTextStyles.labelLarge.copyWith(
-                          color: AppColors.primary,
-                        ),
+                        style: AppTextStyles.labelLarge.copyWith(color: AppColors.primary),
                       ),
                       const SizedBox(height: AppSpacing.xs),
                       Text(dateText, style: AppTextStyles.caption),
@@ -1066,16 +982,10 @@ class _TransactionCard extends StatelessWidget {
                   const Spacer(),
                   Text(
                     'Maelezo',
-                    style: AppTextStyles.labelSmall.copyWith(
-                      color: AppColors.primary,
-                    ),
+                    style: AppTextStyles.labelSmall.copyWith(color: AppColors.primary),
                   ),
                   const SizedBox(width: AppSpacing.xs),
-                  Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    color: AppColors.primary,
-                    size: 12,
-                  ),
+                  Icon(Icons.arrow_forward_ios_rounded, color: AppColors.primary, size: 12),
                 ],
               ),
             ],
@@ -1096,10 +1006,7 @@ class _StatusChip extends StatelessWidget {
     final statusStyle = _statusStyle(transaction.status);
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.xs,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
       decoration: BoxDecoration(
         color: statusStyle.background,
         borderRadius: BorderRadius.circular(AppRadius.chip),
@@ -1155,26 +1062,18 @@ class _CenteredState extends StatelessWidget {
             title,
             textAlign: TextAlign.center,
             style: AppTextStyles.h2.copyWith(
-              color:
-                  Theme.of(context).textTheme.bodyLarge?.color ??
-                  AppColors.textPrimary,
+              color: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
-          Text(
-            message,
-            textAlign: TextAlign.center,
-            style: AppTextStyles.bodyMedium,
-          ),
+          Text(message, textAlign: TextAlign.center, style: AppTextStyles.bodyMedium),
           const SizedBox(height: AppSpacing.lg),
           ElevatedButton(
             onPressed: onAction,
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppRadius.button),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.button)),
             ),
             child: Text(
               actionLabel,
@@ -1208,9 +1107,7 @@ class _DetailRow extends StatelessWidget {
               value,
               textAlign: TextAlign.right,
               style: AppTextStyles.labelMedium.copyWith(
-                color:
-                    Theme.of(context).textTheme.bodyLarge?.color ??
-                    AppColors.textPrimary,
+                color: Theme.of(context).textTheme.bodyLarge?.color ?? AppColors.textPrimary,
               ),
             ),
           ),

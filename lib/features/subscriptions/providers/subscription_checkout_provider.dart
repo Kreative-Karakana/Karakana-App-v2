@@ -51,8 +51,7 @@ class SubscriptionCheckoutProvider extends ChangeNotifier {
   bool get isBusy =>
       _state == SubscriptionCheckoutState.creatingCheckout ||
       _state == SubscriptionCheckoutState.waitingForPayment;
-  bool get isWaitingForPayment =>
-      _state == SubscriptionCheckoutState.waitingForPayment;
+  bool get isWaitingForPayment => _state == SubscriptionCheckoutState.waitingForPayment;
   bool get hasPendingCheckout => _pendingExternalId?.isNotEmpty == true;
 
   Future<void> startCheckout({
@@ -119,9 +118,7 @@ class SubscriptionCheckoutProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> checkPendingPayment({
-    required EntitlementRefreshCallback refreshEntitlement,
-  }) async {
+  Future<void> checkPendingPayment({required EntitlementRefreshCallback refreshEntitlement}) async {
     final externalId = _pendingExternalId;
     if (externalId == null || externalId.isEmpty) return;
 
@@ -150,8 +147,7 @@ class SubscriptionCheckoutProvider extends ChangeNotifier {
         _stopPolling();
         _setState(
           SubscriptionCheckoutState.timedOut,
-          message:
-              'Malipo bado yanasubiri. Unaweza kuangalia hali tena baada ya kuthibitisha.',
+          message: 'Malipo bado yanasubiri. Unaweza kuangalia hali tena baada ya kuthibitisha.',
         );
       }
     } catch (e) {
@@ -163,24 +159,20 @@ class SubscriptionCheckoutProvider extends ChangeNotifier {
         _stopPolling();
         _setState(
           SubscriptionCheckoutState.timedOut,
-          message:
-              'Hatukuweza kuthibitisha malipo sasa. Angalia hali tena baada ya muda.',
+          message: 'Hatukuweza kuthibitisha malipo sasa. Angalia hali tena baada ya muda.',
         );
       }
     }
   }
 
-  Future<void> handleAppResumed({
-    required EntitlementRefreshCallback refreshEntitlement,
-  }) async {
+  Future<void> handleAppResumed({required EntitlementRefreshCallback refreshEntitlement}) async {
     if (!hasPendingCheckout) {
       await refreshEntitlement();
       return;
     }
     await checkPendingPayment(refreshEntitlement: refreshEntitlement);
     await refreshEntitlement();
-    if (hasPendingCheckout &&
-        _state == SubscriptionCheckoutState.waitingForPayment) {
+    if (hasPendingCheckout && _state == SubscriptionCheckoutState.waitingForPayment) {
       startPolling(refreshEntitlement: refreshEntitlement);
     }
   }

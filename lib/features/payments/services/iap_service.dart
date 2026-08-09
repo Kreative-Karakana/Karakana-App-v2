@@ -9,10 +9,9 @@ import '../../../core/utils/secure_storage.dart';
 enum IAPResult { success, error, pending, cancelled }
 
 /// What a product id purchased through [IAPService] should be verified as.
-/// [course] hits the existing one-time course-purchase endpoint (Apple
-/// only, unchanged); [subscription] hits the Apple/Google subscription
-/// verify endpoints added for issue #32 — see [IAPService._verifyWithBackend].
-enum IAPProductKind { course, subscription }
+/// [course] and [ebook] hit their one-time Apple purchase endpoints;
+/// [subscription] hits the Apple/Google subscription verify endpoints.
+enum IAPProductKind { course, ebook, subscription }
 
 class IAPPurchaseResult {
   final IAPResult result;
@@ -32,10 +31,9 @@ class IAPService {
   // purchaseStream delivers PurchaseDetails, not whatever call site started
   // it — this is how _onPurchaseUpdate recovers "was this a course or a
   // subscription purchase" to pick the right backend verify endpoint. Set
-  // by purchase() before buying; also the fallback IAPProductKind.restore
-  // deliveries (which never went through purchase() this session) resolve
-  // to, since every restorable product Karakana sells today is a
-  // subscription (courses are non-restorable one-time purchases).
+  // by purchase() or typed product loading. Restore deliveries that were not
+  // registered this session still default to subscriptions; the eBook restore
+  // follow-up must preload the complete eBook catalog before restore.
   final Map<String, IAPProductKind> _productKinds = {};
 
   Completer<IAPPurchaseResult>? _pendingCompleter;
@@ -59,8 +57,16 @@ class IAPService {
     return true;
   }
 
-  Future<void> loadProducts(Set<String> productIds) async {
+  Future<void> loadProducts(
+    Set<String> productIds, {
+    IAPProductKind? kind,
+  }) async {
     if (productIds.isEmpty) return;
+    if (kind != null) {
+      for (final productId in productIds) {
+        _productKinds[productId] = kind;
+      }
+    }
     final ProductDetailsResponse response =
         await _iap.queryProductDetails(productIds);
     for (final product in response.productDetails) {
@@ -76,7 +82,7 @@ class IAPService {
   }) async {
     final product = _products[productId];
     if (product == null) {
-      await loadProducts({productId});
+      await loadProducts({productId}, kind: kind);
       final retried = _products[productId];
       if (retried == null) {
         return IAPPurchaseResult(
@@ -173,7 +179,19 @@ class IAPService {
     if (kind == IAPProductKind.subscription) {
       return _verifySubscriptionWithBackend(purchase);
     }
+    if (kind == IAPProductKind.ebook) {
+      return _verifyEbookWithBackend(purchase);
+    }
     return _verifyCourseWithBackend(purchase);
+  }
+
+  Future<IAPPurchaseResult> _verifyEbookWithBackend(
+    PurchaseDetails purchase,
+  ) async {
+    return _verifyOneTimeApplePurchase(
+      purchase,
+      path: '/api/v1/payments/apple-iap/ebooks/verify/',
+    );
   }
 
   /// One-time course purchase verification — unchanged from before issue
@@ -182,11 +200,21 @@ class IAPService {
   /// backend (course purchases are not sold as Google Play subscriptions).
   Future<IAPPurchaseResult> _verifyCourseWithBackend(
     PurchaseDetails purchase,
-  ) async {
+  ) {
+    return _verifyOneTimeApplePurchase(
+      purchase,
+      path: '/api/v1/payments/apple-iap/verify/',
+    );
+  }
+
+  Future<IAPPurchaseResult> _verifyOneTimeApplePurchase(
+    PurchaseDetails purchase, {
+    required String path,
+  }) async {
     try {
       final token = await SecureStorage().getToken();
       final response = await ApiClient().dio.post(
-            '/api/v1/payments/apple-iap/verify/',
+            path,
             data: {
               'receipt_data': purchase.verificationData.serverVerificationData,
               'product_id': purchase.productID,
