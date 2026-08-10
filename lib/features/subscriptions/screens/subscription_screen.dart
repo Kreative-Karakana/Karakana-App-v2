@@ -810,7 +810,7 @@ class _TrialOfferCard extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                '0 TZS',
+                'BURE',
                 style: GoogleFonts.montserrat(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
@@ -892,7 +892,7 @@ class _PlansSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final paidPlans = plans.where((plan) => !_isTrialPlan(plan)).toList()
+    final paidPlans = plans.where(_isPurchasablePaidPlan).toList()
       ..sort((a, b) => a.durationDays.compareTo(b.durationDays));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1066,8 +1066,13 @@ class _PlansErrorRow extends StatelessWidget {
   }
 }
 
-bool _isTrialPlan(SubscriptionPlan plan) =>
-    plan.slug == 'usimamizi-wa-biashara-trial';
+const _purchasablePaidPlanSlugs = {
+  'usimamizi-wa-biashara-weekly',
+  'usimamizi-wa-biashara-monthly',
+};
+
+bool _isPurchasablePaidPlan(SubscriptionPlan plan) =>
+    _purchasablePaidPlanSlugs.contains(plan.slug);
 
 String _planDisplayTitle(SubscriptionPlan plan) {
   switch (plan.durationDays) {
