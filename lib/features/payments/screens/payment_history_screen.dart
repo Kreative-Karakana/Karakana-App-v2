@@ -21,12 +21,7 @@ enum _TransactionFilter {
   final String label;
 }
 
-enum _TransactionStatus {
-  successful,
-  pending,
-  failed,
-  refunded,
-}
+enum _TransactionStatus { successful, pending, failed, refunded }
 
 class _UserTransaction {
   const _UserTransaction({
@@ -187,12 +182,14 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
 
     final contentType = _contentTypeFor(payment, course, ebook, product);
     final amount = _amountValue(payment['amount']);
-    final paidAt = _parseDate(_firstNonEmpty([
-      payment['paid_at'],
-      payment['created_at'],
-      payment['updated_at'],
-      payment['initiated_at'],
-    ]));
+    final paidAt = _parseDate(
+      _firstNonEmpty([
+        payment['paid_at'],
+        payment['created_at'],
+        payment['updated_at'],
+        payment['initiated_at'],
+      ]),
+    );
 
     return _UserTransaction(
       title: title,
@@ -392,8 +389,9 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                                 const SizedBox(height: AppSpacing.md),
                             itemBuilder: (_, index) => _TransactionCard(
                               transaction: _visibleTransactions[index],
-                              dateText:
-                                  _formatDate(_visibleTransactions[index].date),
+                              dateText: _formatDate(
+                                _visibleTransactions[index].date,
+                              ),
                               onTap: () => _showTransactionDetails(
                                 _visibleTransactions[index],
                               ),
@@ -473,10 +471,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
               hintStyle: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.textHint,
               ),
-              prefixIcon: Icon(
-                Icons.search_rounded,
-                color: AppColors.primary,
-              ),
+              prefixIcon: Icon(Icons.search_rounded, color: AppColors.primary),
               suffixIcon: _searchQuery.isEmpty
                   ? null
                   : IconButton(
@@ -583,8 +578,9 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
       isScrollControlled: true,
       backgroundColor: Theme.of(context).cardColor,
       shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(AppRadius.modal)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadius.modal),
+        ),
       ),
       builder: (context) {
         return SafeArea(
@@ -629,10 +625,9 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
                           Text(
                             transaction.title,
                             style: AppTextStyles.h3.copyWith(
-                              color: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.color ??
+                              color: Theme.of(
+                                    context,
+                                  ).textTheme.bodyLarge?.color ??
                                   AppColors.textPrimary,
                             ),
                           ),
@@ -1196,9 +1191,7 @@ class _DetailRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Text(label, style: AppTextStyles.bodySmall),
-          ),
+          Expanded(child: Text(label, style: AppTextStyles.bodySmall)),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             flex: 2,
