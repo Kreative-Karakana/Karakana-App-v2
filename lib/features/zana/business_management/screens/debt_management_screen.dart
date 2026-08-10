@@ -10,6 +10,7 @@ import '../../../../widgets/common/top_popup.dart';
 import '../models/business_debt.dart';
 import '../providers/debt_management_provider.dart';
 import '../services/debt_management_service.dart';
+import '../widgets/business_confirmation_dialog.dart';
 
 class DebtManagementScreen extends StatelessWidget {
   final String currency;
@@ -84,8 +85,10 @@ class _DebtManagementViewState extends State<_DebtManagementView> {
         elevation: 0,
         backgroundColor: AppColors.primaryDark,
         foregroundColor: Colors.white,
-        title: Text('Madeni',
-            style: AppTextStyles.h4.copyWith(color: Colors.white)),
+        title: Text(
+          'Madeni',
+          style: AppTextStyles.h3.copyWith(color: Colors.white),
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         key: const Key('add-debt-button'),
@@ -139,6 +142,7 @@ class _DebtManagementViewState extends State<_DebtManagementView> {
                     child: _DebtEmptyState(
                       filtered: provider.selectedStatus != null,
                       onAdd: _openCreate,
+                      onClearFilter: () => provider.setStatusFilter(null),
                     ),
                   )
                 else
@@ -201,7 +205,7 @@ class _DebtManagementViewState extends State<_DebtManagementView> {
       backgroundColor: Colors.transparent,
       builder: (_) => ChangeNotifierProvider.value(
         value: context.read<DebtManagementProvider>(),
-        child: _DebtFormSheet(debt: debt),
+        child: _DebtFormSheet(debt: debt, currency: widget.currency),
       ),
     );
   }
@@ -223,32 +227,15 @@ class _DebtManagementViewState extends State<_DebtManagementView> {
 
   Future<void> _deleteDebt(BusinessDebt debt) {
     return _guardWrite(() async {
-      final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (dialogContext) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.cardLg),
-          ),
-          title: Text('Futa Deni?', style: AppTextStyles.h3),
-          content: Text(
-            'Una uhakika unataka kufuta deni la ${debt.customerName}? '
+      final confirmed = await showBusinessConfirmationDialog(
+        context,
+        title: 'Futa Deni?',
+        message: 'Una uhakika unataka kufuta deni la ${debt.customerName}? '
             'Hatua hii haiwezi kutenduliwa.',
-            style: AppTextStyles.bodyMedium,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Ghairi'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(dialogContext, true),
-              style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-              child: const Text('Futa'),
-            ),
-          ],
-        ),
+        confirmLabel: 'Futa',
+        isDestructive: true,
       );
-      if (confirmed != true || !mounted) return;
+      if (!confirmed || !mounted) return;
 
       setState(() => _activeDebtId = debt.id);
       final provider = context.read<DebtManagementProvider>();
@@ -301,32 +288,29 @@ class _DebtHeader extends StatelessWidget {
           style: AppTextStyles.bodySmall,
         ),
         const SizedBox(height: AppSpacing.md),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              _StatusChip(
-                key: const Key('debt-filter-all'),
-                label: 'Yote',
-                selected: selectedStatus == null,
-                onTap: () => onStatusChanged(null),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              _StatusChip(
-                key: const Key('debt-filter-outstanding'),
-                label: 'Hayajalipwa',
-                selected: selectedStatus == 'outstanding',
-                onTap: () => onStatusChanged('outstanding'),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              _StatusChip(
-                key: const Key('debt-filter-paid'),
-                label: 'Yamelipwa',
-                selected: selectedStatus == 'paid',
-                onTap: () => onStatusChanged('paid'),
-              ),
-            ],
-          ),
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: [
+            _StatusChip(
+              key: const Key('debt-filter-all'),
+              label: 'Yote',
+              selected: selectedStatus == null,
+              onTap: () => onStatusChanged(null),
+            ),
+            _StatusChip(
+              key: const Key('debt-filter-outstanding'),
+              label: 'Hayajalipwa',
+              selected: selectedStatus == 'outstanding',
+              onTap: () => onStatusChanged('outstanding'),
+            ),
+            _StatusChip(
+              key: const Key('debt-filter-paid'),
+              label: 'Yamelipwa',
+              selected: selectedStatus == 'paid',
+              onTap: () => onStatusChanged('paid'),
+            ),
+          ],
         ),
       ],
     );
@@ -347,25 +331,32 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: selected ? AppColors.primary : AppColors.surface,
-      borderRadius: BorderRadius.circular(AppRadius.chip),
-      child: InkWell(
-        onTap: onTap,
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: label,
+      child: Material(
+        color: selected ? AppColors.primary : AppColors.surface,
         borderRadius: BorderRadius.circular(AppRadius.chip),
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 44),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppRadius.chip),
-            border: Border.all(
-              color: selected ? AppColors.primary : AppColors.border,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadius.chip),
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 44),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppRadius.chip),
+              border: Border.all(
+                color: selected ? AppColors.primary : AppColors.border,
+              ),
             ),
-          ),
-          child: Text(
-            label,
-            style: AppTextStyles.labelMedium.copyWith(
-              color: selected ? Colors.white : AppColors.textPrimary,
+            child: ExcludeSemantics(
+              child: Text(
+                label,
+                style: AppTextStyles.labelMedium.copyWith(
+                  color: selected ? Colors.white : AppColors.textPrimary,
+                ),
+              ),
             ),
           ),
         ),
@@ -472,61 +463,106 @@ class _DebtCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.sm),
               Text(
                 debt.note,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.bodySmall,
               ),
             ],
             const SizedBox(height: AppSpacing.md),
-            Row(
-              children: [
-                if (debt.isOutstanding)
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      key: Key('mark-paid-${debt.id}'),
-                      onPressed: isBusy ? null : onMarkPaid,
-                      icon: isBusy
-                          ? const KarakanaWaveLoader(size: 16)
-                          : Icon(
-                              isReadOnly
-                                  ? Icons.lock_outline
-                                  : Icons.check_circle_outline,
-                              size: 18,
-                            ),
-                      label: const Text('Weka Imelipwa'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.profit,
-                        side: BorderSide(
-                          color: AppColors.profit.withValues(alpha: 0.45),
-                        ),
-                        minimumSize: const Size(0, 44),
-                      ),
-                    ),
-                  ),
-                if (debt.isOutstanding) const SizedBox(width: AppSpacing.sm),
-                IconButton(
-                  key: Key('edit-debt-${debt.id}'),
-                  onPressed: isBusy ? null : onEdit,
-                  tooltip: 'Hariri deni',
-                  icon: Icon(
-                    isReadOnly ? Icons.lock_outline : Icons.edit_outlined,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                IconButton(
-                  key: Key('delete-debt-${debt.id}'),
-                  onPressed: isBusy ? null : onDelete,
-                  tooltip: 'Futa deni',
-                  icon: Icon(
-                    isReadOnly ? Icons.lock_outline : Icons.delete_outline,
-                    color: AppColors.error,
-                  ),
-                ),
-              ],
+            _DebtCardActions(
+              debt: debt,
+              isBusy: isBusy,
+              isReadOnly: isReadOnly,
+              onEdit: onEdit,
+              onDelete: onDelete,
+              onMarkPaid: onMarkPaid,
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _DebtCardActions extends StatelessWidget {
+  final BusinessDebt debt;
+  final bool isBusy;
+  final bool isReadOnly;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+  final VoidCallback onMarkPaid;
+
+  const _DebtCardActions({
+    required this.debt,
+    required this.isBusy,
+    required this.isReadOnly,
+    required this.onEdit,
+    required this.onDelete,
+    required this.onMarkPaid,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final markPaidButton = OutlinedButton.icon(
+      key: Key('mark-paid-${debt.id}'),
+      onPressed: isBusy ? null : onMarkPaid,
+      icon: isBusy
+          ? const KarakanaWaveLoader(size: 16)
+          : Icon(
+              isReadOnly ? Icons.lock_outline : Icons.check_circle_outline,
+              size: 18,
+            ),
+      label: const Text('Weka Imelipwa', textAlign: TextAlign.center),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: AppColors.profit,
+        side: BorderSide(color: AppColors.profit.withValues(alpha: 0.45)),
+        minimumSize: const Size(0, 44),
+      ),
+    );
+    final secondaryActions = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          key: Key('edit-debt-${debt.id}'),
+          onPressed: isBusy ? null : onEdit,
+          tooltip: 'Hariri deni',
+          icon: Icon(
+            isReadOnly ? Icons.lock_outline : Icons.edit_outlined,
+            color: AppColors.textSecondary,
+          ),
+        ),
+        IconButton(
+          key: Key('delete-debt-${debt.id}'),
+          onPressed: isBusy ? null : onDelete,
+          tooltip: 'Futa deni',
+          icon: Icon(
+            isReadOnly ? Icons.lock_outline : Icons.delete_outline,
+            color: AppColors.error,
+          ),
+        ),
+      ],
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final shouldStack = constraints.maxWidth < 320 ||
+            MediaQuery.textScalerOf(context).scale(1) > 1.4;
+        if (shouldStack) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (debt.isOutstanding) markPaidButton,
+              if (debt.isOutstanding) const SizedBox(height: AppSpacing.xs),
+              Align(alignment: Alignment.centerRight, child: secondaryActions),
+            ],
+          );
+        }
+        return Row(
+          children: [
+            if (debt.isOutstanding) Expanded(child: markPaidButton),
+            if (debt.isOutstanding) const SizedBox(width: AppSpacing.sm),
+            secondaryActions,
+          ],
+        );
+      },
     );
   }
 }
@@ -566,8 +602,9 @@ class _DateLabel extends StatelessWidget {
 
 class _DebtFormSheet extends StatefulWidget {
   final BusinessDebt? debt;
+  final String currency;
 
-  const _DebtFormSheet({this.debt});
+  const _DebtFormSheet({this.debt, required this.currency});
 
   bool get isEditing => debt != null;
 
@@ -581,9 +618,14 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
   late final TextEditingController _amountController;
   late final TextEditingController _itemController;
   late final TextEditingController _noteController;
+  final _customerFocusNode = FocusNode();
+  final _amountFocusNode = FocusNode();
+  final _itemFocusNode = FocusNode();
+  final _noteFocusNode = FocusNode();
   late DateTime _dateGiven;
   DateTime? _dueDate;
   late String _status;
+  String? _dueDateError;
 
   @override
   void initState() {
@@ -608,6 +650,10 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
     _amountController.dispose();
     _itemController.dispose();
     _noteController.dispose();
+    _customerFocusNode.dispose();
+    _amountFocusNode.dispose();
+    _itemFocusNode.dispose();
+    _noteFocusNode.dispose();
     super.dispose();
   }
 
@@ -634,6 +680,7 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
         top: false,
         child: Form(
           key: _formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -657,9 +704,14 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
                 _DebtTextField(
                   key: const Key('debt-customer-field'),
                   controller: _customerController,
+                  focusNode: _customerFocusNode,
                   label: 'Jina la Mteja *',
                   hint: 'Mfano: Asha Juma',
                   textInputAction: TextInputAction.next,
+                  textCapitalization: TextCapitalization.words,
+                  autofillHints: const [AutofillHints.name],
+                  autofocus: !widget.isEditing,
+                  onFieldSubmitted: (_) => _amountFocusNode.requestFocus(),
                   validator: (value) => value == null || value.trim().isEmpty
                       ? 'Weka jina la mteja.'
                       : null,
@@ -668,13 +720,15 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
                 _DebtTextField(
                   key: const Key('debt-amount-field'),
                   controller: _amountController,
-                  label: 'Kiasi (TZS) *',
+                  focusNode: _amountFocusNode,
+                  label: 'Kiasi (${widget.currency}) *',
                   hint: 'Mfano: 15000',
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
                   inputFormatters: const [_DebtAmountInputFormatter()],
                   textInputAction: TextInputAction.next,
+                  onFieldSubmitted: (_) => _itemFocusNode.requestFocus(),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Weka kiasi cha deni.';
@@ -689,9 +743,12 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
                 const SizedBox(height: AppSpacing.md),
                 _DebtTextField(
                   controller: _itemController,
+                  focusNode: _itemFocusNode,
                   label: 'Bidhaa / Huduma (si lazima)',
                   hint: 'Mfano: Kusuka nywele',
                   textInputAction: TextInputAction.next,
+                  textCapitalization: TextCapitalization.sentences,
+                  onFieldSubmitted: (_) => _noteFocusNode.requestFocus(),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 _DebtDateField(
@@ -705,56 +762,88 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
                   key: const Key('debt-due-date-field'),
                   label: 'Tarehe ya Mwisho (si lazima)',
                   date: _dueDate,
+                  errorText: _dueDateError,
                   onTap: _pickDueDate,
                   onClear: _dueDate == null
                       ? null
-                      : () => setState(() => _dueDate = null),
+                      : () => setState(() {
+                            _dueDate = null;
+                            _dueDateError = null;
+                          }),
                 ),
-                const SizedBox(height: AppSpacing.md),
-                DropdownButtonFormField<String>(
-                  key: const Key('debt-status-field'),
-                  initialValue: _status,
-                  decoration: _debtInputDecoration('Hali', null),
-                  dropdownColor: AppColors.surface,
-                  items: const [
-                    DropdownMenuItem(
-                      value: 'outstanding',
-                      child: Text('Haijalipwa'),
-                    ),
-                    DropdownMenuItem(value: 'paid', child: Text('Imelipwa')),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) setState(() => _status = value);
-                  },
-                ),
+                if (widget.isEditing) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  DropdownButtonFormField<String>(
+                    key: const Key('debt-status-field'),
+                    initialValue: _status,
+                    decoration: _debtInputDecoration('Hali', null),
+                    dropdownColor: AppColors.surface,
+                    items: const [
+                      DropdownMenuItem(
+                        value: 'outstanding',
+                        child: Text('Haijalipwa'),
+                      ),
+                      DropdownMenuItem(value: 'paid', child: Text('Imelipwa')),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) setState(() => _status = value);
+                    },
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.md),
                 _DebtTextField(
                   controller: _noteController,
+                  focusNode: _noteFocusNode,
                   label: 'Maelezo (si lazima)',
                   hint: 'Maelezo mafupi kuhusu deni',
                   maxLines: 3,
-                  textInputAction: TextInputAction.newline,
+                  textCapitalization: TextCapitalization.sentences,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) => _submit(),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                FilledButton(
-                  key: const Key('save-debt-button'),
-                  onPressed: provider.isSubmitting ? null : _submit,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size.fromHeight(48),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.input),
+                Semantics(
+                  liveRegion: provider.isSubmitting,
+                  label: provider.isSubmitting
+                      ? 'Inahifadhi, tafadhali subiri'
+                      : null,
+                  child: FilledButton(
+                    key: const Key('save-debt-button'),
+                    onPressed: provider.isSubmitting ? null : _submit,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor:
+                          AppColors.primary.withValues(alpha: 0.62),
+                      minimumSize: const Size.fromHeight(48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.input),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (provider.isSubmitting) ...[
+                          const KarakanaWaveLoader(
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                        ],
+                        Flexible(
+                          child: Text(
+                            provider.isSubmitting
+                                ? 'Inahifadhi...'
+                                : widget.isEditing
+                                    ? 'Hifadhi Mabadiliko'
+                                    : 'Hifadhi Deni',
+                            textAlign: TextAlign.center,
+                            style: AppTextStyles.buttonMedium,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  child: provider.isSubmitting
-                      ? const KarakanaWaveLoader(color: Colors.white, size: 20)
-                      : Text(
-                          widget.isEditing
-                              ? 'Hifadhi Mabadiliko'
-                              : 'Hifadhi Deni',
-                          style: AppTextStyles.buttonMedium,
-                        ),
                 ),
               ],
             ),
@@ -771,7 +860,12 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     );
-    if (picked != null) setState(() => _dateGiven = picked);
+    if (picked != null) {
+      setState(() {
+        _dateGiven = picked;
+        _dueDateError = null;
+      });
+    }
   }
 
   Future<void> _pickDueDate() async {
@@ -781,12 +875,32 @@ class _DebtFormSheetState extends State<_DebtFormSheet> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    if (picked != null) setState(() => _dueDate = picked);
+    if (picked != null) {
+      setState(() {
+        _dueDate = picked;
+        _dueDateError = null;
+      });
+    }
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
     final provider = context.read<DebtManagementProvider>();
+    if (provider.isSubmitting) return;
+    if (!_formKey.currentState!.validate()) {
+      if (_customerController.text.trim().isEmpty) {
+        _customerFocusNode.requestFocus();
+      } else {
+        _amountFocusNode.requestFocus();
+      }
+      return;
+    }
+    if (_dueDate != null && _dueDate!.isBefore(_dateGiven)) {
+      setState(() {
+        _dueDateError =
+            'Tarehe ya mwisho lazima iwe sawa au baada ya tarehe iliyotolewa.';
+      });
+      return;
+    }
     final debt = widget.debt;
     final ok = debt == null
         ? await provider.createDebt(
@@ -837,6 +951,11 @@ class _DebtTextField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final String? Function(String?)? validator;
   final int maxLines;
+  final FocusNode? focusNode;
+  final ValueChanged<String>? onFieldSubmitted;
+  final TextCapitalization textCapitalization;
+  final Iterable<String>? autofillHints;
+  final bool autofocus;
 
   const _DebtTextField({
     super.key,
@@ -848,15 +967,25 @@ class _DebtTextField extends StatelessWidget {
     this.textInputAction,
     this.validator,
     this.maxLines = 1,
+    this.focusNode,
+    this.onFieldSubmitted,
+    this.textCapitalization = TextCapitalization.none,
+    this.autofillHints,
+    this.autofocus = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      focusNode: focusNode,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       textInputAction: textInputAction,
+      onFieldSubmitted: onFieldSubmitted,
+      textCapitalization: textCapitalization,
+      autofillHints: autofillHints,
+      autofocus: autofocus,
       validator: validator,
       maxLines: maxLines,
       style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimary),
@@ -870,6 +999,7 @@ class _DebtDateField extends StatelessWidget {
   final DateTime? date;
   final VoidCallback onTap;
   final VoidCallback? onClear;
+  final String? errorText;
 
   const _DebtDateField({
     super.key,
@@ -877,6 +1007,7 @@ class _DebtDateField extends StatelessWidget {
     required this.date,
     required this.onTap,
     this.onClear,
+    this.errorText,
   });
 
   @override
@@ -885,7 +1016,9 @@ class _DebtDateField extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppRadius.input),
       child: InputDecorator(
-        decoration: _debtInputDecoration(label, null),
+        decoration: _debtInputDecoration(label, null).copyWith(
+          errorText: errorText,
+        ),
         child: Row(
           children: [
             Icon(Icons.calendar_today_outlined,
@@ -917,8 +1050,13 @@ class _DebtDateField extends StatelessWidget {
 class _DebtEmptyState extends StatelessWidget {
   final bool filtered;
   final VoidCallback onAdd;
+  final VoidCallback onClearFilter;
 
-  const _DebtEmptyState({required this.filtered, required this.onAdd});
+  const _DebtEmptyState({
+    required this.filtered,
+    required this.onAdd,
+    required this.onClearFilter,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -944,7 +1082,14 @@ class _DebtEmptyState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: AppTextStyles.bodySmall,
             ),
-            if (!filtered) ...[
+            if (filtered) ...[
+              const SizedBox(height: AppSpacing.md),
+              OutlinedButton.icon(
+                onPressed: onClearFilter,
+                icon: const Icon(Icons.filter_alt_off_rounded),
+                label: const Text('Onyesha Madeni Yote'),
+              ),
+            ] else ...[
               const SizedBox(height: AppSpacing.md),
               OutlinedButton.icon(
                 onPressed: onAdd,
@@ -968,7 +1113,10 @@ class _DebtLoadingState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const KarakanaWaveLoader(size: 34),
+          const KarakanaWaveLoader(
+            size: 34,
+            semanticsLabel: 'Inapakia madeni',
+          ),
           const SizedBox(height: AppSpacing.md),
           Text('Inapakia madeni...', style: AppTextStyles.bodySmall),
         ],
@@ -986,22 +1134,34 @@ class _DebtErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: AppSpacing.sectionPadding,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.cloud_off_outlined, size: 48, color: AppColors.error),
-            const SizedBox(height: AppSpacing.md),
-            Text(message,
-                textAlign: TextAlign.center, style: AppTextStyles.bodyMedium),
-            const SizedBox(height: AppSpacing.md),
-            OutlinedButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Jaribu Tena'),
-            ),
-          ],
+        child: Semantics(
+          liveRegion: true,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.cloud_off_rounded, size: 42, color: AppColors.error),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                'Imeshindikana kupakia madeni',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.h3,
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: AppTextStyles.bodyMedium,
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              FilledButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Jaribu tena'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1018,7 +1178,12 @@ class _PaginationFooter extends StatelessWidget {
     if (provider.isLoadingMore) {
       return const Padding(
         padding: EdgeInsets.all(AppSpacing.md),
-        child: Center(child: KarakanaWaveLoader(size: 22)),
+        child: Center(
+          child: KarakanaWaveLoader(
+            size: 22,
+            semanticsLabel: 'Inapakia madeni zaidi',
+          ),
+        ),
       );
     }
     if (provider.loadMoreError != null) {

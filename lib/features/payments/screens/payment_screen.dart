@@ -11,6 +11,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../utils/payment_status.dart';
 
 class PaymentScreen extends StatefulWidget {
   final int courseId;
@@ -73,8 +74,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       barrierDismissible: false,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.cardLg),
-        ),
+            borderRadius: BorderRadius.circular(AppRadius.cardLg)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -88,10 +88,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
             Text(
               'Thibitisha malipo kwenye simu yako.\nUsifunge programu hii.',
               textAlign: TextAlign.center,
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: const Color(0xFF5C3D2E),
-                height: 1.5,
-              ),
+              style: AppTextStyles.bodyMedium
+                  .copyWith(color: const Color(0xFF5C3D2E), height: 1.5),
             ),
           ],
         ),
@@ -105,16 +103,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
         data: {
           'accountNumber': phone,
           'provider': _selectedProvider,
-          'course_id': widget.courseId,
+          'course_id': widget.courseId
         },
       );
       debugPrint('[PAYMENT] checkout response: ${checkoutRes.data}');
 
       final externalId = checkoutRes.data['external_id'] as String?;
       final checkoutUrl = checkoutRes.data['checkout_url'] as String?;
-      final gateway = checkoutRes.data['gateway'] as String?;
       final initiationSuccess = checkoutRes.data['success'] == true;
       final responseDesc = checkoutRes.data['response_desc']?.toString();
+      final awaitsUssd = PaymentStatusContract.awaitsUssd(checkoutRes.data);
       if (externalId == null || externalId.isEmpty) {
         if (mounted) Navigator.of(context, rootNavigator: true).pop();
         _showError('Hitilafu ya kuanzisha malipo. Jaribu tena.');
@@ -123,9 +121,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
       // EVMAK MNO flow may not return a checkout URL. In that case we proceed
       // directly to status polling after successful initiation.
-      if (gateway == 'evmak_mno' && initiationSuccess) {
+      if (awaitsUssd && initiationSuccess) {
         // Keep dialog open and continue to polling loop below.
-      } else if (gateway == 'evmak_mno' && !initiationSuccess) {
+      } else if (awaitsUssd && !initiationSuccess) {
         if (mounted) Navigator.of(context, rootNavigator: true).pop();
         _showError(
           responseDesc?.isNotEmpty == true
@@ -136,10 +134,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
       } else if (checkoutUrl != null && checkoutUrl.isNotEmpty) {
         final uri = Uri.tryParse(checkoutUrl);
         if (uri != null) {
-          var opened = await launchUrl(
-            uri,
-            mode: LaunchMode.externalApplication,
-          );
+          var opened =
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
           if (!opened) {
             opened = await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
           }
@@ -149,8 +145,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           if (!opened) {
             if (mounted) Navigator.of(context, rootNavigator: true).pop();
             _showError(
-              'Imeshindikana kufungua ukurasa wa malipo. Jaribu tena.',
-            );
+                'Imeshindikana kufungua ukurasa wa malipo. Jaribu tena.');
             return;
           }
         }
@@ -162,26 +157,24 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
       // 2. Poll for payment status.
       // EVMAK MNO can take longer before callback confirmation.
-      final maxPollAttempts = gateway == 'evmak_mno' ? 20 : 10;
+      final maxPollAttempts = awaitsUssd ? 20 : 10;
       bool success = false;
       for (int i = 0; i < maxPollAttempts; i++) {
         await Future.delayed(const Duration(seconds: 3));
         if (!mounted) return;
 
         try {
-          final statusRes = await ApiClient().dio.get(
-                '/api/v1/payments/$externalId/',
-              );
+          final statusRes =
+              await ApiClient().dio.get('/api/v1/payments/$externalId/');
           debugPrint(
             '[PAYMENT] poll $i/$maxPollAttempts external_id=$externalId status=${statusRes.data}',
           );
-          if (statusRes.data['is_successful'] == true) {
+          if (PaymentStatusContract.isSettled(statusRes.data)) {
             success = true;
             break;
           }
           // If explicitly failed (not just pending), stop early
-          final failed = statusRes.data['is_failed'] == true ||
-              statusRes.data['status'] == 'failed';
+          final failed = PaymentStatusContract.isFailed(statusRes.data);
           if (failed) break;
         } catch (_) {
           // Network hiccup during polling — keep trying
@@ -195,8 +188,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         context.go('/payment/success');
       } else {
         _showError(
-          'Malipo hayakukamilika. Thibitisha kwenye simu yako na ujaribu tena.',
-        );
+            'Malipo hayakukamilika. Thibitisha kwenye simu yako na ujaribu tena.');
       }
     } catch (e) {
       if (!mounted) return;
@@ -214,7 +206,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         'id': 'Mpesa',
         'name': 'Vodacom',
         'color': Color(0xFFE87722),
-        'logo': 'mno_logos/mpesa.png',
+        'logo': 'mno_logos/mpesa.png'
       },
       {
         'id': 'Tigo',
@@ -242,10 +234,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
         backgroundColor: const Color(0xFF3D1800),
         elevation: 0,
         leading: const BackButton(color: Colors.white),
-        title: Text(
-          'Lipia Kozi',
-          style: AppTextStyles.h3.copyWith(color: Colors.white),
-        ),
+        title: Text('Lipia Kozi',
+            style: AppTextStyles.h3.copyWith(color: Colors.white)),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -260,10 +250,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   borderRadius: BorderRadius.circular(AppRadius.card),
                   boxShadow: const [
                     BoxShadow(
-                      color: Color(0x14C4620A),
-                      blurRadius: 10,
-                      offset: Offset(0, 2),
-                    ),
+                        color: Color(0x14C4620A),
+                        blurRadius: 10,
+                        offset: Offset(0, 2)),
                   ],
                 ),
                 child: Row(
@@ -271,8 +260,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     if (widget.courseThumbnail != null)
                       ClipRRect(
                         borderRadius: BorderRadius.circular(
-                          AppSpacing.sm + AppSpacing.xs / 2,
-                        ),
+                            AppSpacing.sm + AppSpacing.xs / 2),
                         child: CachedNetworkImage(
                           imageUrl: widget.courseThumbnail!,
                           width: 72,
@@ -313,16 +301,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
               const SizedBox(height: AppSpacing.lg),
               Text(
                 'Chagua Njia ya Malipo',
-                style: AppTextStyles.h4.copyWith(
-                  color: const Color(0xFF3D1800),
-                ),
+                style:
+                    AppTextStyles.h4.copyWith(color: const Color(0xFF3D1800)),
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
                 'Tumia nambari yako ya simu kulipa',
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: const Color(0xFF9E8070),
-                ),
+                style: AppTextStyles.bodyMedium
+                    .copyWith(color: const Color(0xFF9E8070)),
               ),
               const SizedBox(height: AppSpacing.md),
               ...providers.map((provider) {
@@ -330,13 +316,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 final color = provider['color']! as Color;
                 return GestureDetector(
                   onTap: () => setState(
-                    () => _selectedProvider = provider['id']! as String,
-                  ),
+                      () => _selectedProvider = provider['id']! as String),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     margin: const EdgeInsets.only(
-                      bottom: AppSpacing.sm + AppSpacing.xs / 2,
-                    ),
+                        bottom: AppSpacing.sm + AppSpacing.xs / 2),
                     padding: AppSpacing.cardPadding,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -363,8 +347,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           decoration: BoxDecoration(
                             color: color.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(
-                              AppSpacing.sm + AppSpacing.xs / 2,
-                            ),
+                                AppSpacing.sm + AppSpacing.xs / 2),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(6),
@@ -372,25 +355,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               provider['logo']! as String,
                               fit: BoxFit.contain,
                               errorBuilder: (_, __, ___) => Icon(
-                                Icons.phone_android,
-                                color: color,
-                                size: 22,
-                              ),
+                                  Icons.phone_android,
+                                  color: color,
+                                  size: 22),
                             ),
                           ),
                         ),
                         const SizedBox(
-                          width: AppSpacing.md - AppSpacing.xs / 2,
-                        ),
+                            width: AppSpacing.md - AppSpacing.xs / 2),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 provider['name']! as String,
-                                style: AppTextStyles.h4.copyWith(
-                                  color: const Color(0xFF3D1800),
-                                ),
+                                style: AppTextStyles.h4
+                                    .copyWith(color: const Color(0xFF3D1800)),
                               ),
                               Text(
                                 'Lipa kwa ${provider['name']}',
@@ -481,9 +461,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     'Tumia akaunti yako ya benki au MNO yoyote Tanzania.',
                                     style: GoogleFonts.inter(
                                       fontSize: 10,
-                                      color: Colors.white.withValues(
-                                        alpha: 0.85,
-                                      ),
+                                      color:
+                                          Colors.white.withValues(alpha: 0.85),
                                     ),
                                     maxLines: 1,
                                   ),
@@ -539,9 +518,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               const SizedBox(height: AppSpacing.lg),
               Text(
                 'Nambari ya Simu',
-                style: AppTextStyles.h4.copyWith(
-                  color: const Color(0xFF3D1800),
-                ),
+                style:
+                    AppTextStyles.h4.copyWith(color: const Color(0xFF3D1800)),
               ),
               const SizedBox(height: AppSpacing.sm),
               Row(
@@ -557,9 +535,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     child: Center(
                       child: Text(
                         '+255',
-                        style: AppTextStyles.h4.copyWith(
-                          color: const Color(0xFF3D1800),
-                        ),
+                        style: AppTextStyles.h4
+                            .copyWith(color: const Color(0xFF3D1800)),
                       ),
                     ),
                   ),
@@ -569,9 +546,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
                       onChanged: (_) => setState(() {}),
-                      style: AppTextStyles.h4.copyWith(
-                        color: const Color(0xFF3D1800),
-                      ),
+                      style: AppTextStyles.h4
+                          .copyWith(color: const Color(0xFF3D1800)),
                       decoration: InputDecoration(
                         hintText: '7XX XXX XXX',
                         hintStyle: AppTextStyles.bodyMedium.copyWith(
@@ -581,16 +557,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         fillColor: const Color(0xFFFFF8F4),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.input),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFE8D5C8),
-                          ),
+                          borderSide:
+                              const BorderSide(color: Color(0xFFE8D5C8)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(AppRadius.input),
                           borderSide: const BorderSide(
-                            color: Color(0xFFE87722),
-                            width: 1.5,
-                          ),
+                              color: Color(0xFFE87722), width: 1.5),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.md,
@@ -604,9 +577,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               const SizedBox(height: AppSpacing.sm),
               Text(
                 'Mfano: 0712345678 au 712345678',
-                style: AppTextStyles.caption.copyWith(
-                  color: const Color(0xFFBDA99C),
-                ),
+                style: AppTextStyles.caption
+                    .copyWith(color: const Color(0xFFBDA99C)),
               ),
               const SizedBox(height: AppSpacing.xl),
               Container(
@@ -623,9 +595,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       children: [
                         Text(
                           'Jumla',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: const Color(0xFF9E8070),
-                          ),
+                          style: AppTextStyles.bodyMedium
+                              .copyWith(color: const Color(0xFF9E8070)),
                         ),
                         Text(
                           _formatPrice(widget.coursePrice),
@@ -642,15 +613,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       children: [
                         Text(
                           'Ada ya Malipo',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: const Color(0xFF9E8070),
-                          ),
+                          style: AppTextStyles.bodyMedium
+                              .copyWith(color: const Color(0xFF9E8070)),
                         ),
                         Text(
                           'Bure',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: const Color(0xFFE87722),
-                          ),
+                          style: AppTextStyles.bodyMedium
+                              .copyWith(color: const Color(0xFFE87722)),
                         ),
                       ],
                     ),
@@ -660,9 +629,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       children: [
                         Text(
                           'Jumla ya Kulipa',
-                          style: AppTextStyles.labelLarge.copyWith(
-                            color: const Color(0xFF3D1800),
-                          ),
+                          style: AppTextStyles.labelLarge
+                              .copyWith(color: const Color(0xFF3D1800)),
                         ),
                         Text(
                           _formatPrice(widget.coursePrice),
@@ -699,15 +667,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           width: 20,
                           height: 20,
                           child: KarakanaWaveLoader(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
+                              color: Colors.white, strokeWidth: 2),
                         )
                       : Text(
                           'Lipa ${_formatPrice(widget.coursePrice)}',
-                          style: AppTextStyles.buttonLarge.copyWith(
-                            color: Colors.white,
-                          ),
+                          style: AppTextStyles.buttonLarge
+                              .copyWith(color: Colors.white),
                         ),
                 ),
               ),
@@ -715,17 +680,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.lock_outline,
-                    size: 14,
-                    color: Color(0xFF9E8070),
-                  ),
+                  const Icon(Icons.lock_outline,
+                      size: 14, color: Color(0xFF9E8070)),
                   const SizedBox(width: 6),
                   Text(
                     'Malipo Salama na Karakana',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: const Color(0xFF9E8070),
-                    ),
+                    style: AppTextStyles.bodySmall
+                        .copyWith(color: const Color(0xFF9E8070)),
                   ),
                 ],
               ),

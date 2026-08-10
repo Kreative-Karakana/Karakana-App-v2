@@ -96,7 +96,9 @@ class SubscriptionCheckoutProvider extends ChangeNotifier {
           _fail('Imeshindikana kufungua ukurasa wa malipo. Jaribu tena.');
           return;
         }
-      } else if (payment.gateway != 'evmak_mno' && payment.success != true) {
+      } else if (payment.action != 'await_ussd' &&
+          payment.gateway != 'evmak_mno' &&
+          payment.success != true) {
         _fail('Kiungo cha malipo hakikupatikana. Jaribu tena.');
         return;
       }
@@ -117,9 +119,8 @@ class SubscriptionCheckoutProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> checkPendingPayment({
-    required EntitlementRefreshCallback refreshEntitlement,
-  }) async {
+  Future<void> checkPendingPayment(
+      {required EntitlementRefreshCallback refreshEntitlement}) async {
     final externalId = _pendingExternalId;
     if (externalId == null || externalId.isEmpty) return;
 
@@ -168,9 +169,8 @@ class SubscriptionCheckoutProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> handleAppResumed({
-    required EntitlementRefreshCallback refreshEntitlement,
-  }) async {
+  Future<void> handleAppResumed(
+      {required EntitlementRefreshCallback refreshEntitlement}) async {
     if (!hasPendingCheckout) {
       await refreshEntitlement();
       return;

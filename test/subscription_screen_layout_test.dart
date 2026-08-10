@@ -13,21 +13,65 @@ void main() {
   setUp(() => AppColors.setBrightness(Brightness.light));
   tearDown(() => AppColors.setBrightness(Brightness.light));
 
-  testWidgets('trial and paid plan align in two columns on phones',
-      (tester) async {
+  testWidgets('phone plans use a compact two-column grid', (tester) async {
     await _pumpSubscription(tester, size: const Size(390, 844));
 
     final trial = find.byKey(const Key('subscription-choice-trial'));
-    final monthly = find.byKey(const Key('subscription-choice-monthly'));
+    final daily = find.byKey(
+      const Key('subscription-choice-usimamizi-wa-biashara-daily'),
+    );
 
     expect(trial, findsOneWidget);
-    expect(monthly, findsOneWidget);
-    expect(tester.getTopLeft(trial).dy, tester.getTopLeft(monthly).dy);
+    expect(daily, findsOneWidget);
+    expect(tester.getTopLeft(trial).dy, tester.getTopLeft(daily).dy);
     expect(
-        tester.getTopLeft(trial).dx, lessThan(tester.getTopLeft(monthly).dx));
+      tester.getTopLeft(daily).dx,
+      greaterThan(tester.getTopLeft(trial).dx),
+    );
+    expect(tester.getSize(trial), tester.getSize(daily));
     expect(
-      tester.getSize(find.byKey(const Key('subscription-choice-slot-0'))),
-      tester.getSize(find.byKey(const Key('subscription-choice-slot-1'))),
+      tester.getSize(trial).height,
+      lessThan(420),
+    );
+    expect(find.text('Jaribio (Siku 3)'), findsOneWidget);
+    expect(find.text('Siku 1'), findsOneWidget);
+    expect(find.text('Wiki 1'), findsOneWidget);
+    expect(find.text('Mwezi 1'), findsOneWidget);
+    expect(find.text('Anza Jaribio'), findsOneWidget);
+    expect(find.text('Endelea na Malipo'), findsNWidgets(3));
+    expect(find.text('Jaribio la Siku 3'), findsNothing);
+    expect(
+      find.descendant(
+        of: trial,
+        matching: find.byIcon(Icons.rocket_launch_outlined),
+      ),
+      findsNothing,
+    );
+    final trialTitle = find.text('Jaribio (Siku 3)');
+    final trialPrice = find.text('0 TZS');
+    final trialAction = find.text('Anza Jaribio');
+    expect(tester.getTopLeft(trialPrice).dy,
+        greaterThan(tester.getTopLeft(trialTitle).dy));
+    expect(tester.getTopLeft(trialAction).dy,
+        greaterThan(tester.getTopLeft(trialPrice).dy));
+
+    final dailyTitle = find.text('Siku 1');
+    final dailyPrice = find.text('1,000 TZS');
+    final firstPaidAction = find.text('Endelea na Malipo').first;
+    expect(tester.getTopLeft(dailyPrice).dy,
+        greaterThan(tester.getTopLeft(dailyTitle).dy));
+    expect(tester.getTopLeft(firstPaidAction).dy,
+        greaterThan(tester.getTopLeft(dailyPrice).dy));
+    expect(
+      find.descendant(
+        of: daily,
+        matching: find.byIcon(Icons.workspace_premium_outlined),
+      ),
+      findsNothing,
+    );
+    expect(
+      find.text('Ununuzi haupatikani kwenye kifaa hiki'),
+      findsNothing,
     );
     expect(find.text('Chagua Mpango Wako'), findsOneWidget);
     expect(tester.takeException(), isNull);
@@ -42,39 +86,81 @@ void main() {
     );
 
     final trial = find.byKey(const Key('subscription-choice-trial'));
-    final monthly = find.byKey(const Key('subscription-choice-monthly'));
+    final daily = find.byKey(
+      const Key('subscription-choice-usimamizi-wa-biashara-daily'),
+    );
 
-    expect(tester.getTopLeft(monthly).dy,
-        greaterThan(tester.getTopLeft(trial).dy));
-    expect(tester.getSize(trial).width, tester.getSize(monthly).width);
+    expect(
+        tester.getTopLeft(daily).dy, greaterThan(tester.getTopLeft(trial).dy));
+    expect(tester.getSize(trial).width, tester.getSize(daily).width);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('tablet widths align trial and plans in three columns',
+  testWidgets('medium tablet widths use two content-sized columns',
+      (tester) async {
+    await _pumpSubscription(
+      tester,
+      size: const Size(768, 900),
+    );
+
+    final trial = find.byKey(const Key('subscription-choice-trial'));
+    final daily = find.byKey(
+      const Key('subscription-choice-usimamizi-wa-biashara-daily'),
+    );
+    final weekly = find.byKey(
+      const Key('subscription-choice-usimamizi-wa-biashara-weekly'),
+    );
+
+    expect(tester.getTopLeft(trial).dy, tester.getTopLeft(daily).dy);
+    expect(
+        tester.getTopLeft(daily).dx, greaterThan(tester.getTopLeft(trial).dx));
+    expect(
+        tester.getTopLeft(weekly).dy, greaterThan(tester.getTopLeft(trial).dy));
+    expect(tester.getSize(trial).height, lessThan(400));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('large tablet widths align trial and plans in three columns',
       (tester) async {
     await _pumpSubscription(
       tester,
       size: const Size(1024, 900),
-      includeAnnualPlan: true,
       brightness: Brightness.dark,
     );
 
     final cards = [
       find.byKey(const Key('subscription-choice-trial')),
-      find.byKey(const Key('subscription-choice-monthly')),
-      find.byKey(const Key('subscription-choice-annual')),
+      find.byKey(
+        const Key('subscription-choice-usimamizi-wa-biashara-daily'),
+      ),
+      find.byKey(
+        const Key('subscription-choice-usimamizi-wa-biashara-weekly'),
+      ),
     ];
     final firstRowY = tester.getTopLeft(cards.first).dy;
 
     for (final card in cards.skip(1)) {
       expect(tester.getTopLeft(card).dy, firstRowY);
     }
-    expect(
-      tester
-          .getSize(find.byKey(const Key('subscription-choice-slot-0')))
-          .height,
-      400,
+    expect(tester.getSize(cards.first).height, lessThan(400));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('active trial card shows an activated state', (tester) async {
+    await _pumpSubscription(
+      tester,
+      size: const Size(390, 844),
+      entitlementStatus: 'trial',
     );
+
+    expect(find.text('Imeamilishwa'), findsOneWidget);
+    final trialButton = tester.widget<FilledButton>(
+      find.byKey(const Key('start-subscription-trial')),
+    );
+    expect(trialButton.onPressed, isNull);
+    final countdown = find.textContaining('Jaribio lako limebaki siku');
+    expect(countdown, findsOneWidget);
+    expect(tester.getSize(countdown).height, lessThan(30));
     expect(tester.takeException(), isNull);
   });
 }
@@ -84,7 +170,7 @@ Future<void> _pumpSubscription(
   required Size size,
   double textScale = 1,
   Brightness brightness = Brightness.light,
-  bool includeAnnualPlan = false,
+  String entitlementStatus = 'none',
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
@@ -97,43 +183,52 @@ Future<void> _pumpSubscription(
   final plans = [
     const SubscriptionPlan(
       id: 1,
-      name: 'Mpango wa Mwezi',
-      slug: 'monthly',
+      name: 'Jaribio la Siku 3',
+      slug: 'usimamizi-wa-biashara-trial',
+      billingPeriod: 'custom',
+      durationDays: 3,
+      price: '0.00',
+      currency: 'TZS',
+      features: [],
+    ),
+    const SubscriptionPlan(
+      id: 2,
+      name: 'Usimamizi wa Biashara Daily',
+      slug: 'usimamizi-wa-biashara-daily',
+      billingPeriod: 'daily',
+      durationDays: 1,
+      price: '1000.00',
+      currency: 'TZS',
+      features: [],
+    ),
+    const SubscriptionPlan(
+      id: 3,
+      name: 'Usimamizi wa Biashara Weekly',
+      slug: 'usimamizi-wa-biashara-weekly',
+      billingPeriod: 'weekly',
+      durationDays: 7,
+      price: '6000.00',
+      currency: 'TZS',
+      features: [],
+    ),
+    const SubscriptionPlan(
+      id: 4,
+      name: 'Usimamizi wa Biashara Monthly',
+      slug: 'usimamizi-wa-biashara-monthly',
       billingPeriod: 'monthly',
       durationDays: 30,
-      price: '5000.00',
+      price: '27000.00',
       currency: 'TZS',
-      features: [
-        SubscriptionFeature(
-          code: 'business',
-          name: 'Usimamizi wa Biashara',
-          description: '',
-        ),
-      ],
+      features: [],
     ),
-    if (includeAnnualPlan)
-      const SubscriptionPlan(
-        id: 2,
-        name: 'Mpango wa Mwaka',
-        slug: 'annual',
-        billingPeriod: 'yearly',
-        durationDays: 365,
-        price: '50000.00',
-        currency: 'TZS',
-        features: [
-          SubscriptionFeature(
-            code: 'business',
-            name: 'Usimamizi wa Biashara',
-            description: '',
-          ),
-        ],
-      ),
   ];
   final api = FakeSubscriptionApi(
-    status: const EntitlementStatus(
-      hasActiveSubscription: false,
-      status: 'none',
-      expiryDate: null,
+    status: EntitlementStatus(
+      hasActiveSubscription: entitlementStatus == 'trial',
+      status: entitlementStatus,
+      expiryDate: entitlementStatus == 'trial'
+          ? DateTime.now().add(const Duration(days: 2))
+          : null,
     ),
     plans: plans,
   );

@@ -39,7 +39,7 @@ class _ZanaScreenState extends State<ZanaScreen> {
     final textScale = mediaQuery.textScaler.scale(1);
     final baseHeaderHeight =
         isLandscape ? _landscapeHeaderHeight : _portraitHeaderHeight;
-    final expandedHeight = baseHeaderHeight + math.max(0, textScale - 1) * 96;
+    final expandedHeight = baseHeaderHeight + math.max(0, textScale - 1) * 164;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -54,12 +54,16 @@ class _ZanaScreenState extends State<ZanaScreen> {
           ),
           SliverLayoutBuilder(
             builder: (context, constraints) {
-              final layout =
-                  _ZanaGridLayout.fromWidth(constraints.crossAxisExtent);
-              final extraTextHeight = math.max(0.0, textScale - 1) * 104;
-              final baseCardHeight = constraints.crossAxisExtent < 360
-                  ? _narrowCardHeight
-                  : _cardHeight;
+              final layout = _ZanaGridLayout.fromWidth(
+                constraints.crossAxisExtent,
+                textScale: textScale,
+              );
+              final extraTextHeight = math.max(0.0, textScale - 1) * 120;
+              final baseCardHeight = layout.columnCount == 1
+                  ? _cardHeight
+                  : constraints.crossAxisExtent < 360
+                      ? _narrowCardHeight
+                      : _cardHeight;
 
               return SliverPadding(
                 padding: EdgeInsets.fromLTRB(
@@ -127,7 +131,9 @@ class _ZanaHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isNarrow = MediaQuery.sizeOf(context).width < 360;
+    final mediaQuery = MediaQuery.of(context);
+    final isNarrow = mediaQuery.size.width < 400;
+    final usesLargeText = mediaQuery.textScaler.scale(1) > 1.3;
     return SliverAppBar(
       expandedHeight: expandedHeight,
       pinned: true,
@@ -186,7 +192,7 @@ class _ZanaHeader extends StatelessWidget {
                   padding: EdgeInsets.fromLTRB(
                     AppSpacing.screenPadding.left,
                     AppSpacing.sm,
-                    isNarrow ? AppSpacing.xl : 116,
+                    isNarrow || usesLargeText ? AppSpacing.md : 116,
                     AppSpacing.sm,
                   ),
                   child: Column(
@@ -205,8 +211,6 @@ class _ZanaHeader extends StatelessWidget {
                       const SizedBox(height: AppSpacing.xs),
                       Text(
                         'Zana za Biashara kwa Ujasiriamali',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.textOnDark.withValues(alpha: 0.72),
                           height: 1.3,
@@ -314,8 +318,6 @@ class _ZanaToolCard extends StatelessWidget {
                       const SizedBox(height: AppSpacing.md),
                       Text(
                         tool.nameSwahili,
-                        maxLines: 4,
-                        overflow: TextOverflow.ellipsis,
                         style: AppTextStyles.labelLarge.copyWith(
                           color: AppColors.textOnDark,
                           fontSize: 15,
@@ -327,8 +329,6 @@ class _ZanaToolCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           tool.descriptionSwahili,
-                          maxLines: 8,
-                          overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.textOnDark.withValues(alpha: 0.72),
                             fontSize: 11,
@@ -401,7 +401,10 @@ class _ZanaGridLayout {
     required this.gridSpacing,
   });
 
-  factory _ZanaGridLayout.fromWidth(double availableWidth) {
+  factory _ZanaGridLayout.fromWidth(
+    double availableWidth, {
+    required double textScale,
+  }) {
     final isLargeLayout = availableWidth >= 600;
     final horizontalInset = isLargeLayout ? AppSpacing.xl : AppSpacing.md;
     final gridSpacing = isLargeLayout ? AppSpacing.md : AppSpacing.sm;
@@ -409,9 +412,12 @@ class _ZanaGridLayout {
       availableWidth - (horizontalInset * 2),
       _ZanaScreenState._maxContentWidth,
     );
-    final columns = (contentWidth / _ZanaScreenState._minimumCardWidth)
+    final effectiveMinimumCardWidth =
+        _ZanaScreenState._minimumCardWidth * textScale.clamp(1.0, 1.45);
+    final minimumColumns = textScale > 1.3 ? 1 : 2;
+    final columns = (contentWidth / effectiveMinimumCardWidth)
         .floor()
-        .clamp(2, 4)
+        .clamp(minimumColumns, 4)
         .toInt();
     return _ZanaGridLayout(
       columnCount: columns,

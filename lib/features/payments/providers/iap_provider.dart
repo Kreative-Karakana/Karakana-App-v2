@@ -7,7 +7,16 @@ class IAPProvider extends ChangeNotifier {
   String? errorMessage;
   bool purchaseSuccess = false;
 
-  Future<void> initializeForCourse(String productId) async {
+  Future<void> initializeForCourse(String productId) =>
+      initializeForProduct(productId, kind: IAPProductKind.course);
+
+  Future<void> initializeForEbook(String productId) =>
+      initializeForProduct(productId, kind: IAPProductKind.ebook);
+
+  Future<void> initializeForProduct(
+    String productId, {
+    required IAPProductKind kind,
+  }) async {
     isLoading = true;
     errorMessage = null;
     purchaseSuccess = false;
@@ -19,7 +28,7 @@ class IAPProvider extends ChangeNotifier {
         errorMessage = 'Uthibitisho wa malipo umeshindwa. Wasiliana na msaada.';
         return;
       }
-      await IAPService.instance.loadProducts({productId});
+      await IAPService.instance.loadProducts({productId}, kind: kind);
     } catch (_) {
       errorMessage = 'Hitilafu ya mtandao. Jaribu tena baadaye.';
     } finally {
@@ -28,14 +37,17 @@ class IAPProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> purchase(String productId) async {
+  Future<void> purchase(
+    String productId, {
+    IAPProductKind kind = IAPProductKind.course,
+  }) async {
     isLoading = true;
     errorMessage = null;
     purchaseSuccess = false;
     notifyListeners();
 
     try {
-      final result = await IAPService.instance.purchase(productId);
+      final result = await IAPService.instance.purchase(productId, kind: kind);
       switch (result.result) {
         case IAPResult.success:
           purchaseSuccess = true;
@@ -44,6 +56,9 @@ class IAPProvider extends ChangeNotifier {
           errorMessage = 'Malipo yanasubiri uthibitisho.';
           break;
         case IAPResult.cancelled:
+          errorMessage = null;
+          break;
+        case IAPResult.nothingToRestore:
           errorMessage = null;
           break;
         case IAPResult.error:
@@ -57,6 +72,9 @@ class IAPProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  String? localizedPrice(String productId) =>
+      IAPService.instance.getProduct(productId)?.price;
 
   void reset() {
     isLoading = false;

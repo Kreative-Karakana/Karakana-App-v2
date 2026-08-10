@@ -21,7 +21,7 @@ void main() {
     );
 
     expect(config.enableExternalSubscriptionCheckout, isTrue);
-    expect(config.enableGooglePlayBilling, isTrue);
+    expect(config.enableGooglePlayBilling, isFalse);
     expect(paidPlanWithoutStoreIds.googlePlayProductId, isNull);
   });
 

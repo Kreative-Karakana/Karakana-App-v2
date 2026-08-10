@@ -43,6 +43,7 @@ class ApiEndpoints {
   static const String notifications =
       '/api/v1/communications/notifications/me/';
   static const String supportTickets = '/api/v1/communications/tickets/';
+  static const String zanaLeads = '/api/v1/communications/leads/';
   static const String deviceToken = '/api/v1/communications/device-token/';
   static const String versions = '/api/v1/versions/';
 }

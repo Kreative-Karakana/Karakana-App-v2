@@ -8,12 +8,37 @@ import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
+import '../../payments/utils/payment_status.dart';
 import '../providers/ebook_provider.dart';
 import '../services/ebook_service.dart';
+import '../../payments/providers/iap_provider.dart';
+import '../../payments/services/iap_service.dart';
+
+enum EbookPurchaseRail { owned, freeOrExempt, appleIap, evpay, unavailable }
+
+EbookPurchaseRail ebookPurchaseRail({
+  required bool isIOS,
+  required bool isOwned,
+  required bool isFree,
+  required bool isPaymentExempt,
+  required bool hasAppleProduct,
+}) {
+  if (isOwned) return EbookPurchaseRail.owned;
+  if (isFree || isPaymentExempt) return EbookPurchaseRail.freeOrExempt;
+  if (!isIOS) return EbookPurchaseRail.evpay;
+  return hasAppleProduct
+      ? EbookPurchaseRail.appleIap
+      : EbookPurchaseRail.unavailable;
+}
 
 class EbookDetailScreen extends StatefulWidget {
   final int ebookId;
-  const EbookDetailScreen({super.key, required this.ebookId});
+  final EbookService? service;
+  const EbookDetailScreen({
+    super.key,
+    required this.ebookId,
+    this.service,
+  });
 
   @override
   State<EbookDetailScreen> createState() => _EbookDetailScreenState();
@@ -26,7 +51,7 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
     Color(0xFF7B3A10),
   ];
 
-  final _service = EbookService();
+  late final EbookService _service;
   final _currency = NumberFormat('#,###');
   Map<String, dynamic>? _detail;
   bool _loading = true;
@@ -35,6 +60,7 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
   @override
   void initState() {
     super.initState();
+    _service = widget.service ?? EbookService();
     _load();
   }
 
@@ -50,13 +76,25 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
         'cover_image': e.coverImageUrl,
         'price': e.priceInTzs,
         'is_purchased': e.isPurchased,
+        'is_payment_exempt': e.isPaymentExempt,
+        'apple_iap_product_id': e.appleIapProductId,
       };
+
+      final productId = e.appleIapProductId ?? '';
+      if (mounted &&
+          Theme.of(context).platform == TargetPlatform.iOS &&
+          !e.isFree &&
+          !e.isPurchased &&
+          !e.isPaymentExempt &&
+          productId.isNotEmpty) {
+        await context.read<IAPProvider>().initializeForEbook(productId);
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
-  Future<void> _purchase() async {
+  Future<void> _purchaseWithEvPay() async {
     final phoneCtrl = TextEditingController();
     final ebookProvider = context.read<EbookProvider>();
     String provider = 'Mpesa';
@@ -65,9 +103,7 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
       builder: (_) => AlertDialog(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
         contentPadding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
         actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -114,10 +150,7 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
           children: [
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 12,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [Color(0xFFFFF5ED), Color(0xFFFFE8D6)],
@@ -164,9 +197,12 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
             const SizedBox(height: AppSpacing.sm + 2),
             DropdownButtonFormField<String>(
               initialValue: provider,
-              items: const ['Mpesa', 'Airtel', 'Tigo', 'Halopesa']
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                  .toList(),
+              items: const [
+                'Mpesa',
+                'Airtel',
+                'Tigo',
+                'Halopesa',
+              ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
               onChanged: (v) => provider = v ?? 'Mpesa',
               decoration: InputDecoration(
                 labelText: 'Mtandao',
@@ -244,16 +280,19 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
       if (externalId != null && externalId.isNotEmpty) {
         for (var i = 0; i < 10; i++) {
           await Future.delayed(const Duration(seconds: 3));
-          final statusRes =
-              await ApiClient().dio.get('/api/v1/payments/$externalId/');
-          if ((statusRes.data['is_successful'] == true) && mounted) {
+          final statusRes = await ApiClient().dio.get(
+                '/api/v1/payments/$externalId/',
+              );
+          if (PaymentStatusContract.isSettled(statusRes.data) && mounted) {
             await ebookProvider.fetchLibrary();
             await ebookProvider.fetchStore();
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                    content: Text(
-                        'Malipo yamekamilika. eBook imeongezwa kwenye maktaba.')),
+                  content: Text(
+                    'Malipo yamekamilika. eBook imeongezwa kwenye maktaba.',
+                  ),
+                ),
               );
               context.push('/zana/ebooks/library');
             }
@@ -263,8 +302,85 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(ApiClient().parseError(e))));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(ApiClient().parseError(e))));
+      }
+    } finally {
+      if (mounted) setState(() => _processing = false);
+    }
+  }
+
+  Future<void> _claimWithoutPayment() async {
+    setState(() => _processing = true);
+    final ebookProvider = context.read<EbookProvider>();
+    try {
+      final result = await ebookProvider.purchaseEbook(
+        ebookId: widget.ebookId,
+        accountNumber: '',
+        provider: '',
+      );
+      if (result == null) {
+        throw Exception(
+          ebookProvider.purchaseError ?? 'Hatukuweza kuongeza eBook hii.',
+        );
+      }
+      if (!mounted) return;
+      await _load();
+      if (!mounted) return;
+      context.push('/zana/ebooks/library');
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(ApiClient().parseError(error))),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _processing = false);
+    }
+  }
+
+  Future<void> _purchaseWithApple(String productId) async {
+    setState(() => _processing = true);
+    final iapProvider = context.read<IAPProvider>();
+    final ebookProvider = context.read<EbookProvider>();
+    try {
+      await iapProvider.initializeForEbook(productId);
+      if (iapProvider.errorMessage != null) {
+        throw Exception(iapProvider.errorMessage);
+      }
+
+      await iapProvider.purchase(productId, kind: IAPProductKind.ebook);
+      if (!mounted) return;
+
+      if (!iapProvider.purchaseSuccess) {
+        final message = iapProvider.errorMessage;
+        iapProvider.reset();
+        if (message != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message)),
+          );
+        }
+        return;
+      }
+
+      iapProvider.reset();
+      await ebookProvider.fetchLibrary();
+      await ebookProvider.fetchStore();
+      await _load();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('eBook imeongezwa kwenye maktaba yako.'),
+        ),
+      );
+      context.push('/zana/ebooks/library');
+    } catch (error) {
+      iapProvider.reset();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(ApiClient().parseError(error))),
+        );
       }
     } finally {
       if (mounted) setState(() => _processing = false);
@@ -277,9 +393,7 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
       return Scaffold(
         backgroundColor: const Color(0xFFF8F7FB),
         appBar: _buildAppBar(),
-        body: const SafeArea(
-          child: Center(child: KarakanaWaveLoader()),
-        ),
+        body: const SafeArea(child: Center(child: KarakanaWaveLoader())),
       );
     }
 
@@ -287,6 +401,17 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
     final isPurchased = d['is_purchased'] == true ||
         context.watch<EbookProvider>().isOwned(widget.ebookId);
     final price = (d['price'] as num?)?.toInt() ?? 0;
+    final productId = (d['apple_iap_product_id'] ?? '').toString();
+    final rail = ebookPurchaseRail(
+      isIOS: Theme.of(context).platform == TargetPlatform.iOS,
+      isOwned: isPurchased,
+      isFree: price <= 0,
+      isPaymentExempt: d['is_payment_exempt'] == true,
+      hasAppleProduct: productId.isNotEmpty,
+    );
+    final localizedApplePrice = productId.isEmpty
+        ? null
+        : context.watch<IAPProvider>().localizedPrice(productId);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F7FB),
@@ -366,7 +491,10 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
                         child: Text(
                           price <= 0
                               ? 'Bure'
-                              : 'TZS ${_currency.format(price)}',
+                              : rail == EbookPurchaseRail.appleIap &&
+                                      localizedApplePrice != null
+                                  ? localizedApplePrice
+                                  : 'TZS ${_currency.format(price)}',
                           textAlign: TextAlign.center,
                           style: AppTextStyles.h2.copyWith(
                             color: const Color(0xFF1A1A1A),
@@ -378,19 +506,31 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: FilledButton(
-                          onPressed: _processing
+                          onPressed: _processing ||
+                                  rail == EbookPurchaseRail.unavailable
                               ? null
                               : () {
-                                  if (isPurchased) {
-                                    context.push(
-                                      '/zana/ebooks/read/${widget.ebookId}',
-                                      extra: {
-                                        'ebookTitle':
-                                            (d['title'] ?? 'eBook').toString()
-                                      },
-                                    );
-                                  } else {
-                                    _purchase();
+                                  switch (rail) {
+                                    case EbookPurchaseRail.owned:
+                                      context.push(
+                                        '/zana/ebooks/read/${widget.ebookId}',
+                                        extra: {
+                                          'ebookTitle': (d['title'] ?? 'eBook')
+                                              .toString(),
+                                        },
+                                      );
+                                      break;
+                                    case EbookPurchaseRail.freeOrExempt:
+                                      _claimWithoutPayment();
+                                      break;
+                                    case EbookPurchaseRail.appleIap:
+                                      _purchaseWithApple(productId);
+                                      break;
+                                    case EbookPurchaseRail.evpay:
+                                      _purchaseWithEvPay();
+                                      break;
+                                    case EbookPurchaseRail.unavailable:
+                                      break;
                                   }
                                 },
                           style: FilledButton.styleFrom(
@@ -404,7 +544,16 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
                                   color: Colors.white,
                                   size: 12,
                                 )
-                              : Text(isPurchased ? 'Soma Sasa' : 'Nunua Sasa'),
+                              : Text(
+                                  rail == EbookPurchaseRail.owned
+                                      ? 'Soma Sasa'
+                                      : rail == EbookPurchaseRail.freeOrExempt
+                                          ? 'Ongeza Maktabani'
+                                          : rail ==
+                                                  EbookPurchaseRail.unavailable
+                                              ? 'Haipatikani kwenye iOS'
+                                              : 'Nunua Sasa',
+                                ),
                         ),
                       ),
                     ],
