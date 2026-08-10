@@ -15,16 +15,19 @@ Do not change the workflow Flutter version casually. When the team upgrades Flut
 
 ## Workflow Overview
 
-The repository uses four GitHub Actions workflows:
+The repository uses five GitHub Actions workflows:
 
 - `.github/workflows/flutter-ci.yml`
 - `.github/workflows/flutter-build-validation.yml`
+- `.github/workflows/ios-build-validation.yml`
 - `.github/workflows/android-release.yml`
 - `.github/workflows/ios-release.yml`
 
 `flutter-ci.yml` is the pull request quality gate. It is intentionally fast and must not require production signing secrets.
 
-`flutter-build-validation.yml` validates that merged `main` branch code still builds for Android and iOS without requiring production signing secrets.
+`flutter-build-validation.yml` validates that merged `main` branch code still builds for Android without requiring production signing secrets.
+
+`ios-build-validation.yml` validates iOS when native iOS files or Flutter dependency manifests change, runs nightly as a safety net, and supports manual validation. It does not require production signing secrets.
 
 `android-release.yml` and `ios-release.yml` are manual production release workflows. They should be protected with the GitHub `production` environment so signing credentials are available only after the required approval process.
 
@@ -32,33 +35,46 @@ The repository uses four GitHub Actions workflows:
 
 `flutter-ci.yml` runs on pull requests targeting `main`.
 
-The quality job runs:
+The quality job runs in fail-fast order:
 
 ```sh
-flutter pub get
 dart format --set-exit-if-changed .
+flutter pub get
 flutter analyze
 flutter test
 ```
 
 This workflow is the required pre-merge feedback loop for developers. Configure branch protection so the `Format, analyze, and test` status check from `Flutter CI` is required before merging into `main`.
 
-## Main Branch Build Validation
+## Main Branch Android Build Validation
 
 `flutter-build-validation.yml` runs on pushes to `main` and can also be started manually with `workflow_dispatch`.
 
-The build jobs run:
+The build job runs:
 
 ```sh
 flutter build apk --debug
+```
+
+This job validates merged production code without slowing down every pull request. Build failures on `main` should be treated as release-blocking until fixed.
+
+## Risk-Based iOS Build Validation
+
+`ios-build-validation.yml` runs on pushes to `main` when `ios/**`, `pubspec.yaml`, `pubspec.lock`, Flutter project metadata, or the iOS workflow definitions change. It also runs every night at 02:17 UTC and can be started manually.
+
+The validation build runs:
+
+```sh
 flutter build ios --release --no-codesign
 ```
 
-These jobs validate merged production code without slowing down every pull request. Build failures on `main` should be treated as release-blocking until fixed.
+This targeted-plus-nightly strategy retains iOS compilation coverage without paying for a macOS runner after every unrelated merge.
 
 ## Android Release Workflow
 
 `android-release.yml` is manually triggered with a `version_name` input. The GitHub run number is used as the Android build number.
+
+The workflow rejects dispatches from refs other than `main`, `release/*` branches, and release tags before accessing the protected production environment.
 
 The workflow runs the same quality checks as CI, configures signing from GitHub secrets, builds:
 
@@ -82,7 +98,9 @@ The workflow writes `android/key.properties` and the decoded keystore only on th
 
 `ios-release.yml` is manually triggered with a `version_name` input. The GitHub run number is used as the iOS build number.
 
-The workflow installs dependencies, imports signing material into a temporary keychain, archives the app, exports an IPA, and uploads it to App Store Connect.
+The workflow rejects dispatches from refs other than `main`, `release/*` branches, and release tags before accessing the protected production environment.
+
+The workflow installs dependencies, imports signing material into a temporary keychain, compiles the app once while creating the signed Xcode archive, exports an IPA, and uploads it to App Store Connect.
 
 Required production secrets:
 
