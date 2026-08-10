@@ -29,8 +29,15 @@ import '../utils/post_activation_redirect.dart';
 /// (see docs/apps/subscriptions.md, Security).
 class SubscriptionScreen extends StatelessWidget {
   final SubscriptionApi? service;
+  final SubscriptionPurchaseStore? purchaseStore;
+  final SubscriptionCheckoutConfig? checkoutConfig;
 
-  const SubscriptionScreen({super.key, this.service});
+  const SubscriptionScreen({
+    super.key,
+    this.service,
+    this.purchaseStore,
+    this.checkoutConfig,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,15 +49,19 @@ class SubscriptionScreen extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => SubscriptionCheckoutProvider(service: service),
         ),
-        ChangeNotifierProvider(create: (_) => SubscriptionPurchaseProvider()),
+        ChangeNotifierProvider(
+          create: (_) => SubscriptionPurchaseProvider(store: purchaseStore),
+        ),
       ],
-      child: const _SubscriptionView(),
+      child: _SubscriptionView(checkoutConfig: checkoutConfig),
     );
   }
 }
 
 class _SubscriptionView extends StatefulWidget {
-  const _SubscriptionView();
+  final SubscriptionCheckoutConfig? checkoutConfig;
+
+  const _SubscriptionView({this.checkoutConfig});
 
   @override
   State<_SubscriptionView> createState() => _SubscriptionViewState();
@@ -58,12 +69,13 @@ class _SubscriptionView extends StatefulWidget {
 
 class _SubscriptionViewState extends State<_SubscriptionView>
     with WidgetsBindingObserver {
-  final SubscriptionCheckoutConfig _checkoutConfig =
-      SubscriptionCheckoutConfig.forPlatform();
+  late final SubscriptionCheckoutConfig _checkoutConfig =
+      widget.checkoutConfig ?? SubscriptionCheckoutConfig.forPlatform();
   final PostActivationRedirectCoordinator _redirectCoordinator =
       PostActivationRedirectCoordinator();
   SubscriptionCheckoutProvider? _checkoutProvider;
   SubscriptionPurchaseProvider? _purchaseProvider;
+  final Set<String> _requestedStoreProductIds = {};
   bool _activationExpected = false;
 
   @override
@@ -185,6 +197,8 @@ class _SubscriptionViewState extends State<_SubscriptionView>
             );
           }
 
+          _preloadAppleProducts(provider.plans);
+
           return RefreshIndicator(
             color: AppColors.primary,
             onRefresh: provider.load,
@@ -206,13 +220,33 @@ class _SubscriptionViewState extends State<_SubscriptionView>
                     onStartTrial: () => _activateTrial(context),
                   ),
                 const SizedBox(height: 18),
-                const _RestorePurchasesButton(),
+                if (_checkoutConfig.enableAppleIap)
+                  const _RestorePurchasesButton(),
               ],
             ),
           );
         },
       ),
     );
+  }
+
+  void _preloadAppleProducts(List<SubscriptionPlan> plans) {
+    if (!_checkoutConfig.enableAppleIap) return;
+    final productIds = plans
+        .where((plan) => plan.billingPeriod != 'daily')
+        .map((plan) => plan.appleIapProductId)
+        .whereType<String>()
+        .where((productId) => productId.isNotEmpty)
+        .where((productId) => !_requestedStoreProductIds.contains(productId))
+        .toSet();
+    if (productIds.isEmpty) return;
+    _requestedStoreProductIds.addAll(productIds);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(
+        context.read<SubscriptionPurchaseProvider>().loadProducts(productIds),
+      );
+    });
   }
 
   Future<void> _activateTrial(BuildContext context) async {
@@ -1061,6 +1095,11 @@ class _PlanCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final availability = _purchaseAvailability(plan, checkoutConfig);
     final productId = availability.storeProductId;
+    final storePresentation = productId == null
+        ? null
+        : context
+            .watch<SubscriptionPurchaseProvider>()
+            .productPresentation(productId);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Material(
@@ -1093,29 +1132,28 @@ class _PlanCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.xs),
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: _formatMoney(plan.price),
-                    style: GoogleFonts.montserrat(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  TextSpan(
-                    text: ' ${plan.currency}',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ],
-              ),
+            Text(
+              storePresentation?.localizedPrice ??
+                  '${_formatMoney(plan.price)} ${plan.currency}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: AppColors.primary),
+              style: GoogleFonts.montserrat(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: AppColors.primary,
+              ),
             ),
+            if (storePresentation?.billingPeriod != null) ...[
+              const SizedBox(height: 2),
+              Text(
+                storePresentation!.billingPeriod!,
+                style: GoogleFonts.montserrat(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textTertiary,
+                ),
+              ),
+            ],
             const SizedBox(height: AppSpacing.md),
             if (availability.canUseExternalCheckout) ...[
               _ExternalCheckoutButton(plan: plan),
@@ -1139,9 +1177,12 @@ class _PlanCard extends StatelessWidget {
               )
             else
               _UnavailablePurchaseButton(
-                message: availability.canUseStorePurchase
-                    ? 'App Store bado haijaunganishwa'
-                    : 'Ununuzi haupatikani hapa',
+                message: checkoutConfig.enableAppleIap &&
+                        plan.billingPeriod == 'daily'
+                    ? 'Mpango wa siku 1 haupatikani kwenye iOS'
+                    : availability.canUseStorePurchase
+                        ? 'App Store bado haijaunganishwa'
+                        : 'Ununuzi haupatikani hapa',
               ),
           ],
         ),
@@ -1175,15 +1216,17 @@ SubscriptionPurchaseAvailability _purchaseAvailability(
   SubscriptionPlan plan,
   SubscriptionCheckoutConfig config,
 ) {
+  final unsupportedAppleDuration =
+      config.enableAppleIap && plan.billingPeriod == 'daily';
   final productId = config.enableAppleIap
-      ? plan.appleIapProductId
+      ? (unsupportedAppleDuration ? null : plan.appleIapProductId)
       : config.enableGooglePlayBilling
           ? plan.googlePlayProductId
           : null;
   return SubscriptionPurchaseAvailability(
     canUseExternalCheckout: config.enableExternalSubscriptionCheckout,
-    canUseStorePurchase:
-        config.enableAppleIap || config.enableGooglePlayBilling,
+    canUseStorePurchase: !unsupportedAppleDuration &&
+        (config.enableAppleIap || config.enableGooglePlayBilling),
     storeProductId: productId,
   );
 }
@@ -1615,19 +1658,18 @@ class _RestorePurchasesButton extends StatelessWidget {
   }
 
   Future<void> _restore(BuildContext context) async {
-    final ready = await IAPService.instance.initialize();
-    if (!context.mounted) return;
-    if (!ready) {
-      showTopPopup(context, 'Usajili haupatikani kwenye kifaa hiki.');
-      return;
-    }
-
     final purchase = context.read<SubscriptionPurchaseProvider>();
     await purchase.restore();
     if (!context.mounted) return;
 
     if (purchase.restoreSuccess) {
       showTopPopup(context, 'Ununuzi wako umerejeshwa!', isError: false);
+    } else if (purchase.nothingToRestore) {
+      showTopPopup(
+        context,
+        'Hakuna ununuzi wa kurejesha kwenye akaunti hii.',
+        isError: false,
+      );
     } else if (purchase.errorMessage != null) {
       showTopPopup(context, purchase.errorMessage!);
     }

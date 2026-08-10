@@ -14,11 +14,20 @@ import '../../payments/services/iap_service.dart';
 /// the actual "what can this user do now" state still only ever comes from
 /// `SubscriptionService.getEntitlementStatus()` (`subscriptions/me/`).
 class SubscriptionPurchaseProvider extends ChangeNotifier {
+  final SubscriptionPurchaseStore _store;
+
+  SubscriptionPurchaseProvider({SubscriptionPurchaseStore? store})
+      : _store = store ?? IAPService.instance;
+
   bool isLoading = false;
   String? errorMessage;
   bool purchaseSuccess = false;
   bool restoreSuccess = false;
+  bool nothingToRestore = false;
   bool isPending = false;
+
+  StoreProductPresentation? productPresentation(String productId) =>
+      _store.getSubscriptionPresentation(productId);
 
   Future<bool> initialize(String productId) async {
     isLoading = true;
@@ -26,15 +35,19 @@ class SubscriptionPurchaseProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final ready = await IAPService.instance.initialize();
+      final ready = await _store.initialize();
       if (!ready) {
         errorMessage = 'Usajili haupatikani kwenye kifaa hiki.';
         return false;
       }
-      await IAPService.instance.loadProducts(
+      await _store.loadProducts(
         {productId},
         kind: IAPProductKind.subscription,
       );
+      if (_store.getProduct(productId) == null) {
+        errorMessage = 'Bidhaa hii haijasanidiwa kwenye App Store.';
+        return false;
+      }
       return true;
     } catch (_) {
       errorMessage = 'Hitilafu ya mtandao. Jaribu tena baadaye.';
@@ -45,15 +58,32 @@ class SubscriptionPurchaseProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> loadProducts(Set<String> productIds) async {
+    if (productIds.isEmpty) return;
+    try {
+      final ready = await _store.initialize();
+      if (!ready) return;
+      await _store.loadProducts(
+        productIds,
+        kind: IAPProductKind.subscription,
+      );
+      notifyListeners();
+    } catch (_) {
+      // Individual purchase attempts surface a user-facing error. Catalog
+      // preloading remains best effort so the backend plan list still renders.
+    }
+  }
+
   Future<void> purchase(String productId) async {
     isLoading = true;
     errorMessage = null;
     purchaseSuccess = false;
+    nothingToRestore = false;
     isPending = false;
     notifyListeners();
 
     try {
-      final result = await IAPService.instance.purchase(
+      final result = await _store.purchase(
         productId,
         kind: IAPProductKind.subscription,
       );
@@ -73,10 +103,16 @@ class SubscriptionPurchaseProvider extends ChangeNotifier {
     isLoading = true;
     errorMessage = null;
     restoreSuccess = false;
+    nothingToRestore = false;
     notifyListeners();
 
     try {
-      final result = await IAPService.instance.restorePurchases();
+      final ready = await _store.initialize();
+      if (!ready) {
+        errorMessage = 'Usajili haupatikani kwenye kifaa hiki.';
+        return;
+      }
+      final result = await _store.restorePurchases();
       _applyResult(result, onSuccess: () => restoreSuccess = true);
     } catch (_) {
       errorMessage = 'Hitilafu ya mtandao. Jaribu tena baadaye.';
@@ -102,6 +138,10 @@ class SubscriptionPurchaseProvider extends ChangeNotifier {
       case IAPResult.error:
         errorMessage = result.message ?? 'Hitilafu ya usajili. Jaribu tena.';
         break;
+      case IAPResult.nothingToRestore:
+        nothingToRestore = true;
+        errorMessage = null;
+        break;
     }
   }
 
@@ -110,6 +150,7 @@ class SubscriptionPurchaseProvider extends ChangeNotifier {
     errorMessage = null;
     purchaseSuccess = false;
     restoreSuccess = false;
+    nothingToRestore = false;
     isPending = false;
     notifyListeners();
   }

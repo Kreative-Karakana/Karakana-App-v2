@@ -2,11 +2,12 @@ import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/utils/secure_storage.dart';
 
-enum IAPResult { success, error, pending, cancelled }
+enum IAPResult { success, error, pending, cancelled, nothingToRestore }
 
 /// What a product id purchased through [IAPService] should be verified as.
 /// [course] and [ebook] hit their one-time Apple purchase endpoints;
@@ -19,7 +20,29 @@ class IAPPurchaseResult {
   const IAPPurchaseResult(this.result, {this.message});
 }
 
-class IAPService {
+class StoreProductPresentation {
+  final String localizedPrice;
+  final String? billingPeriod;
+
+  const StoreProductPresentation({
+    required this.localizedPrice,
+    required this.billingPeriod,
+  });
+}
+
+abstract class SubscriptionPurchaseStore {
+  Future<bool> initialize();
+  Future<void> loadProducts(Set<String> productIds, {IAPProductKind? kind});
+  ProductDetails? getProduct(String productId);
+  StoreProductPresentation? getSubscriptionPresentation(String productId);
+  Future<IAPPurchaseResult> purchase(
+    String productId, {
+    IAPProductKind kind = IAPProductKind.course,
+  });
+  Future<IAPPurchaseResult> restorePurchases();
+}
+
+class IAPService implements SubscriptionPurchaseStore {
   IAPService._();
   static final IAPService instance = IAPService._();
 
@@ -35,9 +58,12 @@ class IAPService {
   // registered this session still default to subscriptions; the eBook restore
   // follow-up must preload the complete eBook catalog before restore.
   final Map<String, IAPProductKind> _productKinds = {};
+  final Map<String, List<PurchaseDetails>> _deferredPurchases = {};
 
   Completer<IAPPurchaseResult>? _pendingCompleter;
+  Timer? _restoreFallbackTimer;
 
+  @override
   Future<bool> initialize() async {
     if (!Platform.isIOS && !Platform.isAndroid) return false;
 
@@ -57,6 +83,7 @@ class IAPService {
     return true;
   }
 
+  @override
   Future<void> loadProducts(
     Set<String> productIds, {
     IAPProductKind? kind,
@@ -72,10 +99,58 @@ class IAPService {
     for (final product in response.productDetails) {
       _products[product.id] = product;
     }
+    for (final productId in productIds) {
+      final deferred = _deferredPurchases.remove(productId);
+      if (deferred != null) {
+        unawaited(_onPurchaseUpdate(deferred));
+      }
+    }
   }
 
+  @override
   ProductDetails? getProduct(String productId) => _products[productId];
 
+  @override
+  StoreProductPresentation? getSubscriptionPresentation(String productId) {
+    final product = _products[productId];
+    if (product == null) return null;
+    return StoreProductPresentation(
+      localizedPrice: product.price,
+      billingPeriod: _appleBillingPeriod(product),
+    );
+  }
+
+  String? _appleBillingPeriod(ProductDetails product) {
+    if (product is AppStoreProductDetails) {
+      final period = product.skProduct.subscriptionPeriod;
+      if (period == null) return null;
+      return _periodLabel(period.numberOfUnits, period.unit.name);
+    }
+    if (product is AppStoreProduct2Details) {
+      final period = product.sk2Product.subscription?.subscriptionPeriod;
+      if (period == null) return null;
+      return _periodLabel(period.value, period.unit.name);
+    }
+    return null;
+  }
+
+  String _periodLabel(int units, String unit) {
+    final prefix = units == 1 ? '' : '$units ';
+    switch (unit) {
+      case 'day':
+        return 'kwa ${prefix}siku';
+      case 'week':
+        return 'kwa ${prefix}wiki';
+      case 'month':
+        return 'kwa ${prefix}mwezi';
+      case 'year':
+        return 'kwa ${prefix}mwaka';
+      default:
+        return '';
+    }
+  }
+
+  @override
   Future<IAPPurchaseResult> purchase(
     String productId, {
     IAPProductKind kind = IAPProductKind.course,
@@ -99,7 +174,8 @@ class IAPService {
     final PurchaseParam param =
         PurchaseParam(productDetails: _products[productId]!);
 
-    _pendingCompleter = Completer<IAPPurchaseResult>();
+    final completer = Completer<IAPPurchaseResult>();
+    _pendingCompleter = completer;
 
     try {
       // Play Billing/StoreKit both purchase auto-renewable subscriptions
@@ -111,7 +187,7 @@ class IAPService {
       return IAPPurchaseResult(IAPResult.error, message: e.toString());
     }
 
-    return _pendingCompleter!.future;
+    return completer.future;
   }
 
   /// Replays the user's existing store purchases through [purchaseStream]
@@ -120,15 +196,27 @@ class IAPService {
   /// backend "restore" call — a restored purchase is verified exactly like
   /// a fresh one (see docs/apps/subscriptions.md, Payment provider
   /// integration), which is naturally idempotent on the backend.
+  @override
   Future<IAPPurchaseResult> restorePurchases() async {
-    _pendingCompleter = Completer<IAPPurchaseResult>();
+    _restoreFallbackTimer?.cancel();
+    final completer = Completer<IAPPurchaseResult>();
+    _pendingCompleter = completer;
     try {
       await _iap.restorePurchases();
     } catch (e) {
       _pendingCompleter = null;
       return IAPPurchaseResult(IAPResult.error, message: e.toString());
     }
-    return _pendingCompleter!.future;
+    _restoreFallbackTimer = Timer(const Duration(seconds: 5), () {
+      final completer = _pendingCompleter;
+      if (completer != null && !completer.isCompleted) {
+        completer.complete(
+          const IAPPurchaseResult(IAPResult.nothingToRestore),
+        );
+        _pendingCompleter = null;
+      }
+    });
+    return completer.future;
   }
 
   Future<void> _onPurchaseUpdate(List<PurchaseDetails> purchases) async {
@@ -143,16 +231,24 @@ class IAPService {
 
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
-          final kind =
-              _productKinds[purchase.productID] ?? IAPProductKind.subscription;
+          final kind = _productKinds[purchase.productID];
+          if (kind == null) {
+            _deferredPurchases
+                .putIfAbsent(purchase.productID, () => [])
+                .add(purchase);
+            break;
+          }
           final result = await _verifyWithBackend(purchase, kind);
-          await _iap.completePurchase(purchase);
+          if (result.result == IAPResult.success &&
+              purchase.pendingCompletePurchase) {
+            await _iap.completePurchase(purchase);
+          }
+          _restoreFallbackTimer?.cancel();
           _pendingCompleter?.complete(result);
           _pendingCompleter = null;
           break;
 
         case PurchaseStatus.error:
-          await _iap.completePurchase(purchase);
           _pendingCompleter?.complete(
             IAPPurchaseResult(
               IAPResult.error,
@@ -295,6 +391,7 @@ class IAPService {
   }
 
   void dispose() {
+    _restoreFallbackTimer?.cancel();
     _subscription?.cancel();
     _subscription = null;
   }

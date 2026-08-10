@@ -17,7 +17,9 @@ class SubscriptionCheckoutConfig {
       enableExternalSubscriptionCheckout:
           resolvedPlatform == TargetPlatform.android,
       enableAppleIap: resolvedPlatform == TargetPlatform.iOS,
-      enableGooglePlayBilling: resolvedPlatform == TargetPlatform.android,
+      // Usimamizi wa Biashara remains on EVPay for Android. Google Play
+      // subscription products are intentionally outside this issue.
+      enableGooglePlayBilling: false,
     );
   }
 }

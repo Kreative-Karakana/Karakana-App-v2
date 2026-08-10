@@ -14,6 +14,7 @@ import 'features/courses/providers/quiz_attempt_provider.dart';
 import 'features/ebooks/providers/ebook_provider.dart';
 import 'features/fursa/providers/fursa_provider.dart';
 import 'features/payments/providers/iap_provider.dart';
+import 'features/payments/services/iap_service.dart';
 
 /// Must be a top-level function — called by FCM for background messages.
 @pragma('vm:entry-point')
@@ -57,6 +58,15 @@ Future<void> main() async {
     await authProvider.initialize();
   } catch (e) {
     debugPrint('AuthProvider init error: $e');
+  }
+
+  // Start StoreKit/Play transaction observation before any purchase screen
+  // opens. Unfinished transactions can then be verified after relaunch; the
+  // service only finishes them once backend persistence succeeds.
+  try {
+    await IAPService.instance.initialize();
+  } catch (e) {
+    debugPrint('[IAP] Startup initialization deferred: $e');
   }
 
   final themeProvider = ThemeProvider();
