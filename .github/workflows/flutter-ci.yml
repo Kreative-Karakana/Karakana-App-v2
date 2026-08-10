@@ -4,12 +4,6 @@ on:
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - 'system-documentation/**'
-      - '.gitignore'
-      - 'assets/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

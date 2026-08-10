@@ -29,15 +29,15 @@ Protected release workflows also accept a `version_name` input. The workflow run
 
 ```sh
 flutter clean
-flutter pub get
 dart format --set-exit-if-changed .
+flutter pub get
 flutter analyze
 flutter test
 ```
 
 Document any skipped command and why it was skipped.
 
-Pull requests are validated by `.github/workflows/flutter-ci.yml`. Merged `main` branch builds are validated by `.github/workflows/flutter-build-validation.yml`. See `docs/ci-cd.md` for the full CI/CD policy, pinned Flutter version, required secrets, and protected release workflow details.
+Pull requests are validated by `.github/workflows/flutter-ci.yml`. Merged `main` branch Android builds are validated by `.github/workflows/flutter-build-validation.yml`; iOS builds are validated after iOS/dependency changes, nightly, and on demand by `.github/workflows/ios-build-validation.yml`. See `docs/ci-cd.md` for the full CI/CD policy, pinned Flutter version, required secrets, and protected release workflow details.
 
 ## Android Release
 
