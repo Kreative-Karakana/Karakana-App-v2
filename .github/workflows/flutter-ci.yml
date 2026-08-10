@@ -36,11 +36,11 @@ jobs:
       - name: Verify Flutter version
         run: flutter --version
 
-      - name: Check formatting
-        run: dart format --set-exit-if-changed .
-
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Check formatting
+        run: dart format --set-exit-if-changed .
 
       - name: Run static analysis
         run: flutter analyze
