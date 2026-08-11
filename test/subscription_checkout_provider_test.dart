@@ -154,6 +154,7 @@ void main() {
     final api = FakeSubscriptionApi()
       ..status = const EntitlementStatus(
         hasActiveSubscription: false,
+        trialEligible: false,
         status: 'none',
         expiryDate: null,
       );

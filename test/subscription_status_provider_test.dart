@@ -17,6 +17,7 @@ void main() {
       final api = FakeSubscriptionApi(
         status: const EntitlementStatus(
           hasActiveSubscription: true,
+          trialEligible: false,
           status: 'active',
           expiryDate: null,
         ),
@@ -86,6 +87,7 @@ void main() {
         () async {
       const active = EntitlementStatus(
         hasActiveSubscription: true,
+        trialEligible: false,
         status: 'active',
         expiryDate: null,
       );
@@ -120,6 +122,7 @@ void main() {
     test('a fresh trial returns true and refreshes entitlement', () async {
       const trialEntitlement = EntitlementStatus(
         hasActiveSubscription: true,
+        trialEligible: false,
         status: 'trial',
         expiryDate: null,
       );
@@ -141,6 +144,7 @@ void main() {
     test('an already-used trial returns false without erroring', () async {
       const noneEntitlement = EntitlementStatus(
         hasActiveSubscription: false,
+        trialEligible: false,
         status: 'none',
         expiryDate: null,
       );

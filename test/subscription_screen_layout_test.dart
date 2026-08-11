@@ -151,6 +151,7 @@ void main() {
       tester,
       size: const Size(390, 844),
       entitlementStatus: 'trial',
+      trialEligible: false,
     );
 
     expect(find.text('Imeamilishwa'), findsOneWidget);
@@ -163,6 +164,35 @@ void main() {
     expect(tester.getSize(countdown).height, lessThan(30));
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('expired paid access can still start a first trial',
+      (tester) async {
+    await _pumpSubscription(
+      tester,
+      size: const Size(390, 844),
+      entitlementStatus: 'expired',
+      trialEligible: true,
+    );
+
+    final trialButton = tester.widget<FilledButton>(
+      find.byKey(const Key('start-subscription-trial')),
+    );
+    expect(trialButton.onPressed, isNotNull);
+  });
+
+  testWidgets('backend-ineligible account cannot restart a trial',
+      (tester) async {
+    await _pumpSubscription(
+      tester,
+      size: const Size(390, 844),
+      trialEligible: false,
+    );
+
+    final trialButton = tester.widget<FilledButton>(
+      find.byKey(const Key('start-subscription-trial')),
+    );
+    expect(trialButton.onPressed, isNull);
+  });
 }
 
 Future<void> _pumpSubscription(
@@ -171,6 +201,7 @@ Future<void> _pumpSubscription(
   double textScale = 1,
   Brightness brightness = Brightness.light,
   String entitlementStatus = 'none',
+  bool trialEligible = true,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
@@ -225,6 +256,7 @@ Future<void> _pumpSubscription(
   final api = FakeSubscriptionApi(
     status: EntitlementStatus(
       hasActiveSubscription: entitlementStatus == 'trial',
+      trialEligible: trialEligible,
       status: entitlementStatus,
       expiryDate: entitlementStatus == 'trial'
           ? DateTime.now().add(const Duration(days: 2))

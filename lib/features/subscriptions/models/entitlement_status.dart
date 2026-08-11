@@ -7,6 +7,7 @@ import 'subscription_plan.dart';
 /// backend is the only source of truth for whether writes are allowed.
 class EntitlementStatus {
   final bool hasActiveSubscription;
+  final bool trialEligible;
   final String status;
   final DateTime? expiryDate;
   final DateTime? startDate;
@@ -15,6 +16,7 @@ class EntitlementStatus {
 
   const EntitlementStatus({
     required this.hasActiveSubscription,
+    required this.trialEligible,
     required this.status,
     required this.expiryDate,
     this.startDate,
@@ -69,6 +71,7 @@ class EntitlementStatus {
     final rawFeatures = json['features'];
     return EntitlementStatus(
       hasActiveSubscription: json['has_active_subscription'] == true,
+      trialEligible: json['trial_eligible'] == true,
       status: (json['status'] ?? 'none').toString(),
       expiryDate: expiryDate,
       startDate: startDate,

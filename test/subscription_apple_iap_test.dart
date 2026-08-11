@@ -134,6 +134,7 @@ Future<(FakeSubscriptionApi, GoRouter)> _pump(
     status: status ??
         const EntitlementStatus(
           hasActiveSubscription: false,
+          trialEligible: true,
           status: 'none',
           expiryDate: null,
         ),
@@ -203,6 +204,7 @@ void main() {
     store.onPurchase = () {
       api.status = EntitlementStatus(
         hasActiveSubscription: true,
+        trialEligible: false,
         status: 'active',
         expiryDate: DateTime.now().add(const Duration(days: 7)),
       );
@@ -260,6 +262,7 @@ void main() {
     store.onRestore = () {
       api.status = EntitlementStatus(
         hasActiveSubscription: true,
+        trialEligible: false,
         status: 'active',
         expiryDate: DateTime.now().add(const Duration(days: 30)),
         plan: _plans().last,
@@ -332,6 +335,7 @@ void main() {
       config: android,
       status: EntitlementStatus(
         hasActiveSubscription: true,
+        trialEligible: false,
         status: 'active',
         expiryDate: DateTime.now().add(const Duration(days: 20)),
         plan: _plans().last,
@@ -353,6 +357,7 @@ void main() {
       config: ios,
       status: EntitlementStatus(
         hasActiveSubscription: true,
+        trialEligible: false,
         status: 'active',
         expiryDate: DateTime.now().add(const Duration(days: 20)),
         plan: _plans().last,

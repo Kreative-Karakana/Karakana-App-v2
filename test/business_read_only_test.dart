@@ -33,6 +33,7 @@ void main() {
         subscriptionService: FakeSubscriptionApi(
           status: const EntitlementStatus(
             hasActiveSubscription: false,
+            trialEligible: false,
             status: 'expired',
             expiryDate: null,
           ),
@@ -53,6 +54,7 @@ void main() {
         subscriptionService: FakeSubscriptionApi(
           status: const EntitlementStatus(
             hasActiveSubscription: false,
+            trialEligible: false,
             status: 'expired',
             expiryDate: null,
           ),
@@ -92,6 +94,7 @@ void main() {
       // the provider must react to the 403 itself, not to a pre-fetched flag.
       subscriptionApi.status = const EntitlementStatus(
         hasActiveSubscription: false,
+        trialEligible: false,
         status: 'expired',
         expiryDate: null,
       );
