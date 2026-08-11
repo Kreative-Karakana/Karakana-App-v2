@@ -1,5 +1,7 @@
 # Done
 
+- CI/CD architecture now keeps mandatory PR quality checks, runs frequent Android validation, targets iOS validation by compilation risk plus a nightly safety build, and prevents releases from unapproved refs.
+- CI/CD optimization verified with Dart formatting, Flutter analysis, the full Flutter test suite, YAML parsing, workflow structure checks, and release-ref policy test cases.
 - Android launcher label changed to Karakana.
 - INTERNET permission added to main AndroidManifest.xml.
 - Android splash screen branded with centered launcher icon.

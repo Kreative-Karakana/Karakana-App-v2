@@ -1,10 +1,20 @@
-name: Flutter Build Validation
+name: Android Build Validation
 
 on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'system-documentation/**'
+      - '.gitignore'
+      - 'ios/**'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -28,6 +38,7 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+          cache: gradle
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -44,38 +55,3 @@ jobs:
 
       - name: Build debug APK
         run: flutter build apk --debug
-
-  ios-no-codesign-build:
-    name: iOS no-codesign build
-    runs-on: macos-15
-    timeout-minutes: 40
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Select Xcode
-        run: |
-          sudo xcode-select -s /Applications/Xcode_26.0.app/Contents/Developer || \
-          sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
-          xcodebuild -version
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: stable
-          cache: true
-
-      - name: Verify Flutter version
-        run: flutter --version
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Install CocoaPods dependencies
-        working-directory: ios
-        run: pod install
-
-      - name: Build iOS without code signing
-        run: flutter build ios --release --no-codesign
