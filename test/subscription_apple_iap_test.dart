@@ -30,16 +30,16 @@ class _FakeSubscriptionStore implements SubscriptionPurchaseStore {
       id: weeklyProduct,
       title: 'Wiki moja',
       description: 'Usimamizi wa Biashara',
-      price: 'TSh 4,900',
-      rawPrice: 4900,
+      price: 'TSh 7,900',
+      rawPrice: 7900,
       currencyCode: 'TZS',
     ),
     monthlyProduct: ProductDetails(
       id: monthlyProduct,
       title: 'Mwezi mmoja',
       description: 'Usimamizi wa Biashara',
-      price: 'TSh 24,900',
-      rawPrice: 24900,
+      price: 'TSh 29,900',
+      rawPrice: 29900,
       currencyCode: 'TZS',
     ),
   };
@@ -106,7 +106,7 @@ List<SubscriptionPlan> _plans() => const [
         slug: 'usimamizi-wa-biashara-weekly',
         billingPeriod: 'weekly',
         durationDays: 7,
-        price: '4900.00',
+        price: '7900.00',
         currency: 'TZS',
         features: [],
         appleIapProductId: weeklyProduct,
@@ -117,7 +117,7 @@ List<SubscriptionPlan> _plans() => const [
         slug: 'usimamizi-wa-biashara-monthly',
         billingPeriod: 'monthly',
         durationDays: 30,
-        price: '24900.00',
+        price: '29900.00',
         currency: 'TZS',
         features: [],
         appleIapProductId: monthlyProduct,
@@ -186,8 +186,8 @@ void main() {
       ),
       findsNothing,
     );
-    expect(find.text('TSh 4,900'), findsOneWidget);
-    expect(find.text('TSh 24,900'), findsOneWidget);
+    expect(find.text('TSh 7,900'), findsOneWidget);
+    expect(find.text('TSh 29,900'), findsOneWidget);
     expect(find.text('kwa wiki'), findsOneWidget);
     expect(find.text('kwa mwezi'), findsOneWidget);
     expect(find.text('Nunua Sasa'), findsNWidgets(2));
@@ -311,8 +311,8 @@ void main() {
     await _pump(tester, store: store, config: android);
 
     expect(find.text('Endelea na Malipo'), findsNWidgets(2));
-    expect(find.text('4,900 TZS'), findsOneWidget);
-    expect(find.text('24,900 TZS'), findsOneWidget);
+    expect(find.text('7,900 TZS'), findsOneWidget);
+    expect(find.text('29,900 TZS'), findsOneWidget);
     expect(find.text('BURE'), findsOneWidget);
     expect(
       find.byKey(

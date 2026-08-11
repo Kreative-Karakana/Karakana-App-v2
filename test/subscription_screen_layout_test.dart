@@ -60,7 +60,7 @@ void main() {
         greaterThan(tester.getTopLeft(trialPrice).dy));
 
     final weeklyTitle = find.text('Wiki 1');
-    final weeklyPrice = find.text('4,900 TZS');
+    final weeklyPrice = find.text('7,900 TZS');
     final firstPaidAction = find.text('Endelea na Malipo').first;
     expect(tester.getTopLeft(weeklyPrice).dy,
         greaterThan(tester.getTopLeft(weeklyTitle).dy));
@@ -78,7 +78,7 @@ void main() {
       findsNothing,
     );
     expect(find.text('Chagua Mpango Wako'), findsOneWidget);
-    expect(find.text('24,900 TZS'), findsOneWidget);
+    expect(find.text('29,900 TZS'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -238,7 +238,7 @@ Future<void> _pumpSubscription(
       slug: 'usimamizi-wa-biashara-weekly',
       billingPeriod: 'weekly',
       durationDays: 7,
-      price: '4900.00',
+      price: '7900.00',
       currency: 'TZS',
       features: [],
     ),
@@ -248,7 +248,7 @@ Future<void> _pumpSubscription(
       slug: 'usimamizi-wa-biashara-monthly',
       billingPeriod: 'monthly',
       durationDays: 30,
-      price: '24900.00',
+      price: '29900.00',
       currency: 'TZS',
       features: [],
     ),
