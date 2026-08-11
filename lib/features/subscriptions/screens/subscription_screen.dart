@@ -214,7 +214,7 @@ class _SubscriptionViewState extends State<_SubscriptionView>
                     errorMessage: provider.plansErrorMessage,
                     checkoutConfig: _checkoutConfig,
                     onRetry: provider.loadPlans,
-                    canStartTrial: entitlement.isNone,
+                    canStartTrial: entitlement.trialEligible,
                     isTrialActive: entitlement.isTrial,
                     isActivatingTrial: provider.isActivatingTrial,
                     onStartTrial: () => _activateTrial(context),
@@ -233,7 +233,7 @@ class _SubscriptionViewState extends State<_SubscriptionView>
   void _preloadAppleProducts(List<SubscriptionPlan> plans) {
     if (!_checkoutConfig.enableAppleIap) return;
     final productIds = plans
-        .where((plan) => plan.billingPeriod != 'daily')
+        .where(_isPurchasablePaidPlan)
         .map((plan) => plan.appleIapProductId)
         .whereType<String>()
         .where((productId) => productId.isNotEmpty)
@@ -810,7 +810,7 @@ class _TrialOfferCard extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(
-                '0 TZS',
+                'BURE',
                 style: GoogleFonts.montserrat(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
@@ -892,7 +892,7 @@ class _PlansSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final paidPlans = plans.where((plan) => !_isTrialPlan(plan)).toList()
+    final paidPlans = plans.where(_isPurchasablePaidPlan).toList()
       ..sort((a, b) => a.durationDays.compareTo(b.durationDays));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1066,13 +1066,16 @@ class _PlansErrorRow extends StatelessWidget {
   }
 }
 
-bool _isTrialPlan(SubscriptionPlan plan) =>
-    plan.slug == 'usimamizi-wa-biashara-trial';
+const _purchasablePaidPlanSlugs = {
+  'usimamizi-wa-biashara-weekly',
+  'usimamizi-wa-biashara-monthly',
+};
+
+bool _isPurchasablePaidPlan(SubscriptionPlan plan) =>
+    _purchasablePaidPlanSlugs.contains(plan.slug);
 
 String _planDisplayTitle(SubscriptionPlan plan) {
   switch (plan.durationDays) {
-    case 1:
-      return 'Siku 1';
     case 7:
       return 'Wiki 1';
     case 30:
@@ -1177,12 +1180,9 @@ class _PlanCard extends StatelessWidget {
               )
             else
               _UnavailablePurchaseButton(
-                message: checkoutConfig.enableAppleIap &&
-                        plan.billingPeriod == 'daily'
-                    ? 'Mpango wa siku 1 haupatikani kwenye iOS'
-                    : availability.canUseStorePurchase
-                        ? 'App Store bado haijaunganishwa'
-                        : 'Ununuzi haupatikani hapa',
+                message: availability.canUseStorePurchase
+                    ? 'App Store bado haijaunganishwa'
+                    : 'Ununuzi haupatikani hapa',
               ),
           ],
         ),
@@ -1216,17 +1216,15 @@ SubscriptionPurchaseAvailability _purchaseAvailability(
   SubscriptionPlan plan,
   SubscriptionCheckoutConfig config,
 ) {
-  final unsupportedAppleDuration =
-      config.enableAppleIap && plan.billingPeriod == 'daily';
   final productId = config.enableAppleIap
-      ? (unsupportedAppleDuration ? null : plan.appleIapProductId)
+      ? plan.appleIapProductId
       : config.enableGooglePlayBilling
           ? plan.googlePlayProductId
           : null;
   return SubscriptionPurchaseAvailability(
     canUseExternalCheckout: config.enableExternalSubscriptionCheckout,
-    canUseStorePurchase: !unsupportedAppleDuration &&
-        (config.enableAppleIap || config.enableGooglePlayBilling),
+    canUseStorePurchase:
+        config.enableAppleIap || config.enableGooglePlayBilling,
     storeProductId: productId,
   );
 }

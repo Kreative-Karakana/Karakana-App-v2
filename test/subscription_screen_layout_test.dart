@@ -20,25 +20,29 @@ void main() {
     final daily = find.byKey(
       const Key('subscription-choice-usimamizi-wa-biashara-daily'),
     );
+    final weekly = find.byKey(
+      const Key('subscription-choice-usimamizi-wa-biashara-weekly'),
+    );
 
     expect(trial, findsOneWidget);
-    expect(daily, findsOneWidget);
-    expect(tester.getTopLeft(trial).dy, tester.getTopLeft(daily).dy);
+    expect(daily, findsNothing);
+    expect(weekly, findsOneWidget);
+    expect(tester.getTopLeft(trial).dy, tester.getTopLeft(weekly).dy);
     expect(
-      tester.getTopLeft(daily).dx,
+      tester.getTopLeft(weekly).dx,
       greaterThan(tester.getTopLeft(trial).dx),
     );
-    expect(tester.getSize(trial), tester.getSize(daily));
+    expect(tester.getSize(trial), tester.getSize(weekly));
     expect(
       tester.getSize(trial).height,
       lessThan(420),
     );
     expect(find.text('Jaribio (Siku 3)'), findsOneWidget);
-    expect(find.text('Siku 1'), findsOneWidget);
+    expect(find.text('Siku 1'), findsNothing);
     expect(find.text('Wiki 1'), findsOneWidget);
     expect(find.text('Mwezi 1'), findsOneWidget);
     expect(find.text('Anza Jaribio'), findsOneWidget);
-    expect(find.text('Endelea na Malipo'), findsNWidgets(3));
+    expect(find.text('Endelea na Malipo'), findsNWidgets(2));
     expect(find.text('Jaribio la Siku 3'), findsNothing);
     expect(
       find.descendant(
@@ -48,23 +52,23 @@ void main() {
       findsNothing,
     );
     final trialTitle = find.text('Jaribio (Siku 3)');
-    final trialPrice = find.text('0 TZS');
+    final trialPrice = find.text('BURE');
     final trialAction = find.text('Anza Jaribio');
     expect(tester.getTopLeft(trialPrice).dy,
         greaterThan(tester.getTopLeft(trialTitle).dy));
     expect(tester.getTopLeft(trialAction).dy,
         greaterThan(tester.getTopLeft(trialPrice).dy));
 
-    final dailyTitle = find.text('Siku 1');
-    final dailyPrice = find.text('1,000 TZS');
+    final weeklyTitle = find.text('Wiki 1');
+    final weeklyPrice = find.text('7,900 TZS');
     final firstPaidAction = find.text('Endelea na Malipo').first;
-    expect(tester.getTopLeft(dailyPrice).dy,
-        greaterThan(tester.getTopLeft(dailyTitle).dy));
+    expect(tester.getTopLeft(weeklyPrice).dy,
+        greaterThan(tester.getTopLeft(weeklyTitle).dy));
     expect(tester.getTopLeft(firstPaidAction).dy,
-        greaterThan(tester.getTopLeft(dailyPrice).dy));
+        greaterThan(tester.getTopLeft(weeklyPrice).dy));
     expect(
       find.descendant(
-        of: daily,
+        of: weekly,
         matching: find.byIcon(Icons.workspace_premium_outlined),
       ),
       findsNothing,
@@ -74,6 +78,7 @@ void main() {
       findsNothing,
     );
     expect(find.text('Chagua Mpango Wako'), findsOneWidget);
+    expect(find.text('29,900 TZS'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -86,13 +91,13 @@ void main() {
     );
 
     final trial = find.byKey(const Key('subscription-choice-trial'));
-    final daily = find.byKey(
-      const Key('subscription-choice-usimamizi-wa-biashara-daily'),
+    final weekly = find.byKey(
+      const Key('subscription-choice-usimamizi-wa-biashara-weekly'),
     );
 
     expect(
-        tester.getTopLeft(daily).dy, greaterThan(tester.getTopLeft(trial).dy));
-    expect(tester.getSize(trial).width, tester.getSize(daily).width);
+        tester.getTopLeft(weekly).dy, greaterThan(tester.getTopLeft(trial).dy));
+    expect(tester.getSize(trial).width, tester.getSize(weekly).width);
     expect(tester.takeException(), isNull);
   });
 
@@ -104,18 +109,13 @@ void main() {
     );
 
     final trial = find.byKey(const Key('subscription-choice-trial'));
-    final daily = find.byKey(
-      const Key('subscription-choice-usimamizi-wa-biashara-daily'),
-    );
     final weekly = find.byKey(
       const Key('subscription-choice-usimamizi-wa-biashara-weekly'),
     );
 
-    expect(tester.getTopLeft(trial).dy, tester.getTopLeft(daily).dy);
+    expect(tester.getTopLeft(trial).dy, tester.getTopLeft(weekly).dy);
     expect(
-        tester.getTopLeft(daily).dx, greaterThan(tester.getTopLeft(trial).dx));
-    expect(
-        tester.getTopLeft(weekly).dy, greaterThan(tester.getTopLeft(trial).dy));
+        tester.getTopLeft(weekly).dx, greaterThan(tester.getTopLeft(trial).dx));
     expect(tester.getSize(trial).height, lessThan(400));
     expect(tester.takeException(), isNull);
   });
@@ -131,10 +131,10 @@ void main() {
     final cards = [
       find.byKey(const Key('subscription-choice-trial')),
       find.byKey(
-        const Key('subscription-choice-usimamizi-wa-biashara-daily'),
+        const Key('subscription-choice-usimamizi-wa-biashara-weekly'),
       ),
       find.byKey(
-        const Key('subscription-choice-usimamizi-wa-biashara-weekly'),
+        const Key('subscription-choice-usimamizi-wa-biashara-monthly'),
       ),
     ];
     final firstRowY = tester.getTopLeft(cards.first).dy;
@@ -151,6 +151,7 @@ void main() {
       tester,
       size: const Size(390, 844),
       entitlementStatus: 'trial',
+      trialEligible: false,
     );
 
     expect(find.text('Imeamilishwa'), findsOneWidget);
@@ -163,6 +164,35 @@ void main() {
     expect(tester.getSize(countdown).height, lessThan(30));
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('expired paid access can still start a first trial',
+      (tester) async {
+    await _pumpSubscription(
+      tester,
+      size: const Size(390, 844),
+      entitlementStatus: 'expired',
+      trialEligible: true,
+    );
+
+    final trialButton = tester.widget<FilledButton>(
+      find.byKey(const Key('start-subscription-trial')),
+    );
+    expect(trialButton.onPressed, isNotNull);
+  });
+
+  testWidgets('backend-ineligible account cannot restart a trial',
+      (tester) async {
+    await _pumpSubscription(
+      tester,
+      size: const Size(390, 844),
+      trialEligible: false,
+    );
+
+    final trialButton = tester.widget<FilledButton>(
+      find.byKey(const Key('start-subscription-trial')),
+    );
+    expect(trialButton.onPressed, isNull);
+  });
 }
 
 Future<void> _pumpSubscription(
@@ -171,6 +201,7 @@ Future<void> _pumpSubscription(
   double textScale = 1,
   Brightness brightness = Brightness.light,
   String entitlementStatus = 'none',
+  bool trialEligible = true,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = size;
@@ -207,7 +238,7 @@ Future<void> _pumpSubscription(
       slug: 'usimamizi-wa-biashara-weekly',
       billingPeriod: 'weekly',
       durationDays: 7,
-      price: '6000.00',
+      price: '7900.00',
       currency: 'TZS',
       features: [],
     ),
@@ -217,7 +248,7 @@ Future<void> _pumpSubscription(
       slug: 'usimamizi-wa-biashara-monthly',
       billingPeriod: 'monthly',
       durationDays: 30,
-      price: '27000.00',
+      price: '29900.00',
       currency: 'TZS',
       features: [],
     ),
@@ -225,6 +256,7 @@ Future<void> _pumpSubscription(
   final api = FakeSubscriptionApi(
     status: EntitlementStatus(
       hasActiveSubscription: entitlementStatus == 'trial',
+      trialEligible: trialEligible,
       status: entitlementStatus,
       expiryDate: entitlementStatus == 'trial'
           ? DateTime.now().add(const Duration(days: 2))

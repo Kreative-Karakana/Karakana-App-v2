@@ -11,12 +11,14 @@ void main() {
     test('never subscribed', () {
       final entitlement = EntitlementStatus.fromJson(const {
         'has_active_subscription': false,
+        'trial_eligible': true,
         'status': 'none',
         'subscription': null,
         'features': [],
       });
 
       expect(entitlement.hasActiveSubscription, isFalse);
+      expect(entitlement.trialEligible, isTrue);
       expect(entitlement.isNone, isTrue);
       expect(entitlement.hadPriorAccess, isFalse);
       expect(entitlement.plan, isNull);
@@ -27,6 +29,7 @@ void main() {
     test('active trial parses plan, start/expiry dates, and features', () {
       final entitlement = EntitlementStatus.fromJson({
         'has_active_subscription': true,
+        'trial_eligible': false,
         'status': 'trial',
         'subscription': {
           'id': 1,
@@ -56,6 +59,7 @@ void main() {
       });
 
       expect(entitlement.isTrial, isTrue);
+      expect(entitlement.trialEligible, isFalse);
       expect(entitlement.hasActiveSubscription, isTrue);
       expect(entitlement.plan?.name, 'Jaribio');
       expect(entitlement.plan?.features.single.code,
@@ -68,6 +72,7 @@ void main() {
     test('expired reports the nested (lapsed) subscription, not null', () {
       final entitlement = EntitlementStatus.fromJson(const {
         'has_active_subscription': false,
+        'trial_eligible': false,
         'status': 'expired',
         'subscription': {
           'id': 1,
@@ -81,10 +86,24 @@ void main() {
       });
 
       expect(entitlement.isExpired, isTrue);
+      expect(entitlement.trialEligible, isFalse);
       expect(entitlement.hadPriorAccess, isTrue);
       expect(entitlement.expiryDate, DateTime.parse('2026-07-04T00:00:00Z'));
       // Expiry is in the past — remainingDays clamps to zero, never negative.
       expect(entitlement.remainingDays, 0);
+    });
+
+    test('expired paid access can remain trial eligible', () {
+      final entitlement = EntitlementStatus.fromJson(const {
+        'has_active_subscription': false,
+        'trial_eligible': true,
+        'status': 'expired',
+        'subscription': null,
+        'features': [],
+      });
+
+      expect(entitlement.isExpired, isTrue);
+      expect(entitlement.trialEligible, isTrue);
     });
   });
 }

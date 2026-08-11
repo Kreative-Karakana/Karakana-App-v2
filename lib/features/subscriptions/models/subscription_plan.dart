@@ -34,13 +34,10 @@ class SubscriptionPlan {
   final String currency;
   final List<SubscriptionFeature> features;
 
-  /// Store product ids for [IAPService.purchase]. Not yet returned by
-  /// `SubscriptionPlanSerializer` as of issue #33 — always null until a
-  /// backend follow-up exposes `SubscriptionPlan.apple_iap_product_id`/
-  /// `google_play_product_id` on the catalog endpoints. Parsed defensively
-  /// so the purchase UI degrades to "unavailable" instead of crashing, and
-  /// starts working the moment the backend adds them, with no Flutter
-  /// change required.
+  /// Store product IDs returned by the backend's
+  /// `SubscriptionPlanSerializer` for [IAPService.purchase]. A null value
+  /// means that the plan is not configured for that store, so the purchase
+  /// UI degrades to "unavailable" instead of inventing a client-side ID.
   final String? appleIapProductId;
   final String? googlePlayProductId;
 

@@ -19,6 +19,7 @@ class _FakeSubscriptionStore implements SubscriptionPurchaseStore {
   IAPPurchaseResult restoreResult =
       const IAPPurchaseResult(IAPResult.nothingToRestore);
   final Set<String> loaded = {};
+  final Set<String> queried = {};
   final List<String> purchases = [];
   int restores = 0;
   VoidCallback? onPurchase;
@@ -29,16 +30,16 @@ class _FakeSubscriptionStore implements SubscriptionPurchaseStore {
       id: weeklyProduct,
       title: 'Wiki moja',
       description: 'Usimamizi wa Biashara',
-      price: 'TSh 6,000',
-      rawPrice: 6000,
+      price: 'TSh 7,900',
+      rawPrice: 7900,
       currencyCode: 'TZS',
     ),
     monthlyProduct: ProductDetails(
       id: monthlyProduct,
       title: 'Mwezi mmoja',
       description: 'Usimamizi wa Biashara',
-      price: 'TSh 27,000',
-      rawPrice: 27000,
+      price: 'TSh 29,900',
+      rawPrice: 29900,
       currencyCode: 'TZS',
     ),
   };
@@ -51,6 +52,7 @@ class _FakeSubscriptionStore implements SubscriptionPurchaseStore {
     Set<String> productIds, {
     IAPProductKind? kind,
   }) async {
+    queried.addAll(productIds);
     loaded.addAll(productIds.where(products.containsKey));
   }
 
@@ -104,7 +106,7 @@ List<SubscriptionPlan> _plans() => const [
         slug: 'usimamizi-wa-biashara-weekly',
         billingPeriod: 'weekly',
         durationDays: 7,
-        price: '6000.00',
+        price: '7900.00',
         currency: 'TZS',
         features: [],
         appleIapProductId: weeklyProduct,
@@ -115,7 +117,7 @@ List<SubscriptionPlan> _plans() => const [
         slug: 'usimamizi-wa-biashara-monthly',
         billingPeriod: 'monthly',
         durationDays: 30,
-        price: '27000.00',
+        price: '29900.00',
         currency: 'TZS',
         features: [],
         appleIapProductId: monthlyProduct,
@@ -132,6 +134,7 @@ Future<(FakeSubscriptionApi, GoRouter)> _pump(
     status: status ??
         const EntitlementStatus(
           hasActiveSubscription: false,
+          trialEligible: true,
           status: 'none',
           expiryDate: null,
         ),
@@ -172,21 +175,25 @@ void main() {
     enableGooglePlayBilling: false,
   );
 
-  testWidgets(
-      'iOS offers weekly/monthly StoreKit and explicitly disables daily',
+  testWidgets('iOS offers only weekly/monthly using StoreKit prices',
       (tester) async {
     final store = _FakeSubscriptionStore();
     await _pump(tester, store: store, config: ios);
 
     expect(
-        find.text('Mpango wa siku 1 haupatikani kwenye iOS'), findsOneWidget);
-    expect(find.text('TSh 6,000'), findsOneWidget);
-    expect(find.text('TSh 27,000'), findsOneWidget);
+      find.byKey(
+        const Key('subscription-choice-usimamizi-wa-biashara-daily'),
+      ),
+      findsNothing,
+    );
+    expect(find.text('TSh 7,900'), findsOneWidget);
+    expect(find.text('TSh 29,900'), findsOneWidget);
     expect(find.text('kwa wiki'), findsOneWidget);
     expect(find.text('kwa mwezi'), findsOneWidget);
     expect(find.text('Nunua Sasa'), findsNWidgets(2));
     expect(find.text('Endelea na Malipo'), findsNothing);
     expect(store.loaded, {weeklyProduct, monthlyProduct});
+    expect(store.queried, {weeklyProduct, monthlyProduct});
   });
 
   testWidgets('successful Apple purchase refreshes backend entitlement',
@@ -197,6 +204,7 @@ void main() {
     store.onPurchase = () {
       api.status = EntitlementStatus(
         hasActiveSubscription: true,
+        trialEligible: false,
         status: 'active',
         expiryDate: DateTime.now().add(const Duration(days: 7)),
       );
@@ -254,6 +262,7 @@ void main() {
     store.onRestore = () {
       api.status = EntitlementStatus(
         hasActiveSubscription: true,
+        trialEligible: false,
         status: 'active',
         expiryDate: DateTime.now().add(const Duration(days: 30)),
         plan: _plans().last,
@@ -301,10 +310,41 @@ void main() {
     final store = _FakeSubscriptionStore();
     await _pump(tester, store: store, config: android);
 
-    expect(find.text('Endelea na Malipo'), findsNWidgets(3));
+    expect(find.text('Endelea na Malipo'), findsNWidgets(2));
+    expect(find.text('7,900 TZS'), findsOneWidget);
+    expect(find.text('29,900 TZS'), findsOneWidget);
+    expect(find.text('BURE'), findsOneWidget);
+    expect(
+      find.byKey(
+        const Key('subscription-choice-usimamizi-wa-biashara-daily'),
+      ),
+      findsNothing,
+    );
     expect(find.text('Nunua Sasa'), findsNothing);
     expect(find.text('Rejesha Ununuzi Uliopita'), findsNothing);
     expect(store.loaded, isEmpty);
+  });
+
+  testWidgets(
+      'Android honors an existing backend entitlement acquired through Apple',
+      (tester) async {
+    final store = _FakeSubscriptionStore();
+    await _pump(
+      tester,
+      store: store,
+      config: android,
+      status: EntitlementStatus(
+        hasActiveSubscription: true,
+        trialEligible: false,
+        status: 'active',
+        expiryDate: DateTime.now().add(const Duration(days: 20)),
+        plan: _plans().last,
+      ),
+    );
+
+    expect(find.text('USAJILI AMILIFU'), findsOneWidget);
+    expect(find.text('Endelea na Malipo'), findsNothing);
+    expect(find.text('Nunua Sasa'), findsNothing);
   });
 
   testWidgets(
@@ -317,6 +357,7 @@ void main() {
       config: ios,
       status: EntitlementStatus(
         hasActiveSubscription: true,
+        trialEligible: false,
         status: 'active',
         expiryDate: DateTime.now().add(const Duration(days: 20)),
         plan: _plans().last,

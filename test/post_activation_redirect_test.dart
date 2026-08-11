@@ -7,11 +7,13 @@ import 'package:karakana_app/features/subscriptions/utils/post_activation_redire
 void main() {
   const inactive = EntitlementStatus(
     hasActiveSubscription: false,
+    trialEligible: false,
     status: 'none',
     expiryDate: null,
   );
   const active = EntitlementStatus(
     hasActiveSubscription: true,
+    trialEligible: false,
     status: 'active',
     expiryDate: null,
   );

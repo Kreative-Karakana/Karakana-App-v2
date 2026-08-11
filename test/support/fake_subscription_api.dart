@@ -16,6 +16,7 @@ class FakeSubscriptionApi implements SubscriptionApi {
 
   static const _activeStatus = EntitlementStatus(
     hasActiveSubscription: true,
+    trialEligible: false,
     status: 'active',
     expiryDate: null,
   );
