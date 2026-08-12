@@ -14,7 +14,9 @@ import '../services/auth_session_store.dart';
 class AuthProvider extends ChangeNotifier {
   AuthProvider({AuthApi? api, AuthSessionStore? storage})
       : _api = api ?? AuthService(),
-        _storage = storage ?? SecureStorage();
+        _storage = storage ?? SecureStorage() {
+    ApiClient().setUnauthorizedHandler(invalidateAuthentication);
+  }
 
   final AuthApi _api;
   final AuthSessionStore _storage;
@@ -25,6 +27,7 @@ class AuthProvider extends ChangeNotifier {
   List<dynamic>? _roles;
   String? _errorMessage;
   bool _isOnboardingComplete = false;
+  Future<void>? _authenticationInvalidationInFlight;
 
   bool get isLoading => _isLoading;
   bool get isAuthenticated => _isAuthenticated;
@@ -118,9 +121,9 @@ class AuthProvider extends ChangeNotifier {
       await _storage.deleteToken();
       String? deviceToken;
       try {
-        deviceToken = await FirebaseMessaging.instance
-            .getToken()
-            .timeout(const Duration(seconds: 5));
+        deviceToken = await FirebaseMessaging.instance.getToken().timeout(
+              const Duration(seconds: 5),
+            );
       } catch (e) {
         debugPrint('[AUTH] FCM token fetch failed (non-fatal): $e');
         deviceToken = null;
@@ -139,7 +142,13 @@ class AuthProvider extends ChangeNotifier {
         debugPrint('[AUTH] Signin roles: $_roles');
         if (_roles != null) await _storage.saveRoles(_roles!);
         _user = _extractUser(data);
-        await getCurrentUser();
+        final profileLoaded = await getCurrentUser();
+        if (!profileLoaded) {
+          await invalidateAuthentication();
+          _isLoading = false;
+          notifyListeners();
+          return false;
+        }
         await _syncBiometricSessionForCurrentUser();
         _isAuthenticated = true;
         _isLoading = false;
@@ -163,17 +172,16 @@ class AuthProvider extends ChangeNotifier {
 
   /// Returns the email string on success (HTTP 306 = success), null on failure.
   Future<String?> signup(
-      String firstName, String email, String password) async {
+    String firstName,
+    String email,
+    String password,
+  ) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      await _api.signup(
-        firstName: firstName,
-        email: email,
-        password: password,
-      );
+      await _api.signup(firstName: firstName, email: email, password: password);
       _isLoading = false;
       notifyListeners();
       return email;
@@ -199,12 +207,13 @@ class AuthProvider extends ChangeNotifier {
     try {
       String? deviceToken;
       try {
-        deviceToken = await FirebaseMessaging.instance
-            .getToken()
-            .timeout(const Duration(seconds: 5));
+        deviceToken = await FirebaseMessaging.instance.getToken().timeout(
+              const Duration(seconds: 5),
+            );
       } catch (e) {
         debugPrint(
-            '[AUTH] FCM token fetch failed during verify (non-fatal): $e');
+          '[AUTH] FCM token fetch failed during verify (non-fatal): $e',
+        );
         deviceToken = null;
       }
       final platform = Platform.isIOS ? 'ios' : 'android';
@@ -219,7 +228,13 @@ class AuthProvider extends ChangeNotifier {
         await _storage.saveToken(token.toString());
         _roles = _extractRoles(data);
         if (_roles != null) await _storage.saveRoles(_roles!);
-        await getCurrentUser();
+        final profileLoaded = await getCurrentUser();
+        if (!profileLoaded) {
+          await invalidateAuthentication();
+          _isLoading = false;
+          notifyListeners();
+          return false;
+        }
         await _syncBiometricSessionForCurrentUser();
         _isAuthenticated = true;
         _isLoading = false;
@@ -257,21 +272,43 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    await _storage.clearAll();
-    _isAuthenticated = false;
-    _user = null;
-    _roles = null;
-    _errorMessage = null;
-    notifyListeners();
+    try {
+      await _api.logout();
+    } catch (e) {
+      if (kDebugMode) debugPrint('[AuthProvider] remote logout failed: $e');
+    } finally {
+      await invalidateAuthentication();
+    }
+  }
+
+  Future<void> invalidateAuthentication() {
+    final inFlight = _authenticationInvalidationInFlight;
+    if (inFlight != null) return inFlight;
+
+    final future = _performAuthenticationInvalidation();
+    _authenticationInvalidationInFlight = future;
+    return future.whenComplete(() {
+      if (identical(_authenticationInvalidationInFlight, future)) {
+        _authenticationInvalidationInFlight = null;
+      }
+    });
+  }
+
+  Future<void> _performAuthenticationInvalidation() async {
+    try {
+      await _storage.clearAll();
+    } finally {
+      _isAuthenticated = false;
+      _user = null;
+      _roles = null;
+      _errorMessage = null;
+      notifyListeners();
+    }
   }
 
   Future<void> deleteAccount() async {
-    try {
-      await _api.deleteAccount();
-      await logout();
-    } catch (e) {
-      rethrow;
-    }
+    await _api.deleteAccount();
+    await invalidateAuthentication();
   }
 
   Future<void> completeOnboarding() async {
@@ -334,9 +371,9 @@ class AuthProvider extends ChangeNotifier {
       }
       String? deviceToken;
       try {
-        deviceToken = await FirebaseMessaging.instance
-            .getToken()
-            .timeout(const Duration(seconds: 5));
+        deviceToken = await FirebaseMessaging.instance.getToken().timeout(
+              const Duration(seconds: 5),
+            );
       } catch (e) {
         debugPrint('[AUTH] FCM token fetch failed (non-fatal): $e');
         deviceToken = null;
@@ -442,7 +479,13 @@ class AuthProvider extends ChangeNotifier {
       _roles = _extractRoles(data);
       if (_roles != null) await _storage.saveRoles(_roles!);
       _user = _extractUser(data);
-      await getCurrentUser();
+      final profileLoaded = await getCurrentUser();
+      if (!profileLoaded) {
+        await invalidateAuthentication();
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
       await _syncBiometricSessionForCurrentUser();
       _isAuthenticated = true;
       _isLoading = false;
@@ -455,7 +498,7 @@ class AuthProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<void> getCurrentUser() async {
+  Future<bool> getCurrentUser() async {
     try {
       final profileData = await _api.fetchProfile();
       debugPrint('[AUTH] Profile response: $profileData');
@@ -468,9 +511,12 @@ class AuthProvider extends ChangeNotifier {
         await _storage.saveUserId(_user!['id'].toString());
       }
       _isAuthenticated = true;
+      return true;
     } catch (e) {
       if (kDebugMode) debugPrint('[AuthProvider] getCurrentUser error: $e');
       _isAuthenticated = false;
+      notifyListeners();
+      return false;
     }
   }
 
@@ -481,11 +527,11 @@ class AuthProvider extends ChangeNotifier {
       final token = await _storage.getBiometricTokenForAccount(accountId);
       if (token == null || token.isEmpty) return false;
       await _storage.saveToken(token);
-      await getCurrentUser();
+      final profileLoaded = await getCurrentUser();
+      if (!profileLoaded) return false;
       final currentUserId = userId?.toString();
       if (currentUserId == null || currentUserId != accountId) {
-        _isAuthenticated = false;
-        notifyListeners();
+        await invalidateAuthentication();
         return false;
       }
       notifyListeners();

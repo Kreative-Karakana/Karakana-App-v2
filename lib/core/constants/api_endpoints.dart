@@ -8,6 +8,7 @@ class ApiEndpoints {
   static const String googleAuth = '/api/oauth/';
   static const String appleAuth = '/api/apple-oauth/';
   static const String changePassword = '/api/auth/change-password/';
+  static const String logout = '/api/auth/logout/';
 
   // Profile
   static const String profileMe = '/api/v1/profiles/me/';
@@ -19,6 +20,8 @@ class ApiEndpoints {
 
   // Courses
   static const String courses = '/api/v1/courses/';
+  static const String courseRestoreProducts =
+      '/api/v1/courses/restore-products/';
   static const String categories = '/api/v1/categories/';
   static const String enrollFree = '/api/v1/courses/enroll/';
   static const String wishlist = '/api/v1/wishlist/';

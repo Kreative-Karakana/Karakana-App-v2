@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/app_colors.dart';
@@ -77,7 +76,8 @@ class _TermsDialogState extends State<_TermsDialog> {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.cardLg)),
+        borderRadius: BorderRadius.circular(AppRadius.cardLg),
+      ),
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -94,8 +94,11 @@ class _TermsDialogState extends State<_TermsDialog> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.policy_outlined,
-                    color: Colors.white, size: 24),
+                const Icon(
+                  Icons.policy_outlined,
+                  color: Colors.white,
+                  size: 24,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -220,7 +223,9 @@ class _TermsDialogState extends State<_TermsDialog> {
                         : null,
                     child: _isAccepting
                         ? const KarakanaWaveLoader(
-                            color: Colors.white, strokeWidth: 2)
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          )
                         : Text(
                             'Nakubali Masharti',
                             style: GoogleFonts.poppins(
@@ -232,10 +237,10 @@ class _TermsDialogState extends State<_TermsDialog> {
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 TextButton(
-                  onPressed: () {
-                    context.read<AuthProvider>().logout();
+                  onPressed: () async {
+                    final auth = context.read<AuthProvider>();
                     Navigator.pop(context, false);
-                    context.go('/login');
+                    await auth.logout();
                   },
                   child: Text(
                     'Sitakubali — Toka',
