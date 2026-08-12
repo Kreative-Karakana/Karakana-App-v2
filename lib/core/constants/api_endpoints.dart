@@ -8,6 +8,7 @@ class ApiEndpoints {
   static const String googleAuth = '/api/oauth/';
   static const String appleAuth = '/api/apple-oauth/';
   static const String changePassword = '/api/auth/change-password/';
+  static const String logout = '/api/auth/logout/';
 
   // Profile
   static const String profileMe = '/api/v1/profiles/me/';

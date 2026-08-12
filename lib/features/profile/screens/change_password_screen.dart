@@ -59,7 +59,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         'Nywila imebadilishwa. Tafadhali ingia tena.',
         isError: false,
       );
-      await context.read<AuthProvider>().logout();
+      await context.read<AuthProvider>().invalidateAuthentication();
       if (!mounted) return;
       context.go('/login');
     } catch (error) {
@@ -187,8 +187,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           padding: const EdgeInsets.all(AppSpacing.lg),
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius:
-                                BorderRadius.circular(AppRadius.cardLg),
+                            borderRadius: BorderRadius.circular(
+                              AppRadius.cardLg,
+                            ),
                             border: Border.all(color: AppColors.border),
                             boxShadow: [
                               BoxShadow(
@@ -306,8 +307,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             elevation: 0,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.input),
+                              borderRadius: BorderRadius.circular(
+                                AppRadius.input,
+                              ),
                             ),
                           ),
                           child: _isSaving
@@ -361,10 +363,7 @@ class _PasswordField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         labelStyle: AppTextStyles.bodySmall,
-        prefixIcon: Icon(
-          Icons.lock_outline_rounded,
-          color: AppColors.primary,
-        ),
+        prefixIcon: Icon(Icons.lock_outline_rounded, color: AppColors.primary),
         suffixIcon: IconButton(
           onPressed: onVisibilityChanged,
           icon: Icon(

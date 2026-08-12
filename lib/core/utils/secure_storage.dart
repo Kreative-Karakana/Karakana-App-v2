@@ -150,7 +150,9 @@ class SecureStorage implements AuthSessionStore {
   String _biometricTokenKey(String accountId) => 'biometric_token_$accountId';
 
   Future<void> setBiometricEnabledForAccount(
-      String accountId, bool enabled) async {
+    String accountId,
+    bool enabled,
+  ) async {
     final prefs = await _prefs;
     await prefs.setBool(_biometricEnabledKey(accountId), enabled);
     if (!enabled) {
@@ -172,7 +174,9 @@ class SecureStorage implements AuthSessionStore {
 
   @override
   Future<void> saveBiometricTokenForAccount(
-      String accountId, String token) async {
+    String accountId,
+    String token,
+  ) async {
     try {
       await _storage.write(key: _biometricTokenKey(accountId), value: token);
     } catch (_) {}
@@ -270,6 +274,12 @@ class SecureStorage implements AuthSessionStore {
     try {
       await _storage.delete(key: AppConstants.tokenKey);
       await _storage.delete(key: 'terms_accepted');
+      final secureValues = await _storage.readAll();
+      for (final key in secureValues.keys) {
+        if (key.startsWith('biometric_token_')) {
+          await _storage.delete(key: key);
+        }
+      }
     } catch (_) {
       await _recoverStorage();
     }
@@ -279,5 +289,8 @@ class SecureStorage implements AuthSessionStore {
     await prefs.remove(AppConstants.ambassadorCodeKey);
     await prefs.remove(AppConstants.mastercardDoneKey);
     await prefs.remove(AppConstants.rolesKey);
+    await prefs.remove(_biometricAccountIdKey);
+    // Keep biometric_enabled_<accountId>. A later successful login may seed
+    // a fresh Knox token for that explicitly enabled account.
   }
 }
