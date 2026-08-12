@@ -281,6 +281,11 @@ class ReviewModel {
   final String content;
   final String? trainerReply;
   final String createdAt;
+  final bool isOwner;
+  final bool isTrainer;
+  final bool hasTrainerReply;
+  final bool isReviewAuthorBlocked;
+  final bool isReplyAuthorBlocked;
 
   ReviewModel({
     required this.id,
@@ -290,6 +295,11 @@ class ReviewModel {
     required this.content,
     this.trainerReply,
     required this.createdAt,
+    this.isOwner = false,
+    this.isTrainer = false,
+    this.hasTrainerReply = false,
+    this.isReviewAuthorBlocked = false,
+    this.isReplyAuthorBlocked = false,
   });
 
   factory ReviewModel.fromJson(Map<String, dynamic> json) {
@@ -301,7 +311,9 @@ class ReviewModel {
           '${user['first_name'] ?? ''} ${user['last_name'] ?? ''}'.trim();
       userAvatar = user['avatar']?.toString();
     } else {
-      userName = json['user_name']?.toString() ?? '';
+      userName = json['user_name']?.toString() ??
+          '${json['first_name'] ?? ''} ${json['last_name'] ?? ''}'.trim();
+      userAvatar = json['avatar']?.toString();
     }
     return ReviewModel(
       id: json['id'] ?? 0,
@@ -309,8 +321,15 @@ class ReviewModel {
       userAvatar: userAvatar,
       rating: json['rating'] ?? 0,
       content: json['content'] ?? '',
-      trainerReply: json['trainer_reply']?.toString(),
-      createdAt: json['created_at'] ?? '',
+      trainerReply: (json['trainer_reply'] ?? json['reply'])?.toString(),
+      createdAt: (json['created_at'] ?? json['updated_at'])?.toString() ?? '',
+      isOwner: json['is_owner'] == true,
+      isTrainer: json['is_trainer'] == true,
+      hasTrainerReply: json['has_trainer_reply'] == true ||
+          (json['trainer_reply'] ?? json['reply'])?.toString().isNotEmpty ==
+              true,
+      isReviewAuthorBlocked: json['is_review_author_blocked'] == true,
+      isReplyAuthorBlocked: json['is_reply_author_blocked'] == true,
     );
   }
 }

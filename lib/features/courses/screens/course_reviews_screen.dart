@@ -10,13 +10,18 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../providers/course_provider.dart';
+import '../services/review_safety_service.dart';
 
 class CourseReviewsScreen extends StatefulWidget {
   final int courseId;
+  final ReviewSafetyService? safetyService;
+  final Future<List<dynamic>> Function()? reviewLoader;
 
   const CourseReviewsScreen({
     super.key,
     required this.courseId,
+    this.safetyService,
+    this.reviewLoader,
   });
 
   @override
@@ -30,6 +35,9 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
   int _selectedRating = 5;
   final TextEditingController _reviewController = TextEditingController();
   bool _isSubmitting = false;
+
+  late final ReviewSafetyService _safetyService =
+      widget.safetyService ?? ReviewSafetyService();
 
   @override
   void initState() {
@@ -46,13 +54,18 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
   Future<void> _loadReviews() async {
     try {
       final currentUserId = context.read<AuthProvider>().userId;
-      final res = await ApiClient()
-          .dio
-          .get('/api/v1/courses/${widget.courseId}/reviews/');
-      final data = res.data;
-      final results = data is Map
-          ? (data['results'] as List? ?? [])
-          : (data as List? ?? []);
+      late final List<dynamic> results;
+      if (widget.reviewLoader != null) {
+        results = await widget.reviewLoader!();
+      } else {
+        final res = await ApiClient()
+            .dio
+            .get('/api/v1/courses/${widget.courseId}/reviews/');
+        final data = res.data;
+        results = data is Map
+            ? (data['results'] as List? ?? [])
+            : (data as List? ?? []);
+      }
       if (!mounted) return;
       setState(() {
         _reviews = results;
@@ -64,6 +77,226 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
     } catch (_) {
       if (!mounted) return;
       setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _showReportSheet(
+    int reviewId,
+    ReviewTargetPart targetPart,
+  ) async {
+    var reason = ReviewReportReason.harassment;
+    final detailController = TextEditingController();
+    var isSending = false;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => StatefulBuilder(
+        builder: (ctx, setSheet) => Padding(
+          padding: EdgeInsets.fromLTRB(
+            24,
+            20,
+            24,
+            MediaQuery.of(ctx).viewInsets.bottom + 24,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                targetPart == ReviewTargetPart.review
+                    ? 'Ripoti tathmini'
+                    : 'Ripoti jibu',
+                style: GoogleFonts.montserrat(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              DropdownButtonFormField<ReviewReportReason>(
+                initialValue: reason,
+                isExpanded: true,
+                decoration: const InputDecoration(labelText: 'Sababu'),
+                items: ReviewReportReason.values
+                    .map(
+                      (value) => DropdownMenuItem(
+                        value: value,
+                        child: Text(
+                          value.label,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: isSending
+                    ? null
+                    : (value) {
+                        if (value != null) setSheet(() => reason = value);
+                      },
+              ),
+              const SizedBox(height: AppSpacing.md),
+              TextField(
+                controller: detailController,
+                maxLength: 1000,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  labelText: 'Maelezo ya ziada (si lazima)',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: isSending
+                      ? null
+                      : () async {
+                          setSheet(() => isSending = true);
+                          try {
+                            await _safetyService.report(
+                              courseId: widget.courseId,
+                              reviewId: reviewId,
+                              targetPart: targetPart,
+                              reason: reason,
+                              detail: detailController.text,
+                            );
+                            if (!ctx.mounted) return;
+                            Navigator.of(ctx).pop();
+                            if (!mounted) return;
+                            showTopPopup(
+                              context,
+                              'Ripoti yako imetumwa. Asante kwa kutusaidia kuweka jumuiya salama.',
+                              isError: false,
+                            );
+                          } catch (_) {
+                            if (!ctx.mounted) return;
+                            setSheet(() => isSending = false);
+                            showTopPopup(
+                              ctx,
+                              'Imeshindikana kutuma ripoti. Jaribu tena.',
+                            );
+                          }
+                        },
+                  child: isSending
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: KarakanaWaveLoader(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text('Tuma Ripoti'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+    detailController.dispose();
+  }
+
+  Future<void> _blockUser(
+    int reviewId,
+    ReviewTargetPart targetPart,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Zuia mtumiaji?'),
+        content: const Text(
+          'Hutaona tena maudhui ya mtumiaji huyu. Unaweza kuondoa zuio baadaye.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Ghairi'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Zuia'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      await _safetyService.block(
+        courseId: widget.courseId,
+        reviewId: reviewId,
+        targetPart: targetPart,
+      );
+      await _loadReviews();
+      if (!mounted) return;
+      showTopPopup(
+        context,
+        'Mtumiaji amezuiwa na maudhui yake yamefichwa.',
+        isError: false,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      showTopPopup(context, 'Imeshindikana kumzuia mtumiaji. Jaribu tena.');
+    }
+  }
+
+  Future<void> _unblockUser(
+    int reviewId,
+    ReviewTargetPart targetPart,
+  ) async {
+    try {
+      await _safetyService.unblock(
+        courseId: widget.courseId,
+        reviewId: reviewId,
+        targetPart: targetPart,
+      );
+      await _loadReviews();
+      if (!mounted) return;
+      showTopPopup(context, 'Zuio la mtumiaji limeondolewa.', isError: false);
+    } catch (_) {
+      if (!mounted) return;
+      showTopPopup(context, 'Imeshindikana kuondoa zuio. Jaribu tena.');
+    }
+  }
+
+  Future<void> _handleSafetyAction(
+    ReviewSafetyAction action,
+    int reviewId,
+  ) async {
+    switch (action) {
+      case ReviewSafetyAction.reportReview:
+        return _showReportSheet(reviewId, ReviewTargetPart.review);
+      case ReviewSafetyAction.blockReviewAuthor:
+        return _blockUser(reviewId, ReviewTargetPart.review);
+      case ReviewSafetyAction.unblockReviewAuthor:
+        return _unblockUser(reviewId, ReviewTargetPart.review);
+      case ReviewSafetyAction.reportReply:
+        return _showReportSheet(reviewId, ReviewTargetPart.reply);
+      case ReviewSafetyAction.blockReplyAuthor:
+        return _blockUser(reviewId, ReviewTargetPart.reply);
+      case ReviewSafetyAction.unblockReplyAuthor:
+        return _unblockUser(reviewId, ReviewTargetPart.reply);
+    }
+  }
+
+  String _safetyActionLabel(ReviewSafetyAction action) {
+    switch (action) {
+      case ReviewSafetyAction.reportReview:
+        return 'Ripoti tathmini';
+      case ReviewSafetyAction.blockReviewAuthor:
+        return 'Zuia mtumiaji';
+      case ReviewSafetyAction.unblockReviewAuthor:
+        return 'Ondoa zuio la mtumiaji';
+      case ReviewSafetyAction.reportReply:
+        return 'Ripoti jibu';
+      case ReviewSafetyAction.blockReplyAuthor:
+        return 'Zuia mkufunzi';
+      case ReviewSafetyAction.unblockReplyAuthor:
+        return 'Ondoa zuio la mkufunzi';
     }
   }
 
@@ -418,12 +651,16 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final average = _reviews.isEmpty
+    final visibleReviews = _reviews.where((review) {
+      final data = review as Map;
+      return data['is_review_author_blocked'] != true;
+    }).toList();
+    final average = visibleReviews.isEmpty
         ? 0.0
-        : (_reviews
+        : (visibleReviews
                     .map((r) => (r as Map)['rating'] as int? ?? 0)
                     .reduce((a, b) => a + b) /
-                _reviews.length)
+                visibleReviews.length)
             .toDouble();
 
     return Scaffold(
@@ -466,7 +703,9 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                 Column(
                   children: [
                     Text(
-                      _reviews.isEmpty ? '0.0' : average.toStringAsFixed(1),
+                      visibleReviews.isEmpty
+                          ? '0.0'
+                          : average.toStringAsFixed(1),
                       style: GoogleFonts.montserrat(
                         fontSize: 48,
                         fontWeight: FontWeight.w700,
@@ -484,7 +723,7 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                       ),
                     ),
                     Text(
-                      '${_reviews.length} Tathmini',
+                      '${visibleReviews.length} Tathmini',
                       style: GoogleFonts.montserrat(
                         fontSize: AppTextStyles.bodySmall.fontSize,
                         color: const Color(0xFF9E8070),
@@ -496,11 +735,12 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                 Expanded(
                   child: Column(
                     children: [5, 4, 3, 2, 1].map((stars) {
-                      final count = _reviews
+                      final count = visibleReviews
                           .where((r) => (r as Map)['rating'] == stars)
                           .length;
-                      final percent =
-                          _reviews.isEmpty ? 0.0 : count / _reviews.length;
+                      final percent = visibleReviews.isEmpty
+                          ? 0.0
+                          : count / visibleReviews.length;
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 2),
                         child: Row(
@@ -649,8 +889,22 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                           final rating = review['rating'] as int? ?? 0;
                           final content = review['content'] as String? ?? '';
                           final reply = review['reply'] as String?;
-                          final isTrainer =
-                              context.read<AuthProvider>().isTrainer;
+                          final isOwner = review['is_owner'] == true;
+                          final isTrainer = review['is_trainer'] == true;
+                          final hasTrainerReply =
+                              review['has_trainer_reply'] == true ||
+                                  (reply != null && reply.isNotEmpty);
+                          final isReviewAuthorBlocked =
+                              review['is_review_author_blocked'] == true;
+                          final isReplyAuthorBlocked =
+                              review['is_reply_author_blocked'] == true;
+                          final safetyActions = reviewSafetyActions(
+                            isOwner: isOwner,
+                            isTrainer: isTrainer,
+                            hasTrainerReply: hasTrainerReply,
+                            isReviewAuthorBlocked: isReviewAuthorBlocked,
+                            isReplyAuthorBlocked: isReplyAuthorBlocked,
+                          );
                           return Container(
                             margin: const EdgeInsets.only(bottom: 16),
                             padding: AppSpacing.cardPadding,
@@ -721,17 +975,57 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                                         ],
                                       ),
                                     ),
+                                    if (safetyActions.isNotEmpty)
+                                      PopupMenuButton<ReviewSafetyAction>(
+                                        tooltip: 'Chaguo za usalama',
+                                        icon: const Icon(Icons.more_vert),
+                                        onSelected: (action) =>
+                                            _handleSafetyAction(
+                                          action,
+                                          reviewId,
+                                        ),
+                                        itemBuilder: (_) => safetyActions
+                                            .map(
+                                              (action) => PopupMenuItem(
+                                                value: action,
+                                                child: Text(
+                                                  _safetyActionLabel(action),
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                      ),
                                   ],
                                 ),
                                 const SizedBox(height: 10),
                                 Text(
-                                  content,
+                                  isReviewAuthorBlocked
+                                      ? 'Maudhui ya mtumiaji huyu yamefichwa.'
+                                      : content,
                                   style: GoogleFonts.montserrat(
                                     fontSize: AppTextStyles.bodyMedium.fontSize,
                                     color: const Color(0xFF5C3D2E),
                                     height: 1.5,
                                   ),
                                 ),
+                                if (isReplyAuthorBlocked) ...[
+                                  const SizedBox(height: 12),
+                                  Container(
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFF5E6D8),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      'Jibu la mtumiaji huyu limefichwa.',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 13,
+                                        color: const Color(0xFF5C3D2E),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                                 if (reply != null && reply.isNotEmpty) ...[
                                   const SizedBox(height: 12),
                                   Container(
