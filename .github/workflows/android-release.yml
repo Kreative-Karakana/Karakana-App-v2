@@ -2,11 +2,6 @@ name: Android Release Build
 
 on:
   workflow_dispatch:
-    inputs:
-      version_name:
-        description: "Version name (for example, 2.1.1)"
-        required: true
-        default: "2.1.0"
 
 # No cancel-in-progress: this job signs a release keystore-backed build.
 # Letting a duplicate manual trigger queue behind it is cheaper than risking
@@ -71,6 +66,21 @@ jobs:
       - name: Verify Flutter version
         run: flutter --version
 
+      - name: Resolve release version from pubspec.yaml
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP_VERSION="$(sed -nE 's/^version:[[:space:]]*([^[:space:]#]+).*$/\1/p' pubspec.yaml)"
+          if [[ ! "$APP_VERSION" =~ ^([0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?)[+]([0-9]+)$ ]]; then
+            echo "::error::pubspec.yaml version must include a release name and numeric build number (for example, 2.3.0+40)."
+            exit 1
+          fi
+
+          VERSION_NAME="${BASH_REMATCH[1]}"
+          BUILD_NUMBER="${BASH_REMATCH[3]}"
+          printf 'VERSION_NAME=%s\nBUILD_NUMBER=%s\n' "$VERSION_NAME" "$BUILD_NUMBER" >> "$GITHUB_ENV"
+          echo "Building authorized version: ${VERSION_NAME}+${BUILD_NUMBER}"
+
       - name: Install dependencies
         run: flutter pub get
 
@@ -104,14 +114,14 @@ jobs:
       - name: Build release APK
         run: |
           flutter build apk --release \
-            --build-name=${{ github.event.inputs.version_name }} \
-            --build-number=${{ github.run_number }}
+            --build-name="$VERSION_NAME" \
+            --build-number="$BUILD_NUMBER"
 
       - name: Build release app bundle
         run: |
           flutter build appbundle --release \
-            --build-name=${{ github.event.inputs.version_name }} \
-            --build-number=${{ github.run_number }}
+            --build-name="$VERSION_NAME" \
+            --build-number="$BUILD_NUMBER"
 
       - name: Confirm Android artifacts exist
         run: |
