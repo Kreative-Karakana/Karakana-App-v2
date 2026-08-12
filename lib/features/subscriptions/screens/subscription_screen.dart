@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -970,7 +971,48 @@ class _PlansSection extends StatelessWidget {
           const _MutedText(
             'Hakuna mipango ya usajili inayopatikana kwa sasa.',
           ),
+        const SizedBox(height: AppSpacing.md),
+        const _SubscriptionDisclosureNote(),
       ],
+    );
+  }
+}
+
+class _SubscriptionDisclosureNote extends StatelessWidget {
+  const _SubscriptionDisclosureNote();
+
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      text: TextSpan(
+        style: GoogleFonts.montserrat(
+          fontSize: 11,
+          height: 1.5,
+          color: AppColors.textTertiary,
+        ),
+        children: [
+          const TextSpan(
+            text: 'Kwenye iOS, usajili unaojirudia kiotomatiki unashughulikiwa '
+                'na Apple na unaweza kughairiwa wakati wowote kupitia '
+                'Mipangilio ya Akaunti yako ya Apple. Kwenye Android, malipo '
+                'huchakatwa kupitia mlango wa malipo ya simu. Kwa maelezo '
+                'zaidi kuhusu malipo, uhalali, na kughairi, soma ',
+          ),
+          TextSpan(
+            text: 'Masharti na Sera ya Faragha',
+            style: GoogleFonts.montserrat(
+              fontSize: 11,
+              height: 1.5,
+              fontWeight: FontWeight.w700,
+              color: AppColors.primary,
+              decoration: TextDecoration.underline,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () => context.push('/terms'),
+          ),
+          const TextSpan(text: '.'),
+        ],
+      ),
     );
   }
 }

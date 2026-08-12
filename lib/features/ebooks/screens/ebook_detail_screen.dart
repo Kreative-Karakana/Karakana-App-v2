@@ -215,6 +215,18 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: AppSpacing.sm),
+            GestureDetector(
+              onTap: () => context.push('/terms'),
+              child: Text(
+                'Huu ni ununuzi wa mara moja, si usajili. Soma Masharti na '
+                'Sera ya Faragha',
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: const Color(0xFF7B3A10),
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
           ],
         ),
         actions: [
