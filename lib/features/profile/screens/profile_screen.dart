@@ -224,7 +224,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
         ),
         content: Text(
-          'Je, una uhakika unataka kufuta akaunti yako? Hatua hii haiwezi kutenduliwa na data yako yote itafutwa kabisa.',
+          'Je, una uhakika unataka kufuta akaunti yako? Hatua hii haiwezi '
+          'kutenduliwa. Wasifu wako na ufikiaji wako vitafutwa mara moja. '
+          'Baadhi ya rekodi (kama historia ya malipo au ununuzi) zinaweza '
+          'kuhifadhiwa kwa sababu za kihasibu, usalama, au kisheria, lakini '
+          'hazitatumika tena kuendesha akaunti yako.',
           style: GoogleFonts.montserrat(),
         ),
         actions: [

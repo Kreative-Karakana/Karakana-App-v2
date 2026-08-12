@@ -139,7 +139,6 @@ class AuthProvider extends ChangeNotifier {
       if (token != null) {
         await _storage.saveToken(token.toString());
         _roles = _extractRoles(data);
-        debugPrint('[AUTH] Signin roles: $_roles');
         if (_roles != null) await _storage.saveRoles(_roles!);
         _user = _extractUser(data);
         final profileLoaded = await getCurrentUser();
@@ -502,7 +501,6 @@ class AuthProvider extends ChangeNotifier {
   Future<bool> getCurrentUser() async {
     try {
       final profileData = await _api.fetchProfile();
-      debugPrint('[AUTH] Profile response: $profileData');
       final currentUser = _user;
       final profileUser = profileData is Map<String, dynamic>
           ? profileData

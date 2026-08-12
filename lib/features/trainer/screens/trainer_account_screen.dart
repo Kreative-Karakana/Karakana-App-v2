@@ -498,7 +498,11 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                                     ),
                                   ),
                                   content: Text(
-                                    'Akaunti yako itafutwa kabisa na data yote itapotea. Hii haiwezi kurejeshwa.',
+                                    'Je, una uhakika unataka kufuta akaunti yako? Hatua hii haiwezi '
+                                    'kutenduliwa. Wasifu wako na ufikiaji wako vitafutwa mara moja. '
+                                    'Baadhi ya rekodi (kama historia ya malipo au ununuzi) zinaweza '
+                                    'kuhifadhiwa kwa sababu za kihasibu, usalama, au kisheria, lakini '
+                                    'hazitatumika tena kuendesha akaunti yako.',
                                     style: GoogleFonts.montserrat(
                                       fontSize: 13,
                                       color: const Color(0xFF7B3A10),

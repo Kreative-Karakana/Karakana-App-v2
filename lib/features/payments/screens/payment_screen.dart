@@ -106,7 +106,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
           'course_id': widget.courseId
         },
       );
-      debugPrint('[PAYMENT] checkout response: ${checkoutRes.data}');
 
       final externalId = checkoutRes.data['external_id'] as String?;
       final checkoutUrl = checkoutRes.data['checkout_url'] as String?;
@@ -166,9 +165,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
         try {
           final statusRes =
               await ApiClient().dio.get('/api/v1/payments/$externalId/');
-          debugPrint(
-            '[PAYMENT] poll $i/$maxPollAttempts external_id=$externalId status=${statusRes.data}',
-          );
           if (PaymentStatusContract.isSettled(statusRes.data)) {
             success = true;
             break;
@@ -689,6 +685,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         .copyWith(color: const Color(0xFF9E8070)),
                   ),
                 ],
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Center(
+                child: GestureDetector(
+                  onTap: () => context.push('/terms'),
+                  child: Text(
+                    'Huu ni ununuzi wa mara moja. Soma Masharti na Sera ya '
+                    'Faragha',
+                    textAlign: TextAlign.center,
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: const Color(0xFFE87722),
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: AppSpacing.xl + AppSpacing.sm),
             ],
