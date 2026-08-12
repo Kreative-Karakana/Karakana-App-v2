@@ -86,22 +86,24 @@ void main() {
       },
     );
 
-    test('profile failure after token issuance clears the issued token',
-        () async {
-      final api = _FakeAuthApi(
-        loginResponse: {'token': 'issued-token'},
-        profileError: Exception('profile unavailable'),
-      );
-      final storage = _FakeAuthSessionStore();
-      final provider = AuthProvider(api: api, storage: storage);
+    test(
+      'profile failure after token issuance clears the issued token',
+      () async {
+        final api = _FakeAuthApi(
+          loginResponse: {'token': 'issued-token'},
+          profileError: Exception('profile unavailable'),
+        );
+        final storage = _FakeAuthSessionStore();
+        final provider = AuthProvider(api: api, storage: storage);
 
-      final ok = await provider.login('user@example.test', 'password');
+        final ok = await provider.login('user@example.test', 'password');
 
-      expect(ok, isFalse);
-      expect(provider.isAuthenticated, isFalse);
-      expect(storage.token, isNull);
-      expect(storage.cleared, isTrue);
-    });
+        expect(ok, isFalse);
+        expect(provider.isAuthenticated, isFalse);
+        expect(storage.token, isNull);
+        expect(storage.cleared, isTrue);
+      },
+    );
   });
 
   group('AuthProvider.initialize', () {
@@ -117,8 +119,7 @@ void main() {
       expect(api.fetchProfileCallCount, 0);
     });
 
-    test(
-        'trusts a stored token immediately and refreshes profile in the '
+    test('trusts a stored token immediately and refreshes profile in the '
         'background', () async {
       final api = _FakeAuthApi(
         profileResponse: {'id': 3, 'first_name': 'Juma'},
@@ -360,8 +361,7 @@ class _FakeAuthApi implements AuthApi {
     required String firstName,
     required String email,
     required String password,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<dynamic> verifyEmail({
@@ -369,8 +369,7 @@ class _FakeAuthApi implements AuthApi {
     required String code,
     required String platform,
     String? deviceToken,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<void> forgotPassword({required String email}) =>
@@ -397,8 +396,7 @@ class _FakeAuthApi implements AuthApi {
     String? accessToken,
     required String platform,
     String? deviceToken,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<dynamic> exchangeAppleToken({
@@ -406,8 +404,7 @@ class _FakeAuthApi implements AuthApi {
     String? firstName,
     String? lastName,
     String? authorizationCode,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 }
 
 class _FakeAuthSessionStore implements AuthSessionStore {
@@ -471,8 +468,7 @@ class _FakeAuthSessionStore implements AuthSessionStore {
   Future<void> saveBiometricTokenForAccount(
     String accountId,
     String token,
-  ) async =>
-      biometricTokens[accountId] = token;
+  ) async => biometricTokens[accountId] = token;
 
   @override
   Future<String?> getBiometricTokenForAccount(String accountId) async =>

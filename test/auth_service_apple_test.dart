@@ -41,19 +41,22 @@ void main() {
   });
 
   group('AuthService.exchangeAppleToken', () {
-    test('includes authorization_code in the request body when supplied', () async {
-      await AuthService().exchangeAppleToken(
-        idToken: 'id-token-value',
-        firstName: 'Zuri',
-        lastName: 'Mkulima',
-        authorizationCode: 'auth-code-value',
-      );
+    test(
+      'includes authorization_code in the request body when supplied',
+      () async {
+        await AuthService().exchangeAppleToken(
+          idToken: 'id-token-value',
+          firstName: 'Zuri',
+          lastName: 'Mkulima',
+          authorizationCode: 'auth-code-value',
+        );
 
-      final body = adapter.lastRequest!.data as Map;
-      expect(adapter.lastRequest!.path, '/api/apple-oauth/');
-      expect(body['id_token'], 'id-token-value');
-      expect(body['authorization_code'], 'auth-code-value');
-    });
+        final body = adapter.lastRequest!.data as Map;
+        expect(adapter.lastRequest!.path, '/api/apple-oauth/');
+        expect(body['id_token'], 'id-token-value');
+        expect(body['authorization_code'], 'auth-code-value');
+      },
+    );
 
     test('omits authorization_code when Apple did not supply one', () async {
       await AuthService().exchangeAppleToken(idToken: 'id-token-value');
@@ -62,14 +65,17 @@ void main() {
       expect(body.containsKey('authorization_code'), isFalse);
     });
 
-    test('never sends the identity token under the authorization_code key', () async {
-      await AuthService().exchangeAppleToken(
-        idToken: 'id-token-value',
-        authorizationCode: 'auth-code-value',
-      );
+    test(
+      'never sends the identity token under the authorization_code key',
+      () async {
+        await AuthService().exchangeAppleToken(
+          idToken: 'id-token-value',
+          authorizationCode: 'auth-code-value',
+        );
 
-      final body = adapter.lastRequest!.data as Map;
-      expect(body['authorization_code'], isNot(equals(body['id_token'])));
-    });
+        final body = adapter.lastRequest!.data as Map;
+        expect(body['authorization_code'], isNot(equals(body['id_token'])));
+      },
+    );
   });
 }
