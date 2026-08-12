@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +15,7 @@ import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/services/auth_service.dart';
+import '../../payments/providers/restore_purchases_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -29,6 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _biometricAvailable = false;
   bool _biometricBusy = false;
   String _biometricLabel = 'Biometric';
+  bool _restoringPurchases = false;
 
   @override
   void initState() {
@@ -182,6 +186,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } finally {
       if (mounted) setState(() => _biometricBusy = false);
+    }
+  }
+
+  Future<void> _restorePurchases(BuildContext context) async {
+    if (_restoringPurchases) return;
+    setState(() => _restoringPurchases = true);
+    try {
+      final provider = context.read<RestorePurchasesProvider>();
+      await provider.restoreAll();
+      if (!context.mounted) return;
+      switch (provider.outcome) {
+        case RestoreOutcome.success:
+          showTopPopup(context, 'Ununuzi wako umerejeshwa.', isError: false);
+          break;
+        case RestoreOutcome.nothingToRestore:
+          showTopPopup(context, 'Hakuna ununuzi wa kurejesha kwa akaunti hii.',
+              isError: false);
+          break;
+        case RestoreOutcome.error:
+        case null:
+          if (provider.errorMessage != null) {
+            showTopPopup(context, provider.errorMessage!);
+          }
+          break;
+      }
+    } finally {
+      if (mounted) setState(() => _restoringPurchases = false);
     }
   }
 
@@ -550,6 +581,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           'Historia ya Malipo',
                           onTap: () => context.push('/payment/history'),
                         ),
+                        if (Platform.isIOS)
+                          _buildMenuItem(
+                            Icons.restore_outlined,
+                            const Color(0xFFE87722),
+                            'Rejesha Ununuzi',
+                            subtitle: _restoringPurchases
+                                ? 'Inarejesha...'
+                                : 'Kozi, eBook na usajili uliolipia',
+                            onTap: _restoringPurchases
+                                ? null
+                                : () => _restorePurchases(context),
+                          ),
                         if (auth.isTrainer)
                           _buildMenuItem(
                             Icons.account_balance_wallet_outlined,

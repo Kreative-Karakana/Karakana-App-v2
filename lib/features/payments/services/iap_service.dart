@@ -54,9 +54,13 @@ class IAPService implements SubscriptionPurchaseStore {
   // purchaseStream delivers PurchaseDetails, not whatever call site started
   // it — this is how _onPurchaseUpdate recovers "was this a course or a
   // subscription purchase" to pick the right backend verify endpoint. Set
-  // by purchase() or typed product loading. Restore deliveries that were not
-  // registered this session still default to subscriptions; the eBook restore
-  // follow-up must preload the complete eBook catalog before restore.
+  // by purchase() or typed product loading (loadProducts(..., kind:)).
+  // A restored transaction whose product id was never registered this
+  // session is shelved in _deferredPurchases (never sent to the backend)
+  // until loadProducts() is called again for that exact id — see
+  // RestorePurchasesProvider, which preloads every course/eBook/
+  // subscription product id the user owns before calling
+  // restorePurchases() so nothing is silently dropped.
   final Map<String, IAPProductKind> _productKinds = {};
   final Map<String, List<PurchaseDetails>> _deferredPurchases = {};
 
