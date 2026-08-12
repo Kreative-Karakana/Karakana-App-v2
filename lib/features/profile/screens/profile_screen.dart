@@ -6,13 +6,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/theme/theme_provider.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../auth/services/auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -55,7 +55,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ? await _localAuth.getAvailableBiometrics()
           : const <BiometricType>[];
       final hasFace = types.contains(BiometricType.face);
-      final hasFingerprint = types.contains(BiometricType.fingerprint) ||
+      final hasFingerprint =
+          types.contains(BiometricType.fingerprint) ||
           types.contains(BiometricType.strong) ||
           types.contains(BiometricType.weak);
       final accountId = await _currentAccountId();
@@ -70,8 +71,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _biometricLabel = hasFace
             ? 'Face ID'
             : hasFingerprint
-                ? 'Touch ID'
-                : 'Biometric';
+            ? 'Touch ID'
+            : 'Biometric';
       });
     } catch (_) {
       if (!mounted) return;
@@ -100,8 +101,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             : const <BiometricType>[];
         if (!supported || !enrolled || availableTypes.isEmpty) {
           if (mounted) {
-            showTopPopup(context,
-                'Tafadhali sanidi Face ID/alama ya kidole kwenye kifaa kwanza.');
+            showTopPopup(
+              context,
+              'Tafadhali sanidi Face ID/alama ya kidole kwenye kifaa kwanza.',
+            );
           }
           return;
         }
@@ -117,7 +120,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (!verified) {
           if (mounted) {
             showTopPopup(
-                context, 'Uthibitishaji umeshindikana. Biometric haijawashwa.');
+              context,
+              'Uthibitishaji umeshindikana. Biometric haijawashwa.',
+            );
           }
           return;
         }
@@ -171,7 +176,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (_) {
       if (mounted) {
         showTopPopup(
-            context, 'Imeshindikana kubadili mipangilio ya biometric.');
+          context,
+          'Imeshindikana kubadili mipangilio ya biometric.',
+        );
       }
     } finally {
       if (mounted) setState(() => _biometricBusy = false);
@@ -216,37 +223,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (!context.mounted) return;
 
     try {
-      await ApiClient().dio.delete('/api/v1/accounts/me/delete/');
+      await auth.deleteAccount();
+    } on AccountDeletionBlockedException {
       if (!context.mounted) return;
-
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => AlertDialog(
-          title: Text(
-            'Tutakukosa! 💙',
-            style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-          ),
-          content: Text(
-            'Akaunti yako imefutwa. Asante kwa muda wako pamoja nasi — karibu tena wakati wowote!',
-            style: GoogleFonts.montserrat(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: Text(
-                'Kwa heri',
-                style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ],
-        ),
+      showTopPopup(
+        context,
+        'Akaunti hii haiwezi kufutwa moja kwa moja kwa sababu ina historia '
+        'inayopaswa kuhifadhiwa. Tafadhali wasiliana na msaada.',
       );
-
-      if (!context.mounted) return;
-      await auth.logout();
-      if (!context.mounted) return;
-      context.go('/login');
     } catch (_) {
       if (!context.mounted) return;
       showTopPopup(context, 'Imeshindikana kufuta akaunti. Jaribu tena.');
@@ -260,8 +244,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final userName = auth.userFullName.isNotEmpty
             ? auth.userFullName
             : 'Mtumiaji wa Karakana';
-        final userEmail =
-            auth.userEmail.isNotEmpty ? auth.userEmail : 'Hakuna barua pepe';
+        final userEmail = auth.userEmail.isNotEmpty
+            ? auth.userEmail
+            : 'Hakuna barua pepe';
         final initial = userName.isNotEmpty ? userName[0].toUpperCase() : 'K';
 
         final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -362,8 +347,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   Text(
                                     'Akaunti',
                                     style: GoogleFonts.montserrat(
-                                      fontSize: (AppTextStyles
-                                                  .displayLarge.fontSize ??
+                                      fontSize:
+                                          (AppTextStyles
+                                                  .displayLarge
+                                                  .fontSize ??
                                               32) -
                                           1,
                                       fontWeight: FontWeight.w800,
@@ -377,8 +364,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     style: GoogleFonts.montserrat(
                                       fontSize:
                                           AppTextStyles.bodyMedium.fontSize,
-                                      color:
-                                          Colors.white.withValues(alpha: 0.65),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.65,
+                                      ),
                                       height: 1.35,
                                     ),
                                   ),
@@ -396,20 +384,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.lg - AppSpacing.xs,
-                      AppSpacing.md,
-                      AppSpacing.lg - AppSpacing.xs,
-                      0),
+                    AppSpacing.lg - AppSpacing.xs,
+                    AppSpacing.md,
+                    AppSpacing.lg - AppSpacing.xs,
+                    0,
+                  ),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        vertical: AppSpacing.md + 2,
-                        horizontal: AppSpacing.lg - AppSpacing.xs),
+                      vertical: AppSpacing.md + 2,
+                      horizontal: AppSpacing.lg - AppSpacing.xs,
+                    ),
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(
-                        color:
-                            isDark ? Colors.white10 : const Color(0xFFECE7E2),
+                        color: isDark
+                            ? Colors.white10
+                            : const Color(0xFFECE7E2),
                       ),
                       boxShadow: const [
                         BoxShadow(
@@ -458,10 +449,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w700,
-                                  color: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge
-                                          ?.color ??
+                                  color:
+                                      Theme.of(
+                                        context,
+                                      ).textTheme.bodyLarge?.color ??
                                       const Color(0xFF1A0A00),
                                 ),
                                 maxLines: 1,
@@ -480,17 +471,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               const SizedBox(height: AppSpacing.sm),
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal:
-                                        AppSpacing.sm + AppSpacing.xs / 2,
-                                    vertical: AppSpacing.xs),
+                                  horizontal: AppSpacing.sm + AppSpacing.xs / 2,
+                                  vertical: AppSpacing.xs,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFE87722)
-                                      .withValues(alpha: 0.1),
-                                  borderRadius:
-                                      BorderRadius.circular(AppRadius.cardLg),
+                                  color: const Color(
+                                    0xFFE87722,
+                                  ).withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.cardLg,
+                                  ),
                                   border: Border.all(
-                                    color: const Color(0xFFE87722)
-                                        .withValues(alpha: 0.4),
+                                    color: const Color(
+                                      0xFFE87722,
+                                    ).withValues(alpha: 0.4),
                                   ),
                                 ),
                                 child: Text(
@@ -513,91 +507,135 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.lg - AppSpacing.xs,
-                      AppSpacing.md,
-                      AppSpacing.lg - AppSpacing.xs,
-                      0),
+                    AppSpacing.lg - AppSpacing.xs,
+                    AppSpacing.md,
+                    AppSpacing.lg - AppSpacing.xs,
+                    0,
+                  ),
                   child: Column(
                     children: [
-                      _buildMenuGroup(
-                        'Kujifunza Kwangu',
-                        [
-                          _buildMenuItem(
-                            Icons.school_outlined,
-                            const Color(0xFFE87722),
-                            'Kozi Zangu',
-                            subtitle: 'Kozi ulizojiandikisha',
-                            onTap: () => context.push('/my-courses'),
-                          ),
-                          _buildMenuItem(
-                            Icons.bookmark_outlined,
-                            const Color(0xFFB71C1C),
-                            'Vipendwa Vyangu',
-                            onTap: () => context.push('/wishlist'),
-                          ),
-                        ],
-                      ),
+                      _buildMenuGroup('Kujifunza Kwangu', [
+                        _buildMenuItem(
+                          Icons.school_outlined,
+                          const Color(0xFFE87722),
+                          'Kozi Zangu',
+                          subtitle: 'Kozi ulizojiandikisha',
+                          onTap: () => context.push('/my-courses'),
+                        ),
+                        _buildMenuItem(
+                          Icons.bookmark_outlined,
+                          const Color(0xFFB71C1C),
+                          'Vipendwa Vyangu',
+                          onTap: () => context.push('/wishlist'),
+                        ),
+                      ]),
                       const SizedBox(height: AppSpacing.md),
-                      _buildMenuGroup(
-                        'Akaunti',
-                        [
+                      _buildMenuGroup('Akaunti', [
+                        _buildMenuItem(
+                          Icons.person_outlined,
+                          const Color(0xFF3D1800),
+                          'Hariri Wasifu',
+                          onTap: () => context.push('/profile/edit'),
+                        ),
+                        _buildMenuItem(
+                          Icons.workspace_premium_outlined,
+                          const Color(0xFFE87722),
+                          'Usajili Wangu',
+                          subtitle: 'Jaribio, usajili na tarehe ya mwisho',
+                          onTap: () => context.push('/subscription'),
+                        ),
+                        _buildMenuItem(
+                          Icons.payment_outlined,
+                          const Color(0xFFE87722),
+                          'Historia ya Malipo',
+                          onTap: () => context.push('/payment/history'),
+                        ),
+                        if (auth.isTrainer)
                           _buildMenuItem(
-                            Icons.person_outlined,
-                            const Color(0xFF3D1800),
-                            'Hariri Wasifu',
-                            onTap: () => context.push('/profile/edit'),
+                            Icons.account_balance_wallet_outlined,
+                            const Color(0xFF6A1B9A),
+                            'Mkoba Wangu',
+                            onTap: () => context.push('/wallet'),
                           ),
-                          _buildMenuItem(
-                            Icons.workspace_premium_outlined,
-                            const Color(0xFFE87722),
-                            'Usajili Wangu',
-                            subtitle: 'Jaribio, usajili na tarehe ya mwisho',
-                            onTap: () => context.push('/subscription'),
+                      ]),
+                      const SizedBox(height: AppSpacing.md),
+                      _buildMenuGroup('Msaada', [
+                        _buildMenuItem(
+                          Icons.headset_mic_outlined,
+                          const Color(0xFFE87722),
+                          'Msaada',
+                          onTap: () => context.push('/support'),
+                        ),
+                        _buildMenuItem(
+                          Icons.notifications_outlined,
+                          const Color(0xFFE87722),
+                          'Arifa',
+                          onTap: () => context.push('/notifications'),
+                        ),
+                        _buildMenuItem(
+                          Icons.gavel_outlined,
+                          const Color(0xFF3D1800),
+                          'Masharti na Vigezo',
+                          onTap: () => context.push('/terms'),
+                        ),
+                      ]),
+                      const SizedBox(height: AppSpacing.md),
+                      _buildMenuGroup('Mipangilio', [
+                        ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 4,
                           ),
-                          _buildMenuItem(
-                            Icons.payment_outlined,
-                            const Color(0xFFE87722),
-                            'Historia ya Malipo',
-                            onTap: () => context.push('/payment/history'),
-                          ),
-                          if (auth.isTrainer)
-                            _buildMenuItem(
-                              Icons.account_balance_wallet_outlined,
-                              const Color(0xFF6A1B9A),
-                              'Mkoba Wangu',
-                              onTap: () => context.push('/wallet'),
+                          leading: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: const Color(
+                                0xFFE87722,
+                              ).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      _buildMenuGroup(
-                        'Msaada',
-                        [
-                          _buildMenuItem(
-                            Icons.headset_mic_outlined,
-                            const Color(0xFFE87722),
-                            'Msaada',
-                            onTap: () => context.push('/support'),
+                            child: Icon(
+                              _biometricLabel == 'Face ID'
+                                  ? Icons.face_retouching_natural_rounded
+                                  : Icons.fingerprint_rounded,
+                              color: const Color(0xFFE87722),
+                              size: 18,
+                            ),
                           ),
-                          _buildMenuItem(
-                            Icons.notifications_outlined,
-                            const Color(0xFFE87722),
-                            'Arifa',
-                            onTap: () => context.push('/notifications'),
+                          title: Text(
+                            'Ingia kwa $_biometricLabel',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              color:
+                                  Theme.of(
+                                    context,
+                                  ).textTheme.bodyLarge?.color ??
+                                  const Color(0xFF1A0A00),
+                            ),
                           ),
-                          _buildMenuItem(
-                            Icons.gavel_outlined,
-                            const Color(0xFF3D1800),
-                            'Masharti na Vigezo',
-                            onTap: () => context.push('/terms'),
+                          subtitle: Text(
+                            _biometricAvailable
+                                ? 'Washa au zima biometric kwa akaunti hii'
+                                : 'Haipatikani kwenye kifaa hiki',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 12,
+                              color: const Color(0xFF9E8070),
+                            ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      _buildMenuGroup(
-                        'Mipangilio',
-                        [
-                          ListTile(
+                          trailing: Switch(
+                            value: _biometricEnabled && _biometricAvailable,
+                            onChanged: (_biometricAvailable && !_biometricBusy)
+                                ? _toggleBiometric
+                                : null,
+                            activeThumbColor: const Color(0xFFE87722),
+                            activeTrackColor: const Color(
+                              0xFFE87722,
+                            ).withValues(alpha: 0.3),
+                          ),
+                        ),
+                        Consumer<ThemeProvider>(
+                          builder: (context, themeProvider, _) => ListTile(
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 4,
@@ -606,120 +644,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               width: 36,
                               height: 36,
                               decoration: BoxDecoration(
-                                color: const Color(0xFFE87722)
-                                    .withValues(alpha: 0.1),
+                                color: const Color(
+                                  0xFFE87722,
+                                ).withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Icon(
-                                _biometricLabel == 'Face ID'
-                                    ? Icons.face_retouching_natural_rounded
-                                    : Icons.fingerprint_rounded,
+                                themeProvider.isDark
+                                    ? Icons.dark_mode_outlined
+                                    : Icons.light_mode_outlined,
                                 color: const Color(0xFFE87722),
                                 size: 18,
                               ),
                             ),
                             title: Text(
-                              'Ingia kwa $_biometricLabel',
+                              'Hali ya Giza',
                               style: GoogleFonts.montserrat(
                                 fontSize: 14,
-                                color: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.color ??
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).textTheme.bodyLarge?.color ??
                                     const Color(0xFF1A0A00),
                               ),
                             ),
                             subtitle: Text(
-                              _biometricAvailable
-                                  ? 'Washa au zima biometric kwa akaunti hii'
-                                  : 'Haipatikani kwenye kifaa hiki',
+                              themeProvider.isDark ? 'Imewashwa' : 'Imezimwa',
                               style: GoogleFonts.montserrat(
                                 fontSize: 12,
                                 color: const Color(0xFF9E8070),
                               ),
                             ),
                             trailing: Switch(
-                              value: _biometricEnabled && _biometricAvailable,
-                              onChanged:
-                                  (_biometricAvailable && !_biometricBusy)
-                                      ? _toggleBiometric
-                                      : null,
+                              value: themeProvider.isDark,
+                              onChanged: (_) => themeProvider.toggleTheme(),
                               activeThumbColor: const Color(0xFFE87722),
-                              activeTrackColor: const Color(0xFFE87722)
-                                  .withValues(alpha: 0.3),
+                              activeTrackColor: const Color(
+                                0xFFE87722,
+                              ).withValues(alpha: 0.3),
                             ),
                           ),
-                          Consumer<ThemeProvider>(
-                            builder: (context, themeProvider, _) => ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 4,
-                              ),
-                              leading: Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFE87722)
-                                      .withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Icon(
-                                  themeProvider.isDark
-                                      ? Icons.dark_mode_outlined
-                                      : Icons.light_mode_outlined,
-                                  color: const Color(0xFFE87722),
-                                  size: 18,
-                                ),
-                              ),
-                              title: Text(
-                                'Hali ya Giza',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 14,
-                                  color: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge
-                                          ?.color ??
-                                      const Color(0xFF1A0A00),
-                                ),
-                              ),
-                              subtitle: Text(
-                                themeProvider.isDark ? 'Imewashwa' : 'Imezimwa',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 12,
-                                  color: const Color(0xFF9E8070),
-                                ),
-                              ),
-                              trailing: Switch(
-                                value: themeProvider.isDark,
-                                onChanged: (_) => themeProvider.toggleTheme(),
-                                activeThumbColor: const Color(0xFFE87722),
-                                activeTrackColor: const Color(0xFFE87722)
-                                    .withValues(alpha: 0.3),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ]),
                       const SizedBox(height: AppSpacing.md),
                       if (auth.isTrainer) ...[
-                        _buildMenuGroup(
-                          'Mkufunzi',
-                          [
-                            _buildMenuItem(
-                              Icons.dashboard_outlined,
-                              const Color(0xFF3D1800),
-                              'Dashibodi ya Mkufunzi',
-                              onTap: () => context.push('/trainer/dashboard'),
-                            ),
-                            _buildMenuItem(
-                              Icons.add_box_outlined,
-                              const Color(0xFFE87722),
-                              'Unda Kozi Mpya',
-                              onTap: () =>
-                                  context.push('/trainer/course-builder'),
-                            ),
-                          ],
-                        ),
+                        _buildMenuGroup('Mkufunzi', [
+                          _buildMenuItem(
+                            Icons.dashboard_outlined,
+                            const Color(0xFF3D1800),
+                            'Dashibodi ya Mkufunzi',
+                            onTap: () => context.push('/trainer/dashboard'),
+                          ),
+                          _buildMenuItem(
+                            Icons.add_box_outlined,
+                            const Color(0xFFE87722),
+                            'Unda Kozi Mpya',
+                            onTap: () =>
+                                context.push('/trainer/course-builder'),
+                          ),
+                        ]),
                         const SizedBox(height: AppSpacing.md),
                       ] else ...[
                         GestureDetector(
@@ -731,17 +714,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 colors: [
                                   Color(0xFF1A0A00),
                                   Color(0xFF3D1800),
-                                  Color(0xFF7B3A10)
+                                  Color(0xFF7B3A10),
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.modal),
+                              borderRadius: BorderRadius.circular(
+                                AppRadius.modal,
+                              ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF3D1800)
-                                      .withValues(alpha: 0.18),
+                                  color: const Color(
+                                    0xFF3D1800,
+                                  ).withValues(alpha: 0.18),
                                   blurRadius: 18,
                                   offset: const Offset(0, 10),
                                 ),
@@ -754,11 +739,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   height: 56,
                                   decoration: BoxDecoration(
                                     color: Colors.white.withValues(alpha: 0.12),
-                                    borderRadius:
-                                        BorderRadius.circular(AppRadius.card),
+                                    borderRadius: BorderRadius.circular(
+                                      AppRadius.card,
+                                    ),
                                   ),
-                                  child: const Icon(Icons.school,
-                                      color: Colors.white, size: 28),
+                                  child: const Icon(
+                                    Icons.school,
+                                    color: Colors.white,
+                                    size: 28,
+                                  ),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
@@ -778,15 +767,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         'Fundisha na upate kipato',
                                         style: GoogleFonts.montserrat(
                                           fontSize: 12,
-                                          color: Colors.white
-                                              .withValues(alpha: 0.82),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.82,
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                                const Icon(Icons.arrow_forward_ios,
-                                    color: Colors.white, size: 16),
+                                const Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
                               ],
                             ),
                           ),
@@ -802,51 +795,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 showDialog<void>(
                                   context: context,
                                   builder: (_) => AlertDialog(
-                                    title: Text('Toka',
-                                        style: GoogleFonts.montserrat(
-                                            fontWeight: FontWeight.w700)),
-                                    content: Text('Una uhakika unataka kutoka?',
-                                        style: GoogleFonts.montserrat()),
+                                    title: Text(
+                                      'Toka',
+                                      style: GoogleFonts.montserrat(
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    content: Text(
+                                      'Una uhakika unataka kutoka?',
+                                      style: GoogleFonts.montserrat(),
+                                    ),
                                     actions: [
                                       TextButton(
                                         onPressed: () => Navigator.pop(context),
-                                        child: Text('Hapana',
-                                            style: GoogleFonts.montserrat(
-                                                color:
-                                                    const Color(0xFF9E8070))),
+                                        child: Text(
+                                          'Hapana',
+                                          style: GoogleFonts.montserrat(
+                                            color: const Color(0xFF9E8070),
+                                          ),
+                                        ),
                                       ),
                                       TextButton(
-                                        onPressed: () {
+                                        onPressed: () async {
                                           Navigator.pop(context);
-                                          context.read<AuthProvider>().logout();
-                                          context.go('/login');
+                                          await context
+                                              .read<AuthProvider>()
+                                              .logout();
                                         },
-                                        child: Text('Ndiyo, Toka',
-                                            style: GoogleFonts.montserrat(
-                                                color: const Color(0xFFB71C1C),
-                                                fontWeight: FontWeight.w600)),
+                                        child: Text(
+                                          'Ndiyo, Toka',
+                                          style: GoogleFonts.montserrat(
+                                            color: const Color(0xFFB71C1C),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
                                 );
                               },
-                              icon: const Icon(Icons.logout,
-                                  color: Color(0xFF1A0A00), size: 18),
-                              label: Text('Toka',
-                                  style: GoogleFonts.montserrat(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: const Color(0xFF1A0A00))),
+                              icon: const Icon(
+                                Icons.logout,
+                                color: Color(0xFF1A0A00),
+                                size: 18,
+                              ),
+                              label: Text(
+                                'Toka',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF1A0A00),
+                                ),
+                              ),
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(
-                                    color: Color(0xFFE8D5C8), width: 1.5),
+                                  color: Color(0xFFE8D5C8),
+                                  width: 1.5,
+                                ),
                                 backgroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(AppRadius.input)),
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.input,
+                                  ),
+                                ),
                                 padding: const EdgeInsets.symmetric(
-                                    vertical:
-                                        AppSpacing.md - AppSpacing.xs / 2),
+                                  vertical: AppSpacing.md - AppSpacing.xs / 2,
+                                ),
                               ),
                             ),
                           ),
@@ -854,32 +868,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Expanded(
                             child: OutlinedButton.icon(
                               onPressed: () => _deleteAccount(context, auth),
-                              icon: const Icon(Icons.delete_forever_outlined,
-                                  color: Colors.white, size: 18),
-                              label: Text('Futa Akaunti',
-                                  style: GoogleFonts.montserrat(
-                                      fontSize:
-                                          AppTextStyles.bodyMedium.fontSize,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white)),
+                              icon: const Icon(
+                                Icons.delete_forever_outlined,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                              label: Text(
+                                'Futa Akaunti',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: AppTextStyles.bodyMedium.fontSize,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(
-                                    color: Color(0xFFB71C1C), width: 1.5),
+                                  color: Color(0xFFB71C1C),
+                                  width: 1.5,
+                                ),
                                 backgroundColor: const Color(0xFFB71C1C),
                                 shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.circular(AppRadius.input)),
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.input,
+                                  ),
+                                ),
                                 padding: const EdgeInsets.symmetric(
-                                    vertical:
-                                        AppSpacing.md - AppSpacing.xs / 2),
+                                  vertical: AppSpacing.md - AppSpacing.xs / 2,
+                                ),
                               ),
                             ),
                           ),
                         ],
                       ),
                       SizedBox(
-                          height: MediaQuery.of(context).padding.bottom +
-                              AppSpacing.lg),
+                        height:
+                            MediaQuery.of(context).padding.bottom +
+                            AppSpacing.lg,
+                      ),
                     ],
                   ),
                 ),
@@ -911,16 +936,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'Hapana',
-                  style: GoogleFonts.montserrat(
-                    color: const Color(0xFF9E8070),
-                  ),
+                  style: GoogleFonts.montserrat(color: const Color(0xFF9E8070)),
                 ),
               ),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
                   Navigator.pop(context);
-                  context.read<AuthProvider>().logout();
-                  context.go('/login');
+                  await context.read<AuthProvider>().logout();
                 },
                 child: Text(
                   'Ndiyo, Toka',
@@ -975,8 +997,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.md,
-                AppSpacing.sm + AppSpacing.xs, AppSpacing.md, AppSpacing.xs),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.md,
+              AppSpacing.sm + AppSpacing.xs,
+              AppSpacing.md,
+              AppSpacing.xs,
+            ),
             child: Row(
               children: [
                 Text(
@@ -992,19 +1018,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           ...items.asMap().entries.map(
-                (entry) => Column(
-                  children: [
-                    if (entry.key > 0)
-                      Divider(
-                        height: 1,
-                        color:
-                            isDark ? Colors.white10 : const Color(0xFFF0E4DA),
-                        indent: 56,
-                      ),
-                    entry.value,
-                  ],
-                ),
-              ),
+            (entry) => Column(
+              children: [
+                if (entry.key > 0)
+                  Divider(
+                    height: 1,
+                    color: isDark ? Colors.white10 : const Color(0xFFF0E4DA),
+                    indent: 56,
+                  ),
+                entry.value,
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -1020,8 +1045,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Material(
       color: Colors.transparent,
       child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 2),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: 2,
+        ),
         leading: Container(
           width: 36,
           height: 36,
@@ -1036,7 +1063,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Theme.of(context).textTheme.bodyLarge?.color ??
+            color:
+                Theme.of(context).textTheme.bodyLarge?.color ??
                 const Color(0xFF1A0A00),
           ),
         ),

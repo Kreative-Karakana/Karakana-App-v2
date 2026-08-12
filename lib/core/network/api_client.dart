@@ -8,59 +8,95 @@ class ApiClient {
   factory ApiClient() => _instance;
   ApiClient._internal();
 
+  Future<void> Function()? _unauthorizedHandler;
+  Future<void>? _unauthorizedInFlight;
+
+  void setUnauthorizedHandler(Future<void> Function() handler) {
+    _unauthorizedHandler = handler;
+  }
+
+  Future<void> handleUnauthorized() {
+    final inFlight = _unauthorizedInFlight;
+    if (inFlight != null) return inFlight;
+
+    final future = _runUnauthorizedHandler();
+    _unauthorizedInFlight = future;
+    return future.whenComplete(() {
+      if (identical(_unauthorizedInFlight, future)) {
+        _unauthorizedInFlight = null;
+      }
+    });
+  }
+
+  Future<void> _runUnauthorizedHandler() async {
+    final handler = _unauthorizedHandler;
+    if (handler != null) {
+      await handler();
+    } else {
+      await SecureStorage().clearAll();
+    }
+  }
+
   late final Dio dio = _createDio();
 
   Dio _createDio() {
-    final dio = Dio(BaseOptions(
-      baseUrl: AppConstants.baseUrl,
-      connectTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 30),
-      headers: {'Content-Type': 'application/json'},
-    ));
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: AppConstants.baseUrl,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        headers: {'Content-Type': 'application/json'},
+      ),
+    );
 
-    dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        const authPaths = {
-          '/api/auth/signin/',
-          '/api/auth/signup/',
-          '/api/auth/verify/',
-          '/api/auth/verify/resend/',
-          '/api/request-password-reset/',
-          '/api/oauth/',
-          '/api/apple-oauth/',
-        };
-        final shouldAttachToken = !authPaths.contains(options.path);
-        final token =
-            shouldAttachToken ? await SecureStorage().getToken() : null;
-        if (token != null && token.isNotEmpty) {
-          options.headers['Authorization'] = 'Token $token';
-        }
-        if (kDebugMode) {
-          debugPrint('[API] --> ${options.method} ${options.uri}');
-        }
-        handler.next(options);
-      },
-      onResponse: (response, handler) {
-        if (kDebugMode) {
-          debugPrint(
-              '[API] <-- ${response.statusCode} ${response.requestOptions.uri}');
-        }
-        handler.next(response);
-      },
-      onError: (error, handler) async {
-        if (kDebugMode) {
-          debugPrint(
-              '[API] ERROR ${error.response?.statusCode} ${error.requestOptions.uri}');
-          debugPrint('[API] ERROR BODY: ${error.response?.data}');
-          debugPrint('[API] ERROR TYPE: ${error.type}');
-          debugPrint('[API] ERROR MESSAGE: ${error.message}');
-        }
-        if (error.response?.statusCode == 401) {
-          await SecureStorage().clearAll();
-        }
-        handler.next(error);
-      },
-    ));
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          const authPaths = {
+            '/api/auth/signin/',
+            '/api/auth/signup/',
+            '/api/auth/verify/',
+            '/api/auth/verify/resend/',
+            '/api/request-password-reset/',
+            '/api/oauth/',
+            '/api/apple-oauth/',
+          };
+          final shouldAttachToken = !authPaths.contains(options.path);
+          final token = shouldAttachToken
+              ? await SecureStorage().getToken()
+              : null;
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Token $token';
+          }
+          if (kDebugMode) {
+            debugPrint('[API] --> ${options.method} ${options.uri}');
+          }
+          handler.next(options);
+        },
+        onResponse: (response, handler) {
+          if (kDebugMode) {
+            debugPrint(
+              '[API] <-- ${response.statusCode} ${response.requestOptions.uri}',
+            );
+          }
+          handler.next(response);
+        },
+        onError: (error, handler) async {
+          if (kDebugMode) {
+            debugPrint(
+              '[API] ERROR ${error.response?.statusCode} ${error.requestOptions.uri}',
+            );
+            debugPrint('[API] ERROR BODY: ${error.response?.data}');
+            debugPrint('[API] ERROR TYPE: ${error.type}');
+            debugPrint('[API] ERROR MESSAGE: ${error.message}');
+          }
+          if (error.response?.statusCode == 401) {
+            await handleUnauthorized();
+          }
+          handler.next(error);
+        },
+      ),
+    );
 
     return dio;
   }

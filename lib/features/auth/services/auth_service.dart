@@ -1,5 +1,13 @@
+import 'package:dio/dio.dart';
+
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
+
+class AccountDeletionBlockedException implements Exception {
+  const AccountDeletionBlockedException(this.detail);
+
+  final String detail;
+}
 
 /// Network calls used by `AuthProvider`, extracted behind an interface so
 /// tests can supply a fake instead of hitting the real backend.
@@ -29,6 +37,8 @@ abstract class AuthApi {
   Future<void> resendOTP({required String email});
 
   Future<dynamic> fetchProfile();
+
+  Future<void> logout();
 
   Future<void> deleteAccount();
 
@@ -74,11 +84,7 @@ class AuthService implements AuthApi {
   }) async {
     await ApiClient().dio.post(
       ApiEndpoints.signup,
-      data: {
-        'first_name': firstName,
-        'email': email,
-        'password': password,
-      },
+      data: {'first_name': firstName, 'email': email, 'password': password},
     );
   }
 
@@ -111,10 +117,7 @@ class AuthService implements AuthApi {
 
   @override
   Future<void> resendOTP({required String email}) async {
-    await ApiClient().dio.post(
-      ApiEndpoints.resendOTP,
-      data: {'email': email},
-    );
+    await ApiClient().dio.post(ApiEndpoints.resendOTP, data: {'email': email});
   }
 
   @override
@@ -124,8 +127,23 @@ class AuthService implements AuthApi {
   }
 
   @override
+  Future<void> logout() async {
+    await ApiClient().dio.post(ApiEndpoints.logout);
+  }
+
+  @override
   Future<void> deleteAccount() async {
-    await ApiClient().dio.delete('/api/v1/auth/user/delete/');
+    try {
+      await ApiClient().dio.delete(ApiEndpoints.deleteAccount);
+    } on DioException catch (error) {
+      final data = error.response?.data;
+      if (error.response?.statusCode == 409 &&
+          data is Map &&
+          data['code'] == 'trainer_account_deletion_blocked') {
+        throw AccountDeletionBlockedException(data['detail']?.toString() ?? '');
+      }
+      rethrow;
+    }
   }
 
   @override
