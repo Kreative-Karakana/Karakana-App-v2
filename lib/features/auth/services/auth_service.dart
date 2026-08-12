@@ -53,6 +53,7 @@ abstract class AuthApi {
     required String idToken,
     String? firstName,
     String? lastName,
+    String? authorizationCode,
   });
 }
 
@@ -171,6 +172,7 @@ class AuthService implements AuthApi {
     required String idToken,
     String? firstName,
     String? lastName,
+    String? authorizationCode,
   }) async {
     final response = await ApiClient().dio.post(
       ApiEndpoints.appleAuth,
@@ -178,6 +180,7 @@ class AuthService implements AuthApi {
         'id_token': idToken,
         if (firstName != null) 'first_name': firstName,
         if (lastName != null) 'last_name': lastName,
+        if (authorizationCode != null) 'authorization_code': authorizationCode,
       },
     );
     return response.data;

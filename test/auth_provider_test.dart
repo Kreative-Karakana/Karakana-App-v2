@@ -405,6 +405,7 @@ class _FakeAuthApi implements AuthApi {
     required String idToken,
     String? firstName,
     String? lastName,
+    String? authorizationCode,
   }) =>
       throw UnimplementedError();
 }

@@ -451,6 +451,7 @@ class AuthProvider extends ChangeNotifier {
         idToken: idToken,
         firstName: credential.givenName,
         lastName: credential.familyName,
+        authorizationCode: credential.authorizationCode,
       );
       return await _handleOAuthResponse(data);
     } on SignInWithAppleAuthorizationException catch (e) {
