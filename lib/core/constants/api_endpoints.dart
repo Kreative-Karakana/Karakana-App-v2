@@ -20,6 +20,8 @@ class ApiEndpoints {
 
   // Courses
   static const String courses = '/api/v1/courses/';
+  static const String courseRestoreProducts =
+      '/api/v1/courses/restore-products/';
   static const String categories = '/api/v1/categories/';
   static const String enrollFree = '/api/v1/courses/enroll/';
   static const String wishlist = '/api/v1/wishlist/';

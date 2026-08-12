@@ -20,14 +20,13 @@ enum RestoreOutcome { success, nothingToRestore, error }
 /// restorable is silently dropped just because the user hasn't browsed to
 /// that specific course/eBook this session.
 ///
-/// Known limitation: a course that was purchased and later unpublished or
-/// blocked will not appear in `GET /api/v1/courses/?enrolled=true` (that
-/// endpoint filters through `Course.optimum.visible_to()`, which excludes
-/// unpublished/blocked courses regardless of enrollment), so its product id
-/// cannot be preloaded here and a restore for it will not reach the
-/// backend. eBooks do not share this gap — `GET /api/v1/ebooks/library/` is
-/// backed by `EbookPurchase` records directly, not by the published-eBook
-/// catalog, so a delisted eBook the user owns is still returned.
+/// Course ids come from an authenticated restore-discovery endpoint backed
+/// by successful Apple payment history intersected with the user's current
+/// enrollment. It deliberately includes unpublished/blocked owned courses
+/// without exposing them through the public catalog, and excludes revoked
+/// enrollments. eBooks use their durable purchase library. Subscription ids
+/// combine the active catalog with the current/latest entitlement plan, so
+/// an owned plan remains restorable after it is retired from the catalog.
 class RestorePurchasesProvider extends ChangeNotifier {
   final SubscriptionPurchaseStore _store;
   final CourseCatalogService _courseService;
@@ -39,10 +38,10 @@ class RestorePurchasesProvider extends ChangeNotifier {
     CourseCatalogService? courseService,
     EbookService? ebookService,
     SubscriptionApi? subscriptionApi,
-  })  : _store = store ?? IAPService.instance,
-        _courseService = courseService ?? CourseService(),
-        _ebookService = ebookService ?? EbookService(),
-        _subscriptionApi = subscriptionApi ?? SubscriptionService();
+  }) : _store = store ?? IAPService.instance,
+       _courseService = courseService ?? CourseService(),
+       _ebookService = ebookService ?? EbookService(),
+       _subscriptionApi = subscriptionApi ?? SubscriptionService();
 
   bool isLoading = false;
   String? errorMessage;
@@ -108,33 +107,13 @@ class RestorePurchasesProvider extends ChangeNotifier {
   }
 
   Future<Set<String>> _ownedCourseProductIds() async {
-    final ids = <String>{};
-    var page = 1;
-    const pageSize = 100;
-    // Bounded so a backend pagination bug can never spin this loop
-    // forever — no real user has anywhere near this many enrolled courses.
-    const maxPages = 20;
     try {
-      while (page <= maxPages) {
-        final result = await _courseService.getCoursesPage(
-          enrolled: true,
-          page: page,
-          pageSize: pageSize,
-        );
-        for (final course in result.items) {
-          final productId = course.appleIapProductId;
-          if (productId != null && productId.isNotEmpty) {
-            ids.add(productId);
-          }
-        }
-        if (!result.hasNext) break;
-        page += 1;
-      }
+      return await _courseService.getAppleRestoreProductIds();
     } catch (_) {
       // Best effort — a failed course fetch must not block eBook/
       // subscription restore from proceeding.
+      return {};
     }
-    return ids;
   }
 
   Future<Set<String>> _ownedEbookProductIds() async {
@@ -152,17 +131,20 @@ class RestorePurchasesProvider extends ChangeNotifier {
   }
 
   Future<Set<String>> _knownSubscriptionProductIds() async {
+    final ids = <String>{};
     try {
       final plans = await _subscriptionApi.getPlans();
-      return {
-        for (final plan in plans)
-          if (plan.appleIapProductId != null &&
-              plan.appleIapProductId!.isNotEmpty)
-            plan.appleIapProductId!,
-      };
-    } catch (_) {
-      return {};
-    }
+      for (final plan in plans) {
+        final productId = plan.appleIapProductId;
+        if (productId != null && productId.isNotEmpty) ids.add(productId);
+      }
+    } catch (_) {}
+    try {
+      final entitlement = await _subscriptionApi.getEntitlementStatus();
+      final productId = entitlement.plan?.appleIapProductId;
+      if (productId != null && productId.isNotEmpty) ids.add(productId);
+    } catch (_) {}
+    return ids;
   }
 
   void reset() {

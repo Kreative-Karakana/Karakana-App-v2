@@ -160,6 +160,9 @@ Map<String, dynamic> _courseJson(int id, String title) => {
     };
 
 class _FakeCourseService implements CourseCatalogService {
+  @override
+  Future<Set<String>> getAppleRestoreProductIds() async => {};
+
   _FakeCourseService(this.pages);
 
   final Map<_PageRequest, PaginatedCourses> pages;

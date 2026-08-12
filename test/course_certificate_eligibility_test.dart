@@ -106,6 +106,9 @@ QuizAvailability _availability({
 
 class _FakeCourseService implements CourseCatalogService {
   @override
+  Future<Set<String>> getAppleRestoreProductIds() async => {};
+
+  @override
   Future<CourseModel> getCourseDetail(int id) async {
     return CourseModel.fromJson({
       'id': id,

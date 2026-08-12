@@ -1,3 +1,4 @@
+import '../../../core/constants/api_endpoints.dart';
 import '../../../core/network/api_client.dart';
 import '../models/course_model.dart';
 
@@ -43,6 +44,8 @@ class PaginatedCourses {
 }
 
 abstract class CourseCatalogService {
+  Future<Set<String>> getAppleRestoreProductIds();
+
   Future<PaginatedCourses> getCoursesPage({
     String? search,
     String? categoryName,
@@ -84,6 +87,22 @@ class CourseService implements CourseCatalogService {
   final _dio = ApiClient().dio;
 
   @override
+  Future<Set<String>> getAppleRestoreProductIds() async {
+    try {
+      final response = await _dio.get(ApiEndpoints.courseRestoreProducts);
+      final data = response.data;
+      final productIds = data is Map ? data['product_ids'] : null;
+      if (productIds is! List) return const {};
+      return {
+        for (final id in productIds)
+          if (id.toString().isNotEmpty) id.toString(),
+      };
+    } catch (e) {
+      throw ApiClient().parseError(e);
+    }
+  }
+
+  @override
   Future<PaginatedCourses> getCoursesPage({
     String? search,
     String? categoryName,
@@ -107,8 +126,10 @@ class CourseService implements CourseCatalogService {
       if (weeklyChoice == true) params['weekly_choice'] = true;
       if (enrolled == true) params['enrolled'] = true;
 
-      final response =
-          await _dio.get('/api/v1/courses/', queryParameters: params);
+      final response = await _dio.get(
+        '/api/v1/courses/',
+        queryParameters: params,
+      );
       return PaginatedCourses.fromJson(response.data);
     } catch (e) {
       throw ApiClient().parseError(e);
@@ -168,8 +189,9 @@ class CourseService implements CourseCatalogService {
     try {
       final response = await _dio.get('/api/v1/courses/$courseId/sections/');
       final data = response.data;
-      final list =
-          data is Map ? (data['results'] ?? data['sections'] ?? []) : data;
+      final list = data is Map
+          ? (data['results'] ?? data['sections'] ?? [])
+          : data;
       return (list as List)
           .map((j) => SectionModel.fromJson(j as Map<String, dynamic>))
           .toList();
