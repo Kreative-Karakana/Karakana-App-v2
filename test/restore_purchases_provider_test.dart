@@ -18,7 +18,8 @@ const subscriptionProduct =
 
 void main() {
   group('RestorePurchasesProvider', () {
-    test('registers every owned course/eBook/subscription product id before '
+    test(
+        'registers every owned course/eBook/subscription product id before '
         'calling restorePurchases, so nothing is silently deferred', () async {
       final store = _RecordingStore();
       final provider = RestorePurchasesProvider(
@@ -81,7 +82,8 @@ void main() {
       },
     );
 
-    test('only registers eBooks from successful purchases that have a '
+    test(
+        'only registers eBooks from successful purchases that have a '
         'configured Apple product id', () async {
       final store = _RecordingStore();
       final provider = RestorePurchasesProvider(
@@ -119,7 +121,8 @@ void main() {
       },
     );
 
-    test('surfaces a store initialization failure without calling '
+    test(
+        'surfaces a store initialization failure without calling '
         'restorePurchases', () async {
       final store = _RecordingStore()..available = false;
       final provider = RestorePurchasesProvider(
@@ -193,67 +196,68 @@ void main() {
 }
 
 CourseModel _course(int id, String appleProductId) => CourseModel(
-  id: id,
-  title: 'Course $id',
-  excerpt: '',
-  description: '',
-  price: 0,
-  status: 'published',
-  level: 'beginner',
-  appleIapProductId: appleProductId,
-  trainerName: '',
-  trainerId: 0,
-  studentCount: 0,
-  averageRating: 0,
-  reviewCount: 0,
-  isEnrolled: true,
-  isWishlisted: false,
-  categories: const [],
-  faqs: const [],
-);
+      id: id,
+      title: 'Course $id',
+      excerpt: '',
+      description: '',
+      price: 0,
+      status: 'published',
+      level: 'beginner',
+      appleIapProductId: appleProductId,
+      trainerName: '',
+      trainerId: 0,
+      studentCount: 0,
+      averageRating: 0,
+      reviewCount: 0,
+      isEnrolled: true,
+      isWishlisted: false,
+      categories: const [],
+      faqs: const [],
+    );
 
 Ebook _ebook(String? appleProductId, {int id = 1}) => Ebook(
-  id: id,
-  title: 'Ebook $id',
-  description: '',
-  authorName: '',
-  coverImageUrl: null,
-  priceInTzs: 1000,
-  totalPages: 10,
-  isPurchased: true,
-  isPaymentExempt: false,
-  appleIapProductId: appleProductId,
-  status: 'published',
-  buyersCount: 0,
-  successfulPurchasesCount: 0,
-  totalRevenue: 0,
-  createdAt: null,
-  updatedAt: null,
-);
+      id: id,
+      title: 'Ebook $id',
+      description: '',
+      authorName: '',
+      coverImageUrl: null,
+      priceInTzs: 1000,
+      totalPages: 10,
+      isPurchased: true,
+      isPaymentExempt: false,
+      appleIapProductId: appleProductId,
+      status: 'published',
+      buyersCount: 0,
+      successfulPurchasesCount: 0,
+      totalRevenue: 0,
+      createdAt: null,
+      updatedAt: null,
+    );
 
 EbookPurchase _purchase(
   String? appleProductId, {
   int id = 1,
   bool successful = true,
-}) => EbookPurchase(
-  id: id,
-  ebook: _ebook(appleProductId, id: id),
-  externalId: 'ext-$id',
-  isSuccessful: successful,
-  checkoutResponse: null,
-);
+}) =>
+    EbookPurchase(
+      id: id,
+      ebook: _ebook(appleProductId, id: id),
+      externalId: 'ext-$id',
+      isSuccessful: successful,
+      checkoutResponse: null,
+    );
 
 SubscriptionPlan _plan(String appleProductId) => SubscriptionPlan(
-  id: 1,
-  name: 'Monthly',
-  slug: 'monthly',
-  billingPeriod: 'monthly',
-  durationDays: 30,
-  price: '29900',
-  currency: 'TZS',
-  features: const [],
-  appleIapProductId: appleProductId,
-);
+      id: 1,
+      name: 'Monthly',
+      slug: 'monthly',
+      billingPeriod: 'monthly',
+      durationDays: 30,
+      price: '29900',
+      currency: 'TZS',
+      features: const [],
+      appleIapProductId: appleProductId,
+    );
 
 class _RecordingStore implements SubscriptionPurchaseStore {
   bool available = true;
@@ -383,7 +387,8 @@ class _FakeCourseService implements CourseCatalogService {
     bool? weeklyChoice,
     bool? enrolled,
     int pageSize = 20,
-  }) async => firstPage;
+  }) async =>
+      firstPage;
 
   @override
   Future<CourseModel> getCourseDetail(int id) => throw UnimplementedError();
@@ -443,7 +448,8 @@ class _ThrowingCourseService implements CourseCatalogService {
     bool? weeklyChoice,
     bool? enrolled,
     int pageSize = 20,
-  }) async => throw Exception('network error');
+  }) async =>
+      throw Exception('network error');
 
   @override
   Future<CourseModel> getCourseDetail(int id) => throw UnimplementedError();

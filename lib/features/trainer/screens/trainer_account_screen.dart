@@ -60,8 +60,7 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
           ? await _localAuth.getAvailableBiometrics()
           : const <BiometricType>[];
       final hasFace = types.contains(BiometricType.face);
-      final hasFingerprint =
-          types.contains(BiometricType.fingerprint) ||
+      final hasFingerprint = types.contains(BiometricType.fingerprint) ||
           types.contains(BiometricType.strong) ||
           types.contains(BiometricType.weak);
       final accountId = await _currentAccountId();
@@ -76,8 +75,8 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
         _biometricLabel = hasFace
             ? 'Face ID'
             : hasFingerprint
-            ? 'Touch ID'
-            : 'Biometric';
+                ? 'Touch ID'
+                : 'Biometric';
       });
     } catch (_) {
       if (!mounted) return;
@@ -169,12 +168,10 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, auth, _) {
-        final userName = auth.userFullName.isNotEmpty
-            ? auth.userFullName
-            : 'Mkufunzi';
-        final userEmail = auth.userEmail.isNotEmpty
-            ? auth.userEmail
-            : 'Hakuna barua pepe';
+        final userName =
+            auth.userFullName.isNotEmpty ? auth.userFullName : 'Mkufunzi';
+        final userEmail =
+            auth.userEmail.isNotEmpty ? auth.userEmail : 'Hakuna barua pepe';
         final initial = userName.isNotEmpty ? userName[0].toUpperCase() : 'M';
         final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -252,8 +249,7 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
                               style: GoogleFonts.montserrat(
                                 fontSize: 17,
                                 fontWeight: FontWeight.w700,
-                                color:
-                                    Theme.of(
+                                color: Theme.of(
                                       context,
                                     ).textTheme.bodyLarge?.color ??
                                     const Color(0xFF1A0A00),
@@ -786,18 +782,19 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
             ),
           ),
           ...items.asMap().entries.map(
-            (entry) => Column(
-              children: [
-                if (entry.key > 0)
-                  Divider(
-                    height: 1,
-                    color: isDark ? Colors.white10 : const Color(0xFFF0E4DA),
-                    indent: 56,
-                  ),
-                entry.value,
-              ],
-            ),
-          ),
+                (entry) => Column(
+                  children: [
+                    if (entry.key > 0)
+                      Divider(
+                        height: 1,
+                        color:
+                            isDark ? Colors.white10 : const Color(0xFFF0E4DA),
+                        indent: 56,
+                      ),
+                    entry.value,
+                  ],
+                ),
+              ),
         ],
       ),
     );
@@ -831,8 +828,7 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color:
-                Theme.of(context).textTheme.bodyLarge?.color ??
+            color: Theme.of(context).textTheme.bodyLarge?.color ??
                 const Color(0xFF1A0A00),
           ),
         ),
@@ -882,8 +878,7 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color:
-                Theme.of(context).textTheme.bodyLarge?.color ??
+            color: Theme.of(context).textTheme.bodyLarge?.color ??
                 const Color(0xFF1A0A00),
           ),
         ),

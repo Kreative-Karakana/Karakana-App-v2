@@ -62,9 +62,8 @@ class ApiClient {
             '/api/apple-oauth/',
           };
           final shouldAttachToken = !authPaths.contains(options.path);
-          final token = shouldAttachToken
-              ? await SecureStorage().getToken()
-              : null;
+          final token =
+              shouldAttachToken ? await SecureStorage().getToken() : null;
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Token $token';
           }

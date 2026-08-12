@@ -38,10 +38,10 @@ class RestorePurchasesProvider extends ChangeNotifier {
     CourseCatalogService? courseService,
     EbookService? ebookService,
     SubscriptionApi? subscriptionApi,
-  }) : _store = store ?? IAPService.instance,
-       _courseService = courseService ?? CourseService(),
-       _ebookService = ebookService ?? EbookService(),
-       _subscriptionApi = subscriptionApi ?? SubscriptionService();
+  })  : _store = store ?? IAPService.instance,
+        _courseService = courseService ?? CourseService(),
+        _ebookService = ebookService ?? EbookService(),
+        _subscriptionApi = subscriptionApi ?? SubscriptionService();
 
   bool isLoading = false;
   String? errorMessage;

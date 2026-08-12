@@ -13,8 +13,8 @@ import '../services/auth_session_store.dart';
 
 class AuthProvider extends ChangeNotifier {
   AuthProvider({AuthApi? api, AuthSessionStore? storage})
-    : _api = api ?? AuthService(),
-      _storage = storage ?? SecureStorage() {
+      : _api = api ?? AuthService(),
+        _storage = storage ?? SecureStorage() {
     ApiClient().setUnauthorizedHandler(invalidateAuthentication);
   }
 
@@ -122,8 +122,8 @@ class AuthProvider extends ChangeNotifier {
       String? deviceToken;
       try {
         deviceToken = await FirebaseMessaging.instance.getToken().timeout(
-          const Duration(seconds: 5),
-        );
+              const Duration(seconds: 5),
+            );
       } catch (e) {
         debugPrint('[AUTH] FCM token fetch failed (non-fatal): $e');
         deviceToken = null;
@@ -208,8 +208,8 @@ class AuthProvider extends ChangeNotifier {
       String? deviceToken;
       try {
         deviceToken = await FirebaseMessaging.instance.getToken().timeout(
-          const Duration(seconds: 5),
-        );
+              const Duration(seconds: 5),
+            );
       } catch (e) {
         debugPrint(
           '[AUTH] FCM token fetch failed during verify (non-fatal): $e',
@@ -372,8 +372,8 @@ class AuthProvider extends ChangeNotifier {
       String? deviceToken;
       try {
         deviceToken = await FirebaseMessaging.instance.getToken().timeout(
-          const Duration(seconds: 5),
-        );
+              const Duration(seconds: 5),
+            );
       } catch (e) {
         debugPrint('[AUTH] FCM token fetch failed (non-fatal): $e');
         deviceToken = null;

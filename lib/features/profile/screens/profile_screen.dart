@@ -59,8 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ? await _localAuth.getAvailableBiometrics()
           : const <BiometricType>[];
       final hasFace = types.contains(BiometricType.face);
-      final hasFingerprint =
-          types.contains(BiometricType.fingerprint) ||
+      final hasFingerprint = types.contains(BiometricType.fingerprint) ||
           types.contains(BiometricType.strong) ||
           types.contains(BiometricType.weak);
       final accountId = await _currentAccountId();
@@ -75,8 +74,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _biometricLabel = hasFace
             ? 'Face ID'
             : hasFingerprint
-            ? 'Touch ID'
-            : 'Biometric';
+                ? 'Touch ID'
+                : 'Biometric';
       });
     } catch (_) {
       if (!mounted) return;
@@ -275,9 +274,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         final userName = auth.userFullName.isNotEmpty
             ? auth.userFullName
             : 'Mtumiaji wa Karakana';
-        final userEmail = auth.userEmail.isNotEmpty
-            ? auth.userEmail
-            : 'Hakuna barua pepe';
+        final userEmail =
+            auth.userEmail.isNotEmpty ? auth.userEmail : 'Hakuna barua pepe';
         final initial = userName.isNotEmpty ? userName[0].toUpperCase() : 'K';
 
         final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -378,10 +376,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   Text(
                                     'Akaunti',
                                     style: GoogleFonts.montserrat(
-                                      fontSize:
-                                          (AppTextStyles
-                                                  .displayLarge
-                                                  .fontSize ??
+                                      fontSize: (AppTextStyles
+                                                  .displayLarge.fontSize ??
                                               32) -
                                           1,
                                       fontWeight: FontWeight.w800,
@@ -429,9 +425,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(18),
                       border: Border.all(
-                        color: isDark
-                            ? Colors.white10
-                            : const Color(0xFFECE7E2),
+                        color:
+                            isDark ? Colors.white10 : const Color(0xFFECE7E2),
                       ),
                       boxShadow: const [
                         BoxShadow(
@@ -480,8 +475,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w700,
-                                  color:
-                                      Theme.of(
+                                  color: Theme.of(
                                         context,
                                       ).textTheme.bodyLarge?.color ??
                                       const Color(0xFF1A0A00),
@@ -650,8 +644,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             'Ingia kwa $_biometricLabel',
                             style: GoogleFonts.montserrat(
                               fontSize: 14,
-                              color:
-                                  Theme.of(
+                              color: Theme.of(
                                     context,
                                   ).textTheme.bodyLarge?.color ??
                                   const Color(0xFF1A0A00),
@@ -704,8 +697,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               'Hali ya Giza',
                               style: GoogleFonts.montserrat(
                                 fontSize: 14,
-                                color:
-                                    Theme.of(
+                                color: Theme.of(
                                       context,
                                     ).textTheme.bodyLarge?.color ??
                                     const Color(0xFF1A0A00),
@@ -944,8 +936,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                       SizedBox(
-                        height:
-                            MediaQuery.of(context).padding.bottom +
+                        height: MediaQuery.of(context).padding.bottom +
                             AppSpacing.lg,
                       ),
                     ],
@@ -1061,18 +1052,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           ...items.asMap().entries.map(
-            (entry) => Column(
-              children: [
-                if (entry.key > 0)
-                  Divider(
-                    height: 1,
-                    color: isDark ? Colors.white10 : const Color(0xFFF0E4DA),
-                    indent: 56,
-                  ),
-                entry.value,
-              ],
-            ),
-          ),
+                (entry) => Column(
+                  children: [
+                    if (entry.key > 0)
+                      Divider(
+                        height: 1,
+                        color:
+                            isDark ? Colors.white10 : const Color(0xFFF0E4DA),
+                        indent: 56,
+                      ),
+                    entry.value,
+                  ],
+                ),
+              ),
         ],
       ),
     );
@@ -1106,8 +1098,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color:
-                Theme.of(context).textTheme.bodyLarge?.color ??
+            color: Theme.of(context).textTheme.bodyLarge?.color ??
                 const Color(0xFF1A0A00),
           ),
         ),

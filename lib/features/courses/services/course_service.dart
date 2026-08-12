@@ -189,9 +189,8 @@ class CourseService implements CourseCatalogService {
     try {
       final response = await _dio.get('/api/v1/courses/$courseId/sections/');
       final data = response.data;
-      final list = data is Map
-          ? (data['results'] ?? data['sections'] ?? [])
-          : data;
+      final list =
+          data is Map ? (data['results'] ?? data['sections'] ?? []) : data;
       return (list as List)
           .map((j) => SectionModel.fromJson(j as Map<String, dynamic>))
           .toList();
