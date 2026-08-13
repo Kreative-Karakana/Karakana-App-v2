@@ -75,6 +75,7 @@ class SecureStorage implements AuthSessionStore {
     await prefs.setString(AppConstants.userIdKey, id);
   }
 
+  @override
   Future<String?> getUserId() async {
     final prefs = await _prefs;
     return prefs.getString(AppConstants.userIdKey);
@@ -92,78 +93,16 @@ class SecureStorage implements AuthSessionStore {
     return prefs.getBool(AppConstants.onboardingKey) ?? false;
   }
 
-  Future<void> setBiometricEnabled(bool enabled) async {
-    final accountId = await getActiveBiometricAccountId();
-    if (accountId == null) return;
-    await setBiometricEnabledForAccount(accountId, enabled);
-  }
-
-  Future<bool> isBiometricEnabled() async {
-    final accountId = await getActiveBiometricAccountId();
-    if (accountId == null) return false;
-    return isBiometricEnabledForAccount(accountId);
-  }
-
-  Future<void> saveBiometricToken(String token) async {
-    final accountId = await getActiveBiometricAccountId();
-    if (accountId == null) return;
-    await saveBiometricTokenForAccount(accountId, token);
-  }
-
-  Future<String?> getBiometricToken() async {
-    final accountId = await getActiveBiometricAccountId();
-    if (accountId == null) return null;
-    return getBiometricTokenForAccount(accountId);
-  }
-
-  Future<bool> hasBiometricToken() async {
-    final accountId = await getActiveBiometricAccountId();
-    if (accountId == null) return false;
-    return hasBiometricTokenForAccount(accountId);
-  }
-
-  Future<void> clearBiometricToken() async {
-    final accountId = await getActiveBiometricAccountId();
-    if (accountId == null) return;
-    await clearBiometricTokenForAccount(accountId);
-  }
-
-  @override
-  Future<String?> getActiveBiometricAccountId() async {
-    final prefs = await _prefs;
-    return prefs.getString(_biometricAccountIdKey);
-  }
-
-  @override
-  Future<void> setActiveBiometricAccountId(String? accountId) async {
-    final prefs = await _prefs;
-    if (accountId == null || accountId.isEmpty) {
-      await prefs.remove(_biometricAccountIdKey);
-    } else {
-      await prefs.setString(_biometricAccountIdKey, accountId);
-    }
-  }
-
   String _biometricEnabledKey(String accountId) =>
       'biometric_enabled_$accountId';
 
-  String _biometricTokenKey(String accountId) => 'biometric_token_$accountId';
-
+  @override
   Future<void> setBiometricEnabledForAccount(
     String accountId,
     bool enabled,
   ) async {
     final prefs = await _prefs;
     await prefs.setBool(_biometricEnabledKey(accountId), enabled);
-    if (!enabled) {
-      await clearBiometricTokenForAccount(accountId);
-      final activeAccountId = await getActiveBiometricAccountId();
-      if (activeAccountId == accountId) {
-        await setActiveBiometricAccountId(null);
-      }
-    } else {
-      await setActiveBiometricAccountId(accountId);
-    }
   }
 
   @override
@@ -173,33 +112,26 @@ class SecureStorage implements AuthSessionStore {
   }
 
   @override
-  Future<void> saveBiometricTokenForAccount(
-    String accountId,
-    String token,
-  ) async {
+  Future<void> removeLegacyBiometricCredentials() async {
     try {
-      await _storage.write(key: _biometricTokenKey(accountId), value: token);
-    } catch (_) {}
-  }
-
-  @override
-  Future<String?> getBiometricTokenForAccount(String accountId) async {
-    try {
-      return await _storage.read(key: _biometricTokenKey(accountId));
+      await _storage.delete(key: 'biometric_token');
+      final accountId = await getUserId();
+      if (accountId != null && accountId.isNotEmpty) {
+        await _storage.delete(key: 'biometric_token_$accountId');
+      }
+      final secureValues = await _storage.readAll();
+      for (final key in secureValues.keys) {
+        if (key == 'biometric_token' || key.startsWith('biometric_token_')) {
+          await _storage.delete(key: key);
+        }
+      }
     } catch (_) {
-      return null;
+      // Failure to enumerate legacy entries must never delete the canonical
+      // session token or turn storage recovery into an authentication bypass.
     }
-  }
-
-  Future<bool> hasBiometricTokenForAccount(String accountId) async {
-    final token = await getBiometricTokenForAccount(accountId);
-    return token != null && token.isNotEmpty;
-  }
-
-  Future<void> clearBiometricTokenForAccount(String accountId) async {
-    try {
-      await _storage.delete(key: _biometricTokenKey(accountId));
-    } catch (_) {}
+    final prefs = await _prefs;
+    await prefs.remove(_biometricAccountIdKey);
+    await prefs.remove(AppConstants.biometricKey);
   }
 
   Future<bool?> getAmbassadorCodeState() async {
@@ -276,7 +208,7 @@ class SecureStorage implements AuthSessionStore {
       await _storage.delete(key: 'terms_accepted');
       final secureValues = await _storage.readAll();
       for (final key in secureValues.keys) {
-        if (key.startsWith('biometric_token_')) {
+        if (key == 'biometric_token' || key.startsWith('biometric_token_')) {
           await _storage.delete(key: key);
         }
       }
@@ -290,7 +222,10 @@ class SecureStorage implements AuthSessionStore {
     await prefs.remove(AppConstants.mastercardDoneKey);
     await prefs.remove(AppConstants.rolesKey);
     await prefs.remove(_biometricAccountIdKey);
-    // Keep biometric_enabled_<accountId>. A later successful login may seed
-    // a fresh Knox token for that explicitly enabled account.
+    for (final key in prefs.getKeys()) {
+      if (key.startsWith('biometric_enabled_')) {
+        await prefs.remove(key);
+      }
+    }
   }
 }

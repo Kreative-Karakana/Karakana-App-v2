@@ -11,10 +11,9 @@ abstract class AuthSessionStore {
   Future<bool> isOnboardingComplete();
   Future<void> setOnboardingComplete();
   Future<void> saveUserId(String id);
+  Future<String?> getUserId();
   Future<void> clearAll();
+  Future<void> setBiometricEnabledForAccount(String accountId, bool enabled);
   Future<bool> isBiometricEnabledForAccount(String accountId);
-  Future<void> saveBiometricTokenForAccount(String accountId, String token);
-  Future<String?> getBiometricTokenForAccount(String accountId);
-  Future<void> setActiveBiometricAccountId(String? accountId);
-  Future<String?> getActiveBiometricAccountId();
+  Future<void> removeLegacyBiometricCredentials();
 }
