@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/responsive.dart';
-import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/buttons/gradient_button.dart';
 import '../providers/auth_provider.dart';
+import '../services/biometric_auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -37,7 +36,6 @@ class _LoginScreenState extends State<LoginScreen>
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final LocalAuthentication _localAuth = LocalAuthentication();
   late final String _welcomeMessage =
       _welcomeMessages[math.Random().nextInt(_welcomeMessages.length)];
   bool _obscurePassword = true;
@@ -56,29 +54,12 @@ class _LoginScreenState extends State<LoginScreen>
 
   Future<_BiometricState> _getBiometricState() async {
     try {
-      final supported = await _localAuth.isDeviceSupported();
-      final enrolled = await _localAuth.canCheckBiometrics;
-      if (!supported || !enrolled) {
-        return const _BiometricState();
-      }
-      final biometrics = await _localAuth.getAvailableBiometrics();
-      final accountId = await SecureStorage().getActiveBiometricAccountId();
-      final enabled = accountId == null
-          ? false
-          : await SecureStorage().isBiometricEnabledForAccount(accountId);
-      final hasSession = accountId == null
-          ? false
-          : await SecureStorage().hasBiometricTokenForAccount(accountId);
-      final hasFaceId = biometrics.contains(BiometricType.face);
-      final hasFingerprint = biometrics.contains(BiometricType.fingerprint) ||
-          biometrics.contains(BiometricType.strong) ||
-          biometrics.contains(BiometricType.weak);
+      final availability =
+          await context.read<AuthProvider>().getBiometricAvailability();
 
       return _BiometricState(
-        hasFaceId: hasFaceId,
-        hasFingerprint: hasFingerprint,
-        enabled: enabled,
-        hasSession: hasSession,
+        hasFaceId: availability.kind == BiometricKind.face,
+        hasFingerprint: availability.kind == BiometricKind.fingerprint,
       );
     } catch (_) {
       return const _BiometricState();
@@ -232,15 +213,9 @@ class _LoginScreenState extends State<LoginScreen>
       return;
     }
 
-    if (!state.enabled) {
+    if (!context.read<AuthProvider>().isBiometricLocked) {
       _showTopErrorPopup(
-        'Washa biometric kwenye sehemu ya Akaunti baada ya kuingia.',
-      );
-      return;
-    }
-
-    if (!state.hasSession) {
-      _showTopErrorPopup('Washa biometric kwanza ndani ya akaunti yako.');
+          'Ingia kikamilifu kisha washa biometric kwenye Akaunti.');
       return;
     }
 
@@ -732,14 +707,10 @@ class _LoginScreenState extends State<LoginScreen>
 class _BiometricState {
   final bool hasFaceId;
   final bool hasFingerprint;
-  final bool enabled;
-  final bool hasSession;
 
   const _BiometricState({
     this.hasFaceId = false,
     this.hasFingerprint = false,
-    this.enabled = false,
-    this.hasSession = false,
   });
 }
 

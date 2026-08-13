@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
-import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/buttons/gradient_button.dart';
 import '../providers/auth_provider.dart';
+import '../services/biometric_auth_service.dart';
 
 class BiometricScreen extends StatefulWidget {
   const BiometricScreen({super.key});
@@ -19,7 +18,6 @@ class BiometricScreen extends StatefulWidget {
 }
 
 class _BiometricScreenState extends State<BiometricScreen> {
-  final LocalAuthentication _localAuth = LocalAuthentication();
   bool _isAuthenticating = false;
   bool _failed = false;
   bool _hasFaceId = false;
@@ -34,33 +32,22 @@ class _BiometricScreenState extends State<BiometricScreen> {
 
   Future<void> _prepareAndAuthenticate() async {
     try {
-      final accountId = await SecureStorage().getActiveBiometricAccountId();
-      final enabled = accountId == null
-          ? false
-          : await SecureStorage().isBiometricEnabledForAccount(accountId);
-      final hasSession = accountId == null
-          ? false
-          : await SecureStorage().hasBiometricTokenForAccount(accountId);
-      final supported = await _localAuth.isDeviceSupported();
-      final enrolled = await _localAuth.canCheckBiometrics;
-      final biometrics = (supported && enrolled)
-          ? await _localAuth.getAvailableBiometrics()
-          : const <BiometricType>[];
-      final hasFace = biometrics.contains(BiometricType.face);
-      final hasFingerprint = biometrics.contains(BiometricType.fingerprint) ||
-          biometrics.contains(BiometricType.strong) ||
-          biometrics.contains(BiometricType.weak);
+      final auth = context.read<AuthProvider>();
+      final availability = await auth.getBiometricAvailability();
+      final hasFace = availability.kind == BiometricKind.face;
 
       if (!mounted) return;
       setState(() {
         _hasFaceId = hasFace;
       });
 
-      if (!enabled || !hasSession || (!hasFace && !hasFingerprint)) {
+      if (!auth.isBiometricLocked || !availability.canAuthenticate) {
         if (!mounted) return;
         setState(() {
           _failed = true;
-          _statusMessage = 'Biometric haijawashwa kwa akaunti hii.';
+          _statusMessage = auth.isBiometricLocked
+              ? 'Biometric haipatikani kwenye kifaa hiki.'
+              : 'Hakuna kikao kilichofungwa kwa biometric.';
         });
         return;
       }
@@ -84,38 +71,34 @@ class _BiometricScreenState extends State<BiometricScreen> {
     });
 
     try {
-      final success = await _localAuth.authenticate(
-        localizedReason: _hasFaceId
-            ? 'Thibitisha kwa Face ID ili kuingia'
-            : 'Thibitisha kwa alama ya kidole ili kuingia',
-        options: const AuthenticationOptions(
-          biometricOnly: true,
-          stickyAuth: true,
-          useErrorDialogs: true,
-          sensitiveTransaction: true,
-        ),
-      );
-      if (success && mounted) {
-        final auth = context.read<AuthProvider>();
-        final loggedIn = await auth.loginWithBiometricSession();
-        if (!loggedIn) {
-          setState(() {
-            _isAuthenticating = false;
-            _failed = true;
-            _statusMessage =
-                'Kikao cha biometric kimeisha. Ingia kwa nywila kisha washa tena biometric.';
-          });
-          return;
-        }
-        if (!mounted) return;
+      final auth = context.read<AuthProvider>();
+      final result = await auth.unlockBiometricSession();
+      if (!mounted) return;
+      if (result == BiometricUnlockResult.success) {
         context.go(auth.homeRoute);
-      } else if (mounted) {
-        setState(() {
-          _isAuthenticating = false;
-          _failed = true;
-          _statusMessage = 'Uthibitishaji umeshindikana. Jaribu tena.';
-        });
+        return;
       }
+      setState(() {
+        _isAuthenticating = false;
+        _failed = true;
+        _statusMessage = switch (result) {
+          BiometricUnlockResult.canceled =>
+            'Umeghairi uthibitishaji. Jaribu tena ukiwa tayari.',
+          BiometricUnlockResult.unavailable =>
+            'Biometric haipatikani. Tumia njia ya kawaida kuingia.',
+          BiometricUnlockResult.lockedOut =>
+            'Biometric imefungwa kwa muda. Tumia njia ya kawaida kuingia.',
+          BiometricUnlockResult.temporaryFailure =>
+            'Imeshindikana kuthibitisha kikao kwa sasa. Angalia mtandao kisha ujaribu tena.',
+          BiometricUnlockResult.accountMismatch =>
+            'Kikao hakilingani na akaunti hii. Tafadhali ingia tena.',
+          BiometricUnlockResult.invalidSession =>
+            'Kikao kimeisha. Tafadhali ingia tena.',
+          BiometricUnlockResult.platformError =>
+            'Hitilafu ya biometric imetokea. Tumia njia ya kawaida kuingia.',
+          BiometricUnlockResult.success => null,
+        };
+      });
     } catch (_) {
       if (mounted) {
         setState(() {
@@ -268,7 +251,12 @@ class _BiometricScreenState extends State<BiometricScreen> {
                           ),
                           const SizedBox(height: AppSpacing.sm),
                           TextButton(
-                            onPressed: () => context.go('/login'),
+                            onPressed: () async {
+                              await context
+                                  .read<AuthProvider>()
+                                  .useFullSignIn();
+                              if (context.mounted) context.go('/login');
+                            },
                             child: Text(
                               'Ingia kwa Nywila',
                               style: GoogleFonts.montserrat(

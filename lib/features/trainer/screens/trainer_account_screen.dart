@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_spacing.dart';
@@ -11,6 +10,7 @@ import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../auth/services/biometric_auth_service.dart';
 import '../../auth/services/auth_service.dart';
 
 class TrainerAccountScreen extends StatefulWidget {
@@ -29,7 +29,6 @@ class TrainerAccountScreen extends StatefulWidget {
 class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
   static const double _accountHeaderHeight = 136;
   final ScrollController _scroll = ScrollController();
-  final LocalAuthentication _localAuth = LocalAuthentication();
   bool _biometricEnabled = false;
   bool _biometricAvailable = false;
   bool _biometricBusy = false;
@@ -54,15 +53,10 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
 
   Future<void> _loadBiometricSettings() async {
     try {
-      final supported = await _localAuth.isDeviceSupported();
-      final enrolled = await _localAuth.canCheckBiometrics;
-      final types = (supported && enrolled)
-          ? await _localAuth.getAvailableBiometrics()
-          : const <BiometricType>[];
-      final hasFace = types.contains(BiometricType.face);
-      final hasFingerprint = types.contains(BiometricType.fingerprint) ||
-          types.contains(BiometricType.strong) ||
-          types.contains(BiometricType.weak);
+      final availability =
+          await context.read<AuthProvider>().getBiometricAvailability();
+      final hasFace = availability.kind == BiometricKind.face;
+      final hasFingerprint = availability.kind == BiometricKind.fingerprint;
       final accountId = await _currentAccountId();
       final enabled = accountId == null
           ? false
@@ -98,12 +92,9 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
     setState(() => _biometricBusy = true);
     try {
       if (next) {
-        final supported = await _localAuth.isDeviceSupported();
-        final enrolled = await _localAuth.canCheckBiometrics;
-        final availableTypes = (supported && enrolled)
-            ? await _localAuth.getAvailableBiometrics()
-            : const <BiometricType>[];
-        if (!supported || !enrolled || availableTypes.isEmpty) {
+        final auth = context.read<AuthProvider>();
+        final availability = await auth.getBiometricAvailability();
+        if (!availability.canAuthenticate) {
           if (mounted) {
             showTopPopup(
               context,
@@ -113,15 +104,10 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
           return;
         }
 
-        final verified = await _localAuth.authenticate(
-          localizedReason: 'Thibitisha utambulisho kuwasha $_biometricLabel',
-          options: const AuthenticationOptions(
-            biometricOnly: true,
-            stickyAuth: true,
-            useErrorDialogs: true,
-          ),
+        final verified = await auth.verifyBiometric(
+          reason: 'Thibitisha utambulisho kuwasha $_biometricLabel',
         );
-        if (!verified) {
+        if (verified != BiometricVerificationResult.success) {
           if (mounted) {
             showTopPopup(context, 'Uthibitishaji umeshindikana.');
           }
@@ -138,13 +124,6 @@ class _TrainerAccountScreenState extends State<TrainerAccountScreen> {
       }
 
       await SecureStorage().setBiometricEnabledForAccount(accountId, next);
-      if (next) {
-        final token = await SecureStorage().getToken();
-        if (token != null && token.isNotEmpty) {
-          await SecureStorage().saveBiometricTokenForAccount(accountId, token);
-          await SecureStorage().setActiveBiometricAccountId(accountId);
-        }
-      }
 
       if (!mounted) return;
       setState(() => _biometricEnabled = next);

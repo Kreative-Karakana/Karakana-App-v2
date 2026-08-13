@@ -3,6 +3,7 @@ import 'package:karakana_app/core/network/api_client.dart';
 import 'package:karakana_app/features/auth/providers/auth_provider.dart';
 import 'package:karakana_app/features/auth/services/auth_service.dart';
 import 'package:karakana_app/features/auth/services/auth_session_store.dart';
+import 'package:karakana_app/features/auth/services/biometric_auth_service.dart';
 
 void main() {
   group('AuthProvider.login', () {
@@ -160,18 +161,16 @@ void main() {
       final api = _FakeAuthApi(logoutError: Exception('offline'));
       final storage = _FakeAuthSessionStore()
         ..token = 'abc123'
-        ..activeBiometricAccountId = '42'
         ..biometricEnabledByAccount['42'] = true
-        ..biometricTokens['42'] = 'biometric-token';
+        ..legacyBiometricTokensPresent = true;
       final provider = AuthProvider(api: api, storage: storage);
 
       await provider.logout();
 
       expect(provider.isAuthenticated, isFalse);
       expect(storage.token, isNull);
-      expect(storage.activeBiometricAccountId, isNull);
-      expect(storage.biometricTokens, isEmpty);
-      expect(storage.biometricEnabledByAccount['42'], isTrue);
+      expect(storage.legacyBiometricTokensPresent, isFalse);
+      expect(storage.biometricEnabledByAccount['42'], isFalse);
     });
 
     test(
@@ -183,20 +182,16 @@ void main() {
         );
         final storage = _FakeAuthSessionStore()
           ..token = 'stale-token'
-          ..activeBiometricAccountId = '42'
           ..biometricEnabledByAccount['42'] = true
-          ..biometricTokens['42'] = 'stale-token';
+          ..legacyBiometricTokensPresent = true;
         final provider = AuthProvider(api: api, storage: storage);
 
         await provider.logout();
-        final restoredBeforeLogin = await provider.loginWithBiometricSession();
         final loggedIn = await provider.login('zena@example.test', 'password');
 
-        expect(restoredBeforeLogin, isFalse);
         expect(loggedIn, isTrue);
-        expect(storage.biometricEnabledByAccount['42'], isTrue);
-        expect(storage.biometricTokens['42'], 'fresh-token');
-        expect(storage.activeBiometricAccountId, '42');
+        expect(storage.biometricEnabledByAccount['42'], isFalse);
+        expect(storage.token, 'fresh-token');
       },
     );
   });
@@ -258,54 +253,218 @@ void main() {
     });
   });
 
-  group('AuthProvider.loginWithBiometricSession', () {
+  group('AuthProvider biometric session unlock', () {
     test(
-      'restores the session when the profile matches the saved account',
+      'real lifecycle reaches locked state then validates before learner auth',
+      () async {
+        final storage = _FakeAuthSessionStore();
+        final api = _FakeAuthApi(
+          loginResponse: {'token': 'session-token', 'roles': <String>[]},
+          profileResponse: {'id': 42, 'first_name': 'Zena'},
+        );
+        final initialProvider = AuthProvider(api: api, storage: storage);
+        expect(await initialProvider.login('zena@example.test', 'password'),
+            isTrue);
+        await storage.setBiometricEnabledForAccount('42', true);
+
+        final restartedProvider = AuthProvider(
+          api: api,
+          storage: storage,
+          biometricAuth: _FakeBiometricAuth(),
+        );
+        await restartedProvider.initialize();
+        expect(restartedProvider.isBiometricLocked, isTrue);
+        expect(restartedProvider.isAuthenticated, isFalse);
+
+        final result = await restartedProvider.unlockBiometricSession();
+
+        expect(result, BiometricUnlockResult.success);
+        expect(restartedProvider.isAuthenticated, isTrue);
+        expect(restartedProvider.homeRoute, '/home');
+      },
+    );
+
+    test(
+      'restores persisted trainer roles and routes to trainer dashboard',
       () async {
         final api = _FakeAuthApi(
           profileResponse: {'id': 42, 'first_name': 'Zena'},
         );
         final storage = _FakeAuthSessionStore()
-          ..activeBiometricAccountId = '42'
-          ..biometricTokens['42'] = 'biometric-token';
-        final provider = AuthProvider(api: api, storage: storage);
-
-        final ok = await provider.loginWithBiometricSession();
-
-        expect(ok, isTrue);
-        expect(provider.isAuthenticated, isTrue);
-        expect(storage.token, 'biometric-token');
-      },
-    );
-
-    test(
-      'fails when the restored profile does not match the saved account',
-      () async {
-        final api = _FakeAuthApi(
-          profileResponse: {'id': 99, 'first_name': 'Zena'},
+          ..token = 'session-token'
+          ..userId = '42'
+          ..roles = ['trainers']
+          ..biometricEnabledByAccount['42'] = true;
+        final provider = AuthProvider(
+          api: api,
+          storage: storage,
+          biometricAuth: _FakeBiometricAuth(),
         );
-        final storage = _FakeAuthSessionStore()
-          ..activeBiometricAccountId = '42'
-          ..biometricTokens['42'] = 'biometric-token';
-        final provider = AuthProvider(api: api, storage: storage);
+        await provider.initialize();
 
-        final ok = await provider.loginWithBiometricSession();
+        final result = await provider.unlockBiometricSession();
 
-        expect(ok, isFalse);
-        expect(provider.isAuthenticated, isFalse);
+        expect(result, BiometricUnlockResult.success);
+        expect(provider.homeRoute, '/trainer/dashboard');
       },
     );
 
-    test('fails when there is no saved biometric account', () async {
-      final api = _FakeAuthApi();
-      final storage = _FakeAuthSessionStore();
-      final provider = AuthProvider(api: api, storage: storage);
+    test('account mismatch fails closed', () async {
+      final storage = _lockedStorage();
+      final provider = AuthProvider(
+        api: _FakeAuthApi(profileResponse: {'id': 99}),
+        storage: storage,
+        biometricAuth: _FakeBiometricAuth(),
+      );
+      await provider.initialize();
 
-      final ok = await provider.loginWithBiometricSession();
+      final result = await provider.unlockBiometricSession();
 
-      expect(ok, isFalse);
+      expect(result, BiometricUnlockResult.accountMismatch);
+      expect(provider.isAuthenticated, isFalse);
+      expect(storage.cleared, isTrue);
+    });
+
+    for (final entry in {
+      BiometricVerificationResult.canceled: BiometricUnlockResult.canceled,
+      BiometricVerificationResult.lockedOut: BiometricUnlockResult.lockedOut,
+      BiometricVerificationResult.unavailable:
+          BiometricUnlockResult.unavailable,
+      BiometricVerificationResult.platformError:
+          BiometricUnlockResult.platformError,
+    }.entries) {
+      test('${entry.key.name} fails safely without backend validation',
+          () async {
+        final api = _FakeAuthApi(profileResponse: {'id': 42});
+        final provider = AuthProvider(
+          api: api,
+          storage: _lockedStorage(),
+          biometricAuth: _FakeBiometricAuth(result: entry.key),
+        );
+        await provider.initialize();
+
+        expect(await provider.unlockBiometricSession(), entry.value);
+        expect(provider.isBiometricLocked, isTrue);
+        expect(api.fetchProfileCallCount, 0);
+      });
+    }
+
+    test('temporary profile failure remains locked for retry', () async {
+      final provider = AuthProvider(
+        api: _FakeAuthApi(profileError: Exception('offline')),
+        storage: _lockedStorage(),
+        biometricAuth: _FakeBiometricAuth(),
+      );
+      await provider.initialize();
+
+      expect(
+        await provider.unlockBiometricSession(),
+        BiometricUnlockResult.temporaryFailure,
+      );
+      expect(provider.isBiometricLocked, isTrue);
+    });
+
+    test('revoked session 401 fails closed and cannot be resurrected',
+        () async {
+      final storage = _lockedStorage();
+      final provider = AuthProvider(
+        api: _FakeAuthApi(profileUnauthorized: true),
+        storage: storage,
+        biometricAuth: _FakeBiometricAuth(),
+      );
+      await provider.initialize();
+
+      expect(
+        await provider.unlockBiometricSession(),
+        BiometricUnlockResult.invalidSession,
+      );
+      expect(provider.authenticationState, AuthenticationState.unauthenticated);
+      expect(storage.token, isNull);
+    });
+
+    test('unavailable hardware remains locked without verification', () async {
+      final biometric = _FakeBiometricAuth(available: false);
+      final provider = AuthProvider(
+        api: _FakeAuthApi(profileResponse: {'id': 42}),
+        storage: _lockedStorage(),
+        biometricAuth: biometric,
+      );
+      await provider.initialize();
+
+      expect(
+        await provider.unlockBiometricSession(),
+        BiometricUnlockResult.unavailable,
+      );
+      expect(provider.isBiometricLocked, isTrue);
+      expect(biometric.authenticateCallCount, 0);
+    });
+
+    test('global 401 while locked clears session and requires full sign-in',
+        () async {
+      final storage = _lockedStorage();
+      final provider = AuthProvider(
+        api: _FakeAuthApi(),
+        storage: storage,
+        biometricAuth: _FakeBiometricAuth(),
+      );
+      await provider.initialize();
+
+      await ApiClient().handleUnauthorized();
+
+      expect(provider.authenticationState, AuthenticationState.unauthenticated);
+      expect(storage.token, isNull);
+      expect(storage.biometricEnabledByAccount['42'], isFalse);
+    });
+
+    test('startup removes legacy bearer-token copies but keeps session',
+        () async {
+      final storage = _lockedStorage()..legacyBiometricTokensPresent = true;
+      final provider = AuthProvider(
+        api: _FakeAuthApi(profileResponse: {'id': 42}),
+        storage: storage,
+        biometricAuth: _FakeBiometricAuth(),
+      );
+
+      await provider.initialize();
+
+      expect(storage.legacyBiometricTokensPresent, isFalse);
+      expect(storage.token, 'session-token');
+      expect(provider.isBiometricLocked, isTrue);
     });
   });
+}
+
+_FakeAuthSessionStore _lockedStorage() => _FakeAuthSessionStore()
+  ..token = 'session-token'
+  ..userId = '42'
+  ..biometricEnabledByAccount['42'] = true;
+
+class _FakeBiometricAuth implements BiometricAuthService {
+  _FakeBiometricAuth({
+    this.result = BiometricVerificationResult.success,
+    this.available = true,
+  });
+
+  final BiometricVerificationResult result;
+  final bool available;
+  int authenticateCallCount = 0;
+
+  @override
+  Future<BiometricVerificationResult> authenticate({
+    required String reason,
+  }) async {
+    authenticateCallCount++;
+    return result;
+  }
+
+  @override
+  Future<BiometricAvailability> checkAvailability() async => available
+      ? const BiometricAvailability(
+          isSupported: true,
+          isEnrolled: true,
+          kind: BiometricKind.face,
+        )
+      : const BiometricAvailability.unavailable();
 }
 
 class _FakeAuthApi implements AuthApi {
@@ -313,6 +472,7 @@ class _FakeAuthApi implements AuthApi {
     this.loginResponse,
     this.profileResponse,
     this.profileError,
+    this.profileUnauthorized = false,
     this.loginError,
     this.logoutError,
     this.deleteAccountError,
@@ -322,6 +482,7 @@ class _FakeAuthApi implements AuthApi {
   dynamic loginResponse;
   dynamic profileResponse;
   Object? profileError;
+  bool profileUnauthorized;
   Object? loginError;
   Object? logoutError;
   Object? deleteAccountError;
@@ -351,6 +512,10 @@ class _FakeAuthApi implements AuthApi {
   @override
   Future<dynamic> fetchProfile() async {
     fetchProfileCallCount++;
+    if (profileUnauthorized) {
+      await ApiClient().handleUnauthorized();
+      throw Exception('401 unauthorized');
+    }
     if (profileError != null) throw profileError!;
     return profileResponse ?? <String, dynamic>{};
   }
@@ -418,9 +583,8 @@ class _FakeAuthSessionStore implements AuthSessionStore {
   bool cleared = false;
   bool clearDelay = false;
   int clearCallCount = 0;
-  String? activeBiometricAccountId;
   final Map<String, bool> biometricEnabledByAccount = {};
-  final Map<String, String> biometricTokens = {};
+  bool legacyBiometricTokensPresent = false;
 
   @override
   Future<void> deleteToken() async => token = null;
@@ -459,8 +623,8 @@ class _FakeAuthSessionStore implements AuthSessionStore {
     token = null;
     roles = null;
     userId = null;
-    biometricTokens.clear();
-    activeBiometricAccountId = null;
+    legacyBiometricTokensPresent = false;
+    biometricEnabledByAccount.updateAll((_, __) => false);
   }
 
   @override
@@ -468,21 +632,16 @@ class _FakeAuthSessionStore implements AuthSessionStore {
       biometricEnabledByAccount[accountId] ?? false;
 
   @override
-  Future<void> saveBiometricTokenForAccount(
+  Future<String?> getUserId() async => userId;
+
+  @override
+  Future<void> setBiometricEnabledForAccount(
     String accountId,
-    String token,
+    bool enabled,
   ) async =>
-      biometricTokens[accountId] = token;
+      biometricEnabledByAccount[accountId] = enabled;
 
   @override
-  Future<String?> getBiometricTokenForAccount(String accountId) async =>
-      biometricTokens[accountId];
-
-  @override
-  Future<void> setActiveBiometricAccountId(String? accountId) async =>
-      activeBiometricAccountId = accountId;
-
-  @override
-  Future<String?> getActiveBiometricAccountId() async =>
-      activeBiometricAccountId;
+  Future<void> removeLegacyBiometricCredentials() async =>
+      legacyBiometricTokensPresent = false;
 }

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:async';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -10,19 +9,43 @@ import '../../../core/network/api_client.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../services/auth_service.dart';
 import '../services/auth_session_store.dart';
+import '../services/biometric_auth_service.dart';
+
+enum AuthenticationState {
+  initializing,
+  unauthenticated,
+  biometricLocked,
+  authenticated,
+}
+
+enum BiometricUnlockResult {
+  success,
+  canceled,
+  unavailable,
+  lockedOut,
+  invalidSession,
+  temporaryFailure,
+  accountMismatch,
+  platformError,
+}
 
 class AuthProvider extends ChangeNotifier {
-  AuthProvider({AuthApi? api, AuthSessionStore? storage})
-      : _api = api ?? AuthService(),
-        _storage = storage ?? SecureStorage() {
+  AuthProvider({
+    AuthApi? api,
+    AuthSessionStore? storage,
+    BiometricAuthService? biometricAuth,
+  })  : _api = api ?? AuthService(),
+        _storage = storage ?? SecureStorage(),
+        _biometricAuth = biometricAuth ?? LocalBiometricAuthService() {
     ApiClient().setUnauthorizedHandler(invalidateAuthentication);
   }
 
   final AuthApi _api;
   final AuthSessionStore _storage;
+  final BiometricAuthService _biometricAuth;
 
   bool _isLoading = false;
-  bool _isAuthenticated = false;
+  AuthenticationState _authenticationState = AuthenticationState.initializing;
   Map<String, dynamic>? _user;
   List<dynamic>? _roles;
   String? _errorMessage;
@@ -30,7 +53,11 @@ class AuthProvider extends ChangeNotifier {
   Future<void>? _authenticationInvalidationInFlight;
 
   bool get isLoading => _isLoading;
-  bool get isAuthenticated => _isAuthenticated;
+  AuthenticationState get authenticationState => _authenticationState;
+  bool get isAuthenticated =>
+      _authenticationState == AuthenticationState.authenticated;
+  bool get isBiometricLocked =>
+      _authenticationState == AuthenticationState.biometricLocked;
   Map<String, dynamic>? get user => _user;
   String? get errorMessage => _errorMessage;
   bool get isOnboardingComplete => _isOnboardingComplete;
@@ -88,26 +115,23 @@ class AuthProvider extends ChangeNotifier {
     return isTrainer ? '/trainer/dashboard' : '/home';
   }
 
-  Future<void> _syncBiometricSessionForCurrentUser() async {
-    final accountId = userId?.toString();
-    if (accountId == null || accountId.isEmpty) return;
-    if (await _storage.isBiometricEnabledForAccount(accountId)) {
-      final token = await _storage.getToken();
-      if (token != null && token.isNotEmpty) {
-        await _storage.saveBiometricTokenForAccount(accountId, token);
-        await _storage.setActiveBiometricAccountId(accountId);
-      }
-    }
-  }
-
   Future<void> initialize() async {
     _isOnboardingComplete = await _storage.isOnboardingComplete();
+    await _storage.removeLegacyBiometricCredentials();
     final hasToken = await _storage.hasToken();
     if (hasToken) {
       _roles = await _storage.loadRoles();
-      // Trust local session immediately for fast startup; refresh profile in background.
-      _isAuthenticated = true;
-      unawaited(getCurrentUser());
+      final accountId = await _storage.getUserId();
+      final biometricEnabled = accountId != null &&
+          await _storage.isBiometricEnabledForAccount(accountId);
+      if (biometricEnabled) {
+        _authenticationState = AuthenticationState.biometricLocked;
+      } else {
+        _authenticationState = AuthenticationState.authenticated;
+        getCurrentUser();
+      }
+    } else {
+      _authenticationState = AuthenticationState.unauthenticated;
     }
     notifyListeners();
   }
@@ -148,8 +172,7 @@ class AuthProvider extends ChangeNotifier {
           notifyListeners();
           return false;
         }
-        await _syncBiometricSessionForCurrentUser();
-        _isAuthenticated = true;
+        _authenticationState = AuthenticationState.authenticated;
         _isLoading = false;
         notifyListeners();
         return true;
@@ -234,8 +257,7 @@ class AuthProvider extends ChangeNotifier {
           notifyListeners();
           return false;
         }
-        await _syncBiometricSessionForCurrentUser();
-        _isAuthenticated = true;
+        _authenticationState = AuthenticationState.authenticated;
         _isLoading = false;
         notifyListeners();
         return true;
@@ -297,7 +319,7 @@ class AuthProvider extends ChangeNotifier {
     try {
       await _storage.clearAll();
     } finally {
-      _isAuthenticated = false;
+      _authenticationState = AuthenticationState.unauthenticated;
       _user = null;
       _roles = null;
       _errorMessage = null;
@@ -486,8 +508,9 @@ class AuthProvider extends ChangeNotifier {
         notifyListeners();
         return false;
       }
-      await _syncBiometricSessionForCurrentUser();
-      _isAuthenticated = true;
+      if (!isBiometricLocked) {
+        _authenticationState = AuthenticationState.authenticated;
+      }
       _isLoading = false;
       notifyListeners();
       return true;
@@ -509,36 +532,75 @@ class AuthProvider extends ChangeNotifier {
       if (_user?['id'] != null) {
         await _storage.saveUserId(_user!['id'].toString());
       }
-      _isAuthenticated = true;
+      if (!isBiometricLocked) {
+        _authenticationState = AuthenticationState.authenticated;
+      }
       return true;
     } catch (e) {
       if (kDebugMode) debugPrint('[AuthProvider] getCurrentUser error: $e');
-      _isAuthenticated = false;
+      if (_authenticationState != AuthenticationState.biometricLocked) {
+        _authenticationState = AuthenticationState.unauthenticated;
+      }
       notifyListeners();
       return false;
     }
   }
 
-  Future<bool> loginWithBiometricSession() async {
-    try {
-      final accountId = await _storage.getActiveBiometricAccountId();
-      if (accountId == null || accountId.isEmpty) return false;
-      final token = await _storage.getBiometricTokenForAccount(accountId);
-      if (token == null || token.isEmpty) return false;
-      await _storage.saveToken(token);
-      final profileLoaded = await getCurrentUser();
-      if (!profileLoaded) return false;
-      final currentUserId = userId?.toString();
-      if (currentUserId == null || currentUserId != accountId) {
-        await invalidateAuthentication();
-        return false;
-      }
-      notifyListeners();
-      return _isAuthenticated;
-    } catch (_) {
-      return false;
+  Future<BiometricAvailability> getBiometricAvailability() =>
+      _biometricAuth.checkAvailability();
+
+  Future<BiometricVerificationResult> verifyBiometric({
+    required String reason,
+  }) =>
+      _biometricAuth.authenticate(reason: reason);
+
+  Future<BiometricUnlockResult> unlockBiometricSession() async {
+    if (!isBiometricLocked) return BiometricUnlockResult.invalidSession;
+
+    final availability = await getBiometricAvailability();
+    if (!availability.canAuthenticate) {
+      return BiometricUnlockResult.unavailable;
     }
+    final verification = await verifyBiometric(
+      reason: availability.kind == BiometricKind.face
+          ? 'Thibitisha kwa Face ID ili kuingia'
+          : 'Thibitisha kwa alama ya kidole ili kuingia',
+    );
+    switch (verification) {
+      case BiometricVerificationResult.canceled:
+        return BiometricUnlockResult.canceled;
+      case BiometricVerificationResult.unavailable:
+        return BiometricUnlockResult.unavailable;
+      case BiometricVerificationResult.lockedOut:
+        return BiometricUnlockResult.lockedOut;
+      case BiometricVerificationResult.platformError:
+        return BiometricUnlockResult.platformError;
+      case BiometricVerificationResult.success:
+        break;
+    }
+
+    final expectedAccountId = await _storage.getUserId();
+    if (expectedAccountId == null || expectedAccountId.isEmpty) {
+      await invalidateAuthentication();
+      return BiometricUnlockResult.invalidSession;
+    }
+
+    final profileLoaded = await getCurrentUser();
+    if (!profileLoaded) {
+      return _authenticationState == AuthenticationState.unauthenticated
+          ? BiometricUnlockResult.invalidSession
+          : BiometricUnlockResult.temporaryFailure;
+    }
+    if (userId?.toString() != expectedAccountId) {
+      await invalidateAuthentication();
+      return BiometricUnlockResult.accountMismatch;
+    }
+    _authenticationState = AuthenticationState.authenticated;
+    notifyListeners();
+    return BiometricUnlockResult.success;
   }
+
+  Future<void> useFullSignIn() => invalidateAuthentication();
 
   Map<String, dynamic>? _extractUser(dynamic data) {
     if (data is! Map) return null;
