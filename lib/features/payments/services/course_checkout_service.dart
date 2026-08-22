@@ -37,9 +37,8 @@ class ApiCourseCheckoutService implements CourseCheckoutApi {
       queryParameters: {'course_id': courseId, 'active': true},
     );
     final data = response.data;
-    final rows = data is Map
-        ? (data['results'] as List? ?? const [])
-        : data as List;
+    final rows =
+        data is Map ? (data['results'] as List? ?? const []) : data as List;
     if (rows.isEmpty || rows.first is! Map) return null;
     return Map<String, dynamic>.from(rows.first as Map);
   }

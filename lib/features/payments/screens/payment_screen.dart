@@ -45,8 +45,7 @@ class _PaymentScreenState extends State<PaymentScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _ownsCheckoutController = widget.checkoutController == null;
-    _checkoutController =
-        widget.checkoutController ??
+    _checkoutController = widget.checkoutController ??
         CourseCheckoutController(courseId: widget.courseId);
     _checkoutController.addListener(_onCheckoutChanged);
     _checkoutController.recoverActiveAttempt();
@@ -289,13 +288,12 @@ class _PaymentScreenState extends State<PaymentScreen>
                 final isSelected = _selectedProvider == provider['id'];
                 final color = provider['color']! as Color;
                 return GestureDetector(
-                  onTap:
-                      _checkoutController.hasActiveAttempt ||
+                  onTap: _checkoutController.hasActiveAttempt ||
                           _checkoutController.isBusy
                       ? null
                       : () => setState(
-                          () => _selectedProvider = provider['id']! as String,
-                        ),
+                            () => _selectedProvider = provider['id']! as String,
+                          ),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     margin: const EdgeInsets.only(
@@ -372,9 +370,8 @@ class _PaymentScreenState extends State<PaymentScreen>
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: isSelected
-                                  ? color
-                                  : const Color(0xFFE8D5C8),
+                              color:
+                                  isSelected ? color : const Color(0xFFE8D5C8),
                               width: 2,
                             ),
                             color: isSelected
@@ -532,8 +529,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                   Expanded(
                     child: TextField(
                       controller: _phoneController,
-                      enabled:
-                          !_checkoutController.hasActiveAttempt &&
+                      enabled: !_checkoutController.hasActiveAttempt &&
                           !_checkoutController.isBusy,
                       keyboardType: TextInputType.phone,
                       onChanged: (_) => setState(() {}),
@@ -696,8 +692,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                     ),
                     elevation: 0,
                   ),
-                  onPressed:
-                      (_selectedProvider != null &&
+                  onPressed: (_selectedProvider != null &&
                           _phoneController.text.isNotEmpty &&
                           !_checkoutController.hasActiveAttempt &&
                           !_checkoutController.isBusy)
