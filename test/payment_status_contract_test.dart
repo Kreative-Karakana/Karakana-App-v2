@@ -33,4 +33,18 @@ void main() {
       isTrue,
     );
   });
+
+  test('ambiguous accepted acknowledgement is recoverable but not settled', () {
+    final payload = {
+      'external_id': 'local-attempt-1',
+      'payment_state': 'PENDING',
+      'initiation_state': 'AMBIGUOUS',
+      'action': 'poll_status',
+      'recoverable': true,
+    };
+
+    expect(PaymentStatusContract.isAmbiguous(payload), isTrue);
+    expect(PaymentStatusContract.isRecoverable(payload), isTrue);
+    expect(PaymentStatusContract.isSettled(payload), isFalse);
+  });
 }
