@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -110,15 +111,28 @@ class _EbookLibraryScreenState extends State<EbookLibraryScreen> {
                         '/zana/ebooks/read/${p.ebook.id}',
                         extra: {'ebookTitle': p.ebook.title},
                       ),
-                      leading: p.ebook.coverImageUrl != null
+                      leading: p.ebook.coverImageUrl != null &&
+                              p.ebook.coverImageUrl!.isNotEmpty
                           ? ClipRRect(
                               borderRadius:
                                   BorderRadius.circular(AppSpacing.sm),
-                              child: Image.network(
-                                p.ebook.coverImageUrl!,
+                              child: CachedNetworkImage(
+                                imageUrl: p.ebook.coverImageUrl!,
                                 width: 52,
                                 height: 64,
                                 fit: BoxFit.cover,
+                                placeholder: (_, __) => const SizedBox(
+                                  width: 52,
+                                  height: 64,
+                                  child: Center(
+                                    child: KarakanaWaveLoader(size: 20),
+                                  ),
+                                ),
+                                errorWidget: (_, __, ___) => const SizedBox(
+                                  width: 52,
+                                  height: 64,
+                                  child: Icon(Icons.menu_book_outlined),
+                                ),
                               ),
                             )
                           : const Icon(Icons.menu_book_outlined),

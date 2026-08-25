@@ -2029,10 +2029,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         ? const Color(0xFF2A1A0A)
                         : const Color(0xFFF5E6D8),
                     child: cover != null && cover.isNotEmpty
-                        ? Image.network(
-                            cover,
+                        ? CachedNetworkImage(
+                            imageUrl: cover,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Icon(
+                            placeholder: (_, __) => const Center(
+                              child: KarakanaWaveLoader(
+                                color: Color(0xFFE87722),
+                                size: 24,
+                              ),
+                            ),
+                            errorWidget: (_, __, ___) => const Icon(
                               Icons.menu_book_outlined,
                               color: Color(0xFFE87722),
                               size: 34,
@@ -4229,10 +4235,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 color:
                     isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                 child: cover != null && cover.isNotEmpty
-                    ? Image.network(
-                        cover,
+                    ? CachedNetworkImage(
+                        imageUrl: cover,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Icon(
+                        placeholder: (_, __) => const Center(
+                          child: KarakanaWaveLoader(
+                            color: Color(0xFFE87722),
+                            size: 18,
+                          ),
+                        ),
+                        errorWidget: (_, __, ___) => const Icon(
                           Icons.menu_book_outlined,
                           color: Color(0xFFE87722),
                           size: 24,

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -239,9 +240,22 @@ class _TrainerEbookDetailScreenState extends State<TrainerEbookDetailScreen> {
                                     color: Colors.white.withValues(alpha: 0.12),
                                     child: ebook.coverImageUrl != null &&
                                             ebook.coverImageUrl!.isNotEmpty
-                                        ? Image.network(
-                                            ebook.coverImageUrl!,
+                                        ? CachedNetworkImage(
+                                            imageUrl: ebook.coverImageUrl!,
                                             fit: BoxFit.cover,
+                                            placeholder: (_, __) =>
+                                                const Center(
+                                              child: KarakanaWaveLoader(
+                                                color: Colors.white,
+                                                size: 24,
+                                              ),
+                                            ),
+                                            errorWidget: (_, __, ___) =>
+                                                const Icon(
+                                              Icons.menu_book_rounded,
+                                              size: 42,
+                                              color: Colors.white,
+                                            ),
                                           )
                                         : const Icon(
                                             Icons.menu_book_rounded,
