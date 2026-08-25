@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -394,15 +395,15 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                   SizedBox(
                     height: 130,
                     width: double.infinity,
-                    child:
-                        e.coverImageUrl != null && e.coverImageUrl!.isNotEmpty
-                            ? Image.network(
-                                e.coverImageUrl!,
-                                fit: BoxFit.cover,
-                                errorBuilder: (_, __, ___) =>
-                                    _coverFallback(isDark),
-                              )
-                            : _coverFallback(isDark),
+                    child: e.coverImageUrl != null &&
+                            e.coverImageUrl!.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: e.coverImageUrl!,
+                            fit: BoxFit.cover,
+                            placeholder: (_, __) => _coverFallback(isDark),
+                            errorWidget: (_, __, ___) => _coverFallback(isDark),
+                          )
+                        : _coverFallback(isDark),
                   ),
                   // gradient scrim
                   Positioned(

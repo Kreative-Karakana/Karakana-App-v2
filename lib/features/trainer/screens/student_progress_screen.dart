@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -281,6 +282,7 @@ class _StudentCard extends StatelessWidget {
     final isCompleted = progress >= 100;
 
     final avatar = student['avatar'] as String?;
+    final hasAvatar = avatar != null && avatar.isNotEmpty;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -305,17 +307,19 @@ class _StudentCard extends StatelessWidget {
                 radius: 22,
                 backgroundColor:
                     isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
-                backgroundImage: avatar != null ? NetworkImage(avatar) : null,
-                child: avatar == null
-                    ? Text(
-                        name.isNotEmpty ? name[0].toUpperCase() : 'M',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFFE87722),
-                        ),
-                      )
-                    : null,
+                child: ClipOval(
+                  child: SizedBox.square(
+                    dimension: 44,
+                    child: hasAvatar
+                        ? CachedNetworkImage(
+                            imageUrl: avatar,
+                            fit: BoxFit.cover,
+                            placeholder: (_, __) => _avatarFallback(name),
+                            errorWidget: (_, __, ___) => _avatarFallback(name),
+                          )
+                        : _avatarFallback(name),
+                  ),
+                ),
               ),
               const SizedBox(width: 12),
               // Info
@@ -422,6 +426,19 @@ class _StudentCard extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _avatarFallback(String name) {
+    return Center(
+      child: Text(
+        name.isNotEmpty ? name[0].toUpperCase() : 'M',
+        style: GoogleFonts.montserrat(
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+          color: const Color(0xFFE87722),
+        ),
       ),
     );
   }
