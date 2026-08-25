@@ -1,6 +1,5 @@
 class AppConstants {
   static const String appName = 'Karakana';
-  static const String appVersion = '2.0.0';
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
     defaultValue: 'https://beta.kreativekarakana.co.tz',
