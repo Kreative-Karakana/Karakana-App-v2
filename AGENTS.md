@@ -4,7 +4,7 @@ For every GitHub issue, follow this sequence in order:
 
 1. Pull the issue from GitHub and read its current description, acceptance criteria, labels, dependencies, and relevant discussion.
 2. Investigate and audit the repository to confirm the problem, its cause, affected code, implementation scope, risks, and appropriate verification.
-3. Before changing any implementation files, explain to the repository owner:
+3. Before changing any implementation files, explain the issue to the repository owner in simple, everyday language. Avoid complex technical jargon and do not assume the owner has specialist technical knowledge. If a technical term cannot be avoided, define it briefly in plain language. Explain:
    - the problem that is about to be fixed;
    - why it occurs and why it matters;
    - the proposed implementation;
