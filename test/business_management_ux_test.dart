@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -27,6 +29,43 @@ void main() {
     expect(find.text('Anza Kutumia Usimamizi wa Biashara'), findsNothing);
 
     await tester.tap(find.text('Jaribu tena'));
+    await tester.pumpAndSettle();
+    expect(service.businessLoadCalls, 2);
+  });
+
+  testWidgets('initial load uses the full-screen loading state',
+      (tester) async {
+    final pendingLoad = Completer<Business?>();
+    final service = _BusinessUxService(nextBusinessLoad: pendingLoad);
+
+    await tester.pumpWidget(_app(service));
+    await tester.pump();
+
+    expect(find.text('Inapakia taarifa...'), findsOneWidget);
+
+    pendingLoad.complete(service._business);
+    await tester.pumpAndSettle();
+    expect(find.text('Duka la Asha'), findsWidgets);
+  });
+
+  testWidgets('pull-to-refresh keeps the dashboard visible', (tester) async {
+    final service = _BusinessUxService();
+    await tester.pumpWidget(_app(service));
+    await tester.pumpAndSettle();
+
+    final pendingRefresh = Completer<Business?>();
+    service.nextBusinessLoad = pendingRefresh;
+    await tester.drag(
+      find.byType(Scrollable).first,
+      const Offset(0, 300),
+    );
+    await tester.pump();
+
+    expect(find.byType(RefreshProgressIndicator), findsOneWidget);
+    expect(find.text('Inapakia taarifa...'), findsNothing);
+    expect(find.text('Duka la Asha'), findsWidgets);
+
+    pendingRefresh.complete(service._business);
     await tester.pumpAndSettle();
     expect(service.businessLoadCalls, 2);
   });
@@ -134,9 +173,10 @@ Widget _app(
 }
 
 class _BusinessUxService implements BusinessManagementApi {
-  _BusinessUxService({this.failLoads = false});
+  _BusinessUxService({this.failLoads = false, this.nextBusinessLoad});
 
   final bool failLoads;
+  Completer<Business?>? nextBusinessLoad;
   int businessLoadCalls = 0;
 
   Business get _business => Business.fromJson({
@@ -159,6 +199,9 @@ class _BusinessUxService implements BusinessManagementApi {
   @override
   Future<Business?> getMyBusiness() async {
     businessLoadCalls++;
+    final pendingLoad = nextBusinessLoad;
+    nextBusinessLoad = null;
+    if (pendingLoad != null) return pendingLoad.future;
     if (failLoads) {
       throw DioException(
         requestOptions: RequestOptions(path: '/businesses/me/'),

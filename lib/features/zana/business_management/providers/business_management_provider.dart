@@ -106,8 +106,14 @@ class BusinessManagementProvider extends ChangeNotifier {
       _searchQuery.isNotEmpty ||
       _ordering != null;
 
-  Future<void> loadInitial() async {
-    _isLoading = true;
+  Future<void> loadInitial() => _load(showFullScreenLoader: true);
+
+  Future<void> refresh() => _load(showFullScreenLoader: false);
+
+  Future<void> _load({required bool showFullScreenLoader}) async {
+    if (showFullScreenLoader) {
+      _isLoading = true;
+    }
     _errorMessage = null;
     notifyListeners();
 
@@ -139,7 +145,9 @@ class BusinessManagementProvider extends ChangeNotifier {
         }
       }
     } finally {
-      _isLoading = false;
+      if (showFullScreenLoader) {
+        _isLoading = false;
+      }
       notifyListeners();
     }
   }
