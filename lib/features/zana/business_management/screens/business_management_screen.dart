@@ -218,7 +218,7 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
           if (provider.hasNoBusiness || provider.business == null) {
             return RefreshIndicator(
               color: AppColors.primary,
-              onRefresh: provider.loadInitial,
+              onRefresh: provider.refresh,
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(18, 20, 18, 28),
                 children: [
@@ -247,7 +247,7 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
 
           return RefreshIndicator(
             color: AppColors.primary,
-            onRefresh: provider.loadInitial,
+            onRefresh: provider.refresh,
             child: ListView(
               controller: _scrollController,
               padding: const EdgeInsets.fromLTRB(18, 18, 18, 28),
