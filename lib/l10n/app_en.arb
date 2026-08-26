@@ -1,0 +1,10 @@
+{
+  "@@locale": "en",
+  "paymentSuccessTitle": "Payment successful!",
+  "paymentSuccessSubtitle": "You now have access to your course. Start learning now!",
+  "paymentSuccessStatusLabel": "Status",
+  "paymentSuccessStatusValue": "Successful",
+  "paymentSuccessDateLabel": "Date",
+  "paymentSuccessStartLearning": "Start Learning",
+  "paymentSuccessBackHome": "Back Home"
+}

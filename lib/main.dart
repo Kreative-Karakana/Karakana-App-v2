@@ -1,11 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
+import 'l10n/app_localizations.dart';
 import 'firebase_options.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/notifications/providers/notification_provider.dart';
@@ -199,6 +201,13 @@ class _KarakanaAppState extends State<KarakanaApp> with WidgetsBindingObserver {
                 themeMode: themeProvider.themeMode,
                 theme: AppTheme.light,
                 darkTheme: AppTheme.dark,
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: AppLocalizations.supportedLocales,
                 routerConfig: router,
               );
             },
