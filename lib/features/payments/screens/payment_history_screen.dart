@@ -8,6 +8,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../widgets/common/empty_state_view.dart';
 import '../utils/payment_status.dart';
 
 enum _TransactionFilter {
@@ -1060,8 +1061,20 @@ class _StatusChip extends StatelessWidget {
   }
 }
 
-class _CenteredState extends StatelessWidget {
+class _CenteredState extends EmptyStateView {
   const _CenteredState({
+    required super.icon,
+    required super.title,
+    required String message,
+    required super.actionLabel,
+    required super.onAction,
+  }) : super(subtitle: message);
+}
+
+// Kept for backwards compatibility with older callers.
+// ignore: unused_element
+class _LegacyCenteredState extends StatelessWidget {
+  const _LegacyCenteredState({
     required this.icon,
     required this.title,
     required this.message,
