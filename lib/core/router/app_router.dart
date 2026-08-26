@@ -44,7 +44,6 @@ import '../../features/trainer/screens/trainer_dashboard_screen.dart';
 import '../../features/fursa/screens/fursa_screen.dart';
 import '../../features/zana/business_management/screens/business_management_screen.dart';
 import '../../features/zana/screens/insurance_screen.dart';
-import '../../features/zana/screens/pos_screen.dart';
 import '../../features/zana/screens/kikoba_screen.dart';
 import '../../features/zana/screens/zana_screen.dart';
 import '../../features/ebooks/screens/ebook_store_screen.dart';
@@ -115,7 +114,6 @@ class AppRouter {
     const publicRoutes = [
       AppRoutes.zana,
       '/zana/kikoba',
-      '/zana/pos',
       '/zana/insurance',
       '/fursa',
     ];
@@ -254,10 +252,6 @@ class AppRouter {
         GoRoute(
           path: '/zana/kikoba',
           builder: (context, state) => const KikobaScreen(),
-        ),
-        GoRoute(
-          path: '/zana/pos',
-          builder: (context, state) => const POSScreen(),
         ),
         GoRoute(
           path: '/zana/biz-manager',
