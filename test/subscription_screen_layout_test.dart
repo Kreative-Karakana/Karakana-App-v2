@@ -60,7 +60,7 @@ void main() {
         greaterThan(tester.getTopLeft(trialPrice).dy));
 
     final weeklyTitle = find.text('Wiki 1');
-    final weeklyPrice = find.text('7,900 TZS');
+    final weeklyPrice = find.text('TZS 7,900');
     final firstPaidAction = find.text('Endelea na Malipo').first;
     expect(tester.getTopLeft(weeklyPrice).dy,
         greaterThan(tester.getTopLeft(weeklyTitle).dy));
@@ -78,7 +78,7 @@ void main() {
       findsNothing,
     );
     expect(find.text('Chagua Mpango Wako'), findsOneWidget);
-    expect(find.text('29,900 TZS'), findsOneWidget);
+    expect(find.text('TZS 29,900'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

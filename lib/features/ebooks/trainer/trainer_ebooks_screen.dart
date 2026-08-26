@@ -2,10 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../models/ebook.dart';
@@ -20,7 +20,6 @@ class TrainerEbooksScreen extends StatefulWidget {
 }
 
 class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
-  final _currency = NumberFormat('#,###');
   final _service = EbookService();
 
   // ── HELPERS ───────────────────────────────────────────────────────────────
@@ -29,12 +28,6 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
     if (n >= 1000000) return '${(n / 1000000).toStringAsFixed(1)}M';
     if (n >= 1000) return '${(n / 1000).toStringAsFixed(1)}K';
     return '$n';
-  }
-
-  String _fmtRevenue(double v) {
-    if (v >= 1000000) return 'TZS ${(v / 1000000).toStringAsFixed(1)}M';
-    if (v >= 1000) return 'TZS ${(v / 1000).toStringAsFixed(0)}K';
-    return 'TZS ${_currency.format(v)}';
   }
 
   String _statusLabel(String s) {
@@ -276,8 +269,14 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                       _heroChip(
                           Icons.people_outline, _fmt(totalReaders), 'Wasomaji'),
                       const SizedBox(width: 8),
-                      _heroChip(Icons.payments_outlined,
-                          _fmtRevenue(totalRevenue), 'Mapato'),
+                      _heroChip(
+                        Icons.payments_outlined,
+                        AppFormatters.currency(
+                          totalRevenue,
+                          compact: true,
+                        ),
+                        'Mapato',
+                      ),
                       const SizedBox(width: 8),
                       _heroChip(Icons.check_circle_outline, '$published',
                           'Zilizochapishwa'),
@@ -510,7 +509,10 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                       ),
                       const Spacer(),
                       Text(
-                        'TZS ${_currency.format(e.priceInTzs)}',
+                        AppFormatters.currency(
+                          e.priceInTzs,
+                          zeroLabel: 'Bure',
+                        ),
                         style: GoogleFonts.montserrat(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -528,7 +530,7 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
                             size: 13, color: Color(0xFF7B3A10)),
                         const SizedBox(width: 4),
                         Text(
-                          'Mapato: TZS ${_currency.format(e.totalRevenue)}',
+                          'Mapato: ${AppFormatters.currency(e.totalRevenue)}',
                           style: GoogleFonts.montserrat(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,

@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../../payments/utils/payment_status.dart';
 import '../providers/ebook_provider.dart';
@@ -53,7 +53,6 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
   ];
 
   late final EbookService _service;
-  final _currency = NumberFormat('#,###');
   Map<String, dynamic>? _detail;
   bool _loading = true;
   bool _processing = false;
@@ -522,7 +521,7 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
                               : rail == EbookPurchaseRail.appleIap &&
                                       localizedApplePrice != null
                                   ? localizedApplePrice
-                                  : 'TZS ${_currency.format(price)}',
+                                  : AppFormatters.currency(price),
                           textAlign: TextAlign.center,
                           style: AppTextStyles.h2.copyWith(
                             color: const Color(0xFF1A1A1A),

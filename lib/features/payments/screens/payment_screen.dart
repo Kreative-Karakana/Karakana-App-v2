@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../providers/course_checkout_controller.dart';
 
@@ -65,11 +65,6 @@ class _PaymentScreenState extends State<PaymentScreen>
     if (state == AppLifecycleState.resumed) {
       _checkoutController.handleAppResumed();
     }
-  }
-
-  String _formatPrice(double price) {
-    final formatter = NumberFormat('#,###', 'en_US');
-    return 'TZS ${formatter.format(price)}';
   }
 
   String _normalizePhone(String raw) {
@@ -257,7 +252,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                           ),
                           const SizedBox(height: AppSpacing.sm),
                           Text(
-                            _formatPrice(widget.coursePrice),
+                            AppFormatters.currency(widget.coursePrice),
                             style: AppTextStyles.price.copyWith(
                               fontSize: 18,
                               color: const Color(0xFFE87722),
@@ -631,7 +626,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                           ),
                         ),
                         Text(
-                          _formatPrice(widget.coursePrice),
+                          AppFormatters.currency(widget.coursePrice),
                           style: AppTextStyles.buttonLarge.copyWith(
                             fontWeight: FontWeight.w700,
                             color: const Color(0xFF3D1800),
@@ -668,7 +663,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                           ),
                         ),
                         Text(
-                          _formatPrice(widget.coursePrice),
+                          AppFormatters.currency(widget.coursePrice),
                           style: AppTextStyles.price.copyWith(
                             fontSize: 18,
                             color: const Color(0xFFE87722),
@@ -708,7 +703,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                           ),
                         )
                       : Text(
-                          'Lipa ${_formatPrice(widget.coursePrice)}',
+                          'Lipa ${AppFormatters.currency(widget.coursePrice)}',
                           style: AppTextStyles.buttonLarge.copyWith(
                             color: Colors.white,
                           ),

@@ -8,6 +8,7 @@ import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/formatters.dart';
 import '../utils/payment_status.dart';
 
 enum _TransactionFilter {
@@ -92,7 +93,6 @@ class PaymentHistoryScreen extends StatefulWidget {
 
 class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final NumberFormat _moneyFormatter = NumberFormat('#,###', 'en_US');
   final DateFormat _dateFormatter = DateFormat('dd MMM yyyy');
   final DateFormat _dateTimeFormatter = DateFormat('dd MMM yyyy, HH:mm');
 
@@ -196,7 +196,7 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
       title: title,
       contentType: contentType,
       amount: amount,
-      amountText: _formatPrice(payment['amount']),
+      amountText: AppFormatters.currency(payment['amount']),
       method: _formatMethod(payment['method']),
       status: _statusFor(payment),
       date: paidAt,
@@ -284,18 +284,6 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
   int get _pendingCount => _transactions
       .where((item) => item.status == _TransactionStatus.pending)
       .length;
-
-  String _formatPrice(dynamic price) {
-    try {
-      return 'TZS ${_moneyFormatter.format(double.parse(price.toString()))}';
-    } catch (_) {
-      return 'TZS $price';
-    }
-  }
-
-  String _formatAmountValue(double amount) {
-    return 'TZS ${_moneyFormatter.format(amount)}';
-  }
 
   String _formatMethod(dynamic method) {
     final value = method?.toString().trim() ?? '';
@@ -420,7 +408,9 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
       ),
       child: Column(
         children: [
-          _TotalSpentCard(totalText: _formatAmountValue(_totalSpent)),
+          _TotalSpentCard(
+            totalText: AppFormatters.currency(_totalSpent),
+          ),
           const SizedBox(height: AppSpacing.md),
           Row(
             children: [

@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../../../widgets/common/karakana_wave_loader.dart';
 import '../../../../widgets/common/top_popup.dart';
 import '../models/business.dart';
@@ -2868,7 +2869,10 @@ InputDecoration _inputDecoration(String label, String hint) {
 
 String _money(double value, String currency) {
   final normalized = value.abs() < 0.005 ? 0.0 : value;
-  return '$currency ${_formatThousandsNumber(normalized.toStringAsFixed(0))}';
+  return AppFormatters.currency(
+    normalized,
+    currencyCode: currency,
+  );
 }
 
 String _cleanAmount(String value) {

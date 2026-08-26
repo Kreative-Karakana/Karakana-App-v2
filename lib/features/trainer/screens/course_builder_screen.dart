@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/minimum_tap_target.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../courses/models/quiz_model.dart';
@@ -1164,7 +1165,9 @@ class _CourseBuilderScreenState extends State<CourseBuilderScreen> {
                 : _titleController.text.trim()),
         _summaryTile('Kategoria', categoryName),
         _summaryTile(
-            'Bei', price == 0 ? 'Bure' : 'TZS ${price.toStringAsFixed(0)}'),
+          'Bei',
+          AppFormatters.currency(price, zeroLabel: 'Bure'),
+        ),
         _summaryTile('Kiwango', CourseContract.levelLabel(_selectedLevel)),
         if (!_isEditMode)
           _summaryTile('Maswali ya Mtihani',

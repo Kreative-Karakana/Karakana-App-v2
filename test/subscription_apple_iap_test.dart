@@ -311,8 +311,8 @@ void main() {
     await _pump(tester, store: store, config: android);
 
     expect(find.text('Endelea na Malipo'), findsNWidgets(2));
-    expect(find.text('7,900 TZS'), findsOneWidget);
-    expect(find.text('29,900 TZS'), findsOneWidget);
+    expect(find.text('TZS 7,900'), findsOneWidget);
+    expect(find.text('TZS 29,900'), findsOneWidget);
     expect(find.text('BURE'), findsOneWidget);
     expect(
       find.byKey(

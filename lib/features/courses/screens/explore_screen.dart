@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/cards/course_card_list.dart';
 import '../../../widgets/cards/shimmer_card.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
@@ -769,7 +770,10 @@ class _FeaturedCard extends StatelessWidget {
                                 color: Colors.white.withValues(alpha: 0.2)),
                           ),
                           child: Text(
-                            course.formattedPrice,
+                            AppFormatters.currency(
+                              course.price,
+                              zeroLabel: 'BURE',
+                            ),
                             style: GoogleFonts.montserrat(
                                 fontSize: AppTextStyles.labelSmall.fontSize,
                                 fontWeight: FontWeight.w700,

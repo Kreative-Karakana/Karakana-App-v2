@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../../../widgets/common/karakana_wave_loader.dart';
 import '../../../../widgets/common/top_popup.dart';
 import '../models/business_debt.dart';
@@ -1280,12 +1281,10 @@ String _formatDate(DateTime? date) {
 }
 
 String _money(double value, String currency) {
-  final whole = value.round().toString();
-  final formatted = whole.replaceAllMapped(
-    RegExp(r'\B(?=(\d{3})+(?!\d))'),
-    (_) => ',',
+  return AppFormatters.currency(
+    value,
+    currencyCode: currency,
   );
-  return '$currency $formatted';
 }
 
 String _editableAmount(String amount) {
