@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 
 import '../../../core/network/api_client.dart';
@@ -93,9 +92,6 @@ class PaymentHistoryScreen extends StatefulWidget {
 
 class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final DateFormat _dateFormatter = DateFormat('dd MMM yyyy');
-  final DateFormat _dateTimeFormatter = DateFormat('dd MMM yyyy, HH:mm');
-
   List<_UserTransaction> _transactions = [];
   _TransactionFilter _selectedFilter = _TransactionFilter.all;
   bool _isLoading = true;
@@ -297,12 +293,12 @@ class _PaymentHistoryScreenState extends State<PaymentHistoryScreen> {
 
   String _formatDate(DateTime? date) {
     if (date == null) return 'Tarehe haijatajwa';
-    return _dateFormatter.format(date);
+    return AppDateFormat.display.format(date);
   }
 
   String _formatDateTime(DateTime? date) {
     if (date == null) return 'Tarehe haijatajwa';
-    return _dateTimeFormatter.format(date);
+    return AppDateFormat.displayWithTime.format(date);
   }
 
   DateTime? _parseDate(String value) {

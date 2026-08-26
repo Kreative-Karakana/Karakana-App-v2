@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -385,18 +384,16 @@ class _TrainerEbookDetailScreenState extends State<TrainerEbookDetailScreen> {
                                   'Iliundwa',
                                   ebook.createdAt == null
                                       ? '-'
-                                      : DateFormat(
-                                          'dd MMM yyyy',
-                                        ).format(ebook.createdAt!),
+                                      : AppDateFormat.display
+                                          .format(ebook.createdAt!),
                                 ),
                                 _infoRow(
                                   Icons.update_outlined,
                                   'Imesasishwa',
                                   ebook.updatedAt == null
                                       ? '-'
-                                      : DateFormat(
-                                          'dd MMM yyyy',
-                                        ).format(ebook.updatedAt!),
+                                      : AppDateFormat.display
+                                          .format(ebook.updatedAt!),
                                 ),
                                 _infoRow(
                                   Icons.lock_outline,
