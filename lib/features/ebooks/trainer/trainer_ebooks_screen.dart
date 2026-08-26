@@ -8,6 +8,7 @@ import '../../../core/network/api_client.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../../../widgets/common/empty_state_view.dart';
 import '../models/ebook.dart';
 import '../providers/ebook_provider.dart';
 import '../services/ebook_service.dart';
@@ -685,60 +686,15 @@ class _TrainerEbooksScreenState extends State<TrainerEbooksScreen> {
   // ── EMPTY STATE ───────────────────────────────────────────────────────────
 
   Widget _buildEmptyState(Color surfaceColor) {
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      child: SizedBox(
-        height: 400,
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 88,
-                height: 88,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF5E6D8),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.menu_book_outlined,
-                    size: 44, color: Color(0xFFE87722)),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Huna eBook bado.\nBonyeza + kupakia eBook yako ya kwanza!',
-                style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF7B3A10),
-                  height: 1.5,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  await context.push('/trainer/ebooks/add');
-                  if (mounted) await _refresh();
-                },
-                icon: const Icon(Icons.add_rounded, size: 18),
-                label: Text(
-                  'Pakia eBook',
-                  style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE87722),
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28)),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return EmptyStateView(
+      icon: Icons.menu_book_outlined,
+      title: 'Huna eBook bado.',
+      subtitle: 'Bonyeza + kupakia eBook yako ya kwanza!',
+      actionLabel: 'Pakia eBook',
+      onAction: () async {
+        await context.push('/trainer/ebooks/add');
+        if (mounted) await _refresh();
+      },
     );
   }
 }

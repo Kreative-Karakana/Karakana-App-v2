@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../l10n/app_localizations.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
@@ -106,8 +106,7 @@ class PaymentSuccessScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  DateFormat('dd MMM yyyy')
-                                      .format(DateTime.now()),
+                                  AppDateFormat.display.format(DateTime.now()),
                                   style: AppTextStyles.bodyMedium.copyWith(
                                     fontWeight: FontWeight.w600,
                                     color: const Color(0xFF3D1800),

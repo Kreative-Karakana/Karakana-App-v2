@@ -44,3 +44,12 @@ class AppFormatters {
     return fixed.endsWith('.0') ? fixed.substring(0, fixed.length - 2) : fixed;
   }
 }
+
+class AppDateFormat {
+  AppDateFormat._();
+
+  static final DateFormat display = DateFormat('dd MMM yyyy', 'en_US');
+  static final DateFormat displayWithTime =
+      DateFormat('dd MMM yyyy, HH:mm', 'en_US');
+  static final DateFormat longDisplay = DateFormat('d MMMM yyyy', 'en_US');
+}

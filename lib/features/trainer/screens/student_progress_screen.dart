@@ -4,6 +4,7 @@ import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../widgets/common/empty_state_view.dart';
 
 class StudentProgressScreen extends StatefulWidget {
   final int? courseId;
@@ -452,38 +453,12 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            hasSearch ? Icons.search_off : Icons.people_outline,
-            size: 64,
-            color: const Color(0xFFE8D5C8),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            hasSearch ? 'Hakuna matokeo' : 'Hakuna Wanafunzi Bado',
-            style: GoogleFonts.montserrat(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).textTheme.bodyLarge?.color ??
-                  const Color(0xFF1A0A00),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            hasSearch
-                ? 'Jaribu kutafuta jina tofauti.'
-                : 'Wanafunzi wataonekana hapa wanaposajiliwa.',
-            style: GoogleFonts.montserrat(
-              fontSize: 14,
-              color: const Color(0xFF9E8070),
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+    return EmptyStateView(
+      icon: hasSearch ? Icons.search_off : Icons.people_outline,
+      title: hasSearch ? 'Hakuna matokeo' : 'Hakuna Wanafunzi Bado',
+      subtitle: hasSearch
+          ? 'Jaribu kutafuta jina tofauti.'
+          : 'Wanafunzi wataonekana hapa wanaposajiliwa.',
     );
   }
 }

@@ -44,4 +44,20 @@ void main() {
       );
     });
   });
+
+  group('AppDateFormat', () {
+    final date = DateTime(2026, 8, 26, 14, 5);
+
+    test('formats the standard display date', () {
+      expect(AppDateFormat.display.format(date), '26 Aug 2026');
+    });
+
+    test('formats the standard date and time', () {
+      expect(AppDateFormat.displayWithTime.format(date), '26 Aug 2026, 14:05');
+    });
+
+    test('keeps a long format for certificates', () {
+      expect(AppDateFormat.longDisplay.format(date), '26 August 2026');
+    });
+  });
 }

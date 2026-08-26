@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../widgets/common/empty_state_view.dart';
 
 class MyCoursesScreen extends StatefulWidget {
   const MyCoursesScreen({super.key});
@@ -232,60 +233,12 @@ class _MyCoursesScreenState extends State<MyCoursesScreen> {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 96,
-            height: 96,
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.school_outlined,
-              size: 48,
-              color: Color(0xFFE87722),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Hujajiunga Kozi Yoyote',
-            style: GoogleFonts.montserrat(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).textTheme.bodyLarge?.color ??
-                  const Color(0xFF1A0A00),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            'Tafuta kozi na uanze kujifunza.',
-            style: GoogleFonts.montserrat(
-              fontSize: AppTextStyles.bodyMedium.fontSize,
-              color: const Color(0xFF9E8070),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.lg),
-          ElevatedButton(
-            onPressed: () => context.go('/home'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE87722),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-            ),
-            child: Text(
-              'Tafuta Kozi',
-              style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
-      ),
+    return EmptyStateView(
+      icon: Icons.school_outlined,
+      title: 'Hujajiunga Kozi Yoyote',
+      subtitle: 'Tafuta kozi na uanze kujifunza.',
+      actionLabel: 'Tafuta Kozi',
+      onAction: () => context.go('/home'),
     );
   }
 

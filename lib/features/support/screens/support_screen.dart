@@ -7,6 +7,7 @@ import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../../../widgets/common/empty_state_view.dart';
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({super.key});
@@ -343,41 +344,10 @@ class _SupportScreenState extends State<SupportScreen> {
   }
 
   Widget _buildEmptyState() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 96,
-            height: 96,
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.support_agent_outlined,
-              size: 48,
-              color: Color(0xFFE87722),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.lg - AppSpacing.xs),
-          Text(
-            'Hakuna Tiketi Bado',
-            style: AppTextStyles.h3.copyWith(
-              color: Theme.of(context).textTheme.bodyLarge?.color ??
-                  const Color(0xFF1A0A00),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            'Unda tiketi ili upate msaada.',
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: const Color(0xFF9E8070),
-            ),
-          ),
-        ],
-      ),
+    return const EmptyStateView(
+      icon: Icons.support_agent_outlined,
+      title: 'Hakuna Tiketi Bado',
+      subtitle: 'Unda tiketi ili upate msaada.',
     );
   }
 }

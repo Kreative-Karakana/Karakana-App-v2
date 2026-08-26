@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/network/api_client.dart';
@@ -208,7 +207,7 @@ class _WalletScreenState extends State<WalletScreen> {
     final receiptUrl = checkout['receipt_image'] as String?;
     String formattedDate = '';
     try {
-      formattedDate = DateFormat('dd MMM yyyy').format(DateTime.parse(date));
+      formattedDate = AppDateFormat.display.format(DateTime.parse(date));
     } catch (_) {
       formattedDate = date;
     }
