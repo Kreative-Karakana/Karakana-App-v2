@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../../../widgets/common/empty_state_view.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notifications/providers/notification_provider.dart';
 import '../utils/course_contract.dart';
@@ -1352,6 +1353,17 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   }
 
   Widget _buildEmptyState(String message, IconData icon, Color surfaceColor) {
+    return EmptyStateView(
+      icon: icon,
+      title: message,
+      actionLabel: 'Unda Kozi',
+      onAction: () => context.push('/trainer/course-builder'),
+    );
+  }
+
+  // ignore: unused_element
+  Widget _buildLegacyEmptyState(
+      String message, IconData icon, Color surfaceColor) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Padding(

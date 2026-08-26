@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/network/api_client.dart';
 import '../../../widgets/common/minimum_tap_target.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../../../widgets/common/empty_state_view.dart';
 import '../utils/content_contract.dart';
 
 class LessonManagerScreen extends StatefulWidget {
@@ -393,31 +394,10 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
   }
 
   Widget _buildEmptyState() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 88,
-            height: 88,
-            decoration: BoxDecoration(
-                color:
-                    isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
-                shape: BoxShape.circle),
-            child: const Icon(Icons.view_agenda_outlined,
-                size: 44, color: Color(0xFFE87722)),
-          ),
-          const SizedBox(height: 20),
-          Text('Hakuna sehemu bado.\nBonyeza + kuongeza sehemu ya kwanza!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF7B3A10),
-                  height: 1.5),
-              textAlign: TextAlign.center),
-        ],
-      ),
+    return const EmptyStateView(
+      icon: Icons.view_agenda_outlined,
+      title: 'Hakuna sehemu bado.',
+      subtitle: 'Bonyeza + kuongeza sehemu ya kwanza!',
     );
   }
 
