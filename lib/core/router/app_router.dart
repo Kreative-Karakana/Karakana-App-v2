@@ -65,6 +65,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String explore = '/explore';
   static const String zana = '/zana';
+  static const String zanaBusiness = '/zana/biz-manager';
   static const String account = '/account';
   static const String courseDetail = '/course/:id';
   static const String classroom = '/course/:id/classroom';
@@ -254,7 +255,7 @@ class AppRouter {
           builder: (context, state) => const KikobaScreen(),
         ),
         GoRoute(
-          path: '/zana/biz-manager',
+          path: AppRoutes.zanaBusiness,
           builder: (context, state) => const BusinessManagementScreen(),
         ),
         GoRoute(
