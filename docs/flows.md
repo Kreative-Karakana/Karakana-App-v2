@@ -149,7 +149,6 @@ Relevant screens:
 - `zana_screen.dart`
 - `biz_manager_screen.dart`
 - `insurance_screen.dart`
-- `pos_screen.dart`
 - `kikoba_screen.dart`
 
 Expected behavior:
