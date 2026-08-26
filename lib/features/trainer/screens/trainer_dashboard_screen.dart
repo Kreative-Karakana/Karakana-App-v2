@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:flutter/services.dart';
@@ -309,7 +308,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   String _certDate(Map cert) {
     final raw = cert['created_at'] as String? ?? cert['date'] as String? ?? '';
     try {
-      return DateFormat('dd MMM yyyy').format(DateTime.parse(raw));
+      return AppDateFormat.display.format(DateTime.parse(raw));
     } catch (_) {
       return raw;
     }

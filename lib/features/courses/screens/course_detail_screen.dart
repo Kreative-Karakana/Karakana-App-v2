@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -1206,7 +1205,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     if (raw.isEmpty) return '';
     final parsed = DateTime.tryParse(raw);
     if (parsed == null) return raw;
-    return DateFormat('dd MMM yyyy').format(parsed);
+    return AppDateFormat.display.format(parsed);
   }
 
   Future<void> _toggleWishlist(

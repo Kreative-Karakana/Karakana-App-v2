@@ -17,6 +17,7 @@ import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 
@@ -213,6 +214,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           'phone_number': _nullIfEmpty(_phoneController.text.trim()),
           if (_selectedGender != null) 'gender': _selectedGender,
           if (_dateOfBirth != null)
+            // The API expects a machine-readable date, not the display format.
             'date_of_birth': DateFormat('yyyy-MM-dd').format(_dateOfBirth!),
           'facebook_username': _nullIfEmpty(_facebookController.text.trim()),
           'instagram_username': _nullIfEmpty(_instagramController.text.trim()),
@@ -397,8 +399,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           readOnly: true,
                           controller: TextEditingController(
                             text: _dateOfBirth != null
-                                ? DateFormat('dd MMM yyyy')
-                                    .format(_dateOfBirth!)
+                                ? AppDateFormat.display.format(_dateOfBirth!)
                                 : '',
                           ),
                           decoration: _inputDecoration(

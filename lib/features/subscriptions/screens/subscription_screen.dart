@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -1720,7 +1719,7 @@ class _RestorePurchasesButton extends StatelessWidget {
   }
 }
 
-String _formatDate(DateTime date) => DateFormat('dd MMM yyyy').format(date);
+String _formatDate(DateTime date) => AppDateFormat.display.format(date);
 
 String _billingPeriodLabel(SubscriptionPlan plan) {
   switch (plan.billingPeriod) {

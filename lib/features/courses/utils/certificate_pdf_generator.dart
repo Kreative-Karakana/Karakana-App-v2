@@ -1,8 +1,9 @@
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+
+import '../../../core/utils/formatters.dart';
 
 class CertificatePdfGenerator {
   static Future<pw.Document> generate({
@@ -26,7 +27,7 @@ class CertificatePdfGenerator {
     const lightGrey = PdfColors.grey600;
     const cream = PdfColors.white;
 
-    final dateStr = DateFormat('d MMMM yyyy').format(issuedAt.toLocal());
+    final dateStr = AppDateFormat.longDisplay.format(issuedAt.toLocal());
     final shortCertNum =
         certificateNumber.toUpperCase().replaceAll('-', '').substring(0, 10);
     final excerpt = courseExcerpt.length > 190
