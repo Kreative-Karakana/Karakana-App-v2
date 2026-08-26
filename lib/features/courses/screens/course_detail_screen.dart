@@ -11,6 +11,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../payments/providers/iap_provider.dart';
 import '../models/course_model.dart';
@@ -512,7 +513,10 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  course.formattedPrice,
+                                  AppFormatters.currency(
+                                    course.price,
+                                    zeroLabel: 'BURE',
+                                  ),
                                   style: GoogleFonts.montserrat(
                                     fontSize: 26,
                                     fontWeight: FontWeight.w700,
@@ -941,7 +945,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                   ),
                 )
               : Text(
-                  'Nunua Kozi • ${course.formattedPrice}',
+                  'Nunua Kozi • ${AppFormatters.currency(course.price, zeroLabel: 'BURE')}',
                   style: GoogleFonts.montserrat(
                     fontSize: AppTextStyles.bodyLarge.fontSize,
                     fontWeight: FontWeight.w600,
@@ -972,7 +976,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
           },
         ),
         child: Text(
-          'Nunua Kozi • ${course.formattedPrice}',
+          'Nunua Kozi • ${AppFormatters.currency(course.price, zeroLabel: 'BURE')}',
           style: GoogleFonts.montserrat(
             fontSize: AppTextStyles.bodyLarge.fontSize,
             fontWeight: FontWeight.w600,

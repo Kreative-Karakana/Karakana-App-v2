@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/utils/formatters.dart';
 import '../services/ebook_service.dart';
 
 class AddEditEbookScreen extends StatefulWidget {
@@ -328,9 +329,10 @@ class _AddEditEbookScreenState extends State<AddEditEbookScreen> {
     final title = _title.text.trim();
     final description = _description.text.trim();
     final priceValue = int.tryParse(_normalizedPrice) ?? 0;
-    final priceLabel = priceValue <= 0
-        ? 'Bure'
-        : 'TZS ${NumberFormat('#,###').format(priceValue)}';
+    final priceLabel = AppFormatters.currency(
+      priceValue,
+      zeroLabel: 'Bure',
+    );
     final coverLabel = _coverName ?? 'Bado haijachaguliwa';
     final ebookLabel = _ebookName ?? 'Bado haijachaguliwa';
 

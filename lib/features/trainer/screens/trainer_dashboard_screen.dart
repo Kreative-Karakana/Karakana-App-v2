@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notifications/providers/notification_provider.dart';
@@ -203,15 +204,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     final num = int.tryParse(n.toString()) ?? 0;
     if (num >= 1000) return '${(num / 1000).toStringAsFixed(1)}K';
     return '$num';
-  }
-
-  String _formatPrice(dynamic p) {
-    try {
-      final v = double.parse(p.toString());
-      return NumberFormat('#,###').format(v);
-    } catch (_) {
-      return 'TZS $p';
-    }
   }
 
   String _getGreeting() {
@@ -983,11 +975,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   Widget _buildStatsGrid(Color surfaceColor, Color textPrimary) {
     final ebookRevenue = _stats['total_ebook_revenue'] as double? ?? 0.0;
-    final ebookRevenueStr = ebookRevenue >= 1000000
-        ? 'TZS ${(ebookRevenue / 1000000).toStringAsFixed(1)}M'
-        : ebookRevenue >= 1000
-            ? 'TZS ${(ebookRevenue / 1000).toStringAsFixed(0)}K'
-            : 'TZS ${_formatNumber(ebookRevenue.toInt())}';
+    final ebookRevenueStr = AppFormatters.currency(
+      ebookRevenue,
+      compact: true,
+    );
 
     return Column(
       children: [
@@ -1955,7 +1946,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'TZS ${_formatPrice(price)}',
+                      AppFormatters.currency(price, zeroLabel: 'Bure'),
                       style: GoogleFonts.montserrat(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -2103,7 +2094,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'TZS ${_formatPrice(price)}',
+                      AppFormatters.currency(price, zeroLabel: 'Bure'),
                       style: GoogleFonts.montserrat(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -2120,7 +2111,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     );
   }
 
-  String _computeRevenue(Map course) {
+  int _computeRevenue(Map course) {
     final students = course['student_count'] as int? ?? 0;
     final price = (course['price'] as num? ?? 0).toInt();
     final commissionRate = (course['commission_rate'] as num?)?.toDouble();
@@ -2128,7 +2119,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     if (commissionRate != null && commissionRate > 0 && commissionRate <= 100) {
       gross = (gross * (1 - commissionRate / 100)).round();
     }
-    return _formatPrice(gross);
+    return gross;
   }
 
   Widget _buildCourseCard(
@@ -2396,7 +2387,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       ),
                       const Spacer(),
                       Text(
-                        'TZS ${_formatPrice(price)}',
+                        AppFormatters.currency(price, zeroLabel: 'Bure'),
                         style: GoogleFonts.montserrat(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -2417,7 +2408,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'Mapato: TZS ${_computeRevenue(course)}',
+                          'Mapato: ${AppFormatters.currency(_computeRevenue(course))}',
                           style: GoogleFonts.montserrat(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -4299,7 +4290,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'TZS ${_formatPrice(price)}',
+                    AppFormatters.currency(price, zeroLabel: 'Bure'),
                     style: GoogleFonts.montserrat(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
@@ -4308,7 +4299,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '$buyers wasomaji  •  $purchases mauzo  •  TZS ${_formatPrice(revenue)}',
+                    '$buyers wasomaji  •  $purchases mauzo  •  ${AppFormatters.currency(revenue)}',
                     style: GoogleFonts.montserrat(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,

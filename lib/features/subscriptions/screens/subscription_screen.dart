@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../payments/utils/mobile_money.dart';
@@ -550,7 +551,7 @@ class _SubscriptionActiveCard extends StatelessWidget {
               icon: Icons.payments_outlined,
               label: 'Bei',
               value:
-                  '${_formatMoney(plan.price)} ${plan.currency} ${_billingPeriodLabel(plan)}',
+                  '${AppFormatters.currency(plan.price, currencyCode: plan.currency)} ${_billingPeriodLabel(plan)}',
             ),
           if (entitlement.expiryDate != null) ...[
             const SizedBox(height: 8),
@@ -1179,7 +1180,10 @@ class _PlanCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.xs),
             Text(
               storePresentation?.localizedPrice ??
-                  '${_formatMoney(plan.price)} ${plan.currency}',
+                  AppFormatters.currency(
+                    plan.price,
+                    currencyCode: plan.currency,
+                  ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.montserrat(
@@ -1556,7 +1560,7 @@ class _MobileMoneyCheckoutSheetState extends State<_MobileMoneyCheckoutSheet> {
             ),
             const SizedBox(height: 4),
             Text(
-              '${_formatMoney(widget.plan.price)} ${widget.plan.currency} ${_billingPeriodLabel(widget.plan)}',
+              '${AppFormatters.currency(widget.plan.price, currencyCode: widget.plan.currency)} ${_billingPeriodLabel(widget.plan)}',
               style: GoogleFonts.montserrat(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
@@ -1717,11 +1721,6 @@ class _RestorePurchasesButton extends StatelessWidget {
 }
 
 String _formatDate(DateTime date) => DateFormat('dd MMM yyyy').format(date);
-
-String _formatMoney(String price) {
-  final value = double.tryParse(price) ?? 0;
-  return NumberFormat('#,###', 'en_US').format(value);
-}
 
 String _billingPeriodLabel(SubscriptionPlan plan) {
   switch (plan.billingPeriod) {

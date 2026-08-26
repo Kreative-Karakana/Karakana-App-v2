@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/utils/formatters.dart';
 import '../../features/courses/models/course_model.dart';
 
 class CourseCardHorizontal extends StatelessWidget {
@@ -123,7 +124,10 @@ class CourseCardHorizontal extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        course.formattedPrice,
+                        AppFormatters.currency(
+                          course.price,
+                          zeroLabel: 'BURE',
+                        ),
                         style: GoogleFonts.montserrat(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
