@@ -25,3 +25,8 @@ class AppRadius {
   static const double modal = 24.0;
   static const double circle = 999.0;
 }
+
+class AppMotion {
+  static const Duration fast = Duration(milliseconds: 180);
+  static const Duration standard = Duration(milliseconds: 280);
+}

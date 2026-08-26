@@ -1190,7 +1190,9 @@ class _BannerCarouselState extends State<_BannerCarousel> {
             children: List.generate(
               banners.length,
               (i) => AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
+                duration: MediaQuery.of(context).disableAnimations
+                    ? Duration.zero
+                    : AppMotion.standard,
                 curve: Curves.easeInOut,
                 margin: const EdgeInsets.symmetric(horizontal: 3),
                 width: _currentIndex == i ? 18 : 5,
