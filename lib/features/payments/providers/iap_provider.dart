@@ -4,7 +4,7 @@ import '../services/iap_service.dart';
 
 class IAPProvider extends ChangeNotifier {
   IAPProvider({SubscriptionPurchaseStore? store})
-    : _store = store ?? IAPService.instance;
+      : _store = store ?? IAPService.instance;
 
   final SubscriptionPurchaseStore _store;
 
