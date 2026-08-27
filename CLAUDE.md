@@ -63,3 +63,23 @@ Version 2.0 — complete rebuild from design spec.
 - Support: lib/features/support/screens/support_screen.dart
 - Trainer Dashboard: lib/features/trainer/screens/trainer_dashboard_screen.dart
 - Course Builder: lib/features/trainer/screens/course_builder_screen.dart
+
+## Testing Before Merging Accessibility Changes
+
+Before merging a change that adds accessibility labels or tooltips:
+
+1. Run the automated checks from the repository root:
+   - `dart format --set-exit-if-changed .`
+   - `flutter analyze --no-pub`
+   - `flutter test --no-pub`
+2. Run the app on an iPhone or iPad and enable VoiceOver in Settings → Accessibility → VoiceOver.
+3. Visit the Home screen and swipe through the bottom navigation. Confirm each tab is announced as:
+   - Nyumbani
+   - Tafuta
+   - Zana
+   - Fursa
+   - Akaunti
+4. On Home, confirm the theme toggle, notifications button, and account/avatar button are announced with useful names. If notifications are unread, the count should be announced too.
+5. Open a Course Detail screen and confirm the back, share, and wishlist controls have clear announcements. Toggle the wishlist and confirm the label changes between adding and removing it.
+6. Repeat steps 2–5 on Android with TalkBack enabled in Settings → Accessibility → TalkBack.
+7. Do not merge until the automated checks pass and the VoiceOver/TalkBack checks are complete. Record any device or OS limitations in the pull request.

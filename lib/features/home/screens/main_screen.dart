@@ -13,6 +13,11 @@ import '../../profile/screens/profile_screen.dart';
 import '../../zana/screens/zana_screen.dart';
 import 'home_screen.dart';
 
+String mainTabSemanticLabel(int index) {
+  const labels = ['Nyumbani', 'Tafuta', 'Zana', 'Fursa', 'Akaunti'];
+  return labels[index];
+}
+
 class MainScreen extends StatefulWidget {
   final int initialIndex;
 
@@ -147,35 +152,40 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _buildZanaButton() {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        setState(() => _currentIndex = 2);
-        context.go('/home?tab=2');
-      },
-      child: Container(
-        width: 68,
-        height: 68,
-        decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.5),
-          shape: BoxShape.circle,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xs),
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFE87722),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFE87722).withValues(alpha: 0.25),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
+    return Semantics(
+      button: true,
+      label: 'Zana',
+      selected: _currentIndex == 2,
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.lightImpact();
+          setState(() => _currentIndex = 2);
+          context.go('/home?tab=2');
+        },
+        child: Container(
+          width: 68,
+          height: 68,
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.5),
+            shape: BoxShape.circle,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.xs),
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFE87722),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFE87722).withValues(alpha: 0.25),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child:
+                  const Icon(Icons.construction, color: Colors.white, size: 28),
             ),
-            child:
-                const Icon(Icons.construction, color: Colors.white, size: 28),
           ),
         ),
       ),
@@ -184,40 +194,45 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildNavTab({required int index, required IconData icon}) {
     final isSelected = _currentIndex == index;
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () {
-        HapticFeedback.lightImpact();
-        if (index == 0 && _currentIndex != 0) {
-          context.read<CourseProvider>().loadHomeData();
-        }
-        setState(() => _currentIndex = index);
-        context.go('/home?tab=$index');
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isSelected
-                  ? const Color(0xFFE87722)
-                  : Colors.white.withValues(alpha: 0.55),
-              size: 24,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOut,
-              width: isSelected ? 5 : 0,
-              height: isSelected ? 5 : 0,
-              decoration: const BoxDecoration(
-                color: Color(0xFFE87722),
-                shape: BoxShape.circle,
+    return Semantics(
+      button: true,
+      label: mainTabSemanticLabel(index),
+      selected: isSelected,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          HapticFeedback.lightImpact();
+          if (index == 0 && _currentIndex != 0) {
+            context.read<CourseProvider>().loadHomeData();
+          }
+          setState(() => _currentIndex = index);
+          context.go('/home?tab=$index');
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                color: isSelected
+                    ? const Color(0xFFE87722)
+                    : Colors.white.withValues(alpha: 0.55),
+                size: 24,
               ),
-            ),
-          ],
+              const SizedBox(height: AppSpacing.xs),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                width: isSelected ? 5 : 0,
+                height: isSelected ? 5 : 0,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE87722),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

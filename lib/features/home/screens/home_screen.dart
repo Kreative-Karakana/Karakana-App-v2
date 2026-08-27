@@ -432,6 +432,8 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: themeProvider.isDark
                   ? Icons.light_mode_outlined
                   : Icons.dark_mode_outlined,
+              semanticLabel:
+                  themeProvider.isDark ? 'Washa mwangaza' : 'Washa giza',
               onTap: () => context.read<ThemeProvider>().toggleTheme(),
             );
           },
@@ -967,38 +969,44 @@ class _HomeHeroContent extends StatelessWidget {
 class _HomeHeaderIconButton extends StatelessWidget {
   const _HomeHeaderIconButton({
     required this.icon,
+    required this.semanticLabel,
     required this.onTap,
   });
 
   final IconData icon;
+  final String semanticLabel;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.09),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.12),
-              width: 0.8,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.10),
-                blurRadius: 14,
-                offset: const Offset(0, 6),
+    return Semantics(
+      button: true,
+      label: semanticLabel,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(14),
+          child: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.09),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.12),
+                width: 0.8,
               ),
-            ],
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.10),
+                  blurRadius: 14,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Icon(icon, color: Colors.white, size: 19),
           ),
-          child: Icon(icon, color: Colors.white, size: 19),
         ),
       ),
     );
@@ -1021,6 +1029,7 @@ class _HomeNotificationAction extends StatelessWidget {
       children: [
         _HomeHeaderIconButton(
           icon: Icons.notifications_outlined,
+          semanticLabel: unreadCount > 0 ? 'Arifa, $unreadCount mpya' : 'Arifa',
           onTap: onTap,
         ),
         if (unreadCount > 0)
@@ -1065,42 +1074,46 @@ class _HomeAvatarAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 38,
-        height: 38,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.09),
-          shape: BoxShape.circle,
-          border: Border.all(color: AppColors.primary, width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.10),
-              blurRadius: 14,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: ClipOval(
-          child: avatarUrl != null
-              ? CachedNetworkImage(
-                  imageUrl: avatarUrl!,
-                  fit: BoxFit.cover,
-                )
-              : Container(
-                  color: AppColors.primary,
-                  child: Center(
-                    child: Text(
-                      initial,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
+    return Semantics(
+      button: true,
+      label: 'Akaunti ya mtumiaji',
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 38,
+          height: 38,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.09),
+            shape: BoxShape.circle,
+            border: Border.all(color: AppColors.primary, width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.10),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: ClipOval(
+            child: avatarUrl != null
+                ? CachedNetworkImage(
+                    imageUrl: avatarUrl!,
+                    fit: BoxFit.cover,
+                  )
+                : Container(
+                    color: AppColors.primary,
+                    child: Center(
+                      child: Text(
+                        initial,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                ),
+          ),
         ),
       ),
     );
