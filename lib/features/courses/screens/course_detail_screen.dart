@@ -195,6 +195,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
+                    tooltip: 'Rudi',
                     icon: const Icon(
                       Icons.arrow_back_ios_new,
                       color: Colors.white,
@@ -211,6 +212,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(
+                      tooltip: 'Shiriki kozi',
                       icon: const Icon(
                         Icons.share_outlined,
                         color: Colors.white,
@@ -238,6 +240,9 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                             ),
                           )
                         : IconButton(
+                            tooltip: course.isWishlisted
+                                ? 'Ondoa kwenye vipendwa'
+                                : 'Ongeza kwenye vipendwa',
                             icon: Icon(
                               course.isWishlisted
                                   ? Icons.bookmark
