@@ -37,7 +37,9 @@ class AuthProvider extends ChangeNotifier {
   })  : _api = api ?? AuthService(),
         _storage = storage ?? SecureStorage(),
         _biometricAuth = biometricAuth ?? LocalBiometricAuthService() {
-    ApiClient().setUnauthorizedHandler(invalidateAuthentication);
+    ApiClient().setUnauthorizedHandler(
+      () => invalidateAuthentication(sessionExpired: true),
+    );
   }
 
   final AuthApi _api;
@@ -302,11 +304,13 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> invalidateAuthentication() {
+  Future<void> invalidateAuthentication({bool sessionExpired = false}) {
     final inFlight = _authenticationInvalidationInFlight;
     if (inFlight != null) return inFlight;
 
-    final future = _performAuthenticationInvalidation();
+    final future = _performAuthenticationInvalidation(
+      sessionExpired: sessionExpired,
+    );
     _authenticationInvalidationInFlight = future;
     return future.whenComplete(() {
       if (identical(_authenticationInvalidationInFlight, future)) {
@@ -315,14 +319,17 @@ class AuthProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> _performAuthenticationInvalidation() async {
+  Future<void> _performAuthenticationInvalidation({
+    required bool sessionExpired,
+  }) async {
     try {
       await _storage.clearAll();
     } finally {
       _authenticationState = AuthenticationState.unauthenticated;
       _user = null;
       _roles = null;
-      _errorMessage = null;
+      _errorMessage =
+          sessionExpired ? 'Session Expired, Tafadhali Ingia Tena.' : null;
       notifyListeners();
     }
   }

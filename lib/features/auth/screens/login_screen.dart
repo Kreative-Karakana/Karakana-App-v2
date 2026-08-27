@@ -45,6 +45,19 @@ class _LoginScreenState extends State<LoginScreen>
   bool get wantKeepAlive => true;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final auth = context.read<AuthProvider>();
+      final message = auth.errorMessage;
+      if (message == null || message.isEmpty) return;
+      _showTopErrorPopup(message);
+      auth.clearError();
+    });
+  }
+
+  @override
   void dispose() {
     _removeErrorOverlay();
     _emailController.dispose();
@@ -215,7 +228,8 @@ class _LoginScreenState extends State<LoginScreen>
 
     if (!context.read<AuthProvider>().isBiometricLocked) {
       _showTopErrorPopup(
-          'Ingia kikamilifu kisha washa biometric kwenye Akaunti.');
+        'Ingia kikamilifu kisha washa biometric kwenye Akaunti.',
+      );
       return;
     }
 
@@ -239,7 +253,9 @@ class _LoginScreenState extends State<LoginScreen>
       keyboardType: keyboardType,
       obscureText: obscureText,
       style: GoogleFonts.montserrat(
-          fontSize: compact ? 13 : 14, color: Colors.white),
+        fontSize: compact ? 13 : 14,
+        color: Colors.white,
+      ),
       cursorColor: AppColors.primaryMid,
       validator: validator,
       onChanged: onChanged,
@@ -305,10 +321,13 @@ class _LoginScreenState extends State<LoginScreen>
               SafeArea(
                 child: LayoutBuilder(
                   builder: (context, safeConstraints) {
-                    final keyboardInset =
-                        MediaQuery.viewInsetsOf(context).bottom;
-                    final verticalPadding =
-                        Responsive.h(context, compact ? 0.015 : 0.025);
+                    final keyboardInset = MediaQuery.viewInsetsOf(
+                      context,
+                    ).bottom;
+                    final verticalPadding = Responsive.h(
+                      context,
+                      compact ? 0.015 : 0.025,
+                    );
 
                     return SingleChildScrollView(
                       keyboardDismissBehavior:
@@ -382,24 +401,30 @@ class _LoginScreenState extends State<LoginScreen>
                                 Align(
                                   alignment: Alignment.center,
                                   child: ConstrainedBox(
-                                    constraints:
-                                        const BoxConstraints(maxWidth: 420),
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 420,
+                                    ),
                                     child: Container(
-                                      padding:
-                                          EdgeInsets.all(compact ? 18 : 22),
+                                      padding: EdgeInsets.all(
+                                        compact ? 18 : 22,
+                                      ),
                                       decoration: BoxDecoration(
-                                        color: Colors.white
-                                            .withValues(alpha: 0.06),
-                                        borderRadius:
-                                            BorderRadius.circular(30.r),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.06,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          30.r,
+                                        ),
                                         border: Border.all(
-                                          color: Colors.white
-                                              .withValues(alpha: 0.08),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.08,
+                                          ),
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black
-                                                .withValues(alpha: 0.18),
+                                            color: Colors.black.withValues(
+                                              alpha: 0.18,
+                                            ),
                                             blurRadius: 28,
                                             offset: const Offset(0, 16),
                                           ),
@@ -428,8 +453,9 @@ class _LoginScreenState extends State<LoginScreen>
                                               _welcomeMessage,
                                               style: GoogleFonts.montserrat(
                                                 fontSize: compact ? 12.5 : 13.5,
-                                                color: Colors.white
-                                                    .withValues(alpha: 0.72),
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.72,
+                                                ),
                                                 height: 1.35,
                                               ),
                                             ),
@@ -484,8 +510,9 @@ class _LoginScreenState extends State<LoginScreen>
                                             Align(
                                               alignment: Alignment.centerLeft,
                                               child: TextButton(
-                                                onPressed: () => context
-                                                    .push('/forgot-password'),
+                                                onPressed: () => context.push(
+                                                  '/forgot-password',
+                                                ),
                                                 style: TextButton.styleFrom(
                                                   foregroundColor:
                                                       AppColors.primaryMid,
@@ -518,20 +545,23 @@ class _LoginScreenState extends State<LoginScreen>
                                             ),
                                             if (!keyboardOpen) ...[
                                               SizedBox(
-                                                  height: compact ? 16 : 18),
+                                                height: compact ? 16 : 18,
+                                              ),
                                               Row(
                                                 children: [
                                                   Expanded(
                                                     child: Divider(
                                                       color: Colors.white
                                                           .withValues(
-                                                              alpha: 0.10),
+                                                        alpha: 0.10,
+                                                      ),
                                                     ),
                                                   ),
                                                   Padding(
                                                     padding:
                                                         EdgeInsets.symmetric(
-                                                            horizontal: 10.w),
+                                                      horizontal: 10.w,
+                                                    ),
                                                     child: Text(
                                                       'Njia nyingine',
                                                       style: GoogleFonts
@@ -550,13 +580,15 @@ class _LoginScreenState extends State<LoginScreen>
                                                     child: Divider(
                                                       color: Colors.white
                                                           .withValues(
-                                                              alpha: 0.10),
+                                                        alpha: 0.10,
+                                                      ),
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                               SizedBox(
-                                                  height: compact ? 14 : 16),
+                                                height: compact ? 14 : 16,
+                                              ),
                                               FutureBuilder<_BiometricState>(
                                                 future: _getBiometricState(),
                                                 builder: (context, snapshot) {
@@ -642,7 +674,8 @@ class _LoginScreenState extends State<LoginScreen>
                                                               hasFingerprint,
                                                           onTap: () =>
                                                               _handleBiometricTap(
-                                                                  state),
+                                                            state,
+                                                          ),
                                                           icon: Icon(
                                                             hasFaceId
                                                                 ? Icons
@@ -665,7 +698,8 @@ class _LoginScreenState extends State<LoginScreen>
                                                           ),
                                                           accentColor: hasFaceId
                                                               ? const Color(
-                                                                  0xFF627AF4)
+                                                                  0xFF627AF4,
+                                                                )
                                                               : AppColors
                                                                   .primary,
                                                         ),
@@ -683,9 +717,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 ),
                                 if (!keyboardOpen) ...[
                                   SizedBox(height: 14.h),
-                                  const Center(
-                                    child: _SignupFooter(),
-                                  ),
+                                  const Center(child: _SignupFooter()),
                                 ],
                               ],
                             ),
@@ -708,10 +740,7 @@ class _BiometricState {
   final bool hasFaceId;
   final bool hasFingerprint;
 
-  const _BiometricState({
-    this.hasFaceId = false,
-    this.hasFingerprint = false,
-  });
+  const _BiometricState({this.hasFaceId = false, this.hasFingerprint = false});
 }
 
 class _SignupFooter extends StatelessWidget {
@@ -731,9 +760,7 @@ class _SignupFooter extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(50.r),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.10),
-          ),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

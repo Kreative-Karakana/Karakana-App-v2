@@ -116,7 +116,8 @@ void main() {
     checkout.dispose();
   });
 
-  test('pending timeout remains recoverable and settles after a late webhook', () async {
+  test('pending timeout remains recoverable and settles after a late webhook',
+      () async {
     final api = FakeCourseCheckoutApi();
     final checkout = controller(api);
 
@@ -142,7 +143,8 @@ void main() {
     checkout.dispose();
   });
 
-  test('failed status is reported as failure rather than pending timeout', () async {
+  test('failed status is reported as failure rather than pending timeout',
+      () async {
     final api = FakeCourseCheckoutApi();
     final checkout = controller(api);
 

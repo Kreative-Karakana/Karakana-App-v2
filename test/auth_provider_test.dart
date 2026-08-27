@@ -87,22 +87,24 @@ void main() {
       },
     );
 
-    test('profile failure after token issuance clears the issued token',
-        () async {
-      final api = _FakeAuthApi(
-        loginResponse: {'token': 'issued-token'},
-        profileError: Exception('profile unavailable'),
-      );
-      final storage = _FakeAuthSessionStore();
-      final provider = AuthProvider(api: api, storage: storage);
+    test(
+      'profile failure after token issuance clears the issued token',
+      () async {
+        final api = _FakeAuthApi(
+          loginResponse: {'token': 'issued-token'},
+          profileError: Exception('profile unavailable'),
+        );
+        final storage = _FakeAuthSessionStore();
+        final provider = AuthProvider(api: api, storage: storage);
 
-      final ok = await provider.login('user@example.test', 'password');
+        final ok = await provider.login('user@example.test', 'password');
 
-      expect(ok, isFalse);
-      expect(provider.isAuthenticated, isFalse);
-      expect(storage.token, isNull);
-      expect(storage.cleared, isTrue);
-    });
+        expect(ok, isFalse);
+        expect(provider.isAuthenticated, isFalse);
+        expect(storage.token, isNull);
+        expect(storage.cleared, isTrue);
+      },
+    );
   });
 
   group('AuthProvider.initialize', () {
@@ -155,6 +157,7 @@ void main() {
       expect(provider.user, isNull);
       expect(storage.cleared, isTrue);
       expect(api.logoutCallCount, 1);
+      expect(provider.errorMessage, isNull);
     });
 
     test('clears local session when remote logout fails', () async {
@@ -220,6 +223,10 @@ void main() {
         expect(provider.isAuthenticated, isFalse);
         expect(provider.user, isNull);
         expect(storage.token, isNull);
+        expect(
+          provider.errorMessage,
+          'Session Expired, Tafadhali Ingia Tena.',
+        );
       },
     );
   });
@@ -263,8 +270,10 @@ void main() {
           profileResponse: {'id': 42, 'first_name': 'Zena'},
         );
         final initialProvider = AuthProvider(api: api, storage: storage);
-        expect(await initialProvider.login('zena@example.test', 'password'),
-            isTrue);
+        expect(
+          await initialProvider.login('zena@example.test', 'password'),
+          isTrue,
+        );
         await storage.setBiometricEnabledForAccount('42', true);
 
         final restartedProvider = AuthProvider(
@@ -333,20 +342,22 @@ void main() {
       BiometricVerificationResult.platformError:
           BiometricUnlockResult.platformError,
     }.entries) {
-      test('${entry.key.name} fails safely without backend validation',
-          () async {
-        final api = _FakeAuthApi(profileResponse: {'id': 42});
-        final provider = AuthProvider(
-          api: api,
-          storage: _lockedStorage(),
-          biometricAuth: _FakeBiometricAuth(result: entry.key),
-        );
-        await provider.initialize();
+      test(
+        '${entry.key.name} fails safely without backend validation',
+        () async {
+          final api = _FakeAuthApi(profileResponse: {'id': 42});
+          final provider = AuthProvider(
+            api: api,
+            storage: _lockedStorage(),
+            biometricAuth: _FakeBiometricAuth(result: entry.key),
+          );
+          await provider.initialize();
 
-        expect(await provider.unlockBiometricSession(), entry.value);
-        expect(provider.isBiometricLocked, isTrue);
-        expect(api.fetchProfileCallCount, 0);
-      });
+          expect(await provider.unlockBiometricSession(), entry.value);
+          expect(provider.isBiometricLocked, isTrue);
+          expect(api.fetchProfileCallCount, 0);
+        },
+      );
     }
 
     test('temporary profile failure remains locked for retry', () async {
@@ -364,23 +375,28 @@ void main() {
       expect(provider.isBiometricLocked, isTrue);
     });
 
-    test('revoked session 401 fails closed and cannot be resurrected',
-        () async {
-      final storage = _lockedStorage();
-      final provider = AuthProvider(
-        api: _FakeAuthApi(profileUnauthorized: true),
-        storage: storage,
-        biometricAuth: _FakeBiometricAuth(),
-      );
-      await provider.initialize();
+    test(
+      'revoked session 401 fails closed and cannot be resurrected',
+      () async {
+        final storage = _lockedStorage();
+        final provider = AuthProvider(
+          api: _FakeAuthApi(profileUnauthorized: true),
+          storage: storage,
+          biometricAuth: _FakeBiometricAuth(),
+        );
+        await provider.initialize();
 
-      expect(
-        await provider.unlockBiometricSession(),
-        BiometricUnlockResult.invalidSession,
-      );
-      expect(provider.authenticationState, AuthenticationState.unauthenticated);
-      expect(storage.token, isNull);
-    });
+        expect(
+          await provider.unlockBiometricSession(),
+          BiometricUnlockResult.invalidSession,
+        );
+        expect(
+          provider.authenticationState,
+          AuthenticationState.unauthenticated,
+        );
+        expect(storage.token, isNull);
+      },
+    );
 
     test('unavailable hardware remains locked without verification', () async {
       final biometric = _FakeBiometricAuth(available: false);
@@ -399,38 +415,45 @@ void main() {
       expect(biometric.authenticateCallCount, 0);
     });
 
-    test('global 401 while locked clears session and requires full sign-in',
-        () async {
-      final storage = _lockedStorage();
-      final provider = AuthProvider(
-        api: _FakeAuthApi(),
-        storage: storage,
-        biometricAuth: _FakeBiometricAuth(),
-      );
-      await provider.initialize();
+    test(
+      'global 401 while locked clears session and requires full sign-in',
+      () async {
+        final storage = _lockedStorage();
+        final provider = AuthProvider(
+          api: _FakeAuthApi(),
+          storage: storage,
+          biometricAuth: _FakeBiometricAuth(),
+        );
+        await provider.initialize();
 
-      await ApiClient().handleUnauthorized();
+        await ApiClient().handleUnauthorized();
 
-      expect(provider.authenticationState, AuthenticationState.unauthenticated);
-      expect(storage.token, isNull);
-      expect(storage.biometricEnabledByAccount['42'], isFalse);
-    });
+        expect(
+          provider.authenticationState,
+          AuthenticationState.unauthenticated,
+        );
+        expect(storage.token, isNull);
+        expect(storage.biometricEnabledByAccount['42'], isFalse);
+      },
+    );
 
-    test('startup removes legacy bearer-token copies but keeps session',
-        () async {
-      final storage = _lockedStorage()..legacyBiometricTokensPresent = true;
-      final provider = AuthProvider(
-        api: _FakeAuthApi(profileResponse: {'id': 42}),
-        storage: storage,
-        biometricAuth: _FakeBiometricAuth(),
-      );
+    test(
+      'startup removes legacy bearer-token copies but keeps session',
+      () async {
+        final storage = _lockedStorage()..legacyBiometricTokensPresent = true;
+        final provider = AuthProvider(
+          api: _FakeAuthApi(profileResponse: {'id': 42}),
+          storage: storage,
+          biometricAuth: _FakeBiometricAuth(),
+        );
 
-      await provider.initialize();
+        await provider.initialize();
 
-      expect(storage.legacyBiometricTokensPresent, isFalse);
-      expect(storage.token, 'session-token');
-      expect(provider.isBiometricLocked, isTrue);
-    });
+        expect(storage.legacyBiometricTokensPresent, isFalse);
+        expect(storage.token, 'session-token');
+        expect(provider.isBiometricLocked, isTrue);
+      },
+    );
   });
 }
 
