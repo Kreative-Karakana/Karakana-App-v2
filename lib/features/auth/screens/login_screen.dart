@@ -67,9 +67,8 @@ class _LoginScreenState extends State<LoginScreen>
 
   Future<_BiometricState> _getBiometricState() async {
     try {
-      final availability = await context
-          .read<AuthProvider>()
-          .getBiometricAvailability();
+      final availability =
+          await context.read<AuthProvider>().getBiometricAvailability();
 
       return _BiometricState(
         hasFaceId: availability.kind == BiometricKind.face,
@@ -344,7 +343,7 @@ class _LoginScreenState extends State<LoginScreen>
                           minHeight: keyboardOpen
                               ? 0
                               : safeConstraints.maxHeight -
-                                    (verticalPadding * 2),
+                                  (verticalPadding * 2),
                         ),
                         child: Align(
                           alignment: keyboardOpen
@@ -471,8 +470,8 @@ class _LoginScreenState extends State<LoginScreen>
                                               compact: compact,
                                               validator: (v) =>
                                                   v!.isEmpty || !v.contains('@')
-                                                  ? 'Barua pepe si sahihi'
-                                                  : null,
+                                                      ? 'Barua pepe si sahihi'
+                                                      : null,
                                               onChanged: (_) => context
                                                   .read<AuthProvider>()
                                                   .clearError(),
@@ -489,9 +488,9 @@ class _LoginScreenState extends State<LoginScreen>
                                                 icon: Icon(
                                                   _obscurePassword
                                                       ? Icons
-                                                            .visibility_outlined
+                                                          .visibility_outlined
                                                       : Icons
-                                                            .visibility_off_outlined,
+                                                          .visibility_off_outlined,
                                                   color: AppColors.textTertiary,
                                                   size: 18.r,
                                                 ),
@@ -526,9 +525,8 @@ class _LoginScreenState extends State<LoginScreen>
                                                 child: Text(
                                                   'Umesahau neno la siri?',
                                                   style: GoogleFonts.montserrat(
-                                                    fontSize: compact
-                                                        ? 12
-                                                        : 12.5,
+                                                    fontSize:
+                                                        compact ? 12 : 12.5,
                                                     fontWeight: FontWeight.w600,
                                                   ),
                                                 ),
@@ -555,35 +553,35 @@ class _LoginScreenState extends State<LoginScreen>
                                                     child: Divider(
                                                       color: Colors.white
                                                           .withValues(
-                                                            alpha: 0.10,
-                                                          ),
+                                                        alpha: 0.10,
+                                                      ),
                                                     ),
                                                   ),
                                                   Padding(
                                                     padding:
                                                         EdgeInsets.symmetric(
-                                                          horizontal: 10.w,
-                                                        ),
+                                                      horizontal: 10.w,
+                                                    ),
                                                     child: Text(
                                                       'Njia nyingine',
-                                                      style:
-                                                          GoogleFonts.montserrat(
-                                                            fontSize: compact
-                                                                ? 11
-                                                                : AppTextStyles
-                                                                      .bodySmall
-                                                                      .fontSize,
-                                                            color: AppColors
-                                                                .textTertiary,
-                                                          ),
+                                                      style: GoogleFonts
+                                                          .montserrat(
+                                                        fontSize: compact
+                                                            ? 11
+                                                            : AppTextStyles
+                                                                .bodySmall
+                                                                .fontSize,
+                                                        color: AppColors
+                                                            .textTertiary,
+                                                      ),
                                                     ),
                                                   ),
                                                   Expanded(
                                                     child: Divider(
                                                       color: Colors.white
                                                           .withValues(
-                                                            alpha: 0.10,
-                                                          ),
+                                                        alpha: 0.10,
+                                                      ),
                                                     ),
                                                   ),
                                                 ],
@@ -594,8 +592,7 @@ class _LoginScreenState extends State<LoginScreen>
                                               FutureBuilder<_BiometricState>(
                                                 future: _getBiometricState(),
                                                 builder: (context, snapshot) {
-                                                  final state =
-                                                      snapshot.data ??
+                                                  final state = snapshot.data ??
                                                       const _BiometricState();
                                                   final hasFaceId =
                                                       state.hasFaceId;
@@ -608,8 +605,7 @@ class _LoginScreenState extends State<LoginScreen>
                                                         child: _MethodButton(
                                                           compact: compact,
                                                           label: 'Google',
-                                                          onTap:
-                                                              authProvider
+                                                          onTap: authProvider
                                                                   .isLoading
                                                               ? () {}
                                                               : _handleGoogleSignIn,
@@ -622,21 +618,23 @@ class _LoginScreenState extends State<LoginScreen>
                                                                 : 24,
                                                             decoration:
                                                                 const BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  shape: BoxShape
-                                                                      .circle,
-                                                                ),
+                                                              color:
+                                                                  Colors.white,
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                            ),
                                                             child: Center(
                                                               child: Text(
                                                                 'G',
-                                                                style: GoogleFonts.montserrat(
+                                                                style: GoogleFonts
+                                                                    .montserrat(
                                                                   fontSize:
                                                                       12.sp,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w700,
-                                                                  color: const Color(
+                                                                  color:
+                                                                      const Color(
                                                                     0xFF4285F4,
                                                                   ),
                                                                 ),
@@ -650,8 +648,7 @@ class _LoginScreenState extends State<LoginScreen>
                                                         child: _MethodButton(
                                                           compact: compact,
                                                           label: 'Apple',
-                                                          onTap:
-                                                              authProvider
+                                                          onTap: authProvider
                                                                   .isLoading
                                                               ? () {}
                                                               : _handleAppleSignIn,
@@ -671,32 +668,30 @@ class _LoginScreenState extends State<LoginScreen>
                                                           label: hasFaceId
                                                               ? 'Face ID'
                                                               : hasFingerprint
-                                                              ? 'Touch ID'
-                                                              : 'Biometric',
-                                                          enabled:
-                                                              hasFaceId ||
+                                                                  ? 'Touch ID'
+                                                                  : 'Biometric',
+                                                          enabled: hasFaceId ||
                                                               hasFingerprint,
                                                           onTap: () =>
                                                               _handleBiometricTap(
-                                                                state,
-                                                              ),
+                                                            state,
+                                                          ),
                                                           icon: Icon(
                                                             hasFaceId
                                                                 ? Icons
-                                                                      .face_retouching_natural_rounded
+                                                                    .face_retouching_natural_rounded
                                                                 : Icons
-                                                                      .fingerprint_rounded,
-                                                            color:
-                                                                (hasFaceId ||
+                                                                    .fingerprint_rounded,
+                                                            color: (hasFaceId ||
                                                                     hasFingerprint)
                                                                 ? (hasFaceId
-                                                                      ? const Color(
-                                                                          0xFFDCE4FF,
-                                                                        )
-                                                                      : AppColors
-                                                                            .primaryMid)
+                                                                    ? const Color(
+                                                                        0xFFDCE4FF,
+                                                                      )
+                                                                    : AppColors
+                                                                        .primaryMid)
                                                                 : AppColors
-                                                                      .textTertiary,
+                                                                    .textTertiary,
                                                             size: compact
                                                                 ? 22
                                                                 : 24,
@@ -706,7 +701,7 @@ class _LoginScreenState extends State<LoginScreen>
                                                                   0xFF627AF4,
                                                                 )
                                                               : AppColors
-                                                                    .primary,
+                                                                  .primary,
                                                         ),
                                                       ),
                                                     ],

@@ -34,9 +34,9 @@ class AuthProvider extends ChangeNotifier {
     AuthApi? api,
     AuthSessionStore? storage,
     BiometricAuthService? biometricAuth,
-  }) : _api = api ?? AuthService(),
-       _storage = storage ?? SecureStorage(),
-       _biometricAuth = biometricAuth ?? LocalBiometricAuthService() {
+  })  : _api = api ?? AuthService(),
+        _storage = storage ?? SecureStorage(),
+        _biometricAuth = biometricAuth ?? LocalBiometricAuthService() {
     ApiClient().setUnauthorizedHandler(
       () => invalidateAuthentication(sessionExpired: true),
     );
@@ -124,8 +124,7 @@ class AuthProvider extends ChangeNotifier {
     if (hasToken) {
       _roles = await _storage.loadRoles();
       final accountId = await _storage.getUserId();
-      final biometricEnabled =
-          accountId != null &&
+      final biometricEnabled = accountId != null &&
           await _storage.isBiometricEnabledForAccount(accountId);
       if (biometricEnabled) {
         _authenticationState = AuthenticationState.biometricLocked;
@@ -149,8 +148,8 @@ class AuthProvider extends ChangeNotifier {
       String? deviceToken;
       try {
         deviceToken = await FirebaseMessaging.instance.getToken().timeout(
-          const Duration(seconds: 5),
-        );
+              const Duration(seconds: 5),
+            );
       } catch (e) {
         debugPrint('[AUTH] FCM token fetch failed (non-fatal): $e');
         deviceToken = null;
@@ -233,8 +232,8 @@ class AuthProvider extends ChangeNotifier {
       String? deviceToken;
       try {
         deviceToken = await FirebaseMessaging.instance.getToken().timeout(
-          const Duration(seconds: 5),
-        );
+              const Duration(seconds: 5),
+            );
       } catch (e) {
         debugPrint(
           '[AUTH] FCM token fetch failed during verify (non-fatal): $e',
@@ -329,9 +328,8 @@ class AuthProvider extends ChangeNotifier {
       _authenticationState = AuthenticationState.unauthenticated;
       _user = null;
       _roles = null;
-      _errorMessage = sessionExpired
-          ? 'Session Expired, Tafadhali Ingia Tena.'
-          : null;
+      _errorMessage =
+          sessionExpired ? 'Session Expired, Tafadhali Ingia Tena.' : null;
       notifyListeners();
     }
   }
@@ -402,8 +400,8 @@ class AuthProvider extends ChangeNotifier {
       String? deviceToken;
       try {
         deviceToken = await FirebaseMessaging.instance.getToken().timeout(
-          const Duration(seconds: 5),
-        );
+              const Duration(seconds: 5),
+            );
       } catch (e) {
         debugPrint('[AUTH] FCM token fetch failed (non-fatal): $e');
         deviceToken = null;
@@ -560,7 +558,8 @@ class AuthProvider extends ChangeNotifier {
 
   Future<BiometricVerificationResult> verifyBiometric({
     required String reason,
-  }) => _biometricAuth.authenticate(reason: reason);
+  }) =>
+      _biometricAuth.authenticate(reason: reason);
 
   Future<BiometricUnlockResult> unlockBiometricSession() async {
     if (!isBiometricLocked) return BiometricUnlockResult.invalidSession;

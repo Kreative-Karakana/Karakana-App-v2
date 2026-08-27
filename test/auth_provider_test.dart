@@ -120,7 +120,8 @@ void main() {
       expect(api.fetchProfileCallCount, 0);
     });
 
-    test('trusts a stored token immediately and refreshes profile in the '
+    test(
+        'trusts a stored token immediately and refreshes profile in the '
         'background', () async {
       final api = _FakeAuthApi(
         profileResponse: {'id': 3, 'first_name': 'Juma'},
@@ -547,7 +548,8 @@ class _FakeAuthApi implements AuthApi {
     required String firstName,
     required String email,
     required String password,
-  }) => throw UnimplementedError();
+  }) =>
+      throw UnimplementedError();
 
   @override
   Future<dynamic> verifyEmail({
@@ -555,7 +557,8 @@ class _FakeAuthApi implements AuthApi {
     required String code,
     required String platform,
     String? deviceToken,
-  }) => throw UnimplementedError();
+  }) =>
+      throw UnimplementedError();
 
   @override
   Future<void> forgotPassword({required String email}) =>
@@ -582,7 +585,8 @@ class _FakeAuthApi implements AuthApi {
     String? accessToken,
     required String platform,
     String? deviceToken,
-  }) => throw UnimplementedError();
+  }) =>
+      throw UnimplementedError();
 
   @override
   Future<dynamic> exchangeAppleToken({
@@ -590,7 +594,8 @@ class _FakeAuthApi implements AuthApi {
     String? firstName,
     String? lastName,
     String? authorizationCode,
-  }) => throw UnimplementedError();
+  }) =>
+      throw UnimplementedError();
 }
 
 class _FakeAuthSessionStore implements AuthSessionStore {
@@ -656,7 +661,8 @@ class _FakeAuthSessionStore implements AuthSessionStore {
   Future<void> setBiometricEnabledForAccount(
     String accountId,
     bool enabled,
-  ) async => biometricEnabledByAccount[accountId] = enabled;
+  ) async =>
+      biometricEnabledByAccount[accountId] = enabled;
 
   @override
   Future<void> removeLegacyBiometricCredentials() async =>
