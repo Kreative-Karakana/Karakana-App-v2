@@ -116,6 +116,52 @@ void main() {
     checkout.dispose();
   });
 
+  test('pending timeout remains recoverable and settles after a late webhook', () async {
+    final api = FakeCourseCheckoutApi();
+    final checkout = controller(api);
+
+    await checkout.startCheckout(
+      accountNumber: '255710000000',
+      provider: 'Airtel',
+    );
+    await checkout.checkPaymentStatus();
+
+    expect(checkout.state, CourseCheckoutState.timedOut);
+    expect(checkout.activeExternalId, 'local-attempt-1');
+    expect(checkout.hasActiveAttempt, isTrue);
+    expect(checkout.message, contains('bado yanathibitishwa'));
+
+    api.statusResponse = {
+      'external_id': 'local-attempt-1',
+      'payment_state': 'SETTLED',
+    };
+    await checkout.retryStatusCheck();
+
+    expect(checkout.state, CourseCheckoutState.settled);
+    expect(checkout.hasActiveAttempt, isFalse);
+    checkout.dispose();
+  });
+
+  test('failed status is reported as failure rather than pending timeout', () async {
+    final api = FakeCourseCheckoutApi();
+    final checkout = controller(api);
+
+    await checkout.startCheckout(
+      accountNumber: '255710000000',
+      provider: 'Airtel',
+    );
+    api.statusResponse = {
+      'external_id': 'local-attempt-1',
+      'payment_state': 'FAILED',
+    };
+    await checkout.checkPaymentStatus();
+
+    expect(checkout.state, CourseCheckoutState.failed);
+    expect(checkout.hasActiveAttempt, isFalse);
+    expect(checkout.message, contains('hayakukamilika'));
+    checkout.dispose();
+  });
+
   test('restart recovery adopts the same course-scoped attempt', () async {
     final api = FakeCourseCheckoutApi()
       ..activeResponse = {
