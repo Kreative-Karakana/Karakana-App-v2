@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
+import '../../../widgets/buttons/gradient_button.dart';
 
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
@@ -91,8 +92,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
               Text(_error ?? 'Hatukuweza kupata matokeo.',
                   textAlign: TextAlign.center),
               const SizedBox(height: 16),
-              ElevatedButton(
-                  onPressed: _load, child: const Text('Jaribu tena')),
+              GradientButton(text: 'Jaribu tena', onTap: _load, height: 48),
             ],
           ),
         ),
@@ -123,20 +123,10 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
           const SizedBox(height: AppSpacing.xl),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () =>
-                  context.go('/course/${widget.courseId}/classroom'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFE87722),
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 52),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(28)),
-              ),
-              child: Text(
-                'Rudi Kwenye Darasa',
-                style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
-              ),
+            child: GradientButton(
+              text: 'Rudi Kwenye Darasa',
+              onTap: () => context.go('/course/${widget.courseId}/classroom'),
+              height: 52,
             ),
           ),
           const SizedBox(height: AppSpacing.lg),

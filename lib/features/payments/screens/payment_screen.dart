@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../widgets/buttons/gradient_button.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../providers/course_checkout_controller.dart';
@@ -675,40 +676,16 @@ class _PaymentScreenState extends State<PaymentScreen>
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFE87722),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(double.infinity, 56),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.button),
-                    ),
-                    elevation: 0,
-                  ),
-                  onPressed: (_selectedProvider != null &&
-                          _phoneController.text.isNotEmpty &&
-                          !_checkoutController.hasActiveAttempt &&
-                          !_checkoutController.isBusy)
-                      ? _processPayment
-                      : null,
-                  child: _checkoutController.isBusy
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: KarakanaWaveLoader(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : Text(
-                          'Lipa ${AppFormatters.currency(widget.coursePrice)}',
-                          style: AppTextStyles.buttonLarge.copyWith(
-                            color: Colors.white,
-                          ),
-                        ),
-                ),
+              GradientButton(
+                text: 'Lipa ${AppFormatters.currency(widget.coursePrice)}',
+                height: 56,
+                isLoading: _checkoutController.isBusy,
+                onTap: (_selectedProvider != null &&
+                        _phoneController.text.isNotEmpty &&
+                        !_checkoutController.hasActiveAttempt &&
+                        !_checkoutController.isBusy)
+                    ? _processPayment
+                    : null,
               ),
               const SizedBox(height: AppSpacing.md),
               Row(
