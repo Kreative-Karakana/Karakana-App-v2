@@ -1,0 +1,10 @@
+{
+  "@@locale": "sw",
+  "paymentSuccessTitle": "Malipo Yamefanikiwa!",
+  "paymentSuccessSubtitle": "Umeingia kwenye kozi yako. Anza kujifunza sasa hivi!",
+  "paymentSuccessStatusLabel": "Hali",
+  "paymentSuccessStatusValue": "Imefaulu",
+  "paymentSuccessDateLabel": "Tarehe",
+  "paymentSuccessStartLearning": "Anza Kujifunza",
+  "paymentSuccessBackHome": "Rudi Nyumbani"
+}

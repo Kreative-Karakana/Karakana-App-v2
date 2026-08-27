@@ -44,7 +44,6 @@ import '../../features/trainer/screens/trainer_dashboard_screen.dart';
 import '../../features/fursa/screens/fursa_screen.dart';
 import '../../features/zana/business_management/screens/business_management_screen.dart';
 import '../../features/zana/screens/insurance_screen.dart';
-import '../../features/zana/screens/pos_screen.dart';
 import '../../features/zana/screens/kikoba_screen.dart';
 import '../../features/zana/screens/zana_screen.dart';
 import '../../features/ebooks/screens/ebook_store_screen.dart';
@@ -66,6 +65,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String explore = '/explore';
   static const String zana = '/zana';
+  static const String zanaBusiness = '/zana/biz-manager';
   static const String account = '/account';
   static const String courseDetail = '/course/:id';
   static const String classroom = '/course/:id/classroom';
@@ -95,6 +95,53 @@ class AppRoutes {
 }
 
 class AppRouter {
+  static String? redirectFor({
+    required AuthenticationState authenticationState,
+    required bool isOnboarded,
+    required bool passwordChangeRequired,
+    required bool isTrainer,
+    required String location,
+  }) {
+    final isAuth = authenticationState == AuthenticationState.authenticated;
+    final isBiometricLocked =
+        authenticationState == AuthenticationState.biometricLocked;
+    const authRoutes = [
+      AppRoutes.login,
+      AppRoutes.signup,
+      AppRoutes.verifyEmail,
+      AppRoutes.forgotPassword,
+      AppRoutes.biometric,
+    ];
+    const publicRoutes = [
+      AppRoutes.zana,
+      '/zana/kikoba',
+      '/zana/insurance',
+      '/fursa',
+    ];
+
+    if (location == AppRoutes.splash) return null;
+    if (!isOnboarded) {
+      return location == AppRoutes.onboarding ? null : AppRoutes.onboarding;
+    }
+    if (isBiometricLocked) {
+      return location == AppRoutes.biometric ? null : AppRoutes.biometric;
+    }
+    if (!isAuth &&
+        !authRoutes.contains(location) &&
+        !publicRoutes.contains(location)) {
+      return AppRoutes.login;
+    }
+    if (isAuth &&
+        passwordChangeRequired &&
+        location != AppRoutes.changePassword) {
+      return AppRoutes.changePassword;
+    }
+    if (isAuth && authRoutes.contains(location)) {
+      return isTrainer ? AppRoutes.trainerDashboard : AppRoutes.home;
+    }
+    return null;
+  }
+
   static CustomTransitionPage<void> _buildAuthTransitionPage({
     required GoRouterState state,
     required Widget child,
@@ -128,54 +175,13 @@ class AppRouter {
       initialLocation: AppRoutes.splash,
       refreshListenable: authProvider,
       redirect: (context, state) {
-        final isAuth = authProvider.isAuthenticated;
-        final isOnboarded = authProvider.isOnboardingComplete;
-        final location = state.matchedLocation;
-
-        const authRoutes = [
-          AppRoutes.login,
-          AppRoutes.signup,
-          AppRoutes.verifyEmail,
-          AppRoutes.forgotPassword,
-          AppRoutes.biometric,
-        ];
-        const publicRoutes = [
-          AppRoutes.zana,
-          '/zana/kikoba',
-          '/zana/pos',
-          '/zana/insurance',
-          '/fursa',
-        ];
-
-        // Splash handles its own navigation
-        if (location == AppRoutes.splash) return null;
-
-        // Onboarding guard — takes full priority, skip auth guard entirely
-        if (!isOnboarded) {
-          return location == AppRoutes.onboarding ? null : AppRoutes.onboarding;
-        }
-
-        // Auth guard: redirect unauthenticated to login
-        if (!isAuth &&
-            !authRoutes.contains(location) &&
-            !publicRoutes.contains(location)) {
-          return AppRoutes.login;
-        }
-
-        if (isAuth &&
-            authProvider.passwordChangeRequired &&
-            location != AppRoutes.changePassword) {
-          return AppRoutes.changePassword;
-        }
-
-        // Already logged in: redirect away from auth screens
-        if (isAuth && authRoutes.contains(location)) {
-          return authProvider.isTrainer
-              ? AppRoutes.trainerDashboard
-              : AppRoutes.home;
-        }
-
-        return null;
+        return redirectFor(
+          authenticationState: authProvider.authenticationState,
+          isOnboarded: authProvider.isOnboardingComplete,
+          passwordChangeRequired: authProvider.passwordChangeRequired,
+          isTrainer: authProvider.isTrainer,
+          location: state.matchedLocation,
+        );
       },
       routes: [
         // ── Splash ──────────────────────────────────────────────
@@ -249,11 +255,7 @@ class AppRouter {
           builder: (context, state) => const KikobaScreen(),
         ),
         GoRoute(
-          path: '/zana/pos',
-          builder: (context, state) => const POSScreen(),
-        ),
-        GoRoute(
-          path: '/zana/biz-manager',
+          path: AppRoutes.zanaBusiness,
           builder: (context, state) => const BusinessManagementScreen(),
         ),
         GoRoute(

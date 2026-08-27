@@ -25,7 +25,7 @@ Karakana V2 is a Flutter app organized around feature modules. Shared concerns l
 | `lib/features/profile` | Profile, edit profile, password change, terms, trainer application |
 | `lib/features/support` | Tickets, new ticket, ticket detail |
 | `lib/features/trainer` | Trainer dashboard, courses, lessons, quizzes, student progress |
-| `lib/features/zana` | Business tools, insurance, POS, Kikoba, eBook entry points |
+| `lib/features/zana` | Business tools, insurance, Kikoba, eBook entry points |
 | `lib/widgets` | Reusable buttons, cards, loaders, logo, section headers, popups |
 
 ## Routing

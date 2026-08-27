@@ -1,12 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../../payments/utils/payment_status.dart';
 import '../providers/ebook_provider.dart';
@@ -52,7 +53,6 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
   ];
 
   late final EbookService _service;
-  final _currency = NumberFormat('#,###');
   Map<String, dynamic>? _detail;
   bool _loading = true;
   bool _processing = false;
@@ -457,10 +457,25 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
                             aspectRatio: 0.72,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(22),
-                              child: d['cover_image'] != null
-                                  ? Image.network(
-                                      d['cover_image'].toString(),
+                              child: d['cover_image'] != null &&
+                                      d['cover_image'].toString().isNotEmpty
+                                  ? CachedNetworkImage(
+                                      imageUrl: d['cover_image'].toString(),
                                       fit: BoxFit.cover,
+                                      placeholder: (_, __) => Container(
+                                        color: const Color(0xFFF5E6D8),
+                                        alignment: Alignment.center,
+                                        child: const KarakanaWaveLoader(
+                                          size: 28,
+                                        ),
+                                      ),
+                                      errorWidget: (_, __, ___) => Container(
+                                        color: const Color(0xFFF5E6D8),
+                                        child: const Icon(
+                                          Icons.menu_book_outlined,
+                                          size: 52,
+                                        ),
+                                      ),
                                     )
                                   : Container(
                                       color: const Color(0xFFF5E6D8),
@@ -506,7 +521,7 @@ class _EbookDetailScreenState extends State<EbookDetailScreen> {
                               : rail == EbookPurchaseRail.appleIap &&
                                       localizedApplePrice != null
                                   ? localizedApplePrice
-                                  : 'TZS ${_currency.format(price)}',
+                                  : AppFormatters.currency(price),
                           textAlign: TextAlign.center,
                           style: AppTextStyles.h2.copyWith(
                             color: const Color(0xFF1A1A1A),

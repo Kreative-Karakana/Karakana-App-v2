@@ -46,9 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
           .read<NotificationProvider>()
           .loadNotifications(isTrainer: context.read<AuthProvider>().isTrainer);
       checkAndShowAmbassadorCode(context);
-      // Temporarily hidden per request: "Fomu ya Taarifa" auto-popup on login.
-      // Re-enable later by restoring this call.
-      // checkAndPromptMastercard(context);
+      // Product decision: do not auto-open "Fomu ya Taarifa" from Home.
       _loadBanners();
       _notificationsPollingTimer?.cancel();
       _notificationsPollingTimer = Timer.periodic(
@@ -1192,7 +1190,9 @@ class _BannerCarouselState extends State<_BannerCarousel> {
             children: List.generate(
               banners.length,
               (i) => AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
+                duration: MediaQuery.of(context).disableAnimations
+                    ? Duration.zero
+                    : AppMotion.standard,
                 curve: Curves.easeInOut,
                 margin: const EdgeInsets.symmetric(horizontal: 3),
                 width: _currentIndex == i ? 18 : 5,

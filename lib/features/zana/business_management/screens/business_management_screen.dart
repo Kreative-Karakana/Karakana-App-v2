@@ -9,8 +9,10 @@ import 'package:provider/provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_text_styles.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../../../widgets/common/karakana_wave_loader.dart';
 import '../../../../widgets/common/top_popup.dart';
+import '../../../../widgets/common/empty_state_view.dart';
 import '../models/business.dart';
 import '../models/business_dashboard_summary.dart';
 import '../models/business_transaction.dart';
@@ -218,7 +220,7 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
           if (provider.hasNoBusiness || provider.business == null) {
             return RefreshIndicator(
               color: AppColors.primary,
-              onRefresh: provider.loadInitial,
+              onRefresh: provider.refresh,
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(18, 20, 18, 28),
                 children: [
@@ -247,7 +249,7 @@ class _BusinessManagementViewState extends State<_BusinessManagementView> {
 
           return RefreshIndicator(
             color: AppColors.primary,
-            onRefresh: provider.loadInitial,
+            onRefresh: provider.refresh,
             child: ListView(
               controller: _scrollController,
               padding: const EdgeInsets.fromLTRB(18, 18, 18, 28),
@@ -2700,58 +2702,13 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: AppSpacing.cardPadding,
-      decoration: BoxDecoration(
-        color: AppColors.surfaceWarm,
-        borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 28, color: AppColors.textTertiary),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            title,
-            style: GoogleFonts.montserrat(
-              color: AppColors.textPrimary,
-              fontSize: 13,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            message,
-            style: GoogleFonts.montserrat(
-              color: AppColors.textSecondary,
-              fontSize: 12,
-              height: 1.35,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          if (actionLabel != null && onAction != null) ...[
-            const SizedBox(height: 12),
-            TextButton.icon(
-              onPressed: onAction,
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                visualDensity: VisualDensity.compact,
-                foregroundColor: AppColors.primaryDark,
-              ),
-              icon: Icon(actionIcon, size: 16),
-              label: Text(
-                actionLabel!,
-                style: GoogleFonts.montserrat(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
+    return EmptyStateView(
+      icon: icon,
+      title: title,
+      subtitle: message,
+      actionLabel: actionLabel,
+      onAction: onAction,
+      actionIcon: actionIcon,
     );
   }
 }
@@ -2868,7 +2825,10 @@ InputDecoration _inputDecoration(String label, String hint) {
 
 String _money(double value, String currency) {
   final normalized = value.abs() < 0.005 ? 0.0 : value;
-  return '$currency ${_formatThousandsNumber(normalized.toStringAsFixed(0))}';
+  return AppFormatters.currency(
+    normalized,
+    currencyCode: currency,
+  );
 }
 
 String _cleanAmount(String value) {

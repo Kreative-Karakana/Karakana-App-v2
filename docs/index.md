@@ -29,7 +29,7 @@ The app currently includes:
 - Trainer dashboard, account, course builder, lesson manager, quiz manager, student progress, and trainer eBook management flows.
 - Payments, wallet, user transactions, and payment-success flows.
 - Notifications, support tickets, profile editing, password change, terms, account deletion, and trainer application flows.
-- Zana tools including business management, eBooks, insurance, POS, and Kikoba entry points.
+- Zana tools including business management, eBooks, insurance, and Kikoba entry points.
 
 ## Documentation Standard
 

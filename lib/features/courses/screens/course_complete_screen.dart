@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart' show Share;
 
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../models/quiz_model.dart';
@@ -306,9 +306,9 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                       const SizedBox(height: 12),
                       Text(
                         _certificate?.issuedAt != null
-                            ? DateFormat('d MMMM yyyy')
+                            ? AppDateFormat.longDisplay
                                 .format(_certificate!.issuedAt!.toLocal())
-                            : DateFormat('d MMMM yyyy').format(DateTime.now()),
+                            : AppDateFormat.longDisplay.format(DateTime.now()),
                         style: GoogleFonts.montserrat(
                           fontSize: AppTextStyles.bodySmall.fontSize,
                           color: const Color(0xFF9E8070),
@@ -407,7 +407,7 @@ class _CourseCompleteScreenState extends State<CourseCompleteScreen> {
                     ),
                     onPressed: () async {
                       final date =
-                          DateFormat('d MMMM yyyy').format(DateTime.now());
+                          AppDateFormat.longDisplay.format(DateTime.now());
                       final text =
                           '🎓 Nimekamilisha kozi ya "${widget.courseTitle}" kwenye Karakana!\n\nTarehe: $date\n\n— ${auth.userFullName}\n\nPakua Karakana: https://kreativekarakana.co.tz';
                       await Share.share(

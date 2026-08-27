@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../widgets/common/empty_state_view.dart';
 
 class WishlistScreen extends StatefulWidget {
   const WishlistScreen({super.key});
@@ -195,43 +196,10 @@ class _WishlistScreenState extends State<WishlistScreen> {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 96,
-            height: 96,
-            decoration: const BoxDecoration(
-              color: Color(0xFFF5E6D8),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.bookmark_border_rounded,
-              size: 48,
-              color: Color(0xFFE87722),
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Hujaweka Kozi Yoyote Kwenye Vipendwa',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF1A0A00),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            'Tafuta kozi nzuri na uziweke hapa.',
-            style: GoogleFonts.montserrat(
-              fontSize: AppTextStyles.bodyMedium.fontSize,
-              color: const Color(0xFF9E8070),
-            ),
-          ),
-        ],
-      ),
+    return const EmptyStateView(
+      icon: Icons.bookmark_border_rounded,
+      title: 'Hujaweka Kozi Yoyote Kwenye Vipendwa',
+      subtitle: 'Tafuta kozi nzuri na uziweke hapa.',
     );
   }
 

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/top_popup.dart';
 
 class TicketDetailScreen extends StatefulWidget {
@@ -47,7 +47,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     if (raw == null || raw.isEmpty) return '';
     try {
       final dt = DateTime.parse(raw).toLocal();
-      return DateFormat('HH:mm dd/MM/yyyy').format(dt);
+      return AppDateFormat.displayWithTime.format(dt);
     } catch (_) {
       return '';
     }

@@ -1,10 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../models/ebook.dart';
 import '../services/ebook_service.dart';
@@ -21,7 +22,6 @@ class TrainerEbookDetailScreen extends StatefulWidget {
 
 class _TrainerEbookDetailScreenState extends State<TrainerEbookDetailScreen> {
   final _service = EbookService();
-  final _currency = NumberFormat('#,###');
 
   Ebook? _ebook;
   bool _loading = true;
@@ -239,9 +239,22 @@ class _TrainerEbookDetailScreenState extends State<TrainerEbookDetailScreen> {
                                     color: Colors.white.withValues(alpha: 0.12),
                                     child: ebook.coverImageUrl != null &&
                                             ebook.coverImageUrl!.isNotEmpty
-                                        ? Image.network(
-                                            ebook.coverImageUrl!,
+                                        ? CachedNetworkImage(
+                                            imageUrl: ebook.coverImageUrl!,
                                             fit: BoxFit.cover,
+                                            placeholder: (_, __) =>
+                                                const Center(
+                                              child: KarakanaWaveLoader(
+                                                color: Colors.white,
+                                                size: 24,
+                                              ),
+                                            ),
+                                            errorWidget: (_, __, ___) =>
+                                                const Icon(
+                                              Icons.menu_book_rounded,
+                                              size: 42,
+                                              color: Colors.white,
+                                            ),
                                           )
                                         : const Icon(
                                             Icons.menu_book_rounded,
@@ -325,8 +338,9 @@ class _TrainerEbookDetailScreenState extends State<TrainerEbookDetailScreen> {
                               _metricCard(
                                 icon: Icons.payments_outlined,
                                 label: 'Mapato',
-                                value:
-                                    'TZS ${_currency.format(ebook.totalRevenue)}',
+                                value: AppFormatters.currency(
+                                  ebook.totalRevenue,
+                                ),
                                 accent: const Color(0xFF2E7D32),
                               ),
                               _metricCard(
@@ -360,25 +374,26 @@ class _TrainerEbookDetailScreenState extends State<TrainerEbookDetailScreen> {
                                 _infoRow(
                                   Icons.price_change_outlined,
                                   'Bei',
-                                  'TZS ${_currency.format(ebook.priceInTzs)}',
+                                  AppFormatters.currency(
+                                    ebook.priceInTzs,
+                                    zeroLabel: 'Bure',
+                                  ),
                                 ),
                                 _infoRow(
                                   Icons.calendar_today_outlined,
                                   'Iliundwa',
                                   ebook.createdAt == null
                                       ? '-'
-                                      : DateFormat(
-                                          'dd MMM yyyy',
-                                        ).format(ebook.createdAt!),
+                                      : AppDateFormat.display
+                                          .format(ebook.createdAt!),
                                 ),
                                 _infoRow(
                                   Icons.update_outlined,
                                   'Imesasishwa',
                                   ebook.updatedAt == null
                                       ? '-'
-                                      : DateFormat(
-                                          'dd MMM yyyy',
-                                        ).format(ebook.updatedAt!),
+                                      : AppDateFormat.display
+                                          .format(ebook.updatedAt!),
                                 ),
                                 _infoRow(
                                   Icons.lock_outline,

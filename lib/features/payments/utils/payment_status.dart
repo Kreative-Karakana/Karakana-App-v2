@@ -25,4 +25,18 @@ class PaymentStatusContract {
   static bool awaitsUssd(Map<dynamic, dynamic> json) {
     return json['action'] == 'await_ussd' || json['gateway'] == 'evmak_mno';
   }
+
+  static bool isAmbiguous(Map<dynamic, dynamic> json) {
+    return json['initiation_state']?.toString().toUpperCase() == 'AMBIGUOUS' ||
+        json['action'] == 'poll_status';
+  }
+
+  static bool isRecoverable(Map<dynamic, dynamic> json) {
+    if (isSettled(json) || isFailed(json)) return true;
+    final state = normalizedState(json);
+    return json['recoverable'] == true ||
+        awaitsUssd(json) ||
+        isAmbiguous(json) ||
+        const {'PENDING', 'PROCESSING', 'SUCCESS', 'ON_HOLD'}.contains(state);
+  }
 }

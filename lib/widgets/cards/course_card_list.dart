@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../core/utils/formatters.dart';
 import '../../features/courses/models/course_model.dart';
 
 class CourseListCard extends StatelessWidget {
@@ -148,7 +149,10 @@ class CourseListCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              course.formattedPrice,
+                              AppFormatters.currency(
+                                course.price,
+                                zeroLabel: 'BURE',
+                              ),
                               style: GoogleFonts.montserrat(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,

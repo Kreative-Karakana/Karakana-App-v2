@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../../../widgets/common/top_popup.dart';
 import '../utils/course_contract.dart';
@@ -19,21 +19,11 @@ class TrainerCoursesListScreen extends StatefulWidget {
 }
 
 class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
-  final _currency = NumberFormat('#,###');
-
   List _courses = [];
   bool _loading = true;
   String? _error;
 
   // ── HELPERS ───────────────────────────────────────────────────────────────
-
-  String _fmtPrice(dynamic v) {
-    if (v == null) return '0';
-    final n = double.tryParse(v.toString()) ?? 0;
-    if (n >= 1000000) return '${(n / 1000000).toStringAsFixed(1)}M';
-    if (n >= 1000) return '${(n / 1000).toStringAsFixed(0)}K';
-    return _currency.format(n.toInt());
-  }
 
   String _statusLabel(String s) {
     return CourseContract.statusPresentation(s).label;
@@ -43,7 +33,7 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
     return Color(CourseContract.statusPresentation(s).colorValue);
   }
 
-  String _computeRevenue(Map c) {
+  int _computeRevenue(Map c) {
     final students = c['student_count'] as int? ?? 0;
     final price =
         (double.tryParse((c['price'] ?? '0').toString()) ?? 0).toInt();
@@ -52,7 +42,7 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
     if (commissionRate != null && commissionRate > 0 && commissionRate <= 100) {
       gross = (gross * (1 - commissionRate / 100)).round();
     }
-    return _fmtPrice(gross);
+    return gross;
   }
 
   // ── DATA ─────────────────────────────────────────────────────────────────
@@ -411,7 +401,12 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
                       fontWeight: FontWeight.w500,
                       color: const Color(0xFF7B3A10))),
               const Spacer(),
-              Text('TZS ${_fmtPrice(price)}',
+              Text(
+                  AppFormatters.currency(
+                    price,
+                    compact: true,
+                    zeroLabel: 'Bure',
+                  ),
                   style: GoogleFonts.montserrat(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
@@ -423,7 +418,8 @@ class _TrainerCoursesListScreenState extends State<TrainerCoursesListScreen> {
                 const Icon(Icons.account_balance_wallet_outlined,
                     size: 13, color: Color(0xFF7B3A10)),
                 const SizedBox(width: 4),
-                Text('Mapato: TZS ${_computeRevenue(course)}',
+                Text(
+                    'Mapato: ${AppFormatters.currency(_computeRevenue(course), compact: true)}',
                     style: GoogleFonts.montserrat(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,

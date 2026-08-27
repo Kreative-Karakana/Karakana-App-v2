@@ -34,7 +34,7 @@ Version 2.0 — complete rebuild from design spec.
 - All classes in lib/core/theme/
 
 ## Navigation (GoRouter)
-- Bottom nav: 4 tabs — Nyumbani (/home), Tafuta (/explore), Zana (/zana), Akaunti (/account)
+- Bottom nav: 5 tabs — Nyumbani (index 0), Tafuta (index 1), Zana (index 2), Fursa (index 3), Akaunti (index 4); tab selection is routed through `/home?tab={index}`
 - Auth guard: unauthenticated → /login
 - Onboarding guard: first launch → /onboarding
 

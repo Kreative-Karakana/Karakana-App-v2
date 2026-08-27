@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +9,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../../../widgets/common/empty_state_view.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../notifications/providers/notification_provider.dart';
 import '../utils/course_contract.dart';
@@ -205,15 +206,6 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     return '$num';
   }
 
-  String _formatPrice(dynamic p) {
-    try {
-      final v = double.parse(p.toString());
-      return NumberFormat('#,###').format(v);
-    } catch (_) {
-      return 'TZS $p';
-    }
-  }
-
   String _getGreeting() {
     final hour = DateTime.now().hour;
     if (hour < 12) return 'Habari za Asubuhi';
@@ -317,7 +309,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   String _certDate(Map cert) {
     final raw = cert['created_at'] as String? ?? cert['date'] as String? ?? '';
     try {
-      return DateFormat('dd MMM yyyy').format(DateTime.parse(raw));
+      return AppDateFormat.display.format(DateTime.parse(raw));
     } catch (_) {
       return raw;
     }
@@ -983,11 +975,10 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
 
   Widget _buildStatsGrid(Color surfaceColor, Color textPrimary) {
     final ebookRevenue = _stats['total_ebook_revenue'] as double? ?? 0.0;
-    final ebookRevenueStr = ebookRevenue >= 1000000
-        ? 'TZS ${(ebookRevenue / 1000000).toStringAsFixed(1)}M'
-        : ebookRevenue >= 1000
-            ? 'TZS ${(ebookRevenue / 1000).toStringAsFixed(0)}K'
-            : 'TZS ${_formatNumber(ebookRevenue.toInt())}';
+    final ebookRevenueStr = AppFormatters.currency(
+      ebookRevenue,
+      compact: true,
+    );
 
     return Column(
       children: [
@@ -1361,6 +1352,17 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
   }
 
   Widget _buildEmptyState(String message, IconData icon, Color surfaceColor) {
+    return EmptyStateView(
+      icon: icon,
+      title: message,
+      actionLabel: 'Unda Kozi',
+      onAction: () => context.push('/trainer/course-builder'),
+    );
+  }
+
+  // ignore: unused_element
+  Widget _buildLegacyEmptyState(
+      String message, IconData icon, Color surfaceColor) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Padding(
@@ -1955,7 +1957,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'TZS ${_formatPrice(price)}',
+                      AppFormatters.currency(price, zeroLabel: 'Bure'),
                       style: GoogleFonts.montserrat(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -2029,10 +2031,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         ? const Color(0xFF2A1A0A)
                         : const Color(0xFFF5E6D8),
                     child: cover != null && cover.isNotEmpty
-                        ? Image.network(
-                            cover,
+                        ? CachedNetworkImage(
+                            imageUrl: cover,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const Icon(
+                            placeholder: (_, __) => const Center(
+                              child: KarakanaWaveLoader(
+                                color: Color(0xFFE87722),
+                                size: 24,
+                              ),
+                            ),
+                            errorWidget: (_, __, ___) => const Icon(
                               Icons.menu_book_outlined,
                               color: Color(0xFFE87722),
                               size: 34,
@@ -2097,7 +2105,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'TZS ${_formatPrice(price)}',
+                      AppFormatters.currency(price, zeroLabel: 'Bure'),
                       style: GoogleFonts.montserrat(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -2114,7 +2122,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     );
   }
 
-  String _computeRevenue(Map course) {
+  int _computeRevenue(Map course) {
     final students = course['student_count'] as int? ?? 0;
     final price = (course['price'] as num? ?? 0).toInt();
     final commissionRate = (course['commission_rate'] as num?)?.toDouble();
@@ -2122,7 +2130,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
     if (commissionRate != null && commissionRate > 0 && commissionRate <= 100) {
       gross = (gross * (1 - commissionRate / 100)).round();
     }
-    return _formatPrice(gross);
+    return gross;
   }
 
   Widget _buildCourseCard(
@@ -2390,7 +2398,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                       ),
                       const Spacer(),
                       Text(
-                        'TZS ${_formatPrice(price)}',
+                        AppFormatters.currency(price, zeroLabel: 'Bure'),
                         style: GoogleFonts.montserrat(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -2411,7 +2419,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'Mapato: TZS ${_computeRevenue(course)}',
+                          'Mapato: ${AppFormatters.currency(_computeRevenue(course))}',
                           style: GoogleFonts.montserrat(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -4229,10 +4237,16 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                 color:
                     isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
                 child: cover != null && cover.isNotEmpty
-                    ? Image.network(
-                        cover,
+                    ? CachedNetworkImage(
+                        imageUrl: cover,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Icon(
+                        placeholder: (_, __) => const Center(
+                          child: KarakanaWaveLoader(
+                            color: Color(0xFFE87722),
+                            size: 18,
+                          ),
+                        ),
+                        errorWidget: (_, __, ___) => const Icon(
                           Icons.menu_book_outlined,
                           color: Color(0xFFE87722),
                           size: 24,
@@ -4287,7 +4301,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'TZS ${_formatPrice(price)}',
+                    AppFormatters.currency(price, zeroLabel: 'Bure'),
                     style: GoogleFonts.montserrat(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
@@ -4296,7 +4310,7 @@ class _TrainerDashboardScreenState extends State<TrainerDashboardScreen>
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '$buyers wasomaji  •  $purchases mauzo  •  TZS ${_formatPrice(revenue)}',
+                    '$buyers wasomaji  •  $purchases mauzo  •  ${AppFormatters.currency(revenue)}',
                     style: GoogleFonts.montserrat(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,

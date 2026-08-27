@@ -3,7 +3,9 @@ import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../widgets/common/minimum_tap_target.dart';
 import '../../../widgets/common/top_popup.dart';
+import '../../../widgets/common/empty_state_view.dart';
 import '../utils/content_contract.dart';
 
 class LessonManagerScreen extends StatefulWidget {
@@ -392,31 +394,10 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
   }
 
   Widget _buildEmptyState() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 88,
-            height: 88,
-            decoration: BoxDecoration(
-                color:
-                    isDark ? const Color(0xFF2A1A0A) : const Color(0xFFF5E6D8),
-                shape: BoxShape.circle),
-            child: const Icon(Icons.view_agenda_outlined,
-                size: 44, color: Color(0xFFE87722)),
-          ),
-          const SizedBox(height: 20),
-          Text('Hakuna sehemu bado.\nBonyeza + kuongeza sehemu ya kwanza!',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF7B3A10),
-                  height: 1.5),
-              textAlign: TextAlign.center),
-        ],
-      ),
+    return const EmptyStateView(
+      icon: Icons.view_agenda_outlined,
+      title: 'Hakuna sehemu bado.',
+      subtitle: 'Bonyeza + kuongeza sehemu ya kwanza!',
     );
   }
 
@@ -442,7 +423,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
         children: [
           // Section header
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 12, 12),
+            padding: const EdgeInsets.fromLTRB(16, 5, 12, 5),
             child: Row(children: [
               Container(
                 width: 32,
@@ -468,8 +449,10 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                   style: GoogleFonts.montserrat(
                       fontSize: 11, color: const Color(0xFF9E8070))),
               const SizedBox(width: 8),
-              GestureDetector(
+              MinimumTapTarget(
+                  key: ValueKey('delete-section-${section['id']}'),
                   onTap: () => _deleteSection(section),
+                  semanticsLabel: 'Futa sehemu',
                   child: const Icon(Icons.delete_outline,
                       size: 18, color: Color(0xFF9E8070))),
             ]),
@@ -522,7 +505,7 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
     final hasMux = (lesson['mux_playback_id'] as String? ?? '').isNotEmpty;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       decoration: BoxDecoration(
           border: Border(
               top: BorderSide(
@@ -556,8 +539,10 @@ class _LessonManagerScreenState extends State<LessonManagerScreen> {
                         const Color(0xFF1A0A00))),
           ]),
         ),
-        GestureDetector(
+        MinimumTapTarget(
+            key: ValueKey('delete-lesson-${lesson['id']}'),
             onTap: () => _deleteLesson(lesson),
+            semanticsLabel: 'Futa somo',
             child: const Icon(Icons.delete_outline,
                 size: 16, color: Color(0xFFBDA99C))),
       ]),

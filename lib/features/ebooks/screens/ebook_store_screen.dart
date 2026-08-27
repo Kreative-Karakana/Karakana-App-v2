@@ -1,10 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/karakana_wave_loader.dart';
 import '../providers/ebook_provider.dart';
 
@@ -21,7 +22,6 @@ class _EbookStoreScreenState extends State<EbookStoreScreen> {
     Color(0xFF3D1800),
     Color(0xFF7B3A10),
   ];
-  final _currency = NumberFormat('#,###');
 
   @override
   void initState() {
@@ -98,8 +98,22 @@ class _EbookStoreScreenState extends State<EbookStoreScreen> {
                       Expanded(
                         child: ebook.coverImageUrl != null &&
                                 ebook.coverImageUrl!.isNotEmpty
-                            ? Image.network(ebook.coverImageUrl!,
-                                fit: BoxFit.cover, width: double.infinity)
+                            ? CachedNetworkImage(
+                                imageUrl: ebook.coverImageUrl!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                placeholder: (_, __) => Container(
+                                  color: const Color(0xFFF5E6D8),
+                                  alignment: Alignment.center,
+                                  child: const KarakanaWaveLoader(size: 24),
+                                ),
+                                errorWidget: (_, __, ___) => Container(
+                                  color: const Color(0xFFF5E6D8),
+                                  child: const Center(
+                                    child: Icon(Icons.menu_book_outlined),
+                                  ),
+                                ),
+                              )
                             : Container(
                                 color: const Color(0xFFF5E6D8),
                                 child: const Center(
@@ -125,9 +139,10 @@ class _EbookStoreScreenState extends State<EbookStoreScreen> {
                                 style: AppTextStyles.bodyMedium),
                             const SizedBox(height: AppSpacing.xs),
                             Text(
-                              ebook.isFree
-                                  ? 'Bure'
-                                  : 'TZS ${_currency.format(ebook.priceInTzs)}',
+                              AppFormatters.currency(
+                                ebook.priceInTzs,
+                                zeroLabel: 'Bure',
+                              ),
                               style: AppTextStyles.bodyMedium,
                             ),
                             const SizedBox(height: AppSpacing.sm),

@@ -11,6 +11,7 @@ import '../../../widgets/common/top_popup.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../providers/course_provider.dart';
 import '../services/review_safety_service.dart';
+import '../widgets/star_rating_input.dart';
 
 class CourseReviewsScreen extends StatefulWidget {
   final int courseId;
@@ -545,18 +546,11 @@ class _CourseReviewsScreenState extends State<CourseReviewsScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  5,
-                  (i) => GestureDetector(
-                    onTap: () => setModalState(() => _selectedRating = i + 1),
-                    child: Icon(
-                      i < _selectedRating ? Icons.star : Icons.star_border,
-                      color: const Color(0xFFFFA726),
-                      size: 36,
-                    ),
-                  ),
+              Center(
+                child: StarRatingInput(
+                  rating: _selectedRating,
+                  onChanged: (rating) =>
+                      setModalState(() => _selectedRating = rating),
                 ),
               ),
               const SizedBox(height: AppSpacing.md),

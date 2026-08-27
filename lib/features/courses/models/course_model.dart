@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 class CategoryModel {
   final int id;
   final String name;
@@ -142,9 +140,6 @@ class CourseModel {
       };
 
   bool get isFree => price == 0;
-
-  String get formattedPrice =>
-      isFree ? 'BURE' : 'TZS ${NumberFormat('#,###').format(price)}';
 
   String get formattedLevel {
     switch (level.toUpperCase()) {

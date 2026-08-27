@@ -46,6 +46,8 @@ class _SplashScreenState extends State<SplashScreen>
       if (!mounted) return;
       if (!auth.isOnboardingComplete) {
         context.go('/onboarding');
+      } else if (auth.isBiometricLocked) {
+        context.go('/biometric');
       } else if (auth.isAuthenticated) {
         context.go(auth.homeRoute);
       } else {

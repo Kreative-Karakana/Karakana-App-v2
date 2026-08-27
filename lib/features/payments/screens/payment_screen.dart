@@ -3,21 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/top_popup.dart';
-import '../utils/payment_status.dart';
+import '../providers/course_checkout_controller.dart';
 
 class PaymentScreen extends StatefulWidget {
   final int courseId;
   final String courseTitle;
   final double coursePrice;
   final String? courseThumbnail;
+  final CourseCheckoutController? checkoutController;
 
   const PaymentScreen({
     super.key,
@@ -25,6 +24,7 @@ class PaymentScreen extends StatefulWidget {
     required this.courseTitle,
     required this.coursePrice,
     this.courseThumbnail,
+    this.checkoutController,
   });
 
   @override
@@ -35,34 +35,36 @@ class _PaymentScreenState extends State<PaymentScreen>
     with WidgetsBindingObserver {
   String? _selectedProvider;
   final TextEditingController _phoneController = TextEditingController();
-  bool _isProcessing = false;
-  String? _activeExternalId;
-  bool _statusCheckInFlight = false;
-  bool _paymentTimedOut = false;
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _phoneController.dispose();
-    super.dispose();
-  }
+  late final CourseCheckoutController _checkoutController;
+  late final bool _ownsCheckoutController;
+  CourseCheckoutState? _lastHandledState;
+  bool _waitingDialogOpen = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _ownsCheckoutController = widget.checkoutController == null;
+    _checkoutController = widget.checkoutController ??
+        CourseCheckoutController(courseId: widget.courseId);
+    _checkoutController.addListener(_onCheckoutChanged);
+    _checkoutController.recoverActiveAttempt();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _checkoutController.removeListener(_onCheckoutChanged);
+    if (_ownsCheckoutController) _checkoutController.dispose();
+    _phoneController.dispose();
+    super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && _activeExternalId != null) {
-      _checkPaymentStatus();
+    if (state == AppLifecycleState.resumed) {
+      _checkoutController.handleAppResumed();
     }
-  }
-
-  String _formatPrice(double price) {
-    final formatter = NumberFormat('#,###', 'en_US');
-    return 'TZS ${formatter.format(price)}';
   }
 
   String _normalizePhone(String raw) {
@@ -84,9 +86,19 @@ class _PaymentScreenState extends State<PaymentScreen>
       return;
     }
 
-    setState(() => _isProcessing = true);
+    if (_checkoutController.hasActiveAttempt || _checkoutController.isBusy) {
+      return;
+    }
+    _showWaitingDialog();
+    await _checkoutController.startCheckout(
+      accountNumber: phone,
+      provider: _selectedProvider!,
+    );
+  }
 
-    // Show "waiting for confirmation" dialog
+  void _showWaitingDialog() {
+    if (_waitingDialogOpen || !mounted) return;
+    _waitingDialogOpen = true;
     showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -115,156 +127,37 @@ class _PaymentScreenState extends State<PaymentScreen>
           ],
         ),
       ),
-    );
-
-    try {
-      // 1. Initiate checkout
-      final checkoutRes = await ApiClient().dio.post(
-        '/api/v1/payments/checkout/',
-        data: {
-          'accountNumber': phone,
-          'provider': _selectedProvider,
-          'course_id': widget.courseId,
-        },
-      );
-
-      final externalId = checkoutRes.data['external_id'] as String?;
-      final checkoutUrl = checkoutRes.data['checkout_url'] as String?;
-      final initiationSuccess = checkoutRes.data['success'] == true;
-      final responseDesc = checkoutRes.data['response_desc']?.toString();
-      final awaitsUssd = PaymentStatusContract.awaitsUssd(checkoutRes.data);
-      if (externalId == null || externalId.isEmpty) {
-        if (mounted) Navigator.of(context, rootNavigator: true).pop();
-        _showError('Hitilafu ya kuanzisha malipo. Jaribu tena.');
-        return;
-      }
-
-      // EVMAK MNO flow may not return a checkout URL. In that case we proceed
-      // directly to status polling after successful initiation.
-      if (awaitsUssd && initiationSuccess) {
-        // Keep dialog open and continue to polling loop below.
-      } else if (awaitsUssd && !initiationSuccess) {
-        if (mounted) Navigator.of(context, rootNavigator: true).pop();
-        _showError(
-          responseDesc?.isNotEmpty == true
-              ? ApiClient().localizeErrorMessage(responseDesc!)
-              : 'Malipo hayakuanzishwa. Jaribu tena.',
-        );
-        return;
-      } else if (checkoutUrl != null && checkoutUrl.isNotEmpty) {
-        final uri = Uri.tryParse(checkoutUrl);
-        if (uri != null) {
-          var opened = await launchUrl(
-            uri,
-            mode: LaunchMode.externalApplication,
-          );
-          if (!opened) {
-            opened = await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
-          }
-          if (!opened) {
-            opened = await launchUrl(uri, mode: LaunchMode.platformDefault);
-          }
-          if (!opened) {
-            if (mounted) Navigator.of(context, rootNavigator: true).pop();
-            _showError(
-              'Imeshindikana kufungua ukurasa wa malipo. Jaribu tena.',
-            );
-            return;
-          }
-        }
-      } else {
-        if (mounted) Navigator.of(context, rootNavigator: true).pop();
-        _showError('Kiungo cha malipo hakikupatikana. Jaribu tena.');
-        return;
-      }
-
-      _activeExternalId = externalId;
-
-      // 2. Poll for payment status.
-      // EVMAK MNO can take longer before callback confirmation.
-      final maxPollAttempts = awaitsUssd ? 20 : 10;
-      bool success = false;
-      bool failed = false;
-      for (int i = 0; i < maxPollAttempts; i++) {
-        await Future.delayed(const Duration(seconds: 3));
-        if (!mounted) return;
-
-        try {
-          final statusRes = await ApiClient().dio.get(
-            '/api/v1/payments/$externalId/',
-          );
-          if (PaymentStatusContract.isSettled(statusRes.data)) {
-            success = true;
-            break;
-          }
-          // If explicitly failed (not just pending), stop early
-          if (PaymentStatusContract.isFailed(statusRes.data)) {
-            failed = true;
-            break;
-          }
-        } catch (_) {
-          // Network hiccup during polling — keep trying
-        }
-      }
-
-      if (!mounted) return;
-      Navigator.of(context, rootNavigator: true).pop(); // close dialog
-
-      if (success) {
-        _activeExternalId = null;
-        context.go('/payment/success');
-      } else if (failed) {
-        _activeExternalId = null;
-        _showError('Malipo hayakukamilika. Unaweza kuanzisha malipo mapya.');
-      } else {
-        setState(() {
-          _paymentTimedOut = true;
-          _isProcessing = false;
-        });
-        _showError(
-          'Malipo bado yanathibitishwa. Usilipe tena; angalia hali tena.',
-        );
-      }
-    } catch (e) {
-      if (!mounted) return;
-      Navigator.of(context, rootNavigator: true).pop();
-      _showError(ApiClient().parseError(e));
-    } finally {
-      if (mounted) setState(() => _isProcessing = false);
-    }
+    ).whenComplete(() => _waitingDialogOpen = false);
   }
 
-  Future<void> _checkPaymentStatus() async {
-    final externalId = _activeExternalId;
-    if (externalId == null || _statusCheckInFlight) return;
-    _statusCheckInFlight = true;
-    try {
-      final response = await ApiClient().dio.get(
-        '/api/v1/payments/$externalId/',
-      );
-      if (!mounted) return;
-      if (PaymentStatusContract.isSettled(response.data)) {
-        _activeExternalId = null;
-        setState(() => _paymentTimedOut = false);
+  void _closeWaitingDialog() {
+    if (!_waitingDialogOpen || !mounted) return;
+    Navigator.of(context, rootNavigator: true).pop();
+    _waitingDialogOpen = false;
+  }
+
+  void _onCheckoutChanged() {
+    if (!mounted) return;
+    setState(() {});
+    final state = _checkoutController.state;
+    if (_lastHandledState == state) return;
+    _lastHandledState = state;
+    switch (state) {
+      case CourseCheckoutState.settled:
+        _closeWaitingDialog();
         context.go('/payment/success');
-      } else if (PaymentStatusContract.isFailed(response.data)) {
-        _activeExternalId = null;
-        setState(() => _paymentTimedOut = false);
-        _showError('Malipo hayakukamilika. Unaweza kuanzisha malipo mapya.');
-      } else {
-        setState(() => _paymentTimedOut = true);
-        _showError(
-          'Malipo bado yanathibitishwa. Usilipe tena; angalia hali tena.',
-        );
-      }
-    } catch (_) {
-      if (mounted) {
-        _showError(
-          'Hatujapata hali ya mwisho. Usilipe tena; angalia hali tena.',
-        );
-      }
-    } finally {
-      _statusCheckInFlight = false;
+        return;
+      case CourseCheckoutState.failed:
+      case CourseCheckoutState.timedOut:
+        _closeWaitingDialog();
+        final message = _checkoutController.message;
+        if (message != null) _showError(message);
+        return;
+      case CourseCheckoutState.idle:
+      case CourseCheckoutState.recovering:
+      case CourseCheckoutState.initiating:
+      case CourseCheckoutState.waitingForPayment:
+        break;
     }
   }
 
@@ -359,7 +252,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                           ),
                           const SizedBox(height: AppSpacing.sm),
                           Text(
-                            _formatPrice(widget.coursePrice),
+                            AppFormatters.currency(widget.coursePrice),
                             style: AppTextStyles.price.copyWith(
                               fontSize: 18,
                               color: const Color(0xFFE87722),
@@ -390,9 +283,12 @@ class _PaymentScreenState extends State<PaymentScreen>
                 final isSelected = _selectedProvider == provider['id'];
                 final color = provider['color']! as Color;
                 return GestureDetector(
-                  onTap: () => setState(
-                    () => _selectedProvider = provider['id']! as String,
-                  ),
+                  onTap: _checkoutController.hasActiveAttempt ||
+                          _checkoutController.isBusy
+                      ? null
+                      : () => setState(
+                            () => _selectedProvider = provider['id']! as String,
+                          ),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     margin: const EdgeInsets.only(
@@ -469,9 +365,8 @@ class _PaymentScreenState extends State<PaymentScreen>
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: isSelected
-                                  ? color
-                                  : const Color(0xFFE8D5C8),
+                              color:
+                                  isSelected ? color : const Color(0xFFE8D5C8),
                               width: 2,
                             ),
                             color: isSelected
@@ -629,6 +524,8 @@ class _PaymentScreenState extends State<PaymentScreen>
                   Expanded(
                     child: TextField(
                       controller: _phoneController,
+                      enabled: !_checkoutController.hasActiveAttempt &&
+                          !_checkoutController.isBusy,
                       keyboardType: TextInputType.phone,
                       onChanged: (_) => setState(() {}),
                       style: AppTextStyles.h4.copyWith(
@@ -670,7 +567,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                   color: const Color(0xFFBDA99C),
                 ),
               ),
-              if (_paymentTimedOut) ...[
+              if (_checkoutController.hasActiveAttempt) ...[
                 const SizedBox(height: AppSpacing.md),
                 Container(
                   width: double.infinity,
@@ -684,25 +581,27 @@ class _PaymentScreenState extends State<PaymentScreen>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Malipo bado yanathibitishwa',
+                        'Malipo yanaendelea kuthibitishwa',
                         style: AppTextStyles.labelLarge.copyWith(
                           color: const Color(0xFF3D1800),
                         ),
                       ),
                       const SizedBox(height: AppSpacing.xs),
                       Text(
-                        'Usilipe tena. Angalia hali tena baada ya muda mfupi.',
+                        _checkoutController.message ??
+                            'Usianzishe malipo mengine kwa kozi hii.',
                         style: AppTextStyles.bodySmall.copyWith(
                           color: const Color(0xFF5C3D2E),
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.sm),
-                      TextButton(
-                        onPressed: _statusCheckInFlight
-                            ? null
-                            : _checkPaymentStatus,
-                        child: const Text('Angalia hali ya malipo'),
-                      ),
+                      if (_checkoutController.state ==
+                          CourseCheckoutState.timedOut) ...[
+                        const SizedBox(height: AppSpacing.sm),
+                        TextButton(
+                          onPressed: _checkoutController.retryStatusCheck,
+                          child: const Text('Angalia hali ya malipo'),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -727,7 +626,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                           ),
                         ),
                         Text(
-                          _formatPrice(widget.coursePrice),
+                          AppFormatters.currency(widget.coursePrice),
                           style: AppTextStyles.buttonLarge.copyWith(
                             fontWeight: FontWeight.w700,
                             color: const Color(0xFF3D1800),
@@ -764,7 +663,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                           ),
                         ),
                         Text(
-                          _formatPrice(widget.coursePrice),
+                          AppFormatters.currency(widget.coursePrice),
                           style: AppTextStyles.price.copyWith(
                             fontSize: 18,
                             color: const Color(0xFFE87722),
@@ -788,14 +687,13 @@ class _PaymentScreenState extends State<PaymentScreen>
                     ),
                     elevation: 0,
                   ),
-                  onPressed:
-                      (_selectedProvider != null &&
+                  onPressed: (_selectedProvider != null &&
                           _phoneController.text.isNotEmpty &&
-                          !_isProcessing &&
-                          _activeExternalId == null)
+                          !_checkoutController.hasActiveAttempt &&
+                          !_checkoutController.isBusy)
                       ? _processPayment
                       : null,
-                  child: _isProcessing
+                  child: _checkoutController.isBusy
                       ? const SizedBox(
                           width: 20,
                           height: 20,
@@ -805,7 +703,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                           ),
                         )
                       : Text(
-                          'Lipa ${_formatPrice(widget.coursePrice)}',
+                          'Lipa ${AppFormatters.currency(widget.coursePrice)}',
                           style: AppTextStyles.buttonLarge.copyWith(
                             color: Colors.white,
                           ),

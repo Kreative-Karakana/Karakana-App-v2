@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:karakana_app/widgets/common/karakana_wave_loader.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text_styles.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../widgets/common/top_popup.dart';
 
 class WalletScreen extends StatefulWidget {
@@ -53,14 +53,6 @@ class _WalletScreenState extends State<WalletScreen> {
     } catch (_) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-    }
-  }
-
-  String _formatPrice(dynamic price) {
-    try {
-      return NumberFormat('#,###').format(double.parse(price.toString()));
-    } catch (_) {
-      return '$price';
     }
   }
 
@@ -215,7 +207,7 @@ class _WalletScreenState extends State<WalletScreen> {
     final receiptUrl = checkout['receipt_image'] as String?;
     String formattedDate = '';
     try {
-      formattedDate = DateFormat('dd MMM yyyy').format(DateTime.parse(date));
+      formattedDate = AppDateFormat.display.format(DateTime.parse(date));
     } catch (_) {
       formattedDate = date;
     }
@@ -285,7 +277,7 @@ class _WalletScreenState extends State<WalletScreen> {
         ])),
         const SizedBox(width: AppSpacing.sm),
         Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          Text('TZS ${_formatPrice(amount)}',
+          Text(AppFormatters.currency(amount),
               style: AppTextStyles.labelLarge.copyWith(
                   color: isSuccessful
                       ? const Color(0xFFE87722)
@@ -455,7 +447,9 @@ class _WalletScreenState extends State<WalletScreen> {
                                                   AppSpacing.xs / 2),
                                           Text(
                                             _balanceVisible
-                                                ? 'TZS ${_formatPrice(_wallet?['balance'] ?? 0)}'
+                                                ? AppFormatters.currency(
+                                                    _wallet?['balance'] ?? 0,
+                                                  )
                                                 : 'TZS ••••••',
                                             style: AppTextStyles.displayMedium
                                                 .copyWith(color: Colors.white),
@@ -495,7 +489,9 @@ class _WalletScreenState extends State<WalletScreen> {
                                       const SizedBox(height: 4),
                                       Text(
                                         _balanceVisible
-                                            ? 'TZS ${_formatPrice(_wallet?['total_income'] ?? 0)}'
+                                            ? AppFormatters.currency(
+                                                _wallet?['total_income'] ?? 0,
+                                              )
                                             : 'TZS ••••',
                                         style: AppTextStyles.buttonLarge
                                             .copyWith(
@@ -524,7 +520,10 @@ class _WalletScreenState extends State<WalletScreen> {
                                         const SizedBox(height: 4),
                                         Text(
                                           _balanceVisible
-                                              ? 'TZS ${_formatPrice(_wallet?['total_disbursed'] ?? 0)}'
+                                              ? AppFormatters.currency(
+                                                  _wallet?['total_disbursed'] ??
+                                                      0,
+                                                )
                                               : 'TZS ••••',
                                           style: AppTextStyles.buttonLarge
                                               .copyWith(
