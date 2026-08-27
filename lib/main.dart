@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +34,7 @@ Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await configureAppOrientation();
 
   bool firebaseReady = false;
   try {
@@ -84,6 +86,14 @@ Future<void> main() async {
     themeProvider: themeProvider,
     firebaseReady: firebaseReady,
   ));
+}
+
+/// Keeps normal app screens in portrait. Fullscreen video temporarily
+/// overrides this setting and restores portrait when it closes.
+Future<void> configureAppOrientation() {
+  return SystemChrome.setPreferredOrientations(
+    const [DeviceOrientation.portraitUp],
+  );
 }
 
 class KarakanaApp extends StatefulWidget {
