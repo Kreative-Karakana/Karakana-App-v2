@@ -3,6 +3,11 @@ import 'package:flutter/foundation.dart';
 import '../services/iap_service.dart';
 
 class IAPProvider extends ChangeNotifier {
+  IAPProvider({SubscriptionPurchaseStore? store})
+    : _store = store ?? IAPService.instance;
+
+  final SubscriptionPurchaseStore _store;
+
   bool isLoading = false;
   String? errorMessage;
   bool purchaseSuccess = false;
@@ -23,12 +28,12 @@ class IAPProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final ready = await IAPService.instance.initialize();
+      final ready = await _store.initialize();
       if (!ready) {
         errorMessage = 'Uthibitisho wa malipo umeshindwa. Wasiliana na msaada.';
         return;
       }
-      await IAPService.instance.loadProducts({productId}, kind: kind);
+      await _store.loadProducts({productId}, kind: kind);
     } catch (_) {
       errorMessage = 'Hitilafu ya mtandao. Jaribu tena baadaye.';
     } finally {
@@ -47,7 +52,7 @@ class IAPProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final result = await IAPService.instance.purchase(productId, kind: kind);
+      final result = await _store.purchase(productId, kind: kind);
       switch (result.result) {
         case IAPResult.success:
           purchaseSuccess = true;
@@ -74,7 +79,7 @@ class IAPProvider extends ChangeNotifier {
   }
 
   String? localizedPrice(String productId) =>
-      IAPService.instance.getProduct(productId)?.price;
+      _store.getProduct(productId)?.price;
 
   void reset() {
     isLoading = false;

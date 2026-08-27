@@ -17,6 +17,14 @@ import '../models/course_model.dart';
 import '../providers/course_provider.dart';
 import '../widgets/course_intro_video_player.dart';
 
+@visibleForTesting
+bool isAppleCoursePurchaseDisabled({
+  required bool isIOS,
+  required bool isFree,
+  required String? productId,
+}) =>
+    isIOS && !isFree && (productId == null || productId.isEmpty);
+
 class CourseDetailScreen extends StatefulWidget {
   final int courseId;
 
@@ -896,7 +904,11 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     // iOS: Apple IAP
     if (Platform.isIOS) {
       final productId = course.appleIapProductId ?? '';
-      if (productId.isEmpty) {
+      if (isAppleCoursePurchaseDisabled(
+        isIOS: true,
+        isFree: course.isFree,
+        productId: course.appleIapProductId,
+      )) {
         return SizedBox(
           width: double.infinity,
           child: ElevatedButton(
