@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -577,37 +578,17 @@ class _LoginScreenState extends State<LoginScreen>
                                                                   .isLoading
                                                               ? () {}
                                                               : _handleGoogleSignIn,
-                                                          icon: Container(
+                                                          icon:
+                                                              SvgPicture.asset(
+                                                            'assets/icons/google.svg',
                                                             width: compact
                                                                 ? 22
                                                                 : 24,
                                                             height: compact
                                                                 ? 22
                                                                 : 24,
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                              color:
-                                                                  Colors.white,
-                                                              shape: BoxShape
-                                                                  .circle,
-                                                            ),
-                                                            child: Center(
-                                                              child: Text(
-                                                                'G',
-                                                                style: GoogleFonts
-                                                                    .montserrat(
-                                                                  fontSize:
-                                                                      12.sp,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
-                                                                  color:
-                                                                      const Color(
-                                                                    0xFF4285F4,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
+                                                            semanticsLabel:
+                                                                'Google',
                                                           ),
                                                         ),
                                                       ),
@@ -646,7 +627,7 @@ class _LoginScreenState extends State<LoginScreen>
                                                           icon: Icon(
                                                             hasFaceId
                                                                 ? Icons
-                                                                    .face_retouching_natural_rounded
+                                                                    .face_unlock_rounded
                                                                 : Icons
                                                                     .fingerprint_rounded,
                                                             color: (hasFaceId ||
@@ -663,6 +644,11 @@ class _LoginScreenState extends State<LoginScreen>
                                                                 ? 22
                                                                 : 24,
                                                           ),
+                                                          semanticLabel: hasFaceId
+                                                              ? 'Tumia Face ID'
+                                                              : hasFingerprint
+                                                                  ? 'Tumia alama ya kidole'
+                                                                  : 'Biometric haipatikani',
                                                           accentColor: hasFaceId
                                                               ? const Color(
                                                                   0xFF627AF4)
@@ -839,6 +825,7 @@ class _MethodButton extends StatelessWidget {
   final bool enabled;
   final bool compact;
   final Color? accentColor;
+  final String? semanticLabel;
 
   const _MethodButton({
     required this.icon,
@@ -847,6 +834,7 @@ class _MethodButton extends StatelessWidget {
     required this.compact,
     this.enabled = true,
     this.accentColor,
+    this.semanticLabel,
   });
 
   @override
@@ -855,37 +843,41 @@ class _MethodButton extends StatelessWidget {
         ? (accentColor ?? Colors.white).withValues(alpha: 0.14)
         : Colors.white.withValues(alpha: 0.06);
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 8.w,
-          vertical: compact ? 12 : 14,
-        ),
-        decoration: BoxDecoration(
-          color: enabled
-              ? Colors.white.withValues(alpha: 0.035)
-              : Colors.white.withValues(alpha: 0.025),
-          borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(color: borderColor),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            icon,
-            SizedBox(height: compact ? 8 : 10),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
-                fontSize: compact ? 11.5 : 12.5,
-                fontWeight: FontWeight.w600,
-                color: enabled ? Colors.white : AppColors.textTertiary,
+    return Semantics(
+      button: true,
+      label: semanticLabel ?? label,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 8.w,
+            vertical: compact ? 12 : 14,
+          ),
+          decoration: BoxDecoration(
+            color: enabled
+                ? Colors.white.withValues(alpha: 0.035)
+                : Colors.white.withValues(alpha: 0.025),
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(color: borderColor),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              icon,
+              SizedBox(height: compact ? 8 : 10),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.montserrat(
+                  fontSize: compact ? 11.5 : 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: enabled ? Colors.white : AppColors.textTertiary,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

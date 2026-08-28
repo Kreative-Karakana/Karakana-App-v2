@@ -196,7 +196,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
                     // Fingerprint icon
                     Icon(
                       _hasFaceId
-                          ? Icons.face_retouching_natural_rounded
+                          ? Icons.face_unlock_rounded
                           : Icons.fingerprint,
                       size: 80,
                       color:

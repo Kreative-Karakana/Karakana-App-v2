@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -465,23 +466,11 @@ class _SignupContent extends StatelessWidget {
                               onTap: authProvider.isLoading
                                   ? () {}
                                   : onGoogleSignIn,
-                              icon: Container(
+                              icon: SvgPicture.asset(
+                                'assets/icons/google.svg',
                                 width: dense || veryShort ? 20 : 22,
                                 height: dense || veryShort ? 20 : 22,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'G',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xFF4285F4),
-                                    ),
-                                  ),
-                                ),
+                                semanticsLabel: 'Google',
                               ),
                             ),
                           ),
@@ -516,14 +505,37 @@ class _SignupContent extends StatelessWidget {
                                 color: Colors.white.withValues(alpha: 0.72),
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () => context.go('/login'),
-                              child: Text(
-                                'Ingia',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: dense || veryShort ? 12.5 : 13.5,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.primaryMid,
+                            Semantics(
+                              button: true,
+                              label: 'Ingia',
+                              child: GestureDetector(
+                                onTap: () => context.go('/login'),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: dense || veryShort ? 14 : 16,
+                                    vertical: dense || veryShort ? 5 : 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        AppColors.primary,
+                                        Color(0xFFE07A2F),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(50)),
+                                  ),
+                                  child: Text(
+                                    'Ingia',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize:
+                                          dense || veryShort ? 12.5 : 13.5,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -665,35 +677,39 @@ class _MethodButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 12.w,
-          vertical: compact ? 10 : 12,
-        ),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.035),
-          borderRadius: BorderRadius.circular(20.r),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.14),
+    return Semantics(
+      button: true,
+      label: label,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 12.w,
+            vertical: compact ? 10 : 12,
           ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            icon,
-            SizedBox(width: compact ? 8 : 10),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
-                fontSize: compact ? 11.5 : 12.5,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.035),
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.14),
             ),
-          ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              icon,
+              SizedBox(width: compact ? 8 : 10),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.montserrat(
+                  fontSize: compact ? 11.5 : 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
