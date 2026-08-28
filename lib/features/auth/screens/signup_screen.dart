@@ -519,13 +519,14 @@ class _SignupContent extends StatelessWidget {
                                     gradient: LinearGradient(
                                       colors: [
                                         AppColors.primary,
-                                        Color(0xFFE07A2F),
+                                        const Color(0xFFE07A2F),
                                       ],
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
                                     ),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(50)),
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(50),
+                                    ),
                                   ),
                                   child: Text(
                                     'Ingia',
